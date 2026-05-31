@@ -1,46 +1,37 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
-import { HeroEcosystem } from "@/components/ui/HeroEcosystem";
 import { SplitHeadline } from "@/components/ui/SplitHeadline";
 
 export function HeroSection() {
-  const { scrollYProgress } = useScroll();
-  const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.85]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0.5]);
-  const blur = useTransform(scrollYProgress, [0, 0.2], ["blur(0px)", "blur(6px)"]);
-
   return (
-    <section
-      id="hero"
-      className="scene-shell min-h-[960px] bg-[#FAFAFA] pt-16"
-    >
-      <div className="content-grid grid min-h-[calc(100vh-64px)] items-center gap-12 py-20 lg:grid-cols-[0.6fr_0.4fr]">
-        <motion.div style={{ scale, opacity, filter: blur }} className="origin-left">
-          <p className="cinematic-label mb-10 text-blue-600">
-            Frontend & AI Product Builder
-          </p>
-          <SplitHeadline
-            lines={["기술보다", "사람에게 먼저 닿는", "AI를 만듭니다."]}
-            className="cinematic-title max-w-[900px]"
-          />
-          <p className="mt-16 max-w-[620px] text-2xl font-normal leading-relaxed text-slate-600">
-            음성 인터페이스, 실시간 UX, 생성형 AI를 활용해 사용자가 직접
-            체감할 수 있는 제품 경험으로 연결합니다.
-          </p>
-          <div className="mt-12 flex flex-wrap gap-3">
-            <Button href="#projects" icon={ArrowRight}>
-              Enter the Story
-            </Button>
-            <Button href="/knowledge" variant="secondary">
-              AI Knowledge
-            </Button>
-          </div>
-        </motion.div>
-        <HeroEcosystem />
-      </div>
+    <section id="hero" className="scene-shell flex min-h-screen items-center bg-[#FAFAFA] px-5 py-24">
+      <motion.div
+        initial={{ opacity: 0, y: 40, filter: "blur(12px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        className="mx-auto w-full max-w-[1320px] text-center"
+      >
+        <SplitHeadline
+          lines={["사람은 기술을", "기억하지 않습니다.", "경험을 기억합니다."]}
+          className="mx-auto max-w-[1180px] text-[clamp(88px,9vw,168px)] font-extrabold leading-[0.88] tracking-[-0.06em] text-[#111827]"
+        />
+        <p className="cinematic-label mt-14 text-blue-600">
+          Frontend & AI Product Builder
+        </p>
+        <p className="mx-auto mt-8 max-w-[760px] text-xl leading-8 text-slate-600 md:text-2xl md:leading-10">
+          음성 인터페이스, 실시간 UX, 생성형 AI를
+          <br className="hidden sm:block" />
+          사용자가 체감할 수 있는 경험으로 연결합니다.
+        </p>
+        <div className="mt-12 flex flex-wrap justify-center gap-3">
+          <Button href="#projects">View Projects</Button>
+          <Button href="/knowledge" variant="secondary">
+            AI Knowledge
+          </Button>
+        </div>
+      </motion.div>
     </section>
   );
 }
