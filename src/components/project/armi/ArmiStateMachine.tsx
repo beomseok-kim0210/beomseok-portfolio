@@ -1,5 +1,5 @@
 import { MotionBlock } from "@/components/ui/MotionBlock";
-import { armiStateNodes } from "@/data/armiCaseStudy";
+import { armiStateGroups } from "@/data/armiCaseStudy";
 import { ArmiSectionHeading } from "./ArmiSectionHeading";
 
 export function ArmiStateMachine() {
@@ -8,48 +8,44 @@ export function ArmiStateMachine() {
       <div className="mx-auto max-w-[1280px]">
         <ArmiSectionHeading
           label="Frontend State System"
-          title="음성 AI를 기능이 아니라 상태 머신으로 설계했습니다."
-          subtitle="STT, TTS, 발화자 검증, 로봇 미션은 각각 독립 기능이 아니라 마이크와 UI 상태를 공유하는 하나의 흐름이었습니다."
+          title={"언제 듣고,\n언제 말하지 않을지를 먼저 정했습니다."}
+          subtitle="STT, TTS, 발화자 검증은 모두 마이크를 공유했습니다. 그래서 기능 순서가 아니라 “마이크 소유권” 기준으로 상태를 나눴습니다."
         />
         <MotionBlock className="mt-14">
-          <div className="rounded-[40px] border border-[#E2E8F0] bg-white p-6 md:p-10">
-            <div className="grid gap-4 md:grid-cols-2 xl:flex xl:flex-wrap xl:items-center xl:justify-between">
-              {armiStateNodes.map((node, index) => {
-                const isActive = node.title === "Speaking";
-
-                return (
-                  <div
-                    key={node.title}
-                    className="relative flex flex-col items-center xl:flex-row xl:items-stretch"
-                  >
-                    <div
-                      className={`flex h-24 w-full max-w-[150px] flex-col justify-center rounded-[24px] border bg-white px-4 text-center xl:w-[150px] ${
-                        isActive
-                          ? "border-blue-600 shadow-[0_24px_60px_rgba(37,99,235,0.18)]"
-                          : "border-slate-300"
-                      }`}
-                    >
-                      <p className="text-sm font-semibold text-[#111827]">
-                        {node.title}
-                      </p>
-                      <p className="mt-2 text-xs leading-5 text-slate-500">
-                        {node.description}
-                      </p>
-                    </div>
-                    {index < armiStateNodes.length - 1 ? (
-                      <>
-                        <div className="mx-auto hidden h-px w-10 bg-slate-300 xl:block" />
-                        <div className="mx-auto flex h-8 w-px bg-slate-300 xl:hidden" />
-                      </>
-                    ) : null}
+          <div className="rounded-[40px] border border-[#E2E8F0] bg-[#F8FAFC] p-6 md:p-10">
+            <div className="grid gap-6 xl:grid-cols-3">
+              {armiStateGroups.map((group) => (
+                <article
+                  key={group.title}
+                  className="flex min-h-[360px] flex-col rounded-[32px] border border-[#E2E8F0] bg-white p-8"
+                >
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+                    {group.step} {group.title}
+                  </p>
+                  <div className="mt-8 flex flex-1 flex-col justify-center">
+                    {group.nodes.map((node, index) => (
+                      <div key={node}>
+                        <div className="rounded-full border border-slate-200 bg-[#F8FAFC] px-5 py-3 text-center text-sm font-semibold text-[#111827]">
+                          {node}
+                        </div>
+                        {index < group.nodes.length - 1 ? (
+                          <div className="py-2 text-center text-lg font-semibold text-slate-300">
+                            ↓
+                          </div>
+                        ) : null}
+                      </div>
+                    ))}
                   </div>
-                );
-              })}
+                  <p className="mt-8 border-t border-slate-200 pt-5 text-[15px] font-semibold leading-7 text-slate-700">
+                    {group.rule}
+                  </p>
+                </article>
+              ))}
             </div>
-            <div className="mt-10 rounded-[28px] bg-[#F8FAFC] p-6">
+            <div className="mt-10 rounded-[28px] bg-white p-6">
               <p className="small-label text-blue-600">State Transition Insight</p>
-              <p className="mt-4 text-[18px] leading-[1.75] text-slate-700">
-                핵심은 “언제 듣고, 언제 말하지 않을 것인가”였습니다.
+              <p className="mt-4 text-[18px] leading-[1.7] text-slate-700">
+                핵심 전환 기준은 기능 완료가 아니라 “마이크를 누가 점유하는가”였습니다.
               </p>
             </div>
           </div>

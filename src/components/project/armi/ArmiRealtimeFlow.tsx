@@ -1,6 +1,15 @@
 import { MotionBlock } from "@/components/ui/MotionBlock";
-import { armiRealtimeLinks, armiRealtimeNodes } from "@/data/armiCaseStudy";
+import { armiRealtimeSteps } from "@/data/armiCaseStudy";
 import { ArmiSectionHeading } from "./ArmiSectionHeading";
+import type { ReactNode } from "react";
+
+function FormulaPill({ children }: { children: ReactNode }) {
+  return (
+    <span className="rounded-full border border-slate-200 bg-[#F8FAFC] px-4 py-3 text-sm font-semibold text-slate-700">
+      {children}
+    </span>
+  );
+}
 
 export function ArmiRealtimeFlow() {
   return (
@@ -8,58 +17,83 @@ export function ArmiRealtimeFlow() {
       <div className="mx-auto max-w-[1280px]">
         <ArmiSectionHeading
           label="Realtime Architecture Flow"
-          title="연결된 것과 구독된 것은 달랐습니다."
-          subtitle="WebSocket 연결 성공만으로는 실시간 UX가 완성되지 않았습니다. Tablet topic과 Session topic 구독 상태를 분리해야 했습니다."
+          title={"WebSocket 연결만으로는\n실시간 UX가 완성되지 않았습니다."}
+          subtitle="서버와 연결되어도 필요한 Topic을 다시 구독하지 않으면 이벤트는 도착하지 않았습니다."
         />
         <MotionBlock className="mt-14">
-          <div className="rounded-[40px] border border-[#0F172A] bg-[#07111F] p-8 text-white md:p-12">
-            <div className="grid gap-4 xl:grid-cols-[repeat(11,minmax(0,1fr))] xl:items-center">
-              {armiRealtimeNodes.map((node, index) => (
-                <div
-                  key={`${node.title}-${index}`}
-                  className={index < armiRealtimeLinks.length ? "xl:col-span-2" : "xl:col-span-1"}
-                >
-                  <div className="rounded-[28px] border border-[rgba(148,163,184,0.24)] bg-[rgba(255,255,255,0.08)] p-5">
-                    <p className="text-lg font-semibold">{node.title}</p>
-                    <p className="mt-2 text-sm text-slate-300">{node.detail}</p>
-                  </div>
-                  {index < armiRealtimeLinks.length ? (
-                    <div className="py-3 text-center text-sm font-semibold text-blue-200 xl:py-0 xl:text-left">
-                      {armiRealtimeLinks[index]}
-                    </div>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-            <div className="mt-10 grid gap-6 xl:grid-cols-3">
-              <div className="rounded-[28px] border border-[rgba(148,163,184,0.24)] bg-[rgba(255,255,255,0.06)] p-6">
-                <p className="small-label text-blue-200">Tablet Topic</p>
-                <p className="mt-4 font-mono text-sm text-white">
-                  /topic/tablets/{"{tabletId}"}
+          <div className="rounded-[40px] border border-[#E2E8F0] bg-white p-6 md:p-10">
+            <div className="grid gap-6 xl:grid-cols-2">
+              <article className="rounded-[32px] border border-slate-200 bg-[#F8FAFC] p-8">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  Wrong Assumption
                 </p>
-              </div>
-              <div className="rounded-[28px] border border-[rgba(148,163,184,0.24)] bg-[rgba(255,255,255,0.06)] p-6">
-                <p className="small-label text-blue-200">Session Topic</p>
-                <p className="mt-4 font-mono text-sm text-white">
-                  /topic/tablets/{"{tabletId}"}/sessions/{"{sessionId}"}
-                </p>
-              </div>
-              <div className="rounded-[28px] border border-[rgba(148,163,184,0.24)] bg-[rgba(255,255,255,0.06)] p-6">
-                <p className="small-label text-blue-200">Connection / Subscription</p>
-                <div className="mt-4 space-y-2 text-sm text-slate-200">
-                  <p>Connection State: connected / reconnecting / failed</p>
-                  <p>
-                    Subscription State: tablet subscribed / session subscribed /
-                    stale
-                  </p>
+                <div className="mt-10 flex min-h-[180px] flex-col items-center justify-center gap-5 text-center">
+                  <FormulaPill>WebSocket Connected</FormulaPill>
+                  <span className="text-3xl font-bold text-slate-300">=</span>
+                  <FormulaPill>Realtime Ready</FormulaPill>
                 </div>
-              </div>
+                <p className="mt-8 rounded-[20px] bg-white px-5 py-4 text-center text-[15px] font-semibold text-red-600">
+                  결과: 이벤트 누락 발생
+                </p>
+              </article>
+              <article className="rounded-[32px] border border-blue-200 bg-[#EFF6FF] p-8">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+                  Correct Model
+                </p>
+                <div className="mt-10 flex min-h-[180px] flex-col items-center justify-center gap-4 text-center">
+                  <FormulaPill>WebSocket Connected</FormulaPill>
+                  <span className="font-bold text-blue-500">+</span>
+                  <FormulaPill>Tablet Topic Subscribed</FormulaPill>
+                  <span className="font-bold text-blue-500">+</span>
+                  <FormulaPill>Session Topic Subscribed</FormulaPill>
+                  <span className="text-2xl font-bold text-blue-500">=</span>
+                  <span className="rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white">
+                    Realtime Ready
+                  </span>
+                </div>
+                <p className="mt-8 rounded-[20px] bg-white px-5 py-4 text-center text-[15px] font-semibold text-blue-700">
+                  결과: 이벤트 복구 가능
+                </p>
+              </article>
             </div>
-            <div className="mt-8 rounded-[28px] bg-[rgba(255,255,255,0.06)] p-6">
-              <p className="text-[18px] leading-[1.75] text-slate-200">
-                Connected 상태와 Subscribed 상태를 분리해서 봐야 실시간 이벤트
-                누락을 추적할 수 있었습니다.
+
+            <div className="mt-8 rounded-[28px] bg-[#F8FAFC] p-6 md:p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+                Realtime Ready Flow
               </p>
+              <div className="mt-6 grid gap-3 md:grid-cols-5">
+                {armiRealtimeSteps.map((step, index) => (
+                  <div key={step} className="flex md:block">
+                    <div className="flex min-h-[96px] flex-1 flex-col justify-between rounded-[22px] border border-slate-200 bg-white p-4">
+                      <span className="text-xs font-semibold text-blue-600">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <p className="mt-4 text-sm font-semibold leading-6 text-slate-700">
+                        {step}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-4 xl:grid-cols-2">
+              <div className="rounded-[24px] border border-slate-200 bg-[#0F172A] p-6 text-white">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-200">
+                  Tablet
+                </p>
+                <code className="mt-4 block rounded-[16px] bg-white/10 px-4 py-3 text-sm">
+                  /topic/tablets/{"{tabletId}"}
+                </code>
+              </div>
+              <div className="rounded-[24px] border border-slate-200 bg-[#0F172A] p-6 text-white">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-200">
+                  Session
+                </p>
+                <code className="mt-4 block rounded-[16px] bg-white/10 px-4 py-3 text-sm">
+                  /topic/tablets/{"{tabletId}"}/sessions/{"{sessionId}"}
+                </code>
+              </div>
             </div>
           </div>
         </MotionBlock>
