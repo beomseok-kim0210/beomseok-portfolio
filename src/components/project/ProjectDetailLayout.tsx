@@ -5,6 +5,7 @@ import { navItems } from "@/data/navigation";
 import { projectDetails } from "@/data/projectDetails";
 import type { ProjectDetail } from "@/types/portfolio";
 import { ProjectArchitecture } from "./ProjectArchitecture";
+import { ArmiCaseStudy } from "./ArmiCaseStudy";
 import { ProjectHero } from "./ProjectHero";
 import { ProjectMediaSection } from "./ProjectMediaSection";
 import { ProjectOverview } from "./ProjectOverview";
@@ -22,6 +23,7 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
   const currentIndex = projectDetails.findIndex((item) => item.slug === project.slug);
   const nextProject = projectDetails[(currentIndex + 1) % projectDetails.length];
   const isWeddingCaseStudy = project.slug === "wedding";
+  const isArmiCaseStudy = project.slug === "armi";
 
   return (
     <main className={isWeddingCaseStudy ? "bg-[#FFF9F7]" : "bg-[#FAFAFA]"}>
@@ -38,6 +40,12 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
         </div>
         {isWeddingCaseStudy ? (
           <WeddingCaseStudy project={project} />
+        ) : isArmiCaseStudy ? (
+          <>
+            <ProjectHero project={project} />
+            <ProjectMediaSection project={project} />
+            <ArmiCaseStudy />
+          </>
         ) : (
           <>
             <ProjectHero project={project} />
