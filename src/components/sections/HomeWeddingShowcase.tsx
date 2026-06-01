@@ -8,7 +8,7 @@ export function HomeWeddingShowcase() {
   return (
     <section className="scene-shell flex min-h-screen items-center bg-[#FFF9F7] px-5 py-24 text-[#111827] md:py-40">
       <ShowcaseMotion className="mx-auto w-full text-center">
-        <p className="cinematic-label text-[var(--wedding-accent)]">
+        <p className="cinematic-label !text-[40px] !leading-none !tracking-[0.04em] text-[var(--wedding-accent)]">
           Choice Intelligence
         </p>
         <h2 className="mt-8 text-[clamp(72px,7vw,132px)] font-[780] leading-[0.9] tracking-[-0.05em]">
@@ -16,10 +16,14 @@ export function HomeWeddingShowcase() {
         </h2>
         <SplitHeadline
           lines={["사람은", "자신에게 가장 어울리는 선택을", "얼마나 알고 있을까?"]}
-          className="mx-auto mt-6 max-w-[1180px] text-[clamp(48px,5vw,92px)] font-bold leading-[0.92] tracking-[-0.045em]"
+          className="mx-auto mt-6 max-w-[1180px] text-[clamp(48px,5vw,92px)] font-bold leading-[1.02] tracking-normal"
         />
         <div className="mx-auto mt-16 w-[min(1400px,88vw)]">
-          <BeforeAfterFrame />
+          <BeforeAfterFrame
+            beforeSrc="/images/before_wedding.png"
+            afterSrc="/images/after_wedding.png"
+            beforePosition="center calc(50% + 5px)"
+          />
         </div>
         <Link
           href="/projects/wedding"

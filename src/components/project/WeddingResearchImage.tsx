@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 
 type WeddingResearchImageProps = {
@@ -29,11 +28,12 @@ export function WeddingResearchImage({
   }
 
   return (
-    <Image
+    // A plain img avoids Next image optimizer errors when the source is missing.
+    // We can then switch to a local placeholder gracefully on the client.
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       src={src}
       alt={alt}
-      width={1280}
-      height={720}
       onError={() => setFailed(true)}
       className="h-auto w-full rounded-[28px] border border-[#E5E7EB] bg-white object-cover shadow-[0_32px_80px_rgba(15,23,42,0.08)]"
     />

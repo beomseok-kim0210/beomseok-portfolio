@@ -6,14 +6,34 @@ type BeforeAfterFrameProps = {
   beforeSrc?: string;
   afterSrc?: string;
   compact?: boolean;
+  beforePosition?: string;
+  afterPosition?: string;
 };
 
 export function BeforeAfterFrame({
   beforeSrc,
   afterSrc,
   compact = false,
+  beforePosition = "center",
+  afterPosition = "center",
 }: BeforeAfterFrameProps) {
   const [value, setValue] = useState(52);
+  const beforeStyle = beforeSrc
+    ? {
+        backgroundImage: `url(${beforeSrc})`,
+        backgroundSize: "cover",
+        backgroundPosition: beforePosition,
+        backgroundRepeat: "no-repeat",
+      }
+    : undefined;
+  const afterStyle = afterSrc
+    ? {
+        backgroundImage: `url(${afterSrc})`,
+        backgroundSize: "cover",
+        backgroundPosition: afterPosition,
+        backgroundRepeat: "no-repeat",
+      }
+    : undefined;
 
   return (
     <div
@@ -23,13 +43,11 @@ export function BeforeAfterFrame({
     >
       <div
         className="absolute inset-0 bg-white"
-        style={
-          beforeSrc
-            ? { backgroundImage: `url(${beforeSrc})`, backgroundSize: "cover" }
-            : undefined
-        }
+        style={beforeStyle}
       >
-        <div className="absolute inset-8 rounded-[28px] bg-[#F7ECE8]" />
+        {!beforeSrc ? (
+          <div className="absolute inset-8 rounded-[28px] bg-[#F7ECE8]" />
+        ) : null}
         <span className="absolute left-6 top-6 text-xs font-bold tracking-[0.22em] text-slate-500">
           BEFORE
         </span>
@@ -38,16 +56,16 @@ export function BeforeAfterFrame({
         className="absolute inset-0 bg-[linear-gradient(135deg,#F9EAE6,#FFF9F7)]"
         style={{
           clipPath: `inset(0 ${100 - value}% 0 0)`,
-          ...(afterSrc
-            ? { backgroundImage: `url(${afterSrc})`, backgroundSize: "cover" }
-            : {}),
+          ...afterStyle,
         }}
       >
-        <div className="absolute inset-8 grid grid-cols-3 gap-3">
-          <div className="rounded-[24px] bg-white/70" />
-          <div className="rounded-[24px] bg-white/90" />
-          <div className="rounded-[24px] bg-white/70" />
-        </div>
+        {!afterSrc ? (
+          <div className="absolute inset-8 grid grid-cols-3 gap-3">
+            <div className="rounded-[24px] bg-white/70" />
+            <div className="rounded-[24px] bg-white/90" />
+            <div className="rounded-[24px] bg-white/70" />
+          </div>
+        ) : null}
         <span className="absolute right-6 top-6 text-xs font-bold tracking-[0.22em] text-[#B98979]">
           AFTER
         </span>

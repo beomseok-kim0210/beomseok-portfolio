@@ -14,15 +14,24 @@ const nodes = [
 
 export function HomeLabShowcase() {
   return (
-    <section id="lab" className="scene-shell flex min-h-screen items-center bg-[#111827] px-5 py-24 text-white md:py-40">
+    <section
+      id="lab"
+      className="scene-shell flex min-h-screen items-center bg-[#111827] px-5 py-24 text-white md:py-40"
+    >
       <ShowcaseMotion className="mx-auto w-full text-center">
-        <p className="cinematic-label text-blue-300">AI Lab</p>
+        <p className="cinematic-label !text-[40px] !leading-none !tracking-[0.04em] text-blue-300">
+          AI Lab
+        </p>
         <h2 className="mt-8 text-[clamp(72px,7vw,132px)] font-[780] leading-[0.9] tracking-[-0.05em]">
           Claw Dev
         </h2>
         <SplitHeadline
-          lines={["AI Agent는", "혼자 답하는 도구가 아니라", "함께 일하는 구조가 될 수 있을까?"]}
-          className="mx-auto mt-6 max-w-[1180px] text-[clamp(48px,5vw,92px)] font-bold leading-[0.92] tracking-[-0.045em]"
+          lines={[
+            "AI Agent는",
+            "혼자 동작하는 도구가 아니라",
+            "협업하는 구조가 될 수 있을까?",
+          ]}
+          className="mx-auto mt-6 max-w-[1180px] text-[clamp(48px,5vw,92px)] font-bold leading-[1.02] tracking-normal"
         />
         <div className="relative mx-auto mt-16 aspect-[16/9] w-[min(980px,86vw)] rounded-[40px] border border-white/10 bg-white/[0.04]">
           <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
