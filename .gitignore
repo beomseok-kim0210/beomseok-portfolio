@@ -56,3 +56,11 @@ test-results/
 # misc caches
 .turbo/
 .cache/
+
+# local media assets
+public/videos/*.mp4
+public/videos/*.mov
+public/videos/*.webm
+public/videos/*.avi
+public/videos/*.mkv
+!public/videos/.gitkeep
