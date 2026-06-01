@@ -1,10 +1,21 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { MotionBlock } from "@/components/ui/MotionBlock";
 import { armiScreens } from "@/data/armiCaseStudy";
 import { ArmiMediaPlaceholder } from "./ArmiMediaPlaceholder";
 import { ArmiSectionHeading } from "./ArmiSectionHeading";
 
+function resolvePublicAssetSrc(src: string) {
+  const relativePath = decodeURIComponent(src).replace(/^\//, "");
+  const absolutePath = path.join(process.cwd(), "public", relativePath);
+
+  return existsSync(absolutePath) ? src : undefined;
+}
+
 export function ArmiProductScreens() {
   const [tablet, watch, avatar] = armiScreens;
+  const tabletVideoSrc = "/videos/Patient%20Tablet%20App.mp4";
+  const avatarVideoSrc = "/videos/Responsive%20Avatar%20UI.mp4";
 
   return (
     <section className="py-[96px] md:py-[160px]">
@@ -18,9 +29,11 @@ export function ArmiProductScreens() {
           <MotionBlock className="xl:col-span-7">
             <article className="rounded-[32px] border border-[#E2E8F0] bg-white p-6 md:p-8">
               <ArmiMediaPlaceholder
-                src={tablet.src}
+                src={resolvePublicAssetSrc(tabletVideoSrc)}
                 alt={tablet.alt}
-                className="h-[360px] w-full md:h-[640px]"
+                mediaType="video"
+                mediaFit="contain"
+                className="h-[360px] w-full bg-[#F8FAFC] md:h-[640px]"
               />
               <div className="mt-6">
                 <h3 className="text-3xl font-semibold tracking-[-0.03em] text-[#111827]">
@@ -40,9 +53,20 @@ export function ArmiProductScreens() {
               <MotionBlock key={screen.title} delay={index * 0.06}>
                 <article className="rounded-[32px] border border-[#E2E8F0] bg-white p-6 md:p-8">
                   <ArmiMediaPlaceholder
-                    src={screen.src}
+                    src={
+                      screen.title === "Responsive Avatar UI"
+                        ? resolvePublicAssetSrc(avatarVideoSrc)
+                        : resolvePublicAssetSrc(screen.src)
+                    }
                     alt={screen.alt}
-                    className="h-[360px] w-full md:h-[308px]"
+                    mediaType={
+                      screen.title === "Responsive Avatar UI" ? "video" : "image"
+                    }
+                    className={
+                      screen.title === "Responsive Avatar UI"
+                        ? "aspect-square w-full"
+                        : "h-[360px] w-full md:h-[308px]"
+                    }
                   />
                   <div className="mt-6">
                     <h3 className="text-3xl font-semibold tracking-[-0.03em] text-[#111827]">

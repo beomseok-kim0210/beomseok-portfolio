@@ -3,19 +3,23 @@
 import { useState } from "react";
 
 type ArmiMediaPlaceholderProps = {
-  src: string;
+  src?: string;
   alt: string;
   className?: string;
+  mediaType?: "image" | "video";
+  mediaFit?: "cover" | "contain";
 };
 
 export function ArmiMediaPlaceholder({
   src,
   alt,
   className = "",
+  mediaType = "image",
+  mediaFit = "cover",
 }: ArmiMediaPlaceholderProps) {
   const [failed, setFailed] = useState(false);
 
-  if (failed) {
+  if (!src || failed) {
     return (
       <div
         className={`flex items-center justify-center rounded-[32px] border border-[#E2E8F0] bg-[linear-gradient(135deg,#F8FAFC,#E2E8F0)] p-8 text-center ${className}`}
@@ -30,13 +34,32 @@ export function ArmiMediaPlaceholder({
     );
   }
 
+  if (mediaType === "video") {
+    return (
+      <video
+        src={src}
+        aria-label={alt}
+        autoPlay
+        muted
+        loop
+        playsInline
+        onError={() => setFailed(true)}
+        className={`rounded-[32px] border border-[#E2E8F0] bg-[linear-gradient(135deg,#F8FAFC,#E2E8F0)] ${
+          mediaFit === "contain" ? "object-contain" : "object-cover"
+        } ${className}`}
+      />
+    );
+  }
+
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
       alt={alt}
       onError={() => setFailed(true)}
-      className={`rounded-[32px] border border-[#E2E8F0] bg-[linear-gradient(135deg,#F8FAFC,#E2E8F0)] object-cover ${className}`}
+      className={`rounded-[32px] border border-[#E2E8F0] bg-[linear-gradient(135deg,#F8FAFC,#E2E8F0)] ${
+        mediaFit === "contain" ? "object-contain" : "object-cover"
+      } ${className}`}
     />
   );
 }
