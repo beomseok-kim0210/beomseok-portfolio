@@ -22,6 +22,7 @@ export function HomeArmiShowcase() {
             title="ARMI"
             eyebrow="Live Product Demo"
             duration="03:42"
+            videoSrc="/videos/ARMI_intro.mp4"
           />
         </div>
         <Link

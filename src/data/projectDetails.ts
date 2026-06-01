@@ -62,6 +62,7 @@ export const projectDetails: ProjectDetail[] = [
       "AI Agent",
     ],
     media: {
+      videoSrc: "/videos/ARMI_video_portfolio.mp4",
       caption:
         "ARMI demo — voice request, AI response, robot mission, watch alert, realtime state",
     },
@@ -136,6 +137,7 @@ export const projectDetails: ProjectDetail[] = [
       "3D UX",
     ],
     media: {
+      videoSrc: "/videos/행가래_video_fortpolio.mp4",
       caption:
         "Hangarae demo — pose recognition, 3D feedback, rehabilitation game, AI report",
     },

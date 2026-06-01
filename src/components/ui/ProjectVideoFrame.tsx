@@ -11,6 +11,10 @@ type ProjectVideoFrameProps = {
   duration?: string;
   videoSrc?: string;
   posterSrc?: string;
+  autoPlay?: boolean;
+  muted?: boolean;
+  loop?: boolean;
+  controls?: boolean;
 };
 
 const themeMap = {
@@ -39,6 +43,10 @@ export function ProjectVideoFrame({
   duration = "03:42",
   videoSrc,
   posterSrc,
+  autoPlay = true,
+  muted = true,
+  loop = true,
+  controls = false,
 }: ProjectVideoFrameProps) {
   const config = themeMap[theme];
 
@@ -49,9 +57,10 @@ export function ProjectVideoFrame({
     >
       {videoSrc ? (
         <video
-          autoPlay
-          muted
-          loop
+          autoPlay={autoPlay}
+          muted={muted}
+          loop={loop}
+          controls={controls}
           playsInline
           preload="metadata"
           poster={posterSrc}

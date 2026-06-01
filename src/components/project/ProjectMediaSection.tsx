@@ -21,6 +21,10 @@ export function ProjectMediaSection({ project }: ProjectMediaSectionProps) {
           eyebrow={project.label}
           videoSrc={project.media.videoSrc}
           posterSrc={project.media.posterSrc}
+          autoPlay={false}
+          muted={false}
+          loop={false}
+          controls
         />
       )}
       <p className="small-label mt-6 text-slate-500">{project.media.caption}</p>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { TrackingSkeleton } from "@/components/ui/TrackingSkeleton";
+import { ProjectVideoFrame } from "@/components/ui/ProjectVideoFrame";
 import { SplitHeadline } from "@/components/ui/SplitHeadline";
 import { ShowcaseMotion } from "@/components/sections/HomeShowcase/ShowcaseMotion";
 
@@ -18,8 +18,14 @@ export function HomeHangaraeShowcase() {
           lines={["운동은 했지만", "정말 올바르게", "움직인 걸까?"]}
           className="mx-auto mt-6 max-w-[980px] text-[clamp(48px,5vw,92px)] font-bold leading-[0.92] tracking-[-0.045em]"
         />
-        <div className="mx-auto mt-14 w-[min(760px,86vw)] rounded-[40px] border border-[rgba(36,194,122,0.2)] bg-white/70 p-8 shadow-soft md:scale-[1.18]">
-          <TrackingSkeleton />
+        <div className="mx-auto mt-14 w-[min(980px,88vw)] md:scale-[1.06]">
+          <ProjectVideoFrame
+            theme="hangarae"
+            title="행가래"
+            eyebrow="Live Product Demo"
+            duration="03:42"
+            videoSrc="/videos/행가래_intro.mp4"
+          />
         </div>
         <Link
           href="/projects/hangarae"
