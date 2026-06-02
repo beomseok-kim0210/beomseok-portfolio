@@ -75,7 +75,7 @@ export function WeddingFailureMatrix() {
             </div>
             <div>
               <p className="small-label text-slate-500">Failure Summary</p>
-              <p className="mt-4 text-[15px] leading-7 text-slate-600">
+              <p className="project-caption mt-4">
                 {row.failureSummary}
               </p>
             </div>

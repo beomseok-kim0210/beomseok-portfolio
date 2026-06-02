@@ -25,7 +25,7 @@ export function ProjectTroubleshooting({ project }: ProjectTroubleshootingProps)
             <h3 className="mt-5 text-3xl font-semibold leading-tight">
               {item.title}
             </h3>
-            <p className="mt-4 text-lg leading-8 text-slate-600">{item.summary}</p>
+            <p className="project-body mt-4">{item.summary}</p>
             <div className="mt-8 grid gap-4 md:grid-cols-2">
               {[
                 ["Problem", item.problem],
@@ -35,7 +35,7 @@ export function ProjectTroubleshooting({ project }: ProjectTroubleshootingProps)
               ].map(([label, text]) => (
                 <div key={label} className="rounded-[24px] bg-[#FAFAFA] p-5">
                   <p className="small-label text-slate-500">{label}</p>
-                  <p className="mt-3 text-[15px] leading-7 text-slate-700">
+                  <p className="project-caption mt-3 text-slate-700">
                     {text}
                   </p>
                 </div>

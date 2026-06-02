@@ -12,7 +12,7 @@ export function WeddingEvaluationFramework() {
             <br />
             평가 기준부터 정의했습니다.
           </h2>
-          <p className="mt-8 text-[18px] leading-[1.8] text-slate-600">
+          <p className="project-body mt-8">
             좋은 모델을 찾는 것이 아니라 웨딩드레스 문제를 해결할 수 있는 모델인지
             검증했습니다.
           </p>
@@ -29,7 +29,7 @@ export function WeddingEvaluationFramework() {
                   {axis.title}
                 </h3>
               </div>
-              <p className="text-[15px] leading-7 text-slate-600">
+              <p className="project-caption">
                 {axis.description}
               </p>
             </article>

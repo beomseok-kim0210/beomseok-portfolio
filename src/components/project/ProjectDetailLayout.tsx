@@ -6,6 +6,7 @@ import { projectDetails } from "@/data/projectDetails";
 import type { ProjectDetail } from "@/types/portfolio";
 import { ProjectArchitecture } from "./ProjectArchitecture";
 import { ArmiCaseStudy } from "./ArmiCaseStudy";
+import { HangaraeCaseStudy } from "./HangaraeCaseStudy";
 import { ProjectHero } from "./ProjectHero";
 import { ProjectMediaSection } from "./ProjectMediaSection";
 import { ProjectOverview } from "./ProjectOverview";
@@ -24,6 +25,7 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
   const nextProject = projectDetails[(currentIndex + 1) % projectDetails.length];
   const isWeddingCaseStudy = project.slug === "wedding";
   const isArmiCaseStudy = project.slug === "armi";
+  const isHangaraeCaseStudy = project.slug === "hangarae";
 
   return (
     <main className={isWeddingCaseStudy ? "bg-[#FFF9F7]" : "bg-[#FAFAFA]"}>
@@ -40,6 +42,8 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
         </div>
         {isWeddingCaseStudy ? (
           <WeddingCaseStudy project={project} />
+        ) : isHangaraeCaseStudy ? (
+          <HangaraeCaseStudy />
         ) : isArmiCaseStudy ? (
           <>
             <ProjectHero project={project} />
@@ -49,8 +53,8 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
         ) : (
           <>
             <ProjectHero project={project} />
-            <ProjectMediaSection project={project} />
             <ProjectOverview project={project} />
+            <ProjectMediaSection project={project} />
             <ProjectRole project={project} />
             <ProjectArchitecture project={project} />
             <ProjectTroubleshooting project={project} />

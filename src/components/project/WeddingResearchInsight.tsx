@@ -32,7 +32,7 @@ export function WeddingResearchInsight() {
             <h3 className="mt-5 text-3xl font-semibold text-[#111827]">
               {weddingResearchInsight.leftTitle}
             </h3>
-            <p className="mt-5 text-[18px] leading-[1.8] text-slate-600">
+            <p className="project-body mt-5">
               {weddingResearchInsight.leftBody}
             </p>
           </article>
@@ -55,11 +55,11 @@ export function WeddingResearchInsight() {
               ))}
             </div>
             <div className="mt-8 rounded-[24px] bg-[#FFF4EF] p-6">
-              <p className="text-[18px] leading-[1.8] text-[#111827]">
+              <p className="project-body text-[#111827]">
                 {weddingResearchInsight.mainInsight}
               </p>
             </div>
-            <p className="mt-6 text-[18px] leading-[1.8] text-slate-600">
+            <p className="project-body mt-6">
               {weddingResearchInsight.conclusion}
             </p>
           </article>
@@ -71,7 +71,7 @@ export function WeddingResearchInsight() {
             <h3 className="mt-5 text-3xl font-semibold text-[#111827]">
               {weddingResearchInsight.rightTitle}
             </h3>
-            <p className="mt-5 text-[18px] leading-[1.8] text-slate-600">
+            <p className="project-body mt-5">
               {weddingResearchInsight.rightBody}
             </p>
           </article>

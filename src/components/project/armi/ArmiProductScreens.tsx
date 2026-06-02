@@ -15,6 +15,7 @@ function resolvePublicAssetSrc(src: string) {
 export function ArmiProductScreens() {
   const [tablet, watch, avatar] = armiScreens;
   const tabletVideoSrc = "/videos/Patient%20Tablet%20App.mp4";
+  const watchVideoSrc = "/videos/Watch%20Alert.mp4";
   const avatarVideoSrc = "/videos/Responsive%20Avatar%20UI.mp4";
 
   return (
@@ -25,54 +26,49 @@ export function ArmiProductScreens() {
           title="사용자가 마주하는 상태 화면을 먼저 정리했습니다."
           subtitle="환자 앱, 의료진 Watch, Avatar UI가 같은 상태 흐름 안에서 움직이도록 구성했습니다."
         />
-        <div className="mt-14 grid gap-6 xl:grid-cols-12">
-          <MotionBlock className="xl:col-span-7">
+        <div className="mt-14 space-y-6">
+          <MotionBlock>
             <article className="rounded-[32px] border border-[#E2E8F0] bg-white p-6 md:p-8">
+              <div className="mt-6">
+                <h3 className="text-3xl font-semibold tracking-[-0.03em] text-[#111827]">
+                  {tablet.title}
+                </h3>
+                <p className="project-body mt-4">
+                  {tablet.description}
+                </p>
+              </div>
               <ArmiMediaPlaceholder
                 src={resolvePublicAssetSrc(tabletVideoSrc)}
                 alt={tablet.alt}
                 mediaType="video"
                 mediaFit="contain"
-                className="h-[360px] w-full bg-[#F8FAFC] md:h-[640px]"
+                className="mt-8 h-[420px] w-full bg-[#F8FAFC] md:h-[760px]"
               />
-              <div className="mt-6">
-                <h3 className="text-3xl font-semibold tracking-[-0.03em] text-[#111827]">
-                  {tablet.title}
-                </h3>
-                <p className="mt-4 text-[18px] leading-[1.7] text-slate-600">
-                  {tablet.description}
-                </p>
-              </div>
             </article>
           </MotionBlock>
-          <div className="space-y-6 xl:col-span-5">
+          <div className="grid gap-6 xl:grid-cols-2">
             {[watch, avatar].map((screen, index) => (
               <MotionBlock key={screen.title} delay={index * 0.06}>
                 <article className="rounded-[32px] border border-[#E2E8F0] bg-white p-6 md:p-8">
-                  <ArmiMediaPlaceholder
-                    src={
-                      screen.title === "Responsive Avatar UI"
-                        ? resolvePublicAssetSrc(avatarVideoSrc)
-                        : resolvePublicAssetSrc(screen.src)
-                    }
-                    alt={screen.alt}
-                    mediaType={
-                      screen.title === "Responsive Avatar UI" ? "video" : "image"
-                    }
-                    className={
-                      screen.title === "Responsive Avatar UI"
-                        ? "aspect-square w-full"
-                        : "h-[360px] w-full md:h-[308px]"
-                    }
-                  />
                   <div className="mt-6">
                     <h3 className="text-3xl font-semibold tracking-[-0.03em] text-[#111827]">
                       {screen.title}
                     </h3>
-                    <p className="mt-4 text-[18px] leading-[1.7] text-slate-600">
+                    <p className="project-body mt-4">
                       {screen.description}
                     </p>
                   </div>
+                  <ArmiMediaPlaceholder
+                    src={
+                      screen.title === "Watch Alert"
+                        ? resolvePublicAssetSrc(watchVideoSrc)
+                        : resolvePublicAssetSrc(avatarVideoSrc)
+                    }
+                    alt={screen.alt}
+                    mediaType="video"
+                    mediaFit={screen.title === "Watch Alert" ? "contain" : "cover"}
+                    className="mt-8 aspect-square w-full bg-[#F8FAFC]"
+                  />
                 </article>
               </MotionBlock>
             ))}

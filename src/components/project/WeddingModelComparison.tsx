@@ -68,7 +68,7 @@ export function WeddingModelComparison() {
       </div>
       <div className="border-t border-[#E5E7EB] px-6 py-5">
         <p className="small-label text-[#B98979]">Note</p>
-        <p className="mt-3 text-[15px] leading-7 text-slate-600">
+        <p className="project-caption mt-3">
           {weddingComparisonNote}
         </p>
       </div>

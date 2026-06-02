@@ -148,10 +148,50 @@ input:focus-visible {
   color: #475569;
 }
 
+.project-subtitle {
+  font-size: clamp(26px, 2.5vw, 36px);
+  font-weight: 500;
+  line-height: 1.7;
+  letter-spacing: -0.015em;
+  color: #475569;
+}
+
+.project-body {
+  font-size: clamp(24px, 2.2vw, 32px);
+  font-weight: 400;
+  line-height: 1.8;
+  letter-spacing: -0.014em;
+  color: #475569;
+}
+
+.project-caption {
+  font-size: clamp(20px, 1.8vw, 24px);
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: -0.01em;
+  color: #475569;
+}
+
+.step-label {
+  font-size: clamp(20px, 1.6vw, 24px);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
 .small-label {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.nav-label {
+  font-size: 24px;
+  font-weight: 760;
+  letter-spacing: 0.08em;
+  line-height: 1;
   text-transform: uppercase;
 }
 
@@ -292,6 +332,22 @@ input:focus-visible {
   .body-copy {
     font-size: 20px;
   }
+
+  .project-subtitle {
+    font-size: 22px;
+  }
+
+  .project-body {
+    font-size: 21px;
+  }
+
+  .project-caption {
+    font-size: 18px;
+  }
+
+  .step-label {
+    font-size: 18px;
+  }
 }
 
 @keyframes labPulse {
@@ -304,5 +360,65 @@ input:focus-visible {
   50% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+@media screen {
+  .print-only {
+    display: none !important;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .screen-only {
+    display: none !important;
+  }
+
+  .pdf-document {
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  .pdf-route {
+    background: #ffffff !important;
+  }
+
+  .pdf-route + .pdf-route {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  .pdf-route .scene-shell,
+  .pdf-route main,
+  .pdf-route footer,
+  .pdf-route section {
+    width: auto !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .pdf-avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .glass-nav,
+  header[aria-label] {
+    display: none !important;
   }
 }

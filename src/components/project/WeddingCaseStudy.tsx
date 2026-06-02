@@ -61,7 +61,7 @@ function SectionHeading({
         ))}
       </h2>
       {body ? (
-        <p className="mt-8 max-w-[840px] text-[18px] leading-[1.8] text-slate-600">
+        <p className="project-subtitle mt-8 max-w-[840px]">
           {body}
         </p>
       ) : null}
@@ -83,7 +83,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
             <br />
             제품이 되는 것은 아닙니다.
           </h2>
-          <p className="mt-10 max-w-[840px] text-[18px] leading-[1.8] text-slate-600">
+          <p className="project-body mt-10 max-w-[840px]">
             2D 이미지를 3D 웨딩드레스로 복원하기 위해 SMPL, PIFuHD, ICON,
             ECON 기반 모델을 직접 검토하고, 실패 원인을 분석한 뒤 제품 방향을
             전환했습니다.
@@ -112,7 +112,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
         <div className="mt-10 max-w-[840px] space-y-6">
           {weddingResearchQuestion.map((paragraph, index) => (
             <MotionBlock key={paragraph} delay={index * 0.06}>
-              <p className="text-[18px] leading-[1.8] text-slate-600">
+              <p className="project-body">
                 {paragraph}
               </p>
             </MotionBlock>
@@ -148,25 +148,25 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
                 <div className="mt-8 space-y-5">
                   <div>
                     <p className="small-label text-slate-500">Core Assumption</p>
-                    <p className="mt-3 text-[15px] leading-7 text-slate-600">
+                    <p className="project-caption mt-3">
                       {item.coreAssumption}
                     </p>
                   </div>
                   <div>
                     <p className="small-label text-slate-500">Why Tried</p>
-                    <p className="mt-3 text-[15px] leading-7 text-slate-600">
+                    <p className="project-caption mt-3">
                       {item.whyTried}
                     </p>
                   </div>
                   <div>
                     <p className="small-label text-slate-500">Reason</p>
-                    <p className="mt-3 text-[15px] leading-7 text-slate-600">
+                    <p className="project-caption mt-3">
                       {item.reason}
                     </p>
                   </div>
                   <div className="rounded-[24px] bg-[#FFF4EF] p-5">
                     <p className="small-label text-[#B98979]">Research Outcome</p>
-                    <p className="mt-3 text-[15px] leading-7 text-slate-700">
+                    <p className="project-caption mt-3 text-slate-700">
                       {item.outcome}
                     </p>
                   </div>
@@ -206,7 +206,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
             src={weddingVisualAnalysis.imageSrc}
             alt={weddingVisualAnalysis.imageAlt}
           />
-          <p className="mt-6 max-w-[980px] text-[16px] leading-8 text-slate-600">
+          <p className="project-caption mt-6 max-w-[980px]">
             {weddingVisualAnalysis.caption}
           </p>
         </MotionBlock>
@@ -272,7 +272,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
           </div>
         </MotionBlock>
         <MotionBlock delay={0.22} className="mt-10 max-w-[840px]">
-          <p className="text-[18px] leading-[1.8] text-slate-600">
+          <p className="project-body">
             {weddingVisualAnalysis.explanation}
           </p>
         </MotionBlock>
@@ -319,7 +319,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
         <div className="mt-10 max-w-[840px] space-y-6">
           {weddingLearned.paragraphs.map((paragraph, index) => (
             <MotionBlock key={paragraph} delay={index * 0.06}>
-              <p className="text-[18px] leading-[1.8] text-slate-600">
+              <p className="project-body">
                 {paragraph}
               </p>
             </MotionBlock>

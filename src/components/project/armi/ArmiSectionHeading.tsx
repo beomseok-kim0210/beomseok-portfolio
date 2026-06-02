@@ -20,7 +20,7 @@ export function ArmiSectionHeading({
         {title}
       </h2>
       {subtitle ? (
-        <p className="mt-8 max-w-[840px] text-[18px] leading-[1.75] text-slate-600">
+        <p className="project-subtitle mt-8 max-w-[840px]">
           {subtitle}
         </p>
       ) : null}

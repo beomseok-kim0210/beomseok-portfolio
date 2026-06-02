@@ -17,7 +17,7 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
             <p className="mt-8 text-4xl font-bold tracking-[-0.04em]">
               {highlight.value}
             </p>
-            <p className="mt-4 text-[15px] leading-7 text-slate-600">
+            <p className="project-caption mt-4">
               {highlight.description}
             </p>
           </div>

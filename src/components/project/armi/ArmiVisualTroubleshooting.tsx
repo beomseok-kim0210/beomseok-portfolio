@@ -23,20 +23,20 @@ export function ArmiVisualTroubleshooting() {
           {armiTroubleshooting.map((item, index) => (
             <MotionBlock key={item.category} delay={index * 0.06}>
               <article className="rounded-[40px] border border-[#E2E8F0] bg-white p-6 md:p-10">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+                <p className="step-label text-blue-600">
                   {item.category}
                 </p>
                 <h3 className="mt-5 text-3xl font-semibold tracking-[-0.03em] text-[#111827]">
                   {item.title}
                 </h3>
-                <p className="mt-4 max-w-[840px] text-[18px] leading-[1.7] text-slate-600">
+                <p className="project-body mt-4 max-w-[840px]">
                   {item.diagnosis}
                 </p>
 
                 <div className="mt-8 rounded-[28px] bg-[#F8FAFC] p-6 md:min-h-[260px] md:p-8">
                   <div className="grid gap-5 xl:grid-cols-3">
                     <div className="rounded-[24px] border border-slate-200 bg-white p-6">
-                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+                      <p className="step-label text-blue-600">
                         Before
                       </p>
                       <div className="mt-5">
@@ -44,7 +44,7 @@ export function ArmiVisualTroubleshooting() {
                       </div>
                     </div>
                     <div className="rounded-[24px] border border-slate-200 bg-white p-6">
-                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+                      <p className="step-label text-blue-600">
                         Cause
                       </p>
                       <div className="mt-5">
@@ -52,7 +52,7 @@ export function ArmiVisualTroubleshooting() {
                       </div>
                     </div>
                     <div className="rounded-[24px] border border-blue-200 bg-[#EFF6FF] p-6">
-                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+                      <p className="step-label text-blue-600">
                         After
                       </p>
                       <div className="mt-5">
@@ -64,7 +64,7 @@ export function ArmiVisualTroubleshooting() {
 
                 <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(240px,2fr)]">
                   <div className="rounded-[28px] bg-[#F8FAFC] p-6">
-                    <div className="space-y-2 text-[15px] leading-[1.7] text-slate-700">
+                    <div className="project-caption space-y-2 text-slate-700">
                       <p>
                         <span className="font-semibold text-[#111827]">
                           Problem:

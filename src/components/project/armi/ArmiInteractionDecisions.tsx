@@ -20,26 +20,26 @@ export function ArmiInteractionDecisions() {
                 </h3>
                 <div className="mt-7 space-y-4">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+                    <p className="step-label text-blue-600">
                       Problem
                     </p>
-                    <p className="mt-2 text-[15px] leading-7 text-slate-700">
+                    <p className="project-caption mt-2 text-slate-700">
                       {item.problem}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+                    <p className="step-label text-blue-600">
                       Decision
                     </p>
-                    <p className="mt-2 text-[15px] leading-7 text-slate-700">
+                    <p className="project-caption mt-2 text-slate-700">
                       {item.decision}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+                    <p className="step-label text-blue-600">
                       UX Result
                     </p>
-                    <p className="mt-2 text-[15px] leading-7 text-slate-700">
+                    <p className="project-caption mt-2 text-slate-700">
                       {item.result}
                     </p>
                   </div>

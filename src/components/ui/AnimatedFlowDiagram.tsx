@@ -60,10 +60,10 @@ export function AnimatedFlowDiagram({ nodes }: AnimatedFlowDiagramProps) {
                     : "border-[rgba(148,163,184,0.24)] bg-white/[0.06]"
                 }`}
               >
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-300">
+                <p className="step-label text-blue-300">
                   {node.id}
                 </p>
-                <p className="mt-4 text-xl font-bold text-white">{node.label}</p>
+                <p className="mt-4 text-[28px] font-bold leading-[1.3] text-white">{node.label}</p>
               </motion.div>
               {index < nodes.length - 1 ? (
                 <div className="mx-3 h-px flex-1 bg-[rgba(96,165,250,0.2)]">
@@ -93,11 +93,11 @@ export function AnimatedFlowDiagram({ nodes }: AnimatedFlowDiagramProps) {
                   : "border-[rgba(148,163,184,0.24)] bg-white/[0.05]"
               }`}
             >
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-300">
+              <p className="step-label text-blue-300">
                 {node.id}
               </p>
-              <p className="mt-3 text-xl font-bold text-white">{node.label}</p>
-              <p className="mt-2 text-sm leading-6 text-slate-300">
+              <p className="mt-3 text-[28px] font-bold leading-[1.3] text-white">{node.label}</p>
+              <p className="mt-2 text-[20px] leading-[1.6] text-slate-300">
                 {node.description}
               </p>
             </motion.div>

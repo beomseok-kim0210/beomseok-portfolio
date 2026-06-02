@@ -19,7 +19,7 @@ export function ProjectArchitecture({ project }: ProjectArchitectureProps) {
             className="rounded-[28px] border border-slate-200 bg-white p-7"
           >
             <h3 className="text-2xl font-semibold">{item.title}</h3>
-            <p className="mt-5 text-[15px] leading-7 text-slate-600">
+            <p className="project-caption mt-5">
               {item.description}
             </p>
             {item.tech ? (

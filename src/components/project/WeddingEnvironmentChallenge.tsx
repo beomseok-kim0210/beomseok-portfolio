@@ -33,7 +33,7 @@ export function WeddingEnvironmentChallenge() {
       <div className="max-w-[840px] space-y-5">
         {weddingEnvironmentSummary.map((paragraph, index) => (
           <MotionBlock key={paragraph} delay={0.12 + index * 0.06}>
-            <p className="text-[18px] leading-[1.8] text-slate-600">
+            <p className="project-body">
               {paragraph}
             </p>
           </MotionBlock>

@@ -21,11 +21,11 @@ export function SiteHeader({ items }: SiteHeaderProps) {
 
   return (
     <header className="glass-nav fixed left-0 right-0 top-0 z-50">
-      <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 md:px-10">
-        <Link href="/#hero" className="small-label text-[#111827]">
+      <div className="mx-auto flex h-24 max-w-[1440px] items-center justify-between px-6 md:px-10">
+        <Link href="/#hero" className="nav-label text-[#111827]">
           Kim Beom Seok
         </Link>
-        <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-10 md:flex" aria-label="Primary">
           {items.map((item) => {
             const id = item.href.split("#")[1] ?? "";
             const isActive = activeSection === id;
@@ -34,7 +34,7 @@ export function SiteHeader({ items }: SiteHeaderProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`small-label transition-colors ${
+                className={`nav-label transition-colors ${
                   isActive
                     ? "text-[#111827]"
                     : "text-slate-600 hover:text-[#111827]"

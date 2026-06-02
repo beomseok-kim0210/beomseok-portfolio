@@ -14,13 +14,13 @@ export function ArmiResultSummary() {
           {armiResults.map((item, index) => (
             <MotionBlock key={item.title} delay={index * 0.06}>
               <article className="min-h-[220px] rounded-[32px] border border-[#E2E8F0] bg-white p-8">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+                <p className="step-label text-blue-600">
                   {String(index + 1).padStart(2, "0")}
                 </p>
                 <h3 className="mt-5 text-2xl font-semibold tracking-[-0.02em] text-[#111827]">
                   {item.title}
                 </h3>
-                <p className="mt-5 text-[16px] leading-7 text-slate-600">
+                <p className="project-caption mt-5">
                   {item.description}
                 </p>
               </article>

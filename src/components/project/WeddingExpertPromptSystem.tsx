@@ -33,7 +33,7 @@ export function WeddingExpertPromptSystem() {
               <h3 className="mt-5 text-2xl font-semibold text-[#111827]">
                 {expert.title}
               </h3>
-              <p className="mt-4 text-[15px] leading-7 text-slate-600">
+              <p className="project-caption mt-4">
                 {expert.description}
               </p>
               <p className="mt-5 text-sm font-medium text-slate-500">
@@ -73,7 +73,7 @@ export function WeddingExpertPromptSystem() {
           </div>
           <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
             <div className="rounded-[24px] bg-[#FFF4EF] p-6">
-              <p className="text-[18px] leading-[1.8] text-slate-700">
+              <p className="project-body text-slate-700">
                 각 전문가는 독립적인 Markdown 기반 지식 파일을 사용했다.
                 관련 논문과 도메인 자료를 참고하여 판단 기준을 분리하였다.
               </p>
