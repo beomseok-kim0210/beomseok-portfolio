@@ -64,3 +64,9 @@ public/videos/*.webm
 public/videos/*.avi
 public/videos/*.mkv
 !public/videos/.gitkeep
+!public/videos/ARMI_intro.mp4
+!public/videos/행가래_intro.mp4
+!public/videos/Patient Tablet App.mp4
+!public/videos/Responsive Avatar UI.mp4
+!public/videos/skeleton.mp4
+!public/videos/Watch Alert.mp4
