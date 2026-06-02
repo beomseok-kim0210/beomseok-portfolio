@@ -43,6 +43,7 @@ export function ArmiMediaPlaceholder({
         muted
         loop
         playsInline
+        preload="metadata"
         onError={() => setFailed(true)}
         className={`rounded-[32px] border border-[#E2E8F0] bg-[linear-gradient(135deg,#F8FAFC,#E2E8F0)] ${
           mediaFit === "contain" ? "object-contain" : "object-cover"

@@ -21,9 +21,6 @@ export function ProjectMediaSection({ project }: ProjectMediaSectionProps) {
           eyebrow={project.label}
           videoSrc={project.media.videoSrc}
           posterSrc={project.media.posterSrc}
-          autoPlay={false}
-          muted={false}
-          loop={false}
           controls
         />
       )}

@@ -19,6 +19,10 @@ function resolvePublicAssetSrc(...candidates: Array<string | undefined>) {
   for (const src of candidates) {
     if (!src) continue;
 
+    if (/^https?:\/\//.test(src)) {
+      return src;
+    }
+
     const relativePath = decodeURIComponent(src).replace(/^\//, "");
     const absolutePath = path.join(process.cwd(), "public", relativePath);
 
@@ -346,7 +350,7 @@ function TroubleEvidence({ trouble }: { trouble: HangaraeTrouble }) {
 }
 
 function DemoFilm() {
-  const demoSrc = resolvePublicAssetSrc(hangaraeDemoFilm.src, hangaraeDemoFilm.fallbackSrc);
+  const demoSrc = resolvePublicAssetSrc(hangaraeDemoFilm.src);
 
   return (
     <section className="py-[96px] md:py-[180px]">
@@ -362,9 +366,6 @@ function DemoFilm() {
             alt="Hangarae full case film"
             type="video"
             fit="cover"
-            autoPlay={false}
-            loop={false}
-            muted={false}
             controls
             preload="metadata"
             caption={hangaraeDemoFilm.caption}

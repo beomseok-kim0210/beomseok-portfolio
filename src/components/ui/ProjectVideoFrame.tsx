@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Play } from "lucide-react";
 import { BeforeAfterFrame } from "@/components/ui/BeforeAfterFrame";
 import { TrackingSkeleton } from "@/components/ui/TrackingSkeleton";
@@ -49,13 +52,14 @@ export function ProjectVideoFrame({
   controls = false,
 }: ProjectVideoFrameProps) {
   const config = themeMap[theme];
+  const [failed, setFailed] = useState(false);
 
   return (
     <div
       className={`relative mx-auto aspect-video w-full max-w-[1180px] overflow-hidden rounded-[24px] border shadow-[0_40px_120px_rgba(15,23,42,0.14)] md:rounded-[36px] ${config.className}`}
       aria-label={title}
     >
-      {videoSrc ? (
+      {videoSrc && !failed ? (
         <video
           autoPlay={autoPlay}
           muted={muted}
@@ -64,6 +68,7 @@ export function ProjectVideoFrame({
           playsInline
           preload="metadata"
           poster={posterSrc}
+          onError={() => setFailed(true)}
           className="h-full w-full object-cover"
         >
           <source src={videoSrc} />

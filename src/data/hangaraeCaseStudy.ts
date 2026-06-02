@@ -1,3 +1,5 @@
+import { fullVideoSources } from "@/data/videoSources";
+
 export const hangaraeHero = {
   eyebrow: "Realtime Motion Feedback Case Study",
   title: ["움직임을 데이터로,", "데이터를 피드백으로 바꾸기까지."],
@@ -16,8 +18,7 @@ export const hangaraeDemoFilm = {
   title: "먼저 전체 흐름을 보여드립니다.",
   subtitle:
     "1분 40초 안에 MCP 기반 자산 제작, 3D 구현, 실시간 좌표 연동, 자세 피드백 흐름을 확인할 수 있습니다.",
-  src: "/videos/hangarae-portfolio-full.mp4",
-  fallbackSrc: "/videos/행가래_video_fortpolio.mp4",
+  src: fullVideoSources.hangarae,
   caption: "Full case film · 1m 40s",
   detailCaption:
     "MCP Asset Pipeline · Correct/Incorrect Posture · 3D Pinpoint · Realtime Feedback",

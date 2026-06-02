@@ -1,5 +1,6 @@
 import type { ProjectDetail } from "@/types/portfolio";
 import { challenges } from "@/data/challenges";
+import { fullVideoSources } from "@/data/videoSources";
 
 const gamificationChallenge = {
   title: "재활을 운동이 아니라 게임처럼 느끼게 해야 했던 문제",
@@ -62,7 +63,7 @@ export const projectDetails: ProjectDetail[] = [
       "AI Agent",
     ],
     media: {
-      videoSrc: "/videos/ARMI_video_portfolio.mp4",
+      videoSrc: fullVideoSources.armi,
       caption:
         "ARMI demo — voice request, AI response, robot mission, watch alert, realtime state",
     },
@@ -137,7 +138,7 @@ export const projectDetails: ProjectDetail[] = [
       "3D UX",
     ],
     media: {
-      videoSrc: "/videos/행가래_video_fortpolio.mp4",
+      videoSrc: fullVideoSources.hangarae,
       caption:
         "Hangarae demo — pose recognition, 3D feedback, rehabilitation game, AI report",
     },
