@@ -7,6 +7,8 @@ type ProjectMediaSectionProps = {
 };
 
 export function ProjectMediaSection({ project }: ProjectMediaSectionProps) {
+  const title = project.slug === "armi" ? "ARMI Full Demo" : project.title;
+
   return (
     <section className="py-16">
       {project.theme === "wedding" ? (
@@ -17,7 +19,7 @@ export function ProjectMediaSection({ project }: ProjectMediaSectionProps) {
       ) : (
         <ProjectVideoFrame
           theme={project.theme}
-          title={project.title}
+          title={title}
           eyebrow={project.label}
           videoSrc={project.media.videoSrc}
           posterSrc={project.media.posterSrc}

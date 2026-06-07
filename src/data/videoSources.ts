@@ -1,10 +1,10 @@
 // src/data/videoSources.ts
 
 const ARMI_FULL_VIDEO =
-  "https://beomdda.sirv.com/video/ARMI_video_portfolio.mp4";
+  "https://beomdda.sirv.com/video/armi-full-demo.mp4";
 
 const HANGARAE_FULL_VIDEO =
-  "https://beomdda.sirv.com/video/%ED%96%89%EA%B0%80%EB%9E%98_video_fortpolio.mp4";
+  "https://beomdda.sirv.com/video/hangarae-full-demo.mp4";
 
 export const fullVideoSources = {
   armi:

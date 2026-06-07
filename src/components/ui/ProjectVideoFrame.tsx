@@ -61,6 +61,7 @@ export function ProjectVideoFrame({
     >
       {videoSrc && !failed ? (
         <video
+          src={videoSrc}
           autoPlay={autoPlay}
           muted={muted}
           loop={loop}
@@ -71,7 +72,7 @@ export function ProjectVideoFrame({
           onError={() => setFailed(true)}
           className="h-full w-full object-cover"
         >
-          <source src={videoSrc} />
+          <source src={videoSrc} type="video/mp4" />
         </video>
       ) : (
         <>
