@@ -49,7 +49,7 @@ function SectionHeading({
 }) {
   return (
     <MotionBlock>
-      <p className="small-label text-[#B98979]">{label}</p>
+      <p className="project-section-label text-[#B98979]">{label}</p>
       <h2
         className={`mt-6 text-[44px] font-bold leading-[0.95] tracking-[-0.04em] text-[#111827] md:text-[72px] ${maxWidth}`}
       >
@@ -74,7 +74,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
     <>
       <section className="min-h-[88vh] max-w-[1100px] pt-32 pb-20 md:pt-44 md:pb-24">
         <MotionBlock>
-          <p className="small-label text-[#B98979]">AI Research Case Study</p>
+          <p className="project-section-label text-[#B98979]">AI Research Case Study</p>
           <h1 className="mt-8 text-2xl font-semibold text-slate-500">
             {project.title}
           </h1>

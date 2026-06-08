@@ -66,7 +66,7 @@ export const weddingResearchStats: WeddingStat[] = [
     caption: ["SMPL", "PIFuHD", "ICON", "ECON"],
   },
   {
-    value: "4 Months",
+    value: "3 Weeks",
     label: "Research Period",
     caption: ["2D → 3D", "Reconstruction Study"],
   },
@@ -328,7 +328,7 @@ export const weddingPivot = {
   originalGoal: "2D → 3D 웨딩드레스 가상 피팅",
   finalDirection: "AI 기반 웨딩드레스 추천 및 비교 경험",
   reason:
-    "약 4개월 동안 2D → 3D 변환을 검토했지만, 대형 웨딩드레스의 부피감과 레이어 구조를 안정적으로 표현하지 못했습니다.",
+    "약 3주 동안 2D → 3D 변환을 검토했지만, 대형 웨딩드레스의 부피감과 레이어 구조를 안정적으로 표현하지 못했습니다.",
   insight:
     '사용자가 실제로 원한 것은 "3D 모델 자체"가 아니라 "나에게 어울리는 드레스를 더 확신 있게 고르는 경험"이라고 판단했습니다.',
   therefore:

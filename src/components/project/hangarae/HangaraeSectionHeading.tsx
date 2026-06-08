@@ -15,7 +15,7 @@ export function HangaraeSectionHeading({
 }: HangaraeSectionHeadingProps) {
   return (
     <MotionBlock>
-      <p className={`small-label ${light ? "text-emerald-200" : "text-[#24C27A]"}`}>
+      <p className={`project-section-label ${light ? "text-emerald-200" : "text-[#24C27A]"}`}>
         {label}
       </p>
       <h2

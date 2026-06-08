@@ -383,7 +383,7 @@ export function HangaraeCaseStudy() {
       <section className="py-[96px] md:py-[180px]">
         <div className="mx-auto max-w-[1280px]">
           <MotionBlock>
-            <p className="small-label text-[#22C55E]">{hangaraeHero.eyebrow}</p>
+            <p className="project-section-label text-[#22C55E]">{hangaraeHero.eyebrow}</p>
             <h1 className="mt-8 text-[44px] font-bold leading-[0.95] tracking-[-0.04em] text-[#111827] md:text-[72px]">
               {hangaraeHero.title.map((line) => (
                 <span key={line} className="block">
