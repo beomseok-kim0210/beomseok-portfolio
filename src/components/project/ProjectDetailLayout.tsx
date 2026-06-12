@@ -6,6 +6,7 @@ import { projectDetails } from "@/data/projectDetails";
 import type { ProjectDetail } from "@/types/portfolio";
 import { ProjectArchitecture } from "./ProjectArchitecture";
 import { ArmiCaseStudy } from "./ArmiCaseStudy";
+import { ClawDevCaseStudy } from "./ClawDevCaseStudy";
 import { HangaraeCaseStudy } from "./HangaraeCaseStudy";
 import { ProjectHero } from "./ProjectHero";
 import { ProjectMediaSection } from "./ProjectMediaSection";
@@ -26,21 +27,34 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
   const isWeddingCaseStudy = project.slug === "wedding";
   const isArmiCaseStudy = project.slug === "armi";
   const isHangaraeCaseStudy = project.slug === "hangarae";
+  const isClawDevCaseStudy = project.slug === "claw-dev";
+
+  const mainBg = isClawDevCaseStudy
+    ? "bg-[#0B1120]"
+    : isWeddingCaseStudy
+      ? "bg-[#FFF9F7]"
+      : "bg-[#FAFAFA]";
 
   return (
-    <main className={isWeddingCaseStudy ? "bg-[#FFF9F7]" : "bg-[#FAFAFA]"}>
+    <main className={mainBg}>
       <SiteHeader items={navItems} />
       <div className="mx-auto max-w-[1320px] px-5 md:px-8 lg:px-12">
         <div className="pt-24">
           <Link
             href="/#projects"
-            className="inline-flex items-center gap-2 small-label text-slate-500 transition-colors hover:text-[#111827]"
+            className={`inline-flex items-center gap-2 small-label transition-colors ${
+              isClawDevCaseStudy
+                ? "text-slate-400 hover:text-white"
+                : "text-slate-500 hover:text-[#111827]"
+            }`}
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Projects
           </Link>
         </div>
-        {isWeddingCaseStudy ? (
+        {isClawDevCaseStudy ? (
+          <ClawDevCaseStudy />
+        ) : isWeddingCaseStudy ? (
           <WeddingCaseStudy project={project} />
         ) : isHangaraeCaseStudy ? (
           <HangaraeCaseStudy />
@@ -65,14 +79,22 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
         <section className="py-20">
           <Link
             href={`/projects/${nextProject.slug}`}
-            className={`flex items-center justify-between rounded-[32px] border p-8 transition-colors hover:border-[#111827] ${
-              isWeddingCaseStudy
-                ? "border-[#E5E7EB] bg-white/80 backdrop-blur"
-                : "border-slate-200 bg-white"
+            className={`flex items-center justify-between rounded-[32px] border p-8 transition-colors ${
+              isClawDevCaseStudy
+                ? "border-white/10 bg-white/[0.04] text-white hover:border-white/40"
+                : isWeddingCaseStudy
+                  ? "border-[#E5E7EB] bg-white/80 backdrop-blur hover:border-[#111827]"
+                  : "border-slate-200 bg-white hover:border-[#111827]"
             }`}
           >
             <div>
-              <p className="small-label text-slate-500">Next Case Study</p>
+              <p
+                className={`small-label ${
+                  isClawDevCaseStudy ? "text-slate-400" : "text-slate-500"
+                }`}
+              >
+                Next Case Study
+              </p>
               <p className="mt-4 text-3xl font-semibold">{nextProject.title}</p>
             </div>
             <ArrowRight className="h-6 w-6" />

@@ -255,9 +255,9 @@ export const projectDetails: ProjectDetail[] = [
     subtitle: "Personal AI Lab",
     label: "Personal AI Lab",
     theme: "lab",
-    problemQuestion: ["AI Agent는", "혼자 답하는 도구가 아니라", "함께 일하는 구조가 될 수 있을까?"],
+    problemQuestion: ["AI Agent는", "혼자 답하는 도구가 아니라", "함께 일하는 팀이 될 수 있을까?"],
     description:
-      "멀티에이전트 협업, AI 검색, RAG, 프롬프트 오케스트레이션, 코드 생성 검증 루프를 실험하는 개인 AI Lab입니다.",
+      "6개 역할 에이전트가 토론·합의·코드 생성·상호 리뷰·실제 검증·자가 수리 루프를 도는 멀티에이전트 오케스트레이션 워크스페이스입니다.",
     role: ["Multi-Agent Workflow", "AI Search", "RAG", "Prompt Engineering", "Agent Architecture"],
     techStack: [
       "Multi-Agent Workflow",

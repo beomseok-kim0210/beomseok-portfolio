@@ -4,12 +4,12 @@ import { SplitHeadline } from "@/components/ui/SplitHeadline";
 import { ShowcaseMotion } from "@/components/sections/HomeShowcase/ShowcaseMotion";
 
 const nodes = [
-  ["Prompt", 50, 14],
-  ["Memory", 21, 32],
-  ["Search", 78, 34],
-  ["RAG", 32, 68],
-  ["Agent", 56, 52],
-  ["Verifier", 76, 78],
+  ["PM", 50, 14],
+  ["Backend", 21, 32],
+  ["Frontend", 78, 34],
+  ["AI", 32, 68],
+  ["Infra", 56, 52],
+  ["Test", 76, 78],
 ] as const;
 
 export function HomeLabShowcase() {
