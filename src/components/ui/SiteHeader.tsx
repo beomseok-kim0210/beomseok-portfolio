@@ -21,7 +21,7 @@ export function SiteHeader({ items }: SiteHeaderProps) {
 
   return (
     <header className="glass-nav fixed left-0 right-0 top-0 z-50">
-      <div className="mx-auto flex h-24 max-w-[1440px] items-center justify-between px-6 md:px-10">
+      <div className="mx-auto flex h-14 max-w-[1440px] items-center justify-between px-6 md:px-10">
         <Link href="/#hero" className="nav-label text-[#111827]">
           Kim Beom Seok
         </Link>

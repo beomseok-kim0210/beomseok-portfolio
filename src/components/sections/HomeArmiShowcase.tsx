@@ -11,15 +11,15 @@ export function HomeArmiShowcase() {
       className="scene-shell flex min-h-screen items-center bg-[#000814] px-5 py-24 text-white md:py-40"
     >
       <ShowcaseMotion className="mx-auto w-full text-center">
-        <p className="cinematic-label !text-[40px] !leading-none !tracking-[0.04em] text-white/55">
+        <p className="cinematic-label text-white/55">
           Healthcare AI
         </p>
-        <h2 className="mt-8 text-[clamp(72px,7vw,132px)] font-[780] leading-[0.9] tracking-[-0.05em]">
+        <h2 className="mt-5 text-[clamp(44px,4.5vw,68px)] font-[780] leading-[0.9] tracking-[-0.05em]">
           ARMI
         </h2>
         <SplitHeadline
           lines={["가장 가까운 곳에서", "가장 필요한 순간에"]}
-          className="mx-auto mt-6 max-w-[1180px] text-[clamp(48px,5vw,92px)] font-bold leading-[1.02] tracking-normal"
+          className="mx-auto mt-4 max-w-[860px] text-[clamp(20px,2vw,30px)] font-medium leading-[1.4] tracking-normal opacity-75"
         />
         <div className="mx-auto mt-16 w-[min(1400px,88vw)]">
           <ProjectVideoFrame

@@ -8,15 +8,15 @@ export function HomeHangaraeShowcase() {
   return (
     <section className="scene-shell flex min-h-screen items-center bg-[#F6FFFB] px-5 py-24 text-[#111827] md:py-40">
       <ShowcaseMotion className="mx-auto w-full text-center">
-        <p className="cinematic-label !text-[40px] !leading-none !tracking-[0.04em] text-[var(--hangarae-accent)]">
+        <p className="cinematic-label text-[var(--hangarae-accent)]">
           Rehabilitation AI
         </p>
-        <h2 className="mt-8 text-[clamp(72px,7vw,132px)] font-[780] leading-[0.9] tracking-[-0.05em]">
+        <h2 className="mt-5 text-[clamp(44px,4.5vw,68px)] font-[780] leading-[0.9] tracking-[-0.05em]">
           행가래
         </h2>
         <SplitHeadline
           lines={["환자들의 집으로 가는 걸음을", "더욱 가볍고 안전하게"]}
-          className="mx-auto mt-6 max-w-[1180px] text-[clamp(48px,5vw,92px)] font-bold leading-[1.02] tracking-normal"
+          className="mx-auto mt-4 max-w-[860px] text-[clamp(20px,2vw,30px)] font-medium leading-[1.4] tracking-normal opacity-60"
         />
         <div className="mx-auto mt-14 w-[min(980px,88vw)] md:scale-[1.06]">
           <ProjectVideoFrame

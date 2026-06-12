@@ -8,8 +8,10 @@ type ProjectHeroProps = {
 export function ProjectHero({ project }: ProjectHeroProps) {
   return (
     <section className="min-h-[80vh] pt-40 pb-24">
-      <p className="cinematic-label mb-8 text-blue-600">{project.label}</p>
-      <p className="mb-8 text-2xl font-semibold text-slate-500">
+      <p className="cinematic-label project-hero-meta mb-8 text-blue-600">
+        {project.label}
+      </p>
+      <p className="project-hero-meta mb-8 text-slate-500">
         {project.title}
       </p>
       <SplitHeadline
