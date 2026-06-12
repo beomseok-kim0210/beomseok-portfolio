@@ -6,8 +6,8 @@ import { ShowcaseMotion } from "@/components/sections/HomeShowcase/ShowcaseMotio
 
 export function HomeWeddingShowcase() {
   return (
-    <section className="scene-shell flex min-h-screen items-center bg-[#FFF9F7] px-5 py-24 text-[#111827] md:py-40">
-      <ShowcaseMotion className="mx-auto w-full text-center">
+    <section className="scene-shell flex min-h-screen flex-col items-center justify-center bg-[#FFF9F7] px-5 py-12 text-[#111827] md:py-16">
+      <ShowcaseMotion className="w-full text-center">
         <p className="cinematic-label text-[var(--wedding-accent)]">
           Choice Intelligence
         </p>
@@ -18,16 +18,20 @@ export function HomeWeddingShowcase() {
           lines={["사람은", "자신에게 가장 어울리는 선택을", "얼마나 알고 있을까?"]}
           className="mx-auto mt-4 max-w-[860px] text-[clamp(20px,2vw,30px)] font-medium leading-[1.4] tracking-normal opacity-60"
         />
-        <div className="mx-auto mt-16 w-[min(1400px,88vw)]">
-          <BeforeAfterFrame
-            beforeSrc="/images/before_wedding.png"
-            afterSrc="/images/after_wedding.png"
-            beforePosition="center calc(50% + 5px)"
-          />
-        </div>
+      </ShowcaseMotion>
+
+      <ShowcaseMotion delay={0.15} className="mt-6 w-full max-w-[1400px]">
+        <BeforeAfterFrame
+          beforeSrc="/images/before_wedding.png"
+          afterSrc="/images/after_wedding.png"
+          beforePosition="center calc(50% + 5px)"
+        />
+      </ShowcaseMotion>
+
+      <ShowcaseMotion delay={0.25} className="mt-6 text-center">
         <Link
           href="/projects/wedding"
-          className="mt-12 inline-flex h-[52px] items-center gap-2 rounded-full bg-[#111827] px-7 text-[15px] font-semibold text-white transition-transform hover:-translate-y-0.5"
+          className="inline-flex h-[48px] items-center gap-2 rounded-full bg-[#111827] px-6 text-[14px] font-semibold text-white transition-transform hover:-translate-y-0.5"
         >
           View Case Study <ArrowRight className="h-4 w-4" />
         </Link>

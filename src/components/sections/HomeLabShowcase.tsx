@@ -16,12 +16,10 @@ export function HomeLabShowcase() {
   return (
     <section
       id="lab"
-      className="scene-shell flex min-h-screen items-center bg-[#111827] px-5 py-24 text-white md:py-40"
+      className="scene-shell flex min-h-screen flex-col items-center justify-center bg-[#111827] px-5 py-12 text-white md:py-16"
     >
-      <ShowcaseMotion className="mx-auto w-full text-center">
-        <p className="cinematic-label text-blue-300">
-          AI Lab
-        </p>
+      <ShowcaseMotion className="w-full text-center">
+        <p className="cinematic-label text-blue-300">AI Lab</p>
         <h2 className="mt-5 text-[clamp(44px,4.5vw,68px)] font-[780] leading-[0.9] tracking-[-0.05em]">
           Claw Dev
         </h2>
@@ -33,7 +31,10 @@ export function HomeLabShowcase() {
           ]}
           className="mx-auto mt-4 max-w-[860px] text-[clamp(20px,2vw,30px)] font-medium leading-[1.4] tracking-normal opacity-60"
         />
-        <div className="relative mx-auto mt-16 aspect-[16/9] w-[min(980px,86vw)] rounded-[40px] border border-white/10 bg-white/[0.04]">
+      </ShowcaseMotion>
+
+      <ShowcaseMotion delay={0.15} className="mt-6 w-full max-w-[1200px]">
+        <div className="relative aspect-[16/9] w-full rounded-[28px] border border-white/10 bg-white/[0.04]">
           <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
             {nodes.flatMap((from, i) =>
               nodes.slice(i + 1).map((to) => (
@@ -63,9 +64,12 @@ export function HomeLabShowcase() {
             </div>
           ))}
         </div>
+      </ShowcaseMotion>
+
+      <ShowcaseMotion delay={0.25} className="mt-6 text-center">
         <Link
           href="/projects/claw-dev"
-          className="mt-12 inline-flex h-[52px] items-center gap-2 rounded-full bg-white px-7 text-[15px] font-semibold text-[#111827] transition-transform hover:-translate-y-0.5"
+          className="inline-flex h-[48px] items-center gap-2 rounded-full bg-white px-6 text-[14px] font-semibold text-[#111827] transition-transform hover:-translate-y-0.5"
         >
           View AI Lab <ArrowRight className="h-4 w-4" />
         </Link>

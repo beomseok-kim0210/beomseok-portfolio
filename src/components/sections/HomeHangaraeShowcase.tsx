@@ -6,8 +6,8 @@ import { ShowcaseMotion } from "@/components/sections/HomeShowcase/ShowcaseMotio
 
 export function HomeHangaraeShowcase() {
   return (
-    <section className="scene-shell flex min-h-screen items-center bg-[#F6FFFB] px-5 py-24 text-[#111827] md:py-40">
-      <ShowcaseMotion className="mx-auto w-full text-center">
+    <section className="scene-shell flex min-h-screen flex-col items-center justify-center bg-[#F6FFFB] px-5 py-12 text-[#111827] md:py-16">
+      <ShowcaseMotion className="w-full text-center">
         <p className="cinematic-label text-[var(--hangarae-accent)]">
           Rehabilitation AI
         </p>
@@ -18,18 +18,22 @@ export function HomeHangaraeShowcase() {
           lines={["환자들의 집으로 가는 걸음을", "더욱 가볍고 안전하게"]}
           className="mx-auto mt-4 max-w-[860px] text-[clamp(20px,2vw,30px)] font-medium leading-[1.4] tracking-normal opacity-60"
         />
-        <div className="mx-auto mt-14 w-[min(980px,88vw)] md:scale-[1.06]">
-          <ProjectVideoFrame
-            theme="hangarae"
-            title="행가래"
-            eyebrow="Live Product Demo"
-            duration="03:42"
-            videoSrc="/videos/행가래_intro.mp4"
-          />
-        </div>
+      </ShowcaseMotion>
+
+      <ShowcaseMotion delay={0.15} className="mt-6 w-full">
+        <ProjectVideoFrame
+          theme="hangarae"
+          title="행가래"
+          eyebrow="Live Product Demo"
+          duration="03:42"
+          videoSrc="/videos/행가래_intro.mp4"
+        />
+      </ShowcaseMotion>
+
+      <ShowcaseMotion delay={0.25} className="mt-6 text-center">
         <Link
           href="/projects/hangarae"
-          className="mt-20 inline-flex h-[52px] items-center gap-2 rounded-full bg-[#111827] px-7 text-[15px] font-semibold text-white transition-transform hover:-translate-y-0.5"
+          className="inline-flex h-[48px] items-center gap-2 rounded-full bg-[#111827] px-6 text-[14px] font-semibold text-white transition-transform hover:-translate-y-0.5"
         >
           View Case Study <ArrowRight className="h-4 w-4" />
         </Link>

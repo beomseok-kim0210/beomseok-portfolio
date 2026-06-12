@@ -5,18 +5,20 @@ import { motion } from "framer-motion";
 type ShowcaseMotionProps = {
   children: React.ReactNode;
   className?: string;
+  delay?: number;
 };
 
 export function ShowcaseMotion({
   children,
   className = "",
+  delay = 0,
 }: ShowcaseMotionProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40, filter: "blur(12px)" }}
+      initial={{ opacity: 0, y: 32, filter: "blur(10px)" }}
       whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      viewport={{ once: true, amount: 0.28 }}
-      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.85, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >
       {children}
