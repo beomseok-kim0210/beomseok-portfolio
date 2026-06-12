@@ -13,7 +13,7 @@ export function HeroSection() {
         initial={{ opacity: 0, y: 40, filter: "blur(12px)" }}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        className="mx-auto w-full max-w-[1320px] text-center"
+        className="mx-auto w-full max-w-[1100px] text-center"
       >
         <h1 className="mx-auto max-w-[1100px] text-[clamp(40px,4.5vw,68px)] font-[520] leading-[0.92] tracking-[-0.03em] text-[#111827]">
           <span className="block">

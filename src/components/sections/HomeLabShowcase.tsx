@@ -33,7 +33,7 @@ export function HomeLabShowcase() {
         />
       </ShowcaseMotion>
 
-      <ShowcaseMotion delay={0.15} className="mt-6 w-full max-w-[1200px]">
+      <ShowcaseMotion delay={0.15} className="mt-6 w-full max-w-[1060px]">
         <div className="relative aspect-[16/9] w-full rounded-[28px] border border-white/10 bg-white/[0.04]">
           <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
             {nodes.flatMap((from, i) =>

@@ -20,7 +20,7 @@ export function HomeWeddingShowcase() {
         />
       </ShowcaseMotion>
 
-      <ShowcaseMotion delay={0.15} className="mt-6 w-full max-w-[1400px]">
+      <ShowcaseMotion delay={0.15} className="mt-6 w-full max-w-[1060px]">
         <BeforeAfterFrame
           beforeSrc="/images/before_wedding.png"
           afterSrc="/images/after_wedding.png"

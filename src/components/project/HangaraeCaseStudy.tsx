@@ -58,45 +58,41 @@ function TroubleSummary({ trouble }: { trouble: HangaraeTrouble }) {
 
 function StepDiagram({
   steps,
-  columns,
 }: {
   steps: string[];
-  columns: string;
+  columns?: string;
 }) {
   return (
     <div className="rounded-[32px] border border-[#E2E8F0] bg-white p-5 md:p-8">
-      <div className="mb-6 flex items-end justify-between gap-4 border-b border-[#EEF2F6] pb-5">
+      <div className="mb-5 flex items-center justify-between gap-4 border-b border-[#EEF2F6] pb-5">
         <div>
           <p className="small-label text-[#22C55E]">System Flow</p>
-          <p className="project-caption mt-3 max-w-[560px]">
+          <p className="project-caption mt-2 max-w-[480px]">
             데이터가 어떤 판정을 거쳐 사용자 피드백으로 바뀌는지 한 줄 흐름으로 정리했습니다.
           </p>
         </div>
-        <p className="hidden text-sm font-semibold tracking-[0.14em] text-slate-400 md:block">
+        <p className="shrink-0 text-xs font-semibold tracking-[0.14em] text-slate-400">
           {steps.length} STAGES
         </p>
       </div>
-      <div className={`grid gap-4 ${columns}`}>
+      <div className="overflow-x-auto pb-1">
+        <div className="flex min-w-max items-stretch gap-2">
           {steps.map((step, index) => (
-            <div key={step} className="flex items-center gap-4">
-              <div className="flex min-h-[132px] flex-1 flex-col justify-between rounded-[28px] border border-[#E2E8F0] bg-[#F8FAFC] p-5 md:min-h-[148px] md:p-6">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="small-label text-[#22C55E]">
-                    Step {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span className="h-2.5 w-2.5 rounded-full border border-[#B7F0C6] bg-[#22C55E]" />
-                </div>
-                <p className="text-[28px] font-semibold leading-[1.08] tracking-[-0.04em] text-[#111827]">
+            <div key={step} className="flex items-center gap-2">
+              <div className="flex w-[148px] flex-col justify-between rounded-[20px] border border-[#E2E8F0] bg-[#F8FAFC] p-4 md:w-[164px]">
+                <span className="small-label text-[#22C55E]">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <p className="mt-5 text-[15px] font-semibold leading-[1.2] tracking-[-0.02em] text-[#111827] md:text-base">
                   {step}
                 </p>
               </div>
               {index < steps.length - 1 ? (
-                <div className="hidden items-center justify-center text-[#22C55E] xl:flex">
-                  <ArrowRight className="h-5 w-5" />
-                </div>
+                <ArrowRight className="h-4 w-4 shrink-0 text-[#22C55E]" />
               ) : null}
             </div>
           ))}
+        </div>
       </div>
     </div>
   );
@@ -154,14 +150,14 @@ function TroubleSignalPanel({ trouble }: { trouble: HangaraeTrouble }) {
           <p className="project-body mt-4 text-slate-600">
             {trouble.metricBody}
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-5 flex flex-nowrap gap-2 overflow-x-auto pb-1">
             {stages.map((stage, index) => (
-              <div key={`${trouble.id}-${stage}`} className="flex items-center gap-3">
-                <span className="rounded-full border border-[#DCE5EF] bg-white px-4 py-2.5 text-[15px] font-semibold text-[#334155] md:text-base">
+              <div key={`${trouble.id}-${stage}`} className="flex shrink-0 items-center gap-2">
+                <span className="rounded-full border border-[#DCE5EF] bg-white px-3 py-2 text-sm font-semibold text-[#334155]">
                   {stage}
                 </span>
                 {index < stages.length - 1 ? (
-                  <ArrowRight className="h-4 w-4 text-[#22C55E]" />
+                  <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[#22C55E]" />
                 ) : null}
               </div>
             ))}
