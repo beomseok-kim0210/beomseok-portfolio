@@ -1,5 +1,6 @@
 import { ClawDevHero } from "./clawdev/ClawDevHero";
 import { AgentTeamRoom } from "./clawdev/AgentTeamRoom";
+import { PromptFlowArchitecture } from "./clawdev/PromptFlowArchitecture";
 import { OrchestrationPipeline } from "./clawdev/OrchestrationPipeline";
 import { AgentDebateTranscript } from "./clawdev/AgentDebateTranscript";
 import { VerificationLoop } from "./clawdev/VerificationLoop";
@@ -47,8 +48,16 @@ export function ClawDevCaseStudy() {
       </Section>
 
       <Section
+        label="Architecture"
+        title={"프롬프트 한 줄이\n시스템 전체를 관통한다"}
+        subtitle="요청은 오케스트레이터를 거쳐 6역할 채팅방, 스펙·계획, 코드 생성, 검증까지 하나의 흐름으로 내려갑니다. 프로젝트 메모리와 LLM 레이어가 옆에서 맥락을 공급하고, 검증이 실패하면 수리 루프가 코드 생성으로 되돌립니다."
+      >
+        <PromptFlowArchitecture />
+      </Section>
+
+      <Section
         label="Orchestration"
-        title={"요청 한 줄이\n8단계 파이프라인을 거친다"}
+        title={"각 단계는\n어떻게 작동하나"}
         subtitle="사용자 요청은 PM 해석 → 토론 → 반응 → 클러리피케이션 → PM 확정 → 병렬 스펙 → 구현 계획 → 코딩·검증 루프를 순서대로 통과합니다."
       >
         <OrchestrationPipeline />
