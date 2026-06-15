@@ -72,7 +72,7 @@ export function HeroSection() {
               : { opacity: 1, filter: "blur(0px)" }
           }
           transition={{ duration: 1.0, ease: "easeInOut" }}
-          className="mx-auto max-w-[1100px] text-[clamp(40px,4.5vw,68px)] font-[520] leading-[0.92] tracking-[-0.03em] text-[#111827]"
+          className="mx-auto max-w-[1100px] text-[clamp(52px,5.85vw,88px)] font-[520] leading-[0.92] tracking-[-0.03em] text-[#111827]"
         >
           <span className="block">
             <span className="font-black text-blue-700">사람</span>은
@@ -93,8 +93,14 @@ export function HeroSection() {
               {/* Canvas 레이어: 절대 위치, canvas 준비 후에만 visible */}
               {phase === "vaporizing" && (
                 <span
-                  className="absolute inset-0 block"
-                  style={{ visibility: canvasReady ? "visible" : "hidden" }}
+                  className="absolute block"
+                  style={{
+                    top: "-0.12em",
+                    bottom: "-0.12em",
+                    left: 0,
+                    right: 0,
+                    visibility: canvasReady ? "visible" : "hidden",
+                  }}
                 >
                   <span className="mx-auto block h-full w-full">
                     <VaporizeStyledOnce
@@ -129,10 +135,10 @@ export function HeroSection() {
           )}
         </motion.h1>
 
-        <p className="cinematic-label mt-10 text-blue-600">
+        <p className="cinematic-label mt-10 text-blue-600" style={{ fontSize: "15.6px" }}>
           Frontend & AI Product Builder
         </p>
-        <p className="mx-auto mt-6 max-w-[600px] text-[15px] leading-[1.75] tracking-[-0.015em] text-slate-600 md:text-[17px]">
+        <p className="mx-auto mt-6 max-w-[600px] text-[20px] leading-[1.75] tracking-[-0.015em] text-slate-600 md:text-[22px]">
           음성 인터페이스, 실시간 UX, 생성형 AI를
           <br className="hidden sm:block" />
           사용자가 체감하는 제품 경험으로 연결합니다.
