@@ -1,12 +1,25 @@
-import { ArrowRight, BrainCircuit, Github, Mail, NotebookTabs } from "lucide-react";
+import { Github, Mail, NotebookTabs } from "lucide-react";
 import { MotionBlock } from "@/components/ui/MotionBlock";
 
 const contactLinks = [
-  { label: "GitHub", href: "#hero", icon: Github },
-  { label: "Notion", href: "#hero", icon: NotebookTabs },
-  { label: "Email", href: "mailto:", icon: Mail },
-  { label: "Resume", href: "#hero", icon: ArrowRight },
-  { label: "AI Knowledge", href: "/knowledge", icon: BrainCircuit },
+  {
+    label: "GitHub",
+    href: "https://github.com/beomseok-kim0210",
+    icon: Github,
+    external: true,
+  },
+  {
+    label: "Notion",
+    href: "https://app.notion.com/p/Home-37c8c96517988158aaf8f07a40dff2f4",
+    icon: NotebookTabs,
+    external: true,
+  },
+  {
+    label: "Email",
+    href: "mailto:yongt102028@gmail.com",
+    icon: Mail,
+    external: false,
+  },
 ];
 
 export function ContactSection() {
@@ -31,7 +44,7 @@ export function ContactSection() {
             <p className="subtitle mx-auto mt-8 max-w-[680px] text-slate-600">
               제품처럼 작동하는 AI 경험을 함께 만들고 싶습니다.
             </p>
-            <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="mx-auto mt-14 grid max-w-[760px] gap-3 sm:grid-cols-3">
               {contactLinks.map((link) => {
                 const Icon = link.icon;
 
@@ -40,6 +53,8 @@ export function ContactSection() {
                     key={link.label}
                     href={link.href}
                     aria-label={link.label}
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
                     className="group flex h-24 items-center justify-between rounded-[24px] border border-[#E2E8F0] bg-white px-5 transition duration-200 hover:-translate-y-1 hover:border-[#111827]"
                   >
                     <span className="small-label text-slate-700">{link.label}</span>
