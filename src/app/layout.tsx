@@ -1,5 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
+
+export const viewport: Viewport = {
+  themeColor: "#FAFAFA",
+  colorScheme: "light",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://beomseok-portfolio.vercel.app"),

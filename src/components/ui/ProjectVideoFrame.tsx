@@ -93,7 +93,7 @@ export function ProjectVideoFrame({
               </div>
             ) : (
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 backdrop-blur-2xl md:h-20 md:w-20">
-                <Play className="h-7 w-7 fill-current" />
+                <Play className="h-7 w-7 fill-current" aria-hidden="true" />
               </div>
             )}
           </div>
