@@ -431,3 +431,28 @@ export const clawdevTechGroups: ClawdevTechGroup[] = [
   { label: "CLI", items: ["ink", "ink-text-input", "React 19", "picocolors"] },
   { label: "Web", items: ["raw http", "SSE", "vanilla JS", "dotenv"] },
 ];
+
+// ─── Recap (회고) ─────────────────────────────────────────────
+export const clawdevRecap = {
+  definition:
+    "Claw Dev는 PM·Backend·Frontend·AI·Infra·Test 6개 역할의 AI Agent가 토론 → 합의 → 코드 생성 → 검증 → 수리 루프를 거쳐 실제로 도는 코드를 만드는 개인 개발 자동화 프로젝트입니다. 설계부터 구현까지 혼자 맡았습니다.",
+  takeaways: [
+    {
+      label: "구조화 출력 검증",
+      note: "LLM 출력을 그대로 믿지 않고 Zod 스키마로 검증하고, 틀리면 에러를 돌려줘 재생성했습니다.",
+    },
+    {
+      label: "실제 실행 검증",
+      note: "생성한 코드를 node·tsc·test로 진짜 돌려보고, 실패하면 담당을 추론해 자율 수리했습니다.",
+    },
+    {
+      label: "끊기지 않는 스택",
+      note: "Gemini가 막히면 로컬 Ollama로 폴백해 파이프라인이 멈추지 않게 했습니다.",
+    },
+  ],
+  reflection: [
+    "처음엔 좋은 모델에 한 번에 코드를 맡기면 될 거라 생각했습니다. 그런데 단일 LLM에 통째로 맡기면 요구사항 누락·파일 경로 불일치·타입 오류·테스트 실패가 반복됐습니다.",
+    "그래서 역할을 6개로 나눠 합의한 뒤 코드를 만들게 하고, 출력은 Zod로 검증하고, 생성한 코드는 실제로 node·tsc·test로 돌려본 뒤 실패하면 스스로 고치게 했습니다.",
+    "이 프로젝트로 AI 자동화의 핵심은 '생성' 자체가 아니라 '검증 가능한 구조'라는 걸 배웠습니다. AI가 만든 결과를 그대로 믿지 않고 검증과 수리 루프까지 묶어야 실제 개발 자동화에 가까워집니다.",
+  ],
+} as const;

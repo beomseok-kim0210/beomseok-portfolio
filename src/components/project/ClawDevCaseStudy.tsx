@@ -14,6 +14,8 @@ import {
   ResilienceFallback,
   ResultsAndLimitations,
 } from "./clawdev/ClawdevSubsections";
+import { clawdevRecap } from "@/data/clawdevCaseStudy";
+import { ProjectRecap } from "./ProjectRecap";
 
 function Section({
   label,
@@ -133,6 +135,13 @@ export function ClawDevCaseStudy() {
       >
         <ClawdevTechStack />
       </Section>
+
+      <ProjectRecap
+        definition={clawdevRecap.definition}
+        takeaways={clawdevRecap.takeaways}
+        reflection={clawdevRecap.reflection}
+        accent="#60A5FA"
+      />
     </div>
   );
 }
