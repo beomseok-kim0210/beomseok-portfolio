@@ -13,6 +13,7 @@ import {
 } from "@/data/about";
 import { navItems } from "@/data/navigation";
 import { SiteHeader } from "@/components/ui/SiteHeader";
+import { ProfileImage } from "@/components/ui/ProfileImage";
 
 export const metadata: Metadata = {
   title: "About",
@@ -64,7 +65,15 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <aside className="h-auto min-h-[780px] rounded-[8px] border border-slate-200 bg-white p-8">
+        <aside className="h-auto rounded-[8px] border border-slate-200 bg-white p-8">
+          <div className="mb-8 overflow-hidden rounded-[6px]">
+            <div className="aspect-[4/5] w-full bg-slate-100">
+              <ProfileImage
+                src="/images/profile/beomseok-main.jpg"
+                alt="김범석 프로필 사진"
+              />
+            </div>
+          </div>
           <SectionLabel>Profile</SectionLabel>
           <div className="mt-9 space-y-5">
             {aboutProfile.map((item) => (
@@ -101,16 +110,26 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto max-w-[1280px] px-6 py-[160px] md:px-10 lg:px-12">
-        <div className="max-w-[840px]">
-          <SectionLabel>Who I Am</SectionLabel>
-          <h2 className="mt-8 text-[52px] font-bold leading-[1] text-slate-950 md:text-[72px]">
-            From trade major
-            <br />
-            to AI product builder.
-          </h2>
-          <p className="mt-10 text-[24px] leading-[1.7] text-slate-600">
-            {aboutIntroduction}
-          </p>
+        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr] md:items-center md:gap-16">
+          <div className="max-w-[840px]">
+            <SectionLabel>Who I Am</SectionLabel>
+            <h2 className="mt-8 text-[52px] font-bold leading-[1] text-slate-950 md:text-[72px]">
+              From trade major
+              <br />
+              to AI product builder.
+            </h2>
+            <p className="mt-10 text-[24px] leading-[1.7] text-slate-600">
+              {aboutIntroduction}
+            </p>
+          </div>
+          <div className="overflow-hidden rounded-[8px] border border-slate-200">
+            <div className="aspect-[4/5] w-full bg-slate-100">
+              <ProfileImage
+                src="/images/profile/beomseok-formal.jpg"
+                alt="김범석 프로필 사진 (정면)"
+              />
+            </div>
+          </div>
         </div>
       </section>
 

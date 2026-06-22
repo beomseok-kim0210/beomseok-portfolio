@@ -57,6 +57,9 @@ test-results/
 .turbo/
 .cache/
 
+# claude design skills (vendored tooling — install locally via docs/claude-design-skills-guide.md)
+.claude/skills/
+
 # local media assets
 public/videos/*.mp4
 public/videos/*.mov
