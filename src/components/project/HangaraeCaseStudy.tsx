@@ -6,6 +6,7 @@ import {
   hangaraeDemoFilm,
   hangaraeHero,
   hangaraeOverviewCards,
+  hangaraeRecap,
   hangaraeResultMetrics,
   hangaraeResultParagraph,
   hangaraeTechGroups,
@@ -14,6 +15,7 @@ import {
 } from "@/data/hangaraeCaseStudy";
 import { HangaraeMediaSurface } from "./hangarae/HangaraeMediaSurface";
 import { HangaraeSectionHeading } from "./hangarae/HangaraeSectionHeading";
+import { ProjectRecap } from "./ProjectRecap";
 
 function resolvePublicAssetSrc(...candidates: Array<string | undefined>) {
   for (const src of candidates) {
@@ -34,161 +36,108 @@ function resolvePublicAssetSrc(...candidates: Array<string | undefined>) {
   return undefined;
 }
 
-function TroubleSummary({ trouble }: { trouble: HangaraeTrouble }) {
-  const items = [
-    ["Problem", trouble.problem],
-    ["Cause", trouble.cause],
-    ["Decision", trouble.decision],
-    ["Result", trouble.result],
-  ];
-
+// 트러블 → 모색한 방법 → 선택·근거(HERO) → 인사이트 4단계 흐름
+function TroubleFlow({ trouble }: { trouble: HangaraeTrouble }) {
   return (
-    <div className="rounded-[32px] border border-[#E2E8F0] bg-white p-8 md:p-10">
-      <div className="space-y-6">
-        {items.map(([label, body]) => (
-          <div key={label}>
-            <p className="small-label text-[#22C55E]">{label}</p>
-            <p className="project-body mt-3">{body}</p>
-          </div>
+    <div className="space-y-4">
+      {/* 트러블 — 빨강 */}
+      <div className="rounded-[28px] border border-red-200 bg-red-50 p-7 md:p-8">
+        <p className="small-label flex items-center gap-2 text-red-600">
+          <span
+            className="inline-block h-2 w-2 rounded-full bg-red-500"
+            aria-hidden="true"
+          />
+          트러블
+        </p>
+        <p className="mt-3 text-[17px] font-semibold leading-7 text-[#111827] md:text-[18px]">
+          {trouble.problem}
+        </p>
+        <p className="mt-2 text-[14px] leading-6 text-red-700/70">
+          원인 · {trouble.cause}
+        </p>
+      </div>
+
+      {/* 모색한 방법 */}
+      <div className="rounded-[28px] border border-slate-200 bg-white p-7 md:p-8">
+        <p className="small-label text-slate-500">모색한 방법</p>
+        <ul className="mt-4 space-y-2.5">
+          {trouble.approaches.map((opt, i) => {
+            const chosen = i === trouble.approaches.length - 1;
+            return (
+              <li
+                key={opt}
+                className={`flex items-start gap-3 rounded-2xl border p-4 ${
+                  chosen
+                    ? "border-[#86EFAC] bg-[#F0FDF4]"
+                    : "border-slate-200 bg-white"
+                }`}
+              >
+                <span
+                  className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                    chosen ? "bg-[#15803D] text-white" : "bg-slate-100 text-slate-500"
+                  }`}
+                >
+                  {chosen ? "✓" : i + 1}
+                </span>
+                <span
+                  className={`text-[15px] leading-7 ${
+                    chosen ? "font-semibold text-[#111827]" : "text-slate-600"
+                  }`}
+                >
+                  {opt}
+                  {chosen && (
+                    <span className="ml-2 inline-block rounded-full bg-[#15803D] px-2 py-0.5 text-[11px] font-bold text-white">
+                      선택
+                    </span>
+                  )}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      {/* 선택 & 근거 — HERO(녹색) */}
+      <div className="rounded-[28px] bg-[#15803D] p-7 text-white md:p-9">
+        <p className="small-label text-white/70">선택 &amp; 근거</p>
+        <p className="mt-4 text-[19px] font-bold leading-[1.5] tracking-[-0.02em] md:text-[24px]">
+          {trouble.decision}
+        </p>
+        <p className="mt-4 text-[15px] leading-7 text-white/85 md:text-[16px]">
+          <span className="font-semibold text-white">왜 이 방법인가 · </span>
+          {trouble.rationale}
+        </p>
+        <div className="mt-6 border-t border-white/15 pt-5">
+          <p className="small-label text-white/70">결과</p>
+          <p className="mt-2 text-[15px] font-semibold leading-7 text-white md:text-[16px]">
+            {trouble.result}
+          </p>
+        </div>
+      </div>
+
+      {/* 💡 인사이트 */}
+      <div className="flex items-start gap-4 rounded-[24px] border-l-4 border-[#22C55E] bg-[#F0FDF4] p-6 md:p-7">
+        <span className="text-2xl leading-none" aria-hidden="true">
+          💡
+        </span>
+        <div>
+          <p className="small-label text-[#15803D]">인사이트</p>
+          <p className="mt-2 text-[16px] font-semibold leading-7 text-[#111827] md:text-[18px]">
+            {trouble.insight}
+          </p>
+        </div>
+      </div>
+
+      {/* tech chips */}
+      <div className="flex flex-wrap gap-2 pt-1">
+        {trouble.tech.map((chip) => (
+          <span
+            key={chip}
+            className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600"
+          >
+            {chip}
+          </span>
         ))}
-      </div>
-    </div>
-  );
-}
-
-function StepDiagram({
-  steps,
-}: {
-  steps: string[];
-  columns?: string;
-}) {
-  return (
-    <div className="rounded-[32px] border border-[#E2E8F0] bg-white p-5 md:p-8">
-      <div className="mb-5 flex items-center justify-between gap-4 border-b border-[#EEF2F6] pb-5">
-        <div>
-          <p className="small-label text-[#22C55E]">System Flow</p>
-          <p className="project-caption mt-2 max-w-[480px]">
-            데이터가 어떤 판정을 거쳐 사용자 피드백으로 바뀌는지 한 줄 흐름으로 정리했습니다.
-          </p>
-        </div>
-        <p className="shrink-0 text-xs font-semibold tracking-[0.14em] text-slate-400">
-          {steps.length} STAGES
-        </p>
-      </div>
-      <div className="overflow-x-auto pb-1">
-        <div className="flex min-w-max items-stretch gap-2">
-          {steps.map((step, index) => (
-            <div key={step} className="flex items-center gap-2">
-              <div className="flex w-[148px] flex-col justify-between rounded-[20px] border border-[#E2E8F0] bg-[#F8FAFC] p-4 md:w-[164px]">
-                <span className="small-label text-[#22C55E]">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <p className="mt-5 text-[15px] font-semibold leading-[1.2] tracking-[-0.02em] text-[#111827] md:text-base">
-                  {step}
-                </p>
-              </div>
-              {index < steps.length - 1 ? (
-                <ArrowRight className="h-4 w-4 shrink-0 text-[#22C55E]" />
-              ) : null}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function getTroubleFlow(trouble: HangaraeTrouble) {
-  switch (trouble.visualType) {
-    case "asset-pipeline":
-      return {
-        steps: ["Claude Code", "MCP", "Blender / Unity", "GLB Export", "Three.js"],
-        columns: "md:grid-cols-2 xl:grid-cols-5",
-      };
-    case "correct-feedback":
-      return {
-        steps: ["Coordinate", "Joint Angle", "Threshold Pass", "Success Animation", "Positive Feedback"],
-        columns: "md:grid-cols-2 xl:grid-cols-5",
-      };
-    case "incorrect-feedback":
-      return {
-        steps: ["Coordinate", "Joint Angle", "Threshold Fail", "Correction Message", "Retry Feedback"],
-        columns: "md:grid-cols-2 xl:grid-cols-5",
-      };
-    case "pinpoint-visual":
-      return {
-        steps: ["18 Keypoints", "3D Pinpoint", "Skeleton Line", "Motion Feedback"],
-        columns: "md:grid-cols-2 xl:grid-cols-4",
-      };
-    case "coordinate-pipeline":
-      return {
-        steps: ["Sensor", "Jetson Nano", "Depth Camera", "YOLO", "Redis", "Frontend", "Three.js"],
-        columns: "md:grid-cols-3 xl:grid-cols-7",
-      };
-    default:
-      return {
-        steps: ["Coordinate", "Angle", "Exercise-specific Threshold", "Correct / Incorrect", "Feedback"],
-        columns: "md:grid-cols-2 xl:grid-cols-5",
-      };
-  }
-}
-
-function TroubleSignalPanel({ trouble }: { trouble: HangaraeTrouble }) {
-  const isFlow = trouble.metricBody.includes("->");
-  const stages = isFlow
-    ? trouble.metricBody.split("->").map((s) => s.trim()).filter(Boolean)
-    : [];
-
-  return (
-    <div className="rounded-[28px] bg-[#0F172A] p-6 md:p-8">
-      {/* Row 1: 헤더 */}
-      <div className="flex items-start justify-between gap-6">
-        <div>
-          <p className="small-label text-[#22C55E]">Signal Translation</p>
-          <p className="mt-3 text-[20px] font-semibold leading-[1.2] tracking-[-0.02em] text-white md:text-[22px]">
-            {trouble.metricTitle}
-          </p>
-        </div>
-        <p className="shrink-0 text-right text-sm text-slate-400">
-          {isFlow ? stages.length : "—"} stages · {trouble.tech.length} tech
-        </p>
-      </div>
-
-      {/* Row 2: Flow */}
-      <div className="mt-5 border-t border-white/10 pt-5">
-        {isFlow ? (
-          <div className="flex flex-wrap items-center gap-2">
-            {stages.map((stage, index) => (
-              <div key={`${trouble.id}-${stage}-${index}`} className="flex items-center gap-2">
-                <span className="rounded-full border border-white/[0.12] bg-white/[0.08] px-3.5 py-1.5 text-sm font-medium text-white/85">
-                  {stage}
-                </span>
-                {index < stages.length - 1 ? (
-                  <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[#22C55E]" />
-                ) : null}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm leading-relaxed text-slate-400">
-            {trouble.metricBody}
-          </p>
-        )}
-      </div>
-
-      {/* Row 3: Tech */}
-      <div className="mt-5 border-t border-white/10 pt-5">
-        <p className="small-label mb-3 text-[#22C55E]">Tech Focus</p>
-        <div className="flex flex-wrap gap-2">
-          {trouble.tech.map((item) => (
-            <span
-              key={item}
-              className="rounded-full border border-white/[0.1] bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-slate-300"
-            >
-              {item}
-            </span>
-          ))}
-        </div>
       </div>
     </div>
   );
@@ -232,6 +181,36 @@ function FeedbackMediaPair({
 }
 
 function TroubleEvidence({ trouble }: { trouble: HangaraeTrouble }) {
+  if (trouble.visualType === "yolo-metrics") {
+    return (
+      <div className="rounded-[28px] bg-[#F8FAFC] p-6 md:p-8">
+        <p className="small-label text-[#15803D]">YOLOv11-M Re-training</p>
+        <p className="project-caption mt-2">
+          발 이미지 66,950장 중 20,507장을 선별·라벨링 후 재학습 (전 → 후)
+        </p>
+        <div className="mt-6 space-y-4">
+          {(trouble.metrics ?? []).map((m) => (
+            <div
+              key={m.label}
+              className="rounded-[20px] border border-[#E2E8F0] bg-white p-5"
+            >
+              <p className="small-label text-slate-500">{m.label}</p>
+              <div className="mt-3 flex items-center gap-4">
+                <span className="text-2xl font-semibold text-slate-400">
+                  {m.before}
+                </span>
+                <ArrowRight className="h-5 w-5 shrink-0 text-[#15803D]" />
+                <span className="text-[32px] font-bold leading-none tracking-[-0.03em] text-[#15803D]">
+                  {m.after}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   if (trouble.visualType === "asset-pipeline") {
     return (
       <div className="space-y-6">
@@ -433,7 +412,7 @@ export function HangaraeCaseStudy() {
         <section
           key={trouble.id}
           id={trouble.id}
-          className="min-h-screen py-[96px] md:py-[180px]"
+          className="py-[96px] md:py-[160px]"
         >
           <div className="mx-auto max-w-[1280px]">
             <div className="mb-12">
@@ -443,29 +422,20 @@ export function HangaraeCaseStudy() {
                 subtitle={trouble.diagnosis}
               />
             </div>
-            {(() => {
-              const flow = getTroubleFlow(trouble);
-              return (
-                <MotionBlock delay={0.02} className="mb-10">
-                  <StepDiagram steps={flow.steps} columns={flow.columns} />
-                </MotionBlock>
-              );
-            })()}
             <div className="grid gap-8 xl:grid-cols-12">
-              <MotionBlock delay={index * 0.02} className="xl:col-span-5">
-                <div className="xl:sticky xl:top-[120px]">
-                  <TroubleSummary trouble={trouble} />
-                </div>
-              </MotionBlock>
-              <div className="space-y-6 xl:col-span-7">
-                <MotionBlock delay={0.06}>
-                  <TroubleEvidence trouble={trouble} />
+              <div className="xl:col-span-7">
+                <MotionBlock delay={index * 0.02}>
+                  <TroubleFlow trouble={trouble} />
                 </MotionBlock>
               </div>
+              <div className="xl:col-span-5">
+                <div className="xl:sticky xl:top-[120px]">
+                  <MotionBlock delay={0.06}>
+                    <TroubleEvidence trouble={trouble} />
+                  </MotionBlock>
+                </div>
+              </div>
             </div>
-            <MotionBlock delay={0.12} className="mt-8">
-              <TroubleSignalPanel trouble={trouble} />
-            </MotionBlock>
           </div>
         </section>
       ))}
@@ -525,6 +495,13 @@ export function HangaraeCaseStudy() {
           </div>
         </div>
       </section>
+
+      <ProjectRecap
+        definition={hangaraeRecap.definition}
+        takeaways={hangaraeRecap.takeaways}
+        reflection={hangaraeRecap.reflection}
+        accent="#34D399"
+      />
     </>
   );
 }
