@@ -21,7 +21,7 @@ export function HomeArmiShowcase() {
         />
       </ShowcaseMotion>
 
-      <ShowcaseMotion delay={0.15} className="mt-6 w-full max-w-[1060px]">
+      <ShowcaseMotion preset="media" className="mt-6 w-full max-w-[1060px]">
         <ProjectVideoFrame
           theme="armi"
           title="ARMI"
