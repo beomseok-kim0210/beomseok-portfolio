@@ -20,7 +20,7 @@ export function HomeLabShowcase() {
     >
       <ShowcaseMotion className="w-full text-center">
         <p className="cinematic-label text-blue-300">AI Lab</p>
-        <h2 className="mt-5 text-[clamp(44px,4.5vw,68px)] font-[780] leading-[0.9] tracking-[-0.05em]">
+        <h2 className="mt-5 font-display text-[clamp(44px,4.5vw,68px)] font-[700] leading-[0.9] tracking-[-0.05em]">
           Claw Dev
         </h2>
         <SplitHeadline

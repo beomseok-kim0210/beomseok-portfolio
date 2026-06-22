@@ -1,5 +1,13 @@
 import type { Metadata, Viewport } from "next";
+import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
+
+// 영문 디스플레이 폰트. 한글은 --font-display 스택의 Pretendard로 폴백된다.
+const display = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 export const viewport: Viewport = {
   themeColor: "#FAFAFA",
@@ -45,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={display.variable}>
       <body>{children}</body>
     </html>
   );

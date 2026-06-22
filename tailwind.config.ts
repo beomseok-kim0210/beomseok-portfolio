@@ -19,11 +19,17 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          "Inter",
           "Pretendard",
+          "Inter",
           "-apple-system",
           "BlinkMacSystemFont",
           "Segoe UI",
+          "sans-serif",
+        ],
+        display: [
+          "var(--font-display)",
+          "Pretendard",
+          "Inter",
           "sans-serif",
         ],
       },

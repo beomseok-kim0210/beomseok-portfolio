@@ -12,7 +12,7 @@ export function HomeArmiShowcase() {
     >
       <ShowcaseMotion className="w-full text-center">
         <p className="cinematic-label text-white/55">Healthcare AI</p>
-        <h2 className="mt-5 text-[clamp(44px,4.5vw,68px)] font-[780] leading-[0.9] tracking-[-0.05em]">
+        <h2 className="mt-5 font-display text-[clamp(44px,4.5vw,68px)] font-[700] leading-[0.9] tracking-[-0.05em]">
           ARMI
         </h2>
         <SplitHeadline

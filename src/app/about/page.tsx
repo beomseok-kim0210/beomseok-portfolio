@@ -52,10 +52,10 @@ export default function AboutPage() {
       <section className="mx-auto grid max-w-[1280px] items-start gap-12 px-6 pb-24 pt-36 md:grid-cols-[1.05fr_0.95fr] md:gap-16 md:px-10 lg:px-12">
         <div className="md:pt-4">
           <SectionLabel>About</SectionLabel>
-          <h1 className="mt-8 text-[72px] font-bold leading-[0.98] text-[#111827] md:text-[96px]">
+          <h1 className="mt-8 font-display text-[72px] font-bold leading-[0.98] tracking-[-0.02em] text-[#111827] md:text-[96px]">
             Kim Beomseok
           </h1>
-          <p className="mt-6 text-[36px] font-semibold leading-[1.15] text-slate-700 md:text-[48px]">
+          <p className="mt-6 font-display text-[36px] font-semibold leading-[1.15] tracking-[-0.01em] text-slate-700 md:text-[48px]">
             AI Product Engineer
           </p>
           <p className="mt-10 max-w-[640px] text-[24px] leading-[1.55] text-slate-600 md:text-[30px]">
