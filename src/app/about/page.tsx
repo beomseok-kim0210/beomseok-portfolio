@@ -49,8 +49,8 @@ export default function AboutPage() {
     <main className="bg-[#FAFAFA] text-[#111827]">
       <SiteHeader items={navItems} />
 
-      <section className="mx-auto grid min-h-[80vh] max-w-[1280px] items-center gap-12 px-6 pb-24 pt-36 md:grid-cols-[1.5fr_1fr] md:px-10 lg:px-12">
-        <div>
+      <section className="mx-auto grid max-w-[1280px] items-start gap-12 px-6 pb-24 pt-36 md:grid-cols-[1.05fr_0.95fr] md:gap-16 md:px-10 lg:px-12">
+        <div className="md:pt-4">
           <SectionLabel>About</SectionLabel>
           <h1 className="mt-8 text-[72px] font-bold leading-[0.98] text-[#111827] md:text-[96px]">
             Kim Beomseok
@@ -58,11 +58,69 @@ export default function AboutPage() {
           <p className="mt-6 text-[36px] font-semibold leading-[1.15] text-slate-700 md:text-[48px]">
             AI Product Engineer
           </p>
-          <p className="mt-10 max-w-[720px] text-[24px] leading-[1.55] text-slate-600 md:text-[30px]">
+          <p className="mt-10 max-w-[640px] text-[24px] leading-[1.55] text-slate-600 md:text-[30px]">
             Building AI products that connect
             <br />
             models to real user problems.
           </p>
+
+          {/* 연락 링크 — 왼쪽으로 옮겨 좌우 균형을 맞춤 */}
+          <div className="mt-12 flex flex-wrap gap-3">
+            {[
+              {
+                label: "GitHub",
+                handle: "@beomseok-kim0210",
+                href: "https://github.com/beomseok-kim0210",
+                external: true,
+              },
+              {
+                label: "Email",
+                handle: "yongt102028@gmail.com",
+                href: "mailto:yongt102028@gmail.com",
+                external: false,
+              },
+              {
+                label: "Portfolio",
+                handle: "Home",
+                href: "/",
+                external: false,
+              },
+            ].map((link) => {
+              const content = (
+                <>
+                  <span className="text-[15px] font-semibold text-slate-900">
+                    {link.label}
+                  </span>
+                  <span className="text-[13px] text-slate-400">
+                    {link.handle}
+                  </span>
+                  <ArrowUpRight className="h-4 w-4 text-slate-400 transition-colors group-hover:text-[#111827]" />
+                </>
+              );
+              const className =
+                "group inline-flex items-center gap-2.5 rounded-[8px] border border-slate-200 bg-white px-4 py-3 transition-colors hover:border-[#111827]";
+
+              if (link.href.startsWith("/")) {
+                return (
+                  <Link key={link.label} href={link.href} className={className}>
+                    {content}
+                  </Link>
+                );
+              }
+
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : undefined}
+                  className={className}
+                >
+                  {content}
+                </a>
+              );
+            })}
+          </div>
         </div>
 
         <aside className="h-auto rounded-[8px] border border-slate-200 bg-white p-8">
@@ -76,35 +134,25 @@ export default function AboutPage() {
           </div>
           <SectionLabel>Profile</SectionLabel>
           <div className="mt-9 space-y-5">
-            {aboutProfile.map((item) => (
-              <div key={item.label} className="border-b border-slate-100 pb-4">
-                <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-                  {item.label}
-                </p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {item.value.map((value) => (
-                    <span
-                      key={value}
-                      className="rounded-[8px] bg-slate-50 px-3 py-1.5 text-[17px] font-semibold text-slate-900"
-                    >
-                      {value}
-                    </span>
-                  ))}
+            {aboutProfile
+              .filter((item) => item.label !== "Name" && item.label !== "Role")
+              .map((item) => (
+                <div key={item.label} className="border-b border-slate-100 pb-4">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                    {item.label}
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {item.value.map((value) => (
+                      <span
+                        key={value}
+                        className="rounded-[8px] bg-slate-50 px-3 py-1.5 text-[17px] font-semibold text-slate-900"
+                      >
+                        {value}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-8 grid gap-3">
-            {["GitHub", "Portfolio", "Email"].map((item) => (
-              <Link
-                key={item}
-                href={item === "Portfolio" ? "/" : "#"}
-                className="flex h-14 items-center justify-between rounded-[8px] border border-slate-200 px-4 text-[16px] font-semibold text-slate-700"
-              >
-                {item}
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            ))}
+              ))}
           </div>
         </aside>
       </section>
@@ -133,22 +181,23 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1280px] px-6 py-[160px] md:px-10 lg:px-12">
-        <SectionLabel>At a Glance</SectionLabel>
-        <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {aboutSnapshot.map((item) => (
-            <div
-              key={item.label}
-              className="flex h-[220px] flex-col justify-between rounded-[8px] border border-slate-200 bg-white p-8 transition duration-300 hover:-translate-y-2"
-            >
-              <p className="text-[72px] font-bold leading-none text-[#111827]">
-                {item.value}
-              </p>
-              <p className="text-[22px] font-semibold leading-[1.2] text-slate-700">
-                {item.label}
-              </p>
-            </div>
-          ))}
+      <section className="bg-[#0B1120] py-[140px] md:py-[170px]">
+        <div className="mx-auto max-w-[1280px] px-6 md:px-10 lg:px-12">
+          <p className="text-[14px] font-semibold uppercase leading-none tracking-[0.18em] text-blue-300">
+            At a Glance
+          </p>
+          <div className="mt-16 grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+            {aboutSnapshot.map((item) => (
+              <div key={item.label} className="border-t border-white/10 pt-6">
+                <p className="text-[64px] font-bold leading-none tracking-[-0.03em] text-white md:text-[88px]">
+                  {item.value}
+                </p>
+                <p className="mt-4 text-[18px] font-semibold leading-[1.3] text-slate-400 md:text-[20px]">
+                  {item.label}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
