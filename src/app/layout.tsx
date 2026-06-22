@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import { SmoothScroll } from "@/components/ui/SmoothScroll";
 
 // 영문 디스플레이 폰트. 한글은 --font-display 스택의 Pretendard로 폴백된다.
 const display = Space_Grotesk({
@@ -54,7 +55,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={display.variable}>
-      <body>{children}</body>
+      <body>
+        <SmoothScroll />
+        {children}
+      </body>
     </html>
   );
 }
