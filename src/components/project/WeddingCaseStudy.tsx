@@ -2,11 +2,13 @@ import type { ProjectDetail } from "@/types/portfolio";
 import { MotionBlock } from "@/components/ui/MotionBlock";
 import {
   weddingHeroChips,
-  weddingLearned,
+  weddingProblem,
+  weddingRecap,
   weddingResearchQuestion,
   weddingTimeline,
   weddingVisualAnalysis,
 } from "@/data/weddingResearch";
+import { ProjectRecap } from "./ProjectRecap";
 import { WeddingEnvironmentChallenge } from "./WeddingEnvironmentChallenge";
 import { WeddingEvaluationFramework } from "./WeddingEvaluationFramework";
 import { WeddingExpertPromptSystem } from "./WeddingExpertPromptSystem";
@@ -84,8 +86,9 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
             제품이 되는 것은 아닙니다.
           </h2>
           <p className="project-body mt-10 max-w-[840px]">
-            2D 이미지를 3D 웨딩드레스로 복원하기 위해 SMPL, PIFuHD, ICON,
-            ECON 기반 모델을 직접 검토하고, 실패 원인을 분석한 뒤 제품 방향을
+            드레스 투어 비용 때문에 충분히 비교하지 못하는 문제에서 출발해, AI를
+            &lsquo;비교 도구&rsquo;로 설계했습니다. 2D→3D 복원(SMPL·PIFuHD·ICON·ECON)을 직접
+            검증하고 한계를 확인한 뒤, 생성형 AI 가상 피팅으로 방향을
             전환했습니다.
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
@@ -101,12 +104,42 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
         </MotionBlock>
       </section>
 
+      <section className="py-24 md:py-[180px]">
+        <SectionHeading
+          label={weddingProblem.label}
+          title={weddingProblem.title}
+          maxWidth="max-w-[840px]"
+        />
+        <div className="mt-10 max-w-[840px] space-y-6">
+          {weddingProblem.paragraphs.map((paragraph, index) => (
+            <MotionBlock key={paragraph} delay={index * 0.06}>
+              <p className="project-body">{paragraph}</p>
+            </MotionBlock>
+          ))}
+        </div>
+        <MotionBlock delay={0.2} className="mt-12">
+          <div className="grid gap-4 sm:grid-cols-3">
+            {weddingProblem.highlights.map((item) => (
+              <div
+                key={item.label}
+                className="rounded-[24px] border border-[#E5E7EB] bg-white/75 p-6 backdrop-blur"
+              >
+                <p className="text-2xl font-semibold tracking-[-0.03em] text-[#111827] md:text-3xl">
+                  {item.value}
+                </p>
+                <p className="small-label mt-3 text-[#B98979]">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </MotionBlock>
+      </section>
+
       <WeddingResearchStats />
 
       <section className="py-24 md:py-[180px]">
         <SectionHeading
           label="Research Question"
-          title="왜 3D 웨딩드레스였을까?"
+          title="그래서 왜 3D를 검토했을까?"
           maxWidth="max-w-[840px]"
         />
         <div className="mt-10 max-w-[840px] space-y-6">
@@ -310,30 +343,13 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
         </div>
       </section>
 
-      <section className="py-24 md:py-[180px]">
-        <SectionHeading
-          label="What I Learned"
-          title={weddingLearned.title}
-          maxWidth="max-w-[980px]"
-        />
-        <div className="mt-10 max-w-[840px] space-y-6">
-          {weddingLearned.paragraphs.map((paragraph, index) => (
-            <MotionBlock key={paragraph} delay={index * 0.06}>
-              <p className="project-body">
-                {paragraph}
-              </p>
-            </MotionBlock>
-          ))}
-        </div>
-        <MotionBlock delay={0.18} className="mt-12">
-          <blockquote className="rounded-[32px] border border-[#E5E7EB] bg-white/80 p-8 text-center backdrop-blur">
-            <p className="small-label text-[#B98979]">Quote</p>
-            <p className="mt-5 text-2xl font-semibold tracking-[-0.03em] text-[#111827] md:text-4xl">
-              {weddingLearned.quote}
-            </p>
-          </blockquote>
-        </MotionBlock>
-      </section>
+      <ProjectRecap
+        definition={weddingRecap.definition}
+        takeaways={weddingRecap.takeaways}
+        reflection={weddingRecap.reflection}
+        quote={weddingRecap.quote}
+        accent="#C99A88"
+      />
     </>
   );
 }

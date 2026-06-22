@@ -115,6 +115,21 @@ export const weddingEvaluationAxes: WeddingEvaluationAxis[] = [
   },
 ];
 
+export const weddingProblem = {
+  label: "Problem",
+  title: "드레스 투어는 비싸고,\n충분히 비교할 수 없습니다.",
+  paragraphs: [
+    "신부들은 드레스를 고르기 위해 여러 드레스샵을 도는 '드레스 투어'를 합니다. 그런데 시착 1벌당 5~8만 원의 비용이 반복되면서, 충분히 비교하지 못한 채 제한된 선택지 안에서 결정하게 됩니다.",
+    "저는 이 문제를 '취향이나 정보 부족'이 아니라 '비용과 비교 기회의 구조적 제약'으로 정의했습니다.",
+    "그래서 AI를 '완벽한 실착을 재현하는 기술'이 아니라, 선택 이전 단계에서 더 빠르고 확신 있게 비교하도록 돕는 '의사결정 도구'로 설계하기로 했습니다.",
+  ],
+  highlights: [
+    { value: "5~8만원", label: "시착 1벌당 비용" },
+    { value: "반복 비용", label: "드레스 투어 구조" },
+    { value: "비교 도구", label: "AI의 역할 정의" },
+  ],
+};
+
 export const weddingResearchQuestion = [
   "처음에는 사용자가 단순히 추천 이미지를 보는 것이 아니라, 자신의 체형이 반영된 3D 결과를 확인할 수 있다면 추천 결과에 대한 신뢰도가 더 높아질 것이라고 판단했습니다.",
   "정면 이미지로는 확인하기 어려운 옆면, 후면, 드레스 실루엣까지 보여주기 위해 2D 이미지를 3D로 변환하는 방식을 검토했습니다.",
@@ -380,3 +395,28 @@ export const weddingLearned = {
   ],
   quote: "Technology Validation Before Technology Adoption",
 };
+
+export const weddingRecap = {
+  definition:
+    "Wedding Dress는 신부가 드레스 투어(시착 1벌당 5~8만 원)에서 겪는 '비교 기회의 구조적 제약'을 생성형 AI 가상 피팅으로 푼 프로젝트입니다. 저는 문제 정의와 3D 복원 모델 검증, Stable Diffusion 기반 가상 피팅 프롬프트 설계를 맡았습니다.",
+  takeaways: [
+    {
+      label: "문제 재정의",
+      note: "'취향 부족'이 아니라 '비용·비교 기회의 구조적 제약'이 진짜 문제였습니다.",
+    },
+    {
+      label: "기술 중단 판단",
+      note: "3D 복원은 기술적으로 가능했지만, 서비스 품질 기준에 맞지 않아 중단했습니다.",
+    },
+    {
+      label: "비교 도구로서의 AI",
+      note: "완벽한 실착 재현 대신, 빠르게 비교하고 근거를 주는 도구로 설계했습니다.",
+    },
+  ],
+  reflection: [
+    "처음엔 사용자의 체형이 반영된 3D 드레스를 보여주면 추천 신뢰가 높아질 거라 생각해, SMPL·PIFuHD·ICON·ECON을 직접 환경까지 구축해 검증했습니다. 그런데 웨딩드레스는 '사람 복원(Human Reconstruction)'이 아니라 '의상 복원(Garment Reconstruction)'에 가까운 문제였고, 부피가 큰 드레스는 단일 이미지로 복원되지 않았습니다.",
+    "그래서 3D를 고집하는 대신, 사용자가 진짜 원한 것 — '나에게 어울리는 드레스를 더 확신 있게 고르는 경험' — 으로 방향을 바꿔 Stable Diffusion 가상 피팅과 전문가 역할 프롬프트로 비교 경험을 설계했습니다.",
+    "프로젝트가 끝난 뒤에도 Blender·MCP로 2D→3D 자동화를 다시 만들어 판단이 옳았는지 재검증했습니다. 이 경험으로 'AI를 쓸 수 있다'보다 'AI를 써야 하는 이유'를 먼저 묻게 됐습니다.",
+  ],
+  quote: "Technology Validation Before Technology Adoption",
+} as const;

@@ -4,6 +4,8 @@ type ProjectRecapProps = {
   definition: string;
   takeaways: readonly { label: string; note: string }[];
   reflection: readonly string[];
+  /** 선택적 마무리 인용구 */
+  quote?: string;
   /** accent hex (default ARMI blue) */
   accent?: string;
 };
@@ -18,6 +20,7 @@ export function ProjectRecap({
   definition,
   takeaways,
   reflection,
+  quote,
   accent = "#60A5FA",
 }: ProjectRecapProps) {
   return (
@@ -42,6 +45,17 @@ export function ProjectRecap({
             </p>
           ))}
         </MotionBlock>
+
+        {quote ? (
+          <MotionBlock delay={0.14} className="mt-12">
+            <p
+              className="text-[20px] font-semibold leading-[1.5] tracking-[-0.02em] md:text-[26px]"
+              style={{ color: accent }}
+            >
+              &ldquo;{quote}&rdquo;
+            </p>
+          </MotionBlock>
+        ) : null}
 
         <MotionBlock delay={0.16} className="mt-14 border-t border-white/10 pt-10">
           <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-white/35">
