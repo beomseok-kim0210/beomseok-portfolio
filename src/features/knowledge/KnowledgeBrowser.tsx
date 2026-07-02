@@ -2,13 +2,26 @@
 
 import { Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { MarkdownNote } from "@/components/ui/MarkdownNote";
+import { MotionBlock } from "@/components/ui/MotionBlock";
+import { KnowledgeCard } from "@/features/knowledge/KnowledgeCard";
+import { KnowledgeReader } from "@/features/knowledge/KnowledgeReader";
 import type { KnowledgeNote } from "@/types/portfolio";
 
 type KnowledgeBrowserProps = {
   notes: KnowledgeNote[];
   className?: string;
 };
+
+const FILTERS = [
+  "All",
+  "AI News",
+  "Voice AI",
+  "Prompt Engineering",
+  "RAG",
+  "Computer Vision",
+  "MCP",
+  "Agent",
+];
 
 export function KnowledgeBrowser({
   notes,
@@ -17,26 +30,12 @@ export function KnowledgeBrowser({
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
-  const [activeSlug, setActiveSlug] = useState(notes[0]?.slug ?? "");
+  const [openSlug, setOpenSlug] = useState<string | null>(null);
 
   useEffect(() => {
     const id = window.setTimeout(() => setDebouncedQuery(query), 300);
     return () => window.clearTimeout(id);
   }, [query]);
-
-  const filters = useMemo(
-    () => [
-      "All",
-      "AI News",
-      "Voice AI",
-      "Prompt Engineering",
-      "RAG",
-      "Computer Vision",
-      "MCP",
-      "Agent",
-    ],
-    [],
-  );
 
   const filteredNotes = useMemo(() => {
     const normalized = debouncedQuery.trim().toLowerCase();
@@ -62,97 +61,90 @@ export function KnowledgeBrowser({
     });
   }, [activeFilter, debouncedQuery, notes]);
 
-  const activeNote =
-    notes.find((note) => note.slug === activeSlug) ?? filteredNotes[0] ?? notes[0];
+  const openNote = openSlug
+    ? notes.find((note) => note.slug === openSlug) ?? null
+    : null;
+
+  const [featured, ...rest] = filteredNotes;
 
   return (
-    <div
-      className={`rounded-[40px] border border-slate-200 bg-[#FAFAFA] p-4 md:p-6 ${className}`}
+    <section
+      className={`section-shell bg-[#FAFAFA] pb-28 ${className}`}
     >
-      <div className="mb-6 grid gap-4 lg:grid-cols-[1fr_auto]">
-        <label className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-5 py-4">
-          <Search className="h-5 w-5 text-slate-400" aria-hidden="true" />
-          <span className="sr-only">Search knowledge</span>
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search knowledge system"
-            className="w-full bg-transparent text-[15px] outline-none placeholder:text-slate-400"
-          />
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {filters.map((filter) => (
-            <button
-              key={filter}
-              type="button"
-              onClick={() => setActiveFilter(filter)}
-              className={`rounded-full px-4 py-3 small-label transition-colors ${
-                activeFilter === filter
-                  ? "bg-[#111827] text-white"
-                  : "border border-slate-200 bg-white text-slate-600"
-              }`}
-            >
-              {filter}
-            </button>
-          ))}
+      {/* ─── 스티키 컨트롤 바 ─── */}
+      <div className="sticky top-14 z-30 border-b border-slate-200/80 bg-[#FAFAFA]/85 backdrop-blur-md">
+        <div className="content-grid flex flex-col gap-4 py-5 lg:flex-row lg:items-center lg:justify-between">
+          <label className="flex w-full items-center gap-3 rounded-full border border-slate-200 bg-white px-5 py-3 lg:max-w-[320px]">
+            <Search className="h-4 w-4 shrink-0 text-slate-400" aria-hidden="true" />
+            <span className="sr-only">지식 검색</span>
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search knowledge"
+              className="w-full bg-transparent text-[15px] outline-none placeholder:text-slate-400"
+            />
+          </label>
+
+          <div className="-mx-1 flex flex-nowrap gap-2 overflow-x-auto px-1 pb-1 lg:flex-wrap lg:justify-end lg:overflow-visible lg:pb-0">
+            {FILTERS.map((filter) => (
+              <button
+                key={filter}
+                type="button"
+                onClick={() => setActiveFilter(filter)}
+                aria-pressed={activeFilter === filter}
+                className={`whitespace-nowrap rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] transition-colors ${
+                  activeFilter === filter
+                    ? "bg-ink text-white"
+                    : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
-      <div className="grid gap-5 lg:grid-cols-[1fr_1.05fr]">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1">
-          {filteredNotes.map((note) => (
-            <button
-              key={note.slug}
-              type="button"
-              onClick={() => setActiveSlug(note.slug)}
-              className={`rounded-[28px] border p-5 text-left transition-colors ${
-                activeNote?.slug === note.slug
-                  ? "border-slate-900 bg-white"
-                  : "border-slate-200 bg-white/70 hover:bg-white"
-              }`}
-            >
-              <div className="mb-8 flex items-center justify-between gap-4">
-                <span className="small-label text-blue-600">{note.category}</span>
-                <span className="small-label text-slate-400">
-                  {note.readingTime}
-                </span>
-              </div>
-              <h3 className="text-2xl font-semibold leading-tight">{note.title}</h3>
-              <div className="mt-8 grid grid-cols-2 gap-3 text-[13px] leading-6 text-slate-500">
-                <p>Difficulty: {note.difficulty}</p>
-                <p>Updated: {note.lastUpdated}</p>
-              </div>
-            </button>
-          ))}
-        </div>
-        <div className="min-h-[640px] rounded-[32px] border border-slate-200 bg-white p-7 md:p-10">
-          {activeNote ? (
-            <>
-              <p className="cinematic-label text-blue-600">Knowledge OS</p>
-              <h3 className="mt-6 text-4xl font-semibold leading-tight">
-                {activeNote.title}
-              </h3>
-              <p className="mt-5 max-w-[760px] text-[15px] leading-7 text-slate-600">
-                {activeNote.summary}
-              </p>
-              <div className="mt-8 flex flex-wrap gap-2">
-                {activeNote.keywords.map((keyword) => (
-                  <span
-                    key={keyword}
-                    className="rounded-full bg-slate-100 px-3 py-1 small-label text-slate-600"
+
+      {/* ─── 에디토리얼 그리드 ─── */}
+      <div className="content-grid pt-12">
+        <p className="small-label mb-8 text-slate-400">
+          {filteredNotes.length} / {notes.length} Notes
+        </p>
+
+        {filteredNotes.length === 0 ? (
+          <div className="rounded-[28px] border border-dashed border-slate-300 bg-white/60 py-24 text-center">
+            <p className="section-title text-slate-400">
+              조건에 맞는 노트가 없습니다.
+            </p>
+            <p className="body-copy mt-3">
+              검색어나 필터를 바꿔 다시 시도해 보세요.
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-6">
+            {featured ? (
+              <MotionBlock>
+                <KnowledgeCard note={featured} onOpen={setOpenSlug} featured />
+              </MotionBlock>
+            ) : null}
+
+            {rest.length ? (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {rest.map((note, index) => (
+                  <MotionBlock
+                    key={note.slug}
+                    delay={Math.min(index * 0.05, 0.3)}
                   >
-                    {keyword}
-                  </span>
+                    <KnowledgeCard note={note} onOpen={setOpenSlug} />
+                  </MotionBlock>
                 ))}
               </div>
-              <div className="mt-8 rounded-[24px] bg-[#FAFAFA] p-6">
-                <MarkdownNote body={activeNote.body} />
-              </div>
-            </>
-          ) : (
-            <p className="text-slate-500">No knowledge note found.</p>
-          )}
+            ) : null}
           </div>
+        )}
       </div>
-    </div>
+
+      <KnowledgeReader note={openNote} onClose={() => setOpenSlug(null)} />
+    </section>
   );
 }

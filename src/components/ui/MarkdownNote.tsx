@@ -44,6 +44,21 @@ export function MarkdownNote({ body }: MarkdownNoteProps) {
           return <hr key={block} className="my-6 border-slate-200" />;
         }
 
+        if (block.startsWith("> ")) {
+          const lines = block
+            .split("\n")
+            .map((line) => line.replace(/^>\s?/, "").trim())
+            .filter(Boolean);
+
+          return (
+            <blockquote key={block}>
+              {lines.map((line) => (
+                <p key={line}>{parseInline(line)}</p>
+              ))}
+            </blockquote>
+          );
+        }
+
         if (block.startsWith("### ")) {
           return <h3 key={block}>{parseInline(block.replace(/^### /, ""))}</h3>;
         }
