@@ -27,6 +27,7 @@ export function KnowledgeBrowser({
   const filters = useMemo(
     () => [
       "All",
+      "AI News",
       "Voice AI",
       "Prompt Engineering",
       "RAG",
