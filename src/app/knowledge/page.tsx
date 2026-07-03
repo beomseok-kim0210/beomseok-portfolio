@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import { MotionBlock } from "@/components/ui/MotionBlock";
 import { KnowledgeBrowser } from "@/features/knowledge/KnowledgeBrowser";
+import { StudyNotes } from "@/features/knowledge/StudyNotes";
 import { navItems } from "@/data/navigation";
 import { getKnowledgeNotes } from "@/lib/knowledge";
 
@@ -66,6 +67,9 @@ export default function KnowledgePage() {
 
       {/* ─── 브라우즈 그리드 + 몰입 리딩 ─── */}
       <KnowledgeBrowser notes={notes} />
+
+      {/* ─── 노션 학습 노트 인덱스 (링크 연동) ─── */}
+      <StudyNotes />
     </main>
   );
 }
