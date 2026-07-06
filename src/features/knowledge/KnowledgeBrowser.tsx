@@ -65,6 +65,13 @@ export function KnowledgeBrowser({
     ? notes.find((note) => note.slug === openSlug) ?? null
     : null;
 
+  const handleKeywordSelect = (keyword: string) => {
+    setActiveFilter("All");
+    setQuery(keyword);
+    setDebouncedQuery(keyword);
+    setOpenSlug(null);
+  };
+
   const [featured, ...rest] = filteredNotes;
 
   return (
@@ -124,7 +131,12 @@ export function KnowledgeBrowser({
           <div className="flex flex-col gap-6">
             {featured ? (
               <MotionBlock>
-                <KnowledgeCard note={featured} onOpen={setOpenSlug} featured />
+                <KnowledgeCard
+                  note={featured}
+                  onOpen={setOpenSlug}
+                  onKeywordSelect={handleKeywordSelect}
+                  featured
+                />
               </MotionBlock>
             ) : null}
 
@@ -135,7 +147,11 @@ export function KnowledgeBrowser({
                     key={note.slug}
                     delay={Math.min(index * 0.05, 0.3)}
                   >
-                    <KnowledgeCard note={note} onOpen={setOpenSlug} />
+                    <KnowledgeCard
+                      note={note}
+                      onOpen={setOpenSlug}
+                      onKeywordSelect={handleKeywordSelect}
+                    />
                   </MotionBlock>
                 ))}
               </div>
@@ -144,7 +160,11 @@ export function KnowledgeBrowser({
         )}
       </div>
 
-      <KnowledgeReader note={openNote} onClose={() => setOpenSlug(null)} />
+      <KnowledgeReader
+        note={openNote}
+        onClose={() => setOpenSlug(null)}
+        onKeywordSelect={handleKeywordSelect}
+      />
     </section>
   );
 }

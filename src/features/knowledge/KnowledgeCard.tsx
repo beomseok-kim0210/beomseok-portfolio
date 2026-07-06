@@ -6,12 +6,14 @@ import type { KnowledgeNote } from "@/types/portfolio";
 type KnowledgeCardProps = {
   note: KnowledgeNote;
   onOpen: (slug: string) => void;
+  onKeywordSelect?: (keyword: string) => void;
   featured?: boolean;
 };
 
 export function KnowledgeCard({
   note,
   onOpen,
+  onKeywordSelect,
   featured = false,
 }: KnowledgeCardProps) {
   return (
@@ -54,9 +56,23 @@ export function KnowledgeCard({
             {note.keywords.slice(0, featured ? 4 : 3).map((keyword) => (
               <span
                 key={keyword}
-                className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium tracking-wide text-slate-600"
+                role={onKeywordSelect ? "button" : undefined}
+                tabIndex={onKeywordSelect ? 0 : undefined}
+                onClick={(event) => {
+                  if (!onKeywordSelect) return;
+                  event.stopPropagation();
+                  onKeywordSelect(keyword);
+                }}
+                onKeyDown={(event) => {
+                  if (!onKeywordSelect) return;
+                  if (event.key !== "Enter" && event.key !== " ") return;
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onKeywordSelect(keyword);
+                }}
+                className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium tracking-wide text-slate-600 transition-colors hover:bg-blue-100 hover:text-blue-700"
               >
-                {keyword}
+                #{keyword}
               </span>
             ))}
           </div>

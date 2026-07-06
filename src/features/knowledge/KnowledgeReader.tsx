@@ -9,9 +9,14 @@ import type { KnowledgeNote } from "@/types/portfolio";
 type KnowledgeReaderProps = {
   note: KnowledgeNote | null;
   onClose: () => void;
+  onKeywordSelect?: (keyword: string) => void;
 };
 
-export function KnowledgeReader({ note, onClose }: KnowledgeReaderProps) {
+export function KnowledgeReader({
+  note,
+  onClose,
+  onKeywordSelect,
+}: KnowledgeReaderProps) {
   const reduceMotion = useReducedMotion();
   const closeRef = useRef<HTMLButtonElement>(null);
   const open = Boolean(note);
@@ -87,12 +92,14 @@ export function KnowledgeReader({ note, onClose }: KnowledgeReaderProps) {
               {note.keywords.length ? (
                 <div className="mt-6 flex flex-wrap gap-2">
                   {note.keywords.map((keyword) => (
-                    <span
+                    <button
                       key={keyword}
-                      className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium tracking-wide text-slate-600"
+                      type="button"
+                      onClick={() => onKeywordSelect?.(keyword)}
+                      className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium tracking-wide text-slate-600 transition-colors hover:bg-blue-100 hover:text-blue-700"
                     >
-                      {keyword}
-                    </span>
+                      #{keyword}
+                    </button>
                   ))}
                 </div>
               ) : null}

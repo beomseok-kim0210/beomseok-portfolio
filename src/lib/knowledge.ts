@@ -30,6 +30,18 @@ function parseFrontmatter(source: string) {
   };
 }
 
+// 슬러그의 YYYY-MM-DD(예: ai-news-2026-07-06)를 우선하고, 없으면
+// lastUpdated의 YYYY.MM을 월 초 날짜로 취급해 정렬 키를 만든다.
+function toSortableDate(slug: string, lastUpdated: string): string {
+  const slugDate = slug.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (slugDate) return `${slugDate[1]}-${slugDate[2]}-${slugDate[3]}`;
+
+  const monthDate = lastUpdated.match(/(\d{4})\.(\d{2})/);
+  if (monthDate) return `${monthDate[1]}-${monthDate[2]}-01`;
+
+  return "0000-00-00";
+}
+
 export function getKnowledgeNotes(): KnowledgeNote[] {
   if (!fs.existsSync(knowledgeDirectory)) return [];
 
@@ -59,5 +71,9 @@ export function getKnowledgeNotes(): KnowledgeNote[] {
         body,
       };
     })
-    .sort((a, b) => a.title.localeCompare(b.title));
+    .sort((a, b) =>
+      toSortableDate(b.slug, b.lastUpdated).localeCompare(
+        toSortableDate(a.slug, a.lastUpdated),
+      ),
+    );
 }
