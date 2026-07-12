@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import { MotionBlock } from "@/components/ui/MotionBlock";
 import { KnowledgeBrowser } from "@/features/knowledge/KnowledgeBrowser";
+import { DesignPromptLibrary } from "@/features/knowledge/DesignPromptLibrary";
 import { StudyNotes } from "@/features/knowledge/StudyNotes";
 import { navItems } from "@/data/navigation";
 import { getKnowledgeNotes } from "@/lib/knowledge";
@@ -67,6 +68,9 @@ export default function KnowledgePage() {
 
       {/* ─── 브라우즈 그리드 + 몰입 리딩 ─── */}
       <KnowledgeBrowser notes={notes} />
+
+      {/* ─── 프롬프트 엔지니어링: 디자인 프롬프트 라이브러리 ─── */}
+      <DesignPromptLibrary />
 
       {/* ─── 노션 학습 노트 인덱스 (링크 연동) ─── */}
       <StudyNotes />
