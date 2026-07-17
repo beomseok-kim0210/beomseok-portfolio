@@ -1,10 +1,11 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { DocentEmotion } from "@/types/docent";
 import { ChatPanel } from "./ChatPanel";
 import { useDocentChat } from "./useDocentChat";
+import { useVoice } from "./useVoice";
 
 const AvatarCanvas = dynamic(() => import("./AvatarCanvas"), {
   ssr: false,
@@ -24,11 +25,30 @@ function AvatarSkeleton() {
 export function DocentExperience() {
   const [emotion, setEmotion] = useState<DocentEmotion>("neutral");
   const chat = useDocentChat({ onEmotion: setEmotion });
+  const voice = useVoice();
+
+  // 스트리밍이 끝나면 (음성 모드일 때) 마지막 도슨트 답변을 낭독한다.
+  const spokenCountRef = useRef(0);
+  useEffect(() => {
+    if (chat.isStreaming || !voice.voiceEnabled) return;
+    const last = chat.messages[chat.messages.length - 1];
+    if (
+      last?.role === "assistant" &&
+      last.content &&
+      chat.messages.length > spokenCountRef.current
+    ) {
+      spokenCountRef.current = chat.messages.length;
+      voice.speak(last.content);
+    }
+  }, [chat.isStreaming, chat.messages, voice]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-      <AvatarCanvas emotion={emotion} speaking={chat.isStreaming} />
-      <ChatPanel {...chat} />
+      <AvatarCanvas
+        emotion={emotion}
+        speaking={chat.isStreaming || voice.ttsSpeaking}
+      />
+      <ChatPanel {...chat} voice={voice} />
     </div>
   );
 }
