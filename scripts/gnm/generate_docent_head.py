@@ -87,6 +87,15 @@ def main() -> None:
         default=1.0,
         help="identity 벡터 스케일 (0=평균 얼굴)",
     )
+    parser.add_argument(
+        "--identity",
+        type=pathlib.Path,
+        default=None,
+        help=(
+            "fit_identity.py가 만든 npz. 주면 사진에서 피팅한 얼굴을 쓰고, "
+            "없으면 시맨틱 샘플러로 임의 얼굴을 생성한다."
+        ),
+    )
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
 
@@ -98,15 +107,24 @@ def main() -> None:
         variant=gnm_numpy.GNMVariant.HEAD,
     )
 
-    print("Sampling identity (MALE + ASIAN)...")
-    identity_sampler = semantic_sampler.IdentitySampler()
-    identity = identity_sampler.blend_identities(
-        {semantic_sampler.Gender.MALE: 1.0},
-        {semantic_sampler.Ethnicity.ASIAN: 1.0},
-        1,
-        rng=rng,
-    )
-    identity = np.asarray(identity).reshape(-1) * args.identity_scale
+    if args.identity is not None:
+        print(f"Loading fitted identity from {args.identity}")
+        identity = np.load(args.identity)["identity"].reshape(-1).astype(np.float64)
+        if identity.size != gnm.identity_dim:
+            raise SystemExit(
+                f"identity 차원 불일치: {identity.size} != {gnm.identity_dim}"
+            )
+        identity = identity * args.identity_scale
+    else:
+        print("Sampling identity (MALE + ASIAN)...")
+        identity_sampler = semantic_sampler.IdentitySampler()
+        identity = identity_sampler.blend_identities(
+            {semantic_sampler.Gender.MALE: 1.0},
+            {semantic_sampler.Ethnicity.ASIAN: 1.0},
+            1,
+            rng=rng,
+        )
+        identity = np.asarray(identity).reshape(-1) * args.identity_scale
 
     expression_sampler = semantic_sampler.ExpressionSampler()
     rotations = np.zeros((gnm.num_joints, 3))
