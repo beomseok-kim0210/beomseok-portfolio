@@ -62,53 +62,74 @@ export function DocentHead({ emotion, viseme }: DocentHeadProps) {
   const reduced = usePrefersReducedMotion();
   const blink = useRef({ nextAt: 2.5, closing: false });
 
-  const head = useMemo(() => {
-    const found = scene.getObjectByName("Head");
-    return found instanceof Mesh ? found : null;
+  // GLB가 부위별 재질(피부·흰자·홍채·치아…)로 나뉘어 있어 메쉬가 여러 개다.
+  // 모프타겟을 가진 서브메쉬를 모두 모아 같은 가중치로 함께 구동한다.
+  const meshes = useMemo(() => {
+    const found: Mesh[] = [];
+    scene.traverse((object) => {
+      if (
+        object instanceof Mesh &&
+        object.morphTargetInfluences &&
+        object.morphTargetDictionary
+      ) {
+        found.push(object);
+      }
+    });
+    return found;
   }, [scene]);
 
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime;
-    const influences = head?.morphTargetInfluences;
-    const dictionary = head?.morphTargetDictionary;
 
-    if (influences && dictionary) {
-      // 1) 감정 표정: 이름별 목표 가중치로 수렴 (없는 모프는 조용히 무시)
-      //    말하는 중에는 감정 모프와 비짐이 같은 입술 정점을 두고 겹쳐 이를
-      //    드러낸 기괴한 표정이 되므로, 발화 중에는 감정 강도를 낮춘다.
-      const targets = EMOTION_WEIGHTS[emotion] ?? {};
-      const emotionScale = viseme ? 0.45 : 1;
-      const damp = reduced ? 40 : 6;
-      for (const [name, index] of Object.entries(dictionary)) {
-        if (name === "blink" || VISEME_MORPH_NAMES.includes(name)) continue;
-        const target = (targets[name] ?? 0) * emotionScale;
-        influences[index] = MathUtils.damp(influences[index], target, damp, delta);
-      }
-
-      // 2) 립싱크: 활성 비짐만 올리고 나머지는 내린다.
-      //    전환이 뚝뚝 끊기지 않도록 damp로 부드럽게 섞는다.
-      const activeMorph = viseme ? VISEME_MORPH[viseme] : null;
-      const activeTarget = viseme ? VISEME_INTENSITY[viseme] : 0;
-      for (const name of VISEME_MORPH_NAMES) {
-        const index = dictionary[name];
-        if (index === undefined) continue;
-        const target = name === activeMorph ? activeTarget : 0;
-        influences[index] = MathUtils.damp(influences[index], target, 18, delta);
-      }
-
-      // 3) 눈 깜빡임: 2.5~6초 랜덤 간격, ~120ms
-      const blinkIndex = dictionary["blink"] ?? -1;
-      if (blinkIndex >= 0 && !reduced) {
-        const b = blink.current;
+    // 눈 깜빡임 타이밍은 메쉬마다 따로 굴리면 어긋나므로 프레임당 한 번만 계산
+    let blinkTarget: number | null = null;
+    if (!reduced && meshes.length > 0) {
+      const b = blink.current;
+      const first = meshes[0];
+      const blinkIndex = first.morphTargetDictionary?.["blink"];
+      if (blinkIndex !== undefined) {
+        const currentBlink = first.morphTargetInfluences?.[blinkIndex] ?? 0;
         if (!b.closing && t >= b.nextAt) b.closing = true;
-        if (b.closing) {
-          influences[blinkIndex] = MathUtils.damp(influences[blinkIndex], 1, 30, delta);
-          if (influences[blinkIndex] > 0.85) {
-            b.closing = false;
-            b.nextAt = t + 2.5 + Math.random() * 3.5;
+        if (b.closing && currentBlink > 0.85) {
+          b.closing = false;
+          b.nextAt = t + 2.5 + Math.random() * 3.5;
+        }
+        blinkTarget = b.closing ? 1 : 0;
+      }
+    }
+
+    const targets = EMOTION_WEIGHTS[emotion] ?? {};
+    // 말하는 중에는 감정 모프와 비짐이 같은 입술 정점을 두고 겹쳐 이를 드러낸
+    // 기괴한 표정이 되므로, 발화 중에는 감정 강도를 낮춘다.
+    const emotionScale = viseme ? 0.45 : 1;
+    const damp = reduced ? 40 : 6;
+    const activeMorph = viseme ? VISEME_MORPH[viseme] : null;
+    const activeTarget = viseme ? VISEME_INTENSITY[viseme] : 0;
+
+    for (const mesh of meshes) {
+      const influences = mesh.morphTargetInfluences;
+      const dictionary = mesh.morphTargetDictionary;
+      if (!influences || !dictionary) continue;
+
+      for (const [name, index] of Object.entries(dictionary)) {
+        if (name === "blink") {
+          // 3) 눈 깜빡임
+          if (blinkTarget !== null) {
+            influences[index] = MathUtils.damp(
+              influences[index],
+              blinkTarget,
+              blinkTarget > 0 ? 30 : 18,
+              delta
+            );
           }
+        } else if (VISEME_MORPH_NAMES.includes(name)) {
+          // 2) 립싱크: 활성 비짐만 올리고 나머지는 내린다
+          const target = name === activeMorph ? activeTarget : 0;
+          influences[index] = MathUtils.damp(influences[index], target, 18, delta);
         } else {
-          influences[blinkIndex] = MathUtils.damp(influences[blinkIndex], 0, 18, delta);
+          // 1) 감정 표정
+          const target = (targets[name] ?? 0) * emotionScale;
+          influences[index] = MathUtils.damp(influences[index], target, damp, delta);
         }
       }
     }

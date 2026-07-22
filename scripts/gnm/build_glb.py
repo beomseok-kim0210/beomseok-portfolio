@@ -19,10 +19,15 @@ GLB 계약 (src/features/docent/DocentHead.tsx와의 인터페이스):
 from __future__ import annotations
 
 import argparse
+import os
 import pathlib
+
+os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")
 
 import numpy as np
 import pygltflib
+
+from gnm.shape import gnm_numpy
 
 MORPH_ORDER = [
     "smile",
@@ -37,11 +42,49 @@ MORPH_ORDER = [
     "viseme_o",
     "viseme_m",
 ]
-SKIN_COLOR = [0.851, 0.678, 0.573, 1.0]  # 무광 스킨톤
+# 부위별 재질. 우선순위 순서대로 정점에 배정한다(앞쪽이 더 구체적).
+# GNM은 skin/eyes/teeth/tongue가 전체 정점을 정확히 분할하므로 누락이 없다.
+# eye_exteriors(각막 껍질)는 불투명하게 그리면 홍채를 가려서 제외한다.
+MATERIALS: list[tuple[str, str, list[float], float]] = [
+    # (재질 이름, GNM 정점 그룹, baseColor RGBA, roughness)
+    ("Pupil", "pupils", [0.02, 0.02, 0.03, 1.0], 0.25),
+    ("Iris", "irises", [0.20, 0.12, 0.07, 1.0], 0.30),
+    ("Sclera", "scleras", [0.93, 0.92, 0.90, 1.0], 0.35),
+    ("Teeth", "teeth", [0.93, 0.91, 0.86, 1.0], 0.40),
+    ("Gums", "gums", [0.72, 0.42, 0.42, 1.0], 0.60),
+    ("Tongue", "tongue", [0.70, 0.36, 0.36, 1.0], 0.65),
+    ("Skin", "skin", [0.851, 0.678, 0.573, 1.0], 0.75),
+]
+EXCLUDED_GROUP = "eye_exteriors"  # 투명해야 할 각막 껍질 — 렌더에서 뺀다
 # sparse 제외 임계값. CVAE 샘플러가 얼굴 전체에 미세 노이즈를 남기므로
 # 절대값만으로는 걸러지지 않는다. 모프 자신의 최대 변위 대비 상대 임계를 함께 쓴다.
 SPARSE_EPSILON_ABS = 2e-5
 SPARSE_EPSILON_REL = 0.01  # 최대 변위의 1% 미만 이동은 눈에 보이지 않음
+
+
+def assign_triangle_materials(triangles: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """GNM 정점 그룹으로 정점·삼각형에 재질을 배정한다.
+
+    Returns:
+      (삼각형별 재질 인덱스, 제외 대상 삼각형 마스크)
+    """
+    gnm = gnm_numpy.GNM.from_local(
+        version=gnm_numpy.GNMMajorVersion.V3,
+        variant=gnm_numpy.GNMVariant.HEAD,
+    )
+    vertex_count = gnm.num_vertices
+    # 뒤에서부터 덮어써서 앞쪽(구체적) 재질이 최종 승자가 되게 한다
+    vertex_material = np.full(vertex_count, len(MATERIALS) - 1, dtype=np.int32)
+    for material_index in range(len(MATERIALS) - 1, -1, -1):
+        _, group, _, _ = MATERIALS[material_index]
+        vertex_material[np.asarray(gnm.vertex_group_mask(group))] = material_index
+
+    excluded_vertices = np.asarray(gnm.vertex_group_mask(EXCLUDED_GROUP))
+
+    # 삼각형은 세 정점 중 가장 구체적인(작은 인덱스) 재질을 따른다
+    triangle_material = vertex_material[triangles].min(axis=1)
+    triangle_excluded = excluded_vertices[triangles].any(axis=1)
+    return triangle_material, triangle_excluded
 
 
 def compute_vertex_normals(vertices: np.ndarray, triangles: np.ndarray) -> np.ndarray:
@@ -175,55 +218,80 @@ def main() -> None:
         accessors.append(acc)
         return len(accessors) - 1, int(moved.size)
 
-    idx_indices = add_dense(
-        triangles.reshape(-1, 1),
-        pygltflib.UNSIGNED_INT,
-        "SCALAR",
-        pygltflib.ELEMENT_ARRAY_BUFFER,
-        minmax=False,
-    )
-    # SCALAR는 (N,1)로 넣었으므로 count를 정점 인덱스 개수로 되돌린다
-    accessors[idx_indices].count = triangles.size
+    # --- 부위별 재질 배정 후 프리미티브 분리 ---
+    triangle_material, triangle_excluded = assign_triangle_materials(triangles)
+    print(f"각막 껍질({EXCLUDED_GROUP}) 삼각형 {int(triangle_excluded.sum())}개 제외")
 
-    idx_position = add_dense(
-        base_t, pygltflib.FLOAT, "VEC3", pygltflib.ARRAY_BUFFER, minmax=True
-    )
-    idx_normal = add_dense(
-        normals, pygltflib.FLOAT, "VEC3", pygltflib.ARRAY_BUFFER, minmax=False
-    )
+    primitives: list[pygltflib.Primitive] = []
+    materials: list[pygltflib.Material] = []
+    print("\n재질별 프리미티브:")
+    for material_index, (name, group, color, roughness) in enumerate(MATERIALS):
+        selected = (triangle_material == material_index) & ~triangle_excluded
+        if not selected.any():
+            continue
 
-    target_accessors: list[int] = []
-    print("모프타겟 sparse 통계:")
-    for name in MORPH_ORDER:
-        acc_index, moved_count = add_sparse_morph(deltas[name])
-        target_accessors.append(acc_index)
-        ratio = moved_count / len(base_t) * 100
-        print(f"  {name:12s} 움직인 정점 {moved_count:6d} / {len(base_t)} ({ratio:4.1f}%)")
+        sub_triangles = triangles[selected]
+        # 이 프리미티브가 쓰는 정점만 골라 인덱스를 다시 매긴다
+        used = np.unique(sub_triangles)
+        remap = np.full(len(base_t), -1, dtype=np.int64)
+        remap[used] = np.arange(used.size)
+        local_triangles = remap[sub_triangles].astype(np.uint32)
 
-    primitive = pygltflib.Primitive(
-        attributes=pygltflib.Attributes(POSITION=idx_position, NORMAL=idx_normal),
-        indices=idx_indices,
-        material=0,
-        targets=[pygltflib.Attributes(POSITION=i) for i in target_accessors],
-    )
+        idx_indices = add_dense(
+            local_triangles.reshape(-1, 1),
+            pygltflib.UNSIGNED_INT,
+            "SCALAR",
+            pygltflib.ELEMENT_ARRAY_BUFFER,
+            minmax=False,
+        )
+        # SCALAR는 (N,1)로 넣었으므로 count를 정점 인덱스 개수로 되돌린다
+        accessors[idx_indices].count = local_triangles.size
+
+        idx_position = add_dense(
+            base_t[used], pygltflib.FLOAT, "VEC3", pygltflib.ARRAY_BUFFER, minmax=True
+        )
+        idx_normal = add_dense(
+            normals[used], pygltflib.FLOAT, "VEC3", pygltflib.ARRAY_BUFFER, minmax=False
+        )
+
+        target_accessors = [
+            add_sparse_morph(deltas[morph][used])[0] for morph in MORPH_ORDER
+        ]
+
+        primitives.append(
+            pygltflib.Primitive(
+                attributes=pygltflib.Attributes(
+                    POSITION=idx_position, NORMAL=idx_normal
+                ),
+                indices=idx_indices,
+                material=len(materials),
+                targets=[pygltflib.Attributes(POSITION=i) for i in target_accessors],
+            )
+        )
+        materials.append(
+            pygltflib.Material(
+                name=name,
+                pbrMetallicRoughness=pygltflib.PbrMetallicRoughness(
+                    baseColorFactor=color,
+                    metallicFactor=0.0,
+                    roughnessFactor=roughness,
+                ),
+                doubleSided=False,
+            )
+        )
+        print(
+            f"  {name:8s} 정점 {used.size:6d}, 삼각형 {int(selected.sum()):6d}  ({group})"
+        )
 
     gltf = pygltflib.GLTF2()
     gltf.asset = pygltflib.Asset(
         version="2.0", generator="beomseok-portfolio gnm pipeline"
     )
-    gltf.materials = [
-        pygltflib.Material(
-            name="Skin",
-            pbrMetallicRoughness=pygltflib.PbrMetallicRoughness(
-                baseColorFactor=SKIN_COLOR, metallicFactor=0.0, roughnessFactor=0.75
-            ),
-            doubleSided=False,
-        )
-    ]
+    gltf.materials = materials
     gltf.meshes = [
         pygltflib.Mesh(
             name="Head",
-            primitives=[primitive],
+            primitives=primitives,
             weights=[0.0] * len(MORPH_ORDER),
             extras={"targetNames": MORPH_ORDER},
         )
@@ -241,7 +309,7 @@ def main() -> None:
 
     size_mb = args.out.stat().st_size / 1e6
     print(f"\nSaved {args.out} ({size_mb:.2f} MB)")
-    print(f"  vertices={len(base_t)}, triangles={len(triangles)}")
+    print(f"  프리미티브 {len(primitives)}개, 재질 {len(materials)}개")
     print(f"  morphs({len(MORPH_ORDER)})={MORPH_ORDER}")
     if size_mb > 3:
         print("  WARNING: >3MB — gltf-transform draco 압축 검토")
