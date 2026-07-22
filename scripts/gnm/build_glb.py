@@ -1,10 +1,14 @@
-"""docent_head.npz → public/models/docent.glb (모프타겟 6개 포함) 조립.
+"""docent_head.npz → public/models/docent.glb (감정 5 + 비짐 6 모프타겟).
 
 GLB 계약 (src/features/docent/DocentHead.tsx와의 인터페이스):
   - 루트 노드/메쉬 이름 "Head" (three.js에서 scene.getObjectByName("Head")가 Mesh)
-  - morphTargetDictionary 키: smile, thinking, surprised, sad, talking, blink
-    (mesh.extras.targetNames — three.js GLTFLoader가 읽는 위치)
+  - morphTargetDictionary 키:
+      감정: smile, thinking, surprised, sad, blink
+      비짐: viseme_a, viseme_i, viseme_u, viseme_e, viseme_o, viseme_m
   - 원점 = 목 피벗 근사(메쉬 바닥에서 35% 높이), +Z 응시, 머리 높이 ~0.25 유닛
+
+비짐은 입 주변 정점만 움직이므로 glTF sparse accessor로 저장한다. 움직이지
+않는 정점은 파일에 아예 담기지 않아 모프 하나당 용량이 크게 줄어든다.
 
 사용법:
   cd C:/Users/kbs02/Desktop/gnm-pipeline
@@ -16,13 +20,28 @@ from __future__ import annotations
 
 import argparse
 import pathlib
-import struct
 
 import numpy as np
 import pygltflib
 
-MORPH_ORDER = ["smile", "thinking", "surprised", "sad", "talking", "blink"]
+MORPH_ORDER = [
+    "smile",
+    "thinking",
+    "surprised",
+    "sad",
+    "blink",
+    "viseme_a",
+    "viseme_i",
+    "viseme_u",
+    "viseme_e",
+    "viseme_o",
+    "viseme_m",
+]
 SKIN_COLOR = [0.851, 0.678, 0.573, 1.0]  # 무광 스킨톤
+# sparse 제외 임계값. CVAE 샘플러가 얼굴 전체에 미세 노이즈를 남기므로
+# 절대값만으로는 걸러지지 않는다. 모프 자신의 최대 변위 대비 상대 임계를 함께 쓴다.
+SPARSE_EPSILON_ABS = 2e-5
+SPARSE_EPSILON_REL = 0.01  # 최대 변위의 1% 미만 이동은 눈에 보이지 않음
 
 
 def compute_vertex_normals(vertices: np.ndarray, triangles: np.ndarray) -> np.ndarray:
@@ -53,7 +72,6 @@ def main() -> None:
     mins, maxs = base.min(axis=0), base.max(axis=0)
     height = maxs[1] - mins[1]
     scale = args.head_height / height
-    # 목 피벗: 바닥에서 35% 높이, 수평은 스컬 중심
     pivot = np.array(
         [
             (mins[0] + maxs[0]) / 2.0,
@@ -67,54 +85,54 @@ def main() -> None:
     base_t = transform(base)
     normals = compute_vertex_normals(base_t, triangles)
 
-    # 얼굴이 +Z를 보는지 검증: 코끝(=|z| 최대인 얼굴 중앙 정점)의 z 부호 확인
+    # 얼굴이 +Z를 보는지 검증
     face_center_band = np.abs(base_t[:, 0]) < 0.01
     nose_z = base_t[face_center_band, 2]
     if abs(nose_z.min()) > abs(nose_z.max()):
         raise SystemExit(
-            "얼굴이 -Z를 보고 있습니다. 180도 회전 로직을 추가해야 합니다. "
+            "얼굴이 -Z를 보고 있습니다. 180도 회전 로직이 필요합니다. "
             f"(z range: {nose_z.min():.3f}..{nose_z.max():.3f})"
         )
 
+    missing = [n for n in MORPH_ORDER if f"vertices_{n}" not in data]
+    if missing:
+        raise SystemExit(
+            f"npz에 없는 모프: {missing}\n"
+            "generate_docent_head.py를 먼저 다시 실행하세요."
+        )
+
     deltas = {
-        name: transform(np.asarray(data[f"vertices_{name}"], dtype=np.float32))
-        - base_t
+        name: transform(np.asarray(data[f"vertices_{name}"], dtype=np.float32)) - base_t
         for name in MORPH_ORDER
     }
 
     # --- 바이너리 버퍼 조립 ---
     blob = bytearray()
 
-    def push(arr: np.ndarray) -> tuple[int, int]:
-        """blob에 4바이트 정렬로 추가하고 (offset, length) 반환."""
+    def push(arr: np.ndarray) -> int:
+        """blob에 4바이트 정렬로 추가하고 bufferView 인덱스를 반환."""
         while len(blob) % 4:
             blob.extend(b"\x00")
         offset = len(blob)
         raw = arr.tobytes()
         blob.extend(raw)
-        return offset, len(raw)
-
-    gltf = pygltflib.GLTF2()
-    gltf.asset = pygltflib.Asset(version="2.0", generator="beomseok-portfolio gnm pipeline")
+        buffer_views.append(
+            pygltflib.BufferView(buffer=0, byteOffset=offset, byteLength=len(raw))
+        )
+        return len(buffer_views) - 1
 
     accessors: list[pygltflib.Accessor] = []
     buffer_views: list[pygltflib.BufferView] = []
 
-    def add_accessor(
-        arr: np.ndarray,
-        component_type: int,
-        type_: str,
-        target: int,
-        minmax: bool = False,
+    def add_dense(
+        arr: np.ndarray, component_type: int, type_: str, target: int, minmax: bool
     ) -> int:
-        offset, length = push(arr)
-        buffer_views.append(
-            pygltflib.BufferView(buffer=0, byteOffset=offset, byteLength=length, target=target)
-        )
+        view = push(arr)
+        buffer_views[view].target = target
         acc = pygltflib.Accessor(
-            bufferView=len(buffer_views) - 1,
+            bufferView=view,
             componentType=component_type,
-            count=len(arr) if arr.ndim > 1 else arr.size,
+            count=len(arr),
             type=type_,
         )
         if minmax:
@@ -123,19 +141,64 @@ def main() -> None:
         accessors.append(acc)
         return len(accessors) - 1
 
-    idx_indices = add_accessor(
-        triangles.reshape(-1), pygltflib.UNSIGNED_INT, "SCALAR", pygltflib.ELEMENT_ARRAY_BUFFER
+    def add_sparse_morph(delta: np.ndarray) -> tuple[int, int]:
+        """움직인 정점만 담는 sparse accessor. (accessor 인덱스, 저장 정점 수)."""
+        magnitude = np.abs(delta).max(axis=1)
+        threshold = max(SPARSE_EPSILON_ABS, SPARSE_EPSILON_REL * magnitude.max())
+        moved = np.flatnonzero(magnitude > threshold)
+        # 전혀 안 움직이면 spec상 sparse.count>=1이라 첫 정점을 0 델타로 넣는다
+        if moved.size == 0:
+            moved = np.array([0], dtype=np.uint32)
+
+        idx_view = push(moved.astype(np.uint32))
+        val_view = push(delta[moved].astype(np.float32))
+
+        acc = pygltflib.Accessor(
+            # bufferView 없음 = 기본값 전부 0, sparse가 움직인 곳만 덮어씀
+            componentType=pygltflib.FLOAT,
+            count=len(delta),
+            type="VEC3",
+            min=delta.min(axis=0).tolist(),
+            max=delta.max(axis=0).tolist(),
+            sparse=pygltflib.Sparse(
+                count=int(moved.size),
+                indices=pygltflib.AccessorSparseIndices(
+                    bufferView=idx_view,
+                    byteOffset=0,
+                    componentType=pygltflib.UNSIGNED_INT,
+                ),
+                values=pygltflib.AccessorSparseValues(
+                    bufferView=val_view, byteOffset=0
+                ),
+            ),
+        )
+        accessors.append(acc)
+        return len(accessors) - 1, int(moved.size)
+
+    idx_indices = add_dense(
+        triangles.reshape(-1, 1),
+        pygltflib.UNSIGNED_INT,
+        "SCALAR",
+        pygltflib.ELEMENT_ARRAY_BUFFER,
+        minmax=False,
     )
-    idx_position = add_accessor(
+    # SCALAR는 (N,1)로 넣었으므로 count를 정점 인덱스 개수로 되돌린다
+    accessors[idx_indices].count = triangles.size
+
+    idx_position = add_dense(
         base_t, pygltflib.FLOAT, "VEC3", pygltflib.ARRAY_BUFFER, minmax=True
     )
-    idx_normal = add_accessor(normals, pygltflib.FLOAT, "VEC3", pygltflib.ARRAY_BUFFER)
+    idx_normal = add_dense(
+        normals, pygltflib.FLOAT, "VEC3", pygltflib.ARRAY_BUFFER, minmax=False
+    )
 
-    target_accessors = []
+    target_accessors: list[int] = []
+    print("모프타겟 sparse 통계:")
     for name in MORPH_ORDER:
-        target_accessors.append(
-            add_accessor(deltas[name], pygltflib.FLOAT, "VEC3", pygltflib.ARRAY_BUFFER, minmax=True)
-        )
+        acc_index, moved_count = add_sparse_morph(deltas[name])
+        target_accessors.append(acc_index)
+        ratio = moved_count / len(base_t) * 100
+        print(f"  {name:12s} 움직인 정점 {moved_count:6d} / {len(base_t)} ({ratio:4.1f}%)")
 
     primitive = pygltflib.Primitive(
         attributes=pygltflib.Attributes(POSITION=idx_position, NORMAL=idx_normal),
@@ -144,6 +207,10 @@ def main() -> None:
         targets=[pygltflib.Attributes(POSITION=i) for i in target_accessors],
     )
 
+    gltf = pygltflib.GLTF2()
+    gltf.asset = pygltflib.Asset(
+        version="2.0", generator="beomseok-portfolio gnm pipeline"
+    )
     gltf.materials = [
         pygltflib.Material(
             name="Skin",
@@ -173,11 +240,11 @@ def main() -> None:
     gltf.save_binary(str(args.out))
 
     size_mb = args.out.stat().st_size / 1e6
-    print(f"Saved {args.out} ({size_mb:.2f} MB)")
-    print(f"  vertices={len(base_t)}, triangles={len(triangles)}, morphs={MORPH_ORDER}")
-    print(f"  bounds y: {base_t[:,1].min():.3f}..{base_t[:,1].max():.3f} (pivot=origin)")
+    print(f"\nSaved {args.out} ({size_mb:.2f} MB)")
+    print(f"  vertices={len(base_t)}, triangles={len(triangles)}")
+    print(f"  morphs({len(MORPH_ORDER)})={MORPH_ORDER}")
     if size_mb > 3:
-        print("  WARNING: >3MB — gltf-transform draco 압축 필요")
+        print("  WARNING: >3MB — gltf-transform draco 압축 검토")
 
 
 if __name__ == "__main__":

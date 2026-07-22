@@ -32,13 +32,21 @@ Expression = semantic_sampler.Expression
 # scale은 블렌드 결과를 곱해 강도를 조절한다 (морф는 웹에서 0~1로 다시 조절되므로
 # 여기서는 "최대 강도" 기준의 자연스러운 상한을 잡는다).
 EXPRESSION_RECIPES: dict[str, tuple[dict[Expression, float], float]] = {
+    # ── 감정 표정 ──
     "smile": ({Expression.HAPPY: 0.7, Expression.SMILE_WIDE: 0.3}, 1.0),
     "thinking": ({Expression.SQUINT: 0.6, Expression.MOUTH_LEFT: 0.4}, 0.9),
     "surprised": ({Expression.SURPRISE: 1.0}, 1.0),
     "sad": ({Expression.CORNERS_DOWN: 0.8, Expression.COMPRESS_FACE: 0.2}, 0.9),
-    # 턱 관절이 없어 입벌림은 SURPRISE(턱 하강 성분 포함)를 약하게 써서 만든다.
-    "talking": ({Expression.SURPRISE: 0.55, Expression.FUNNELER: 0.25}, 0.8),
     "blink": ({Expression.WINK_LEFT: 1.0, Expression.WINK_RIGHT: 1.0}, 1.0),
+    # ── 립싱크용 모음 비짐 ──
+    # 턱 관절이 따로 없어 입벌림은 SURPRISE(턱 하강 성분)로, 입술 오므림은
+    # PUCKER/FUNNELER로, 좌우 벌림은 SMILE_WIDE/STRETCH_FACE로 근사한다.
+    "viseme_a": ({Expression.SURPRISE: 0.75}, 1.0),  # ㅏ ㅑ ㅐ — 크게 벌림
+    "viseme_i": ({Expression.SMILE_WIDE: 0.55, Expression.STRETCH_FACE: 0.2}, 1.0),  # ㅣ ㅢ
+    "viseme_u": ({Expression.PUCKER: 0.75}, 1.0),  # ㅜ ㅠ ㅡ — 오므림
+    "viseme_e": ({Expression.SURPRISE: 0.3, Expression.SMILE_WIDE: 0.35}, 1.0),  # ㅔ ㅓ
+    "viseme_o": ({Expression.FUNNELER: 0.5, Expression.SURPRISE: 0.3}, 1.0),  # ㅗ ㅛ
+    "viseme_m": ({Expression.LIPS_ROLL_IN: 0.45}, 1.0),  # ㅁ ㅂ ㅍ — 다뭄
 }
 
 

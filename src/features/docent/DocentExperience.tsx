@@ -44,10 +44,7 @@ export function DocentExperience() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-      <AvatarCanvas
-        emotion={emotion}
-        speaking={chat.isStreaming || voice.ttsSpeaking}
-      />
+      <AvatarCanvas emotion={emotion} viseme={voice.viseme} />
       <ChatPanel {...chat} voice={voice} />
     </div>
   );

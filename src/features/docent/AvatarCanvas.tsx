@@ -2,13 +2,14 @@
 
 import { Canvas } from "@react-three/fiber";
 import { Component, Suspense, useEffect, useState, type ReactNode } from "react";
+import type { VisemeKey } from "@/lib/docent/visemes";
 import type { DocentEmotion } from "@/types/docent";
 import { AvatarFallback } from "./AvatarFallback";
 import { DocentHead } from "./DocentHead";
 
 interface AvatarCanvasProps {
   emotion: DocentEmotion;
-  speaking: boolean;
+  viseme: VisemeKey | null;
 }
 
 // GLB 파싱 실패 등 Suspense 내부 throw를 흡수한다.
@@ -36,7 +37,7 @@ function webglAvailable(): boolean {
   }
 }
 
-export default function AvatarCanvas({ emotion, speaking }: AvatarCanvasProps) {
+export default function AvatarCanvas({ emotion, viseme }: AvatarCanvasProps) {
   const [webglOk, setWebglOk] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -62,7 +63,7 @@ export default function AvatarCanvas({ emotion, speaking }: AvatarCanvasProps) {
           <directionalLight position={[2, 3, 4]} intensity={1.6} />
           <directionalLight position={[-3, 1, 2]} intensity={0.4} color="#8fb8ff" />
           <Suspense fallback={null}>
-            <DocentHead emotion={emotion} speaking={speaking} />
+            <DocentHead emotion={emotion} viseme={viseme} />
           </Suspense>
         </Canvas>
       </AvatarErrorBoundary>
