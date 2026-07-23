@@ -2,6 +2,7 @@
 
 import { Canvas } from "@react-three/fiber";
 import { Component, Suspense, useEffect, useState, type ReactNode } from "react";
+import { ACESFilmicToneMapping } from "three";
 import type { VisemeKey } from "@/lib/docent/visemes";
 import type { DocentEmotion } from "@/types/docent";
 import { AvatarFallback } from "./AvatarFallback";
@@ -52,16 +53,24 @@ export default function AvatarCanvas({ emotion, viseme }: AvatarCanvasProps) {
         <Canvas
           camera={{ position: [0, 0.05, 0.62], fov: 30 }}
           dpr={[1, 1.75]}
-          gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
+          gl={{
+            antialias: true,
+            powerPreference: "high-performance",
+            alpha: true,
+            toneMapping: ACESFilmicToneMapping,
+            toneMappingExposure: 1.05,
+          }}
           onCreated={({ gl }) =>
             gl.domElement.addEventListener("webglcontextlost", () =>
               setWebglOk(false)
             )
           }
         >
-          <ambientLight intensity={0.7} />
-          <directionalLight position={[2, 3, 4]} intensity={1.6} />
-          <directionalLight position={[-3, 1, 2]} intensity={0.4} color="#8fb8ff" />
+          {/* 얼굴 정면 키라이트(따뜻)·필라이트(차가움)·림라이트로 입체감 */}
+          <ambientLight intensity={0.55} />
+          <directionalLight position={[1.5, 2.2, 4]} intensity={1.5} color="#fff2e6" />
+          <directionalLight position={[-3, 0.5, 2]} intensity={0.45} color="#9fb8e0" />
+          <directionalLight position={[0, 1.5, -3]} intensity={0.35} color="#ffffff" />
           <Suspense fallback={null}>
             <DocentHead emotion={emotion} viseme={viseme} />
           </Suspense>
