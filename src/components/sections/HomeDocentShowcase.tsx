@@ -45,10 +45,10 @@ export function HomeDocentShowcase() {
 
       <ShowcaseMotion delay={0.25} className="mt-8 text-center">
         <Link
-          href="/docent"
+          href="/playground"
           className="inline-flex h-[48px] items-center gap-2 rounded-full bg-white px-6 text-[14px] font-semibold text-[#111827] transition-transform hover:-translate-y-0.5"
         >
-          Meet the Docent <ArrowRight className="h-4 w-4" />
+          Playground에서 만나기 <ArrowRight className="h-4 w-4" />
         </Link>
       </ShowcaseMotion>
     </section>
