@@ -24,15 +24,15 @@ export default function PlaygroundPage() {
         <div className="content-grid relative z-10 pb-24 pt-36 md:pt-44">
           {/* ─── 히어로 ─── */}
           <MotionBlock className="text-center">
-            <p className="cinematic-label text-blue-400">AI Playground</p>
-            <h1 className="cinematic-title mx-auto mt-6 max-w-[18ch] text-white">
-              뉴스에서 본 기술을,
-              <br className="hidden md:block" /> 직접 만들어 보는 곳.
+            <p className="cinematic-label text-blue-400">Research → Production</p>
+            <h1 className="cinematic-title mx-auto mt-6 max-w-[20ch] text-white">
+              AI 리서치에서
+              <br className="hidden md:block" /> 실제 적용까지.
             </h1>
-            <p className="subtitle mx-auto mt-6 max-w-[54ch] text-slate-300">
-              매일 수집하는 AI 뉴스에서 &ldquo;직접 해볼 만한 것&rdquo;을 골라
-              실제로 구현합니다. 대표 사례는 오픈소스 3D 헤드 모델로 만든 AI
-              도슨트입니다.
+            <p className="subtitle mx-auto mt-6 max-w-[56ch] text-slate-300">
+              매일 큐레이션하는 AI 리서치·릴리스 중 프로덕션에 적용할 기술을
+              선별하고, 실제로 동작하는 구현물로 옮깁니다. 대표 사례는 오픈소스
+              파라메트릭 3D 헤드 모델(GNM)을 활용한 AI 도슨트입니다.
             </p>
           </MotionBlock>
 
@@ -54,9 +54,13 @@ export default function PlaygroundPage() {
           <MotionBlock delay={0.15} className="mt-24">
             <div className="mb-10 text-center">
               <p className="cinematic-label text-blue-400">Devlog</p>
-              <h2 className="mx-auto mt-3 max-w-[20ch] font-display text-2xl font-semibold text-white md:text-3xl">
-                이 얼굴은 어떻게 만들어졌나
+              <h2 className="mx-auto mt-3 max-w-[24ch] font-display text-2xl font-semibold text-white md:text-3xl">
+                구현 및 개선 과정
               </h2>
+              <p className="mx-auto mt-3 max-w-[48ch] text-sm text-slate-400">
+                오픈소스 발표부터 실제 적용까지, 날짜별 의사결정과 한계를 그대로
+                기록했습니다.
+              </p>
             </div>
             <DocentDevlog />
           </MotionBlock>
