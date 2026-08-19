@@ -1,6 +1,7 @@
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import { ContactSection } from "@/components/sections/Contact/ContactSection";
 import { HomeArmiShowcase } from "@/components/sections/HomeArmiShowcase";
+import { HomeBcosShowcase } from "@/components/sections/HomeBcosShowcase";
 import { HomeDocentShowcase } from "@/components/sections/HomeDocentShowcase";
 import { HomeHangaraeShowcase } from "@/components/sections/HomeHangaraeShowcase";
 import { HomeLabShowcase } from "@/components/sections/HomeLabShowcase";
@@ -17,6 +18,7 @@ export default function Home() {
       <HomeHangaraeShowcase />
       <HomeWeddingShowcase />
       <HomeLabShowcase />
+      <HomeBcosShowcase />
       <HomeDocentShowcase />
       <ContactSection />
     </main>
