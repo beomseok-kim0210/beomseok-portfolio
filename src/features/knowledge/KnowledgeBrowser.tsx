@@ -15,6 +15,7 @@ type KnowledgeBrowserProps = {
 const FILTERS = [
   "All",
   "AI News",
+  "AI Tips",
   "Voice AI",
   "Prompt Engineering",
   "RAG",
