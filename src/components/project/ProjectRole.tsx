@@ -6,7 +6,7 @@ type ProjectRoleProps = {
 
 export function ProjectRole({ project }: ProjectRoleProps) {
   return (
-    <section className="py-20">
+    <section data-docent-section="role" className="py-20">
       <div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
         <div>
           <p className="cinematic-label mb-6 text-blue-600">Role</p>

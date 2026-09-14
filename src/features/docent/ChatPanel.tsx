@@ -7,7 +7,7 @@ import { docentConfig, docentCopy, docentStarterQuestions } from "@/data/docent"
 import type { DocentChatState } from "./useDocentChat";
 import type { VoiceState } from "./useVoice";
 
-type ChatPanelProps = DocentChatState & { voice: VoiceState };
+type ChatPanelProps = DocentChatState & { voice: VoiceState; compact?: boolean };
 
 export function ChatPanel({
   messages,
@@ -15,6 +15,8 @@ export function ChatPanel({
   mode,
   send,
   voice,
+  lastAnswer,
+  compact = false,
 }: ChatPanelProps) {
   const reduceMotion = useReducedMotion();
   const [input, setInput] = useState("");
@@ -54,7 +56,14 @@ export function ChatPanel({
   };
 
   return (
-    <div className="flex h-[60vh] min-h-[420px] flex-col rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm lg:h-[560px]">
+    <div
+      className={compact
+        ? "flex h-[52vh] min-h-[360px] flex-col rounded-[24px] border border-white/10 bg-white/[0.04] backdrop-blur-sm"
+        : "flex h-[60vh] min-h-[420px] flex-col rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm lg:h-[560px]"}
+      data-docent-mode={mode ?? ""}
+      data-docent-grounded={lastAnswer ? String(lastAnswer.grounded) : ""}
+      data-docent-active-project={lastAnswer?.activeProject ?? ""}
+    >
       <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
         <p className="small-label text-slate-400">Ask the docent</p>
         <div className="flex items-center gap-2">
@@ -64,6 +73,13 @@ export function ChatPanel({
               className="rounded-full border border-amber-400/40 bg-amber-400/10 px-3 py-1 text-xs font-medium text-amber-300"
             >
               {docentCopy.demoBadge}
+            </span>
+          ) : mode === "evidence" ? (
+            <span
+              title={docentCopy.evidenceNotice}
+              className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-300"
+            >
+              {docentCopy.evidenceBadge}
             </span>
           ) : null}
           {voice.ttsSupported ? (

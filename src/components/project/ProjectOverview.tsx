@@ -6,7 +6,7 @@ type ProjectOverviewProps = {
 
 export function ProjectOverview({ project }: ProjectOverviewProps) {
   return (
-    <section className="py-20">
+    <section data-docent-section="overview" className="py-20">
       <div className="grid gap-5 md:grid-cols-3">
         {project.highlights.map((highlight) => (
           <div

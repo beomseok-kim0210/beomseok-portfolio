@@ -28,7 +28,7 @@ export function ClawDevHero() {
   }, [inView]);
 
   return (
-    <section ref={ref} className="pt-10 pb-24 md:pt-16">
+    <section ref={ref} className="pt-10 pb-24 md:pt-16" data-docent-section="overview">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={inView ? { opacity: 1, y: 0 } : undefined}

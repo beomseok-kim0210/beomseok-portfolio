@@ -65,7 +65,7 @@ export const docentFallbackEntries: DocentFallbackEntry[] = [
       "Core stack — AI: GPT, Claude, Qwen; Agents: MCP, RAG, tool calling; Computer vision: YOLO, OpenCV, depth cameras; Frontend: React, Flutter, Three.js; Backend: Spring, Django, Redis. Strengths in voice AI, realtime systems, and agent design.",
   },
   {
-    keywords: ["수상", "상", "award", "prize", "우승", "1위", "1등"],
+    keywords: ["수상", "award", "prize", "우승", "1위", "1등"],
     emotion: "smile",
     answer:
       "두 개의 수상 경력이 있어요. 프롬프트 엔지니어링 부트캠프의 Wedding AI로 생성형 AI 대상을 받았고, 음성 AI 프로젝트 ARMI로 SSAFY 공통 프로젝트 1위를 차지했습니다.",

@@ -14,6 +14,8 @@ interface AvatarCanvasProps {
   viseme: VisemeKey | null;
   /** LAM-A2E 가 만든 입 자세. 있으면 viseme 라벨보다 우선한다. */
   mouth?: SemanticMouthPose | null;
+  /** 도크 안의 낮은 캔버스. */
+  compact?: boolean;
 }
 
 // GLB 파싱 실패 등 Suspense 내부 throw를 흡수한다.
@@ -41,7 +43,7 @@ function webglAvailable(): boolean {
   }
 }
 
-export default function AvatarCanvas({ emotion, viseme, mouth = null }: AvatarCanvasProps) {
+export default function AvatarCanvas({ emotion, viseme, mouth = null, compact = false }: AvatarCanvasProps) {
   const [webglOk, setWebglOk] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -51,7 +53,9 @@ export default function AvatarCanvas({ emotion, viseme, mouth = null }: AvatarCa
   if (webglOk === false) return <AvatarFallback emotion={emotion} />;
 
   return (
-    <div className="relative h-[42vh] min-h-[300px] w-full overflow-hidden rounded-[32px] bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.15),rgba(11,17,32,0.6))] lg:h-[560px]">
+    <div className={compact
+      ? "relative h-[220px] w-full overflow-hidden rounded-[24px] bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.15),rgba(11,17,32,0.6))]"
+      : "relative h-[42vh] min-h-[300px] w-full overflow-hidden rounded-[32px] bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.15),rgba(11,17,32,0.6))] lg:h-[560px]"}>
       <AvatarErrorBoundary fallback={<AvatarFallback emotion={emotion} />}>
         <Canvas
           camera={{ position: [0, 0.05, 0.62], fov: 30 }}

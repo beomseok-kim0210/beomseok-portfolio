@@ -6,7 +6,7 @@ type ProjectResultProps = {
 
 export function ProjectResult({ project }: ProjectResultProps) {
   return (
-    <section className="py-20">
+    <section data-docent-section="result" className="py-20">
       <div className="rounded-[36px] bg-[#111827] p-8 text-white md:p-12">
         <p className="cinematic-label mb-8 text-blue-300">Result</p>
         <div className="grid gap-5 md:grid-cols-3">
