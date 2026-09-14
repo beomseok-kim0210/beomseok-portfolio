@@ -7,10 +7,13 @@ import { Group, MathUtils, Mesh } from "three";
 import type { VisemeKey } from "@/lib/docent/visemes";
 import {
   DEPRECATED_LEGACY_MOUTH_MORPHS,
-  SEMANTIC_MOUTH_MORPHS,
   semanticMouthPose,
-  type SemanticMouthMorph,
 } from "@/lib/docent/legacyVisemeToSemanticMouth";
+import {
+  SEMANTIC_MOUTH_MORPHS,
+  type SemanticMouthMorph,
+  type SemanticMouthPose,
+} from "@/lib/docent/semanticMouth";
 import type { DocentEmotion } from "@/types/docent";
 
 /**
@@ -143,8 +146,13 @@ function buildRig(allMeshes: Mesh[], model: string): { rigs: MorphRig[]; audit: 
 
 interface DocentHeadProps {
   emotion: DocentEmotion;
-  /** 현재 발음 중인 입모양. null이면 입을 다문다. */
+  /** 폴백 경로. 브라우저 TTS 가 말할 때의 입모양 라벨. null 이면 입을 다문다. */
   viseme: VisemeKey | null;
+  /**
+   * 주 경로. LAM-A2E 가 실제 파형에서 뽑아 캘리브레이션까지 통과한 입 자세.
+   * 값이 있으면 이것이 이긴다 — 라벨 경로는 쳐다보지 않는다.
+   */
+  mouth?: SemanticMouthPose | null;
 }
 
 function usePrefersReducedMotion(): boolean {
@@ -159,7 +167,7 @@ function usePrefersReducedMotion(): boolean {
   return reduced;
 }
 
-export function DocentHead({ emotion, viseme }: DocentHeadProps) {
+export function DocentHead({ emotion, viseme, mouth: lamMouth = null }: DocentHeadProps) {
   const group = useRef<Group>(null);
   const { scene } = useGLTF(MODEL_URL);
   const reduced = usePrefersReducedMotion();
@@ -217,11 +225,14 @@ export function DocentHead({ emotion, viseme }: DocentHeadProps) {
   // 렌더 중에 전역에 걸면 두 가지가 샌다: 언마운트 뒤에도 클로저가 three.js 메쉬를
   // 붙잡고, concurrent 렌더에서 버려진 렌더의 상태가 그대로 남는다. 그래서 effect
   // 에서 걸고 cleanup 에서 지운다. 값은 ref 로 읽으므로 재설치도 필요 없다.
-  const latest = useRef({ viseme, emotion });
-  latest.current = { viseme, emotion };
+  const latest = useRef({ viseme, emotion, mouthSource: "rest" as string });
+  latest.current = { viseme, emotion, mouthSource: lamMouth ? "lam" : viseme ? "viseme" : "rest" };
   useEffect(() => {
     if (!DEV || typeof window === "undefined") return;
-    const w = window as unknown as { __ddHeadProbe?: () => unknown };
+    const w = window as unknown as { __ddHeadProbe?: () => unknown; __ddHeadAudit?: RigAudit };
+    // 렌더에서 건 audit 을 여기서도 다시 건다. StrictMode 가 cleanup 을 먼저 돌려도
+    // 남아 있도록.
+    w.__ddHeadAudit = audit;
     w.__ddHeadProbe = () => ({
       model: MODEL_URL,
       ...latest.current,
@@ -240,8 +251,9 @@ export function DocentHead({ emotion, viseme }: DocentHeadProps) {
     });
     return () => {
       delete w.__ddHeadProbe;
+      delete w.__ddHeadAudit;
     };
-  }, [rigs]);
+  }, [rigs, audit]);
 
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime;
@@ -264,7 +276,8 @@ export function DocentHead({ emotion, viseme }: DocentHeadProps) {
     }
 
     // 1) 입 — 라벨을 액추에이터 목표로 바꾼 뒤 그 목표로 감쇠시킨다
-    const pose = semanticMouthPose(viseme);
+    // 주 경로가 값을 주면 그것이 목표다. 없을 때만 라벨 폴백으로 내려간다.
+    const pose = lamMouth ?? semanticMouthPose(viseme);
     const m = mouth.current;
     for (const name of SEMANTIC_MOUTH_MORPHS) {
       m[name] = MathUtils.damp(m[name], pose[name], 18, delta);
@@ -273,7 +286,7 @@ export function DocentHead({ emotion, viseme }: DocentHeadProps) {
     const targets = EMOTION_WEIGHTS[emotion] ?? {};
     // 말하는 중에는 감정 모프와 입 액추에이터가 같은 입술 정점을 두고 겹쳐 이를
     // 드러낸 기괴한 표정이 되므로, 발화 중에는 감정 강도를 낮춘다.
-    const emotionScale = viseme ? 0.45 : 1;
+    const emotionScale = lamMouth || viseme ? 0.45 : 1;
     const damp = reduced ? 40 : 6;
 
     for (const rig of rigs) {

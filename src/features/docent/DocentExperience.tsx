@@ -1,10 +1,11 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { DocentEmotion } from "@/types/docent";
 import { ChatPanel } from "./ChatPanel";
 import { useDocentChat } from "./useDocentChat";
+import { useSupertonicVoice } from "./useSupertonicVoice";
 import { useVoice } from "./useVoice";
 
 const AvatarCanvas = dynamic(() => import("./AvatarCanvas"), {
@@ -22,10 +23,38 @@ function AvatarSkeleton() {
   );
 }
 
+const DEV = process.env.NODE_ENV !== "production";
+
 export function DocentExperience() {
   const [emotion, setEmotion] = useState<DocentEmotion>("neutral");
   const chat = useDocentChat({ onEmotion: setEmotion });
   const voice = useVoice();
+  const supertonic = useSupertonicVoice();
+
+  /**
+   * 발화 하나에 엔진 하나.
+   *
+   * 주 경로는 Supertonic 이 만든 파형을 재생하면서 같은 파형을 읽은 LAM 타임라인으로
+   * 입을 움직인다. 그 경로가 실패했을 때만 브라우저 TTS + viseme 라벨로 내려간다.
+   * 조용히 내려가지는 않는다 — 어느 엔진이 말했는지 진단에 남는다.
+   */
+  const [lastEngine, setLastEngine] = useState<"supertonic" | "browser_tts" | "none">("none");
+
+  const speakOnce = useCallback(async (content: string) => {
+    voice.stopSpeaking();
+    const outcome = await supertonic.speak(content);
+    if (outcome === "ok") {
+      setLastEngine("supertonic");
+      return;
+    }
+    if (outcome === "superseded") {
+      // 이 발화는 이미 다음 발화에 밀려났다. 여기서 폴백을 켜면 새 발화 위에
+      // 옛 문장을 겹쳐 읽게 된다 — 아무것도 하지 않는 것이 맞다.
+      return;
+    }
+    setLastEngine("browser_tts");
+    voice.speak(content);
+  }, [supertonic, voice]);
 
   // 스트리밍이 끝나면 (음성 모드일 때) 마지막 도슨트 답변을 낭독한다.
   const spokenCountRef = useRef(0);
@@ -38,13 +67,42 @@ export function DocentExperience() {
       chat.messages.length > spokenCountRef.current
     ) {
       spokenCountRef.current = chat.messages.length;
-      voice.speak(last.content);
+      void speakOnce(last.content);
     }
-  }, [chat.isStreaming, chat.messages, voice]);
+  }, [chat.isStreaming, chat.messages, voice.voiceEnabled, speakOnce, voice]);
+
+  // 음성을 끄면 둘 다 즉시 멈춘다. 입은 중립으로 돌아간다.
+  useEffect(() => {
+    if (!voice.voiceEnabled) {
+      supertonic.stop();
+      voice.stopSpeaking();
+    }
+  }, [voice.voiceEnabled, supertonic, voice]);
+
+  // 진단 전역. 렌더에서 걸면 StrictMode 의 이중 호출이 cleanup 을 먼저 돌려 값을
+  // 지워 버리므로, 매 렌더 뒤 effect 에서 새로 걸고 언마운트에서만 지운다.
+  useEffect(() => {
+    if (!DEV || typeof window === "undefined") return;
+    (window as unknown as { __ddVoice?: unknown }).__ddVoice = {
+      lastEngine,
+      supertonic: {
+        engine: supertonic.engine,
+        speaking: supertonic.speaking,
+        preparing: supertonic.preparing,
+        error: supertonic.error,
+        meta: supertonic.meta,
+        currentTime: supertonic.currentTime,
+        mouth: supertonic.mouth,
+      },
+      browserTts: { speaking: voice.ttsSpeaking, viseme: voice.viseme },
+      voiceEnabled: voice.voiceEnabled,
+    };
+    return () => { delete (window as unknown as { __ddVoice?: unknown }).__ddVoice; };
+  });
 
   return (
     <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-      <AvatarCanvas emotion={emotion} viseme={voice.viseme} />
+      <AvatarCanvas emotion={emotion} viseme={voice.viseme} mouth={supertonic.mouth} />
       <ChatPanel {...chat} voice={voice} />
     </div>
   );

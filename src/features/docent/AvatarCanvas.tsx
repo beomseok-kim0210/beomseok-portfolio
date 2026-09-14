@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { Component, Suspense, useEffect, useState, type ReactNode } from "react";
 import { ACESFilmicToneMapping } from "three";
 import type { VisemeKey } from "@/lib/docent/visemes";
+import type { SemanticMouthPose } from "@/lib/docent/semanticMouth";
 import type { DocentEmotion } from "@/types/docent";
 import { AvatarFallback } from "./AvatarFallback";
 import { DocentHead } from "./DocentHead";
@@ -11,6 +12,8 @@ import { DocentHead } from "./DocentHead";
 interface AvatarCanvasProps {
   emotion: DocentEmotion;
   viseme: VisemeKey | null;
+  /** LAM-A2E 가 만든 입 자세. 있으면 viseme 라벨보다 우선한다. */
+  mouth?: SemanticMouthPose | null;
 }
 
 // GLB 파싱 실패 등 Suspense 내부 throw를 흡수한다.
@@ -38,7 +41,7 @@ function webglAvailable(): boolean {
   }
 }
 
-export default function AvatarCanvas({ emotion, viseme }: AvatarCanvasProps) {
+export default function AvatarCanvas({ emotion, viseme, mouth = null }: AvatarCanvasProps) {
   const [webglOk, setWebglOk] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -72,7 +75,7 @@ export default function AvatarCanvas({ emotion, viseme }: AvatarCanvasProps) {
           <directionalLight position={[-3, 0.5, 2]} intensity={0.45} color="#9fb8e0" />
           <directionalLight position={[0, 1.5, -3]} intensity={0.35} color="#ffffff" />
           <Suspense fallback={null}>
-            <DocentHead emotion={emotion} viseme={viseme} />
+            <DocentHead emotion={emotion} viseme={viseme} mouth={mouth} />
           </Suspense>
         </Canvas>
       </AvatarErrorBoundary>

@@ -1,0 +1,78 @@
+{
+  "_comment": [
+    "RunPod Serverless 엔드포인트에 넣을 설정값. 이 파일은 기록이지 자동 적용되지",
+    "않는다 — 엔드포인트는 아직 만들지 않았고, 만드는 순간 과금이 시작되므로 Human",
+    "승인 전에는 만들지 않는다. 값의 근거는 runpod/COST-MODEL.md 에 있다.",
+    "여기에 API 키나 엔드포인트 ID 를 적지 않는다."
+  ],
+
+  "workerType": "FLEX",
+  "activeWorkers": 0,
+  "minWorkers": 0,
+  "maxWorkers": 1,
+  "_maxWorkers_why": [
+    "공식 기본값은 3 이다. 1 로 내리는 이유는 이 워크로드가 워커당 요청을 직렬로",
+    "처리하고 방문자가 동시에 몰릴 일이 거의 없기 때문이다. 두 번째 워커는 콜드로",
+    "떠야 하므로 20 초를 더 기다리게 하고 그만큼 더 과금된다.",
+    "",
+    "주의 — 라우트의 503 'busy' 는 *로컬* 백엔드에만 있다. RunPodVoiceProvider 에는",
+    "용량 카운터가 없고, 두 번째 동시 요청은 거절되는 대신 RunPod 큐에 들어가",
+    "delayTime 이 늘어난다. 그 대기가 라우트의 전체 상한(130 s)을 넘으면 그때 폴백이",
+    "된다. RunPod 경로의 애플리케이션 측 입장 제어는 아직 없다.",
+    "실제 동시 요청이 관측되면 다시 볼 값이다."
+  ],
+
+  "idleTimeoutSeconds": 5,
+  "_idleTimeout_why": [
+    "공식 기본값 그대로. T 초 인상은 그것이 T/20 개 이상의 콜드 스타트를 막을 때만",
+    "이득인데, '한 명이 한두 개 묻고 떠나는' 패턴에서는 그 조건이 성립하지 않는다."
+  ],
+
+  "executionTimeoutSeconds": 120,
+  "_executionTimeout_why": [
+    "공식 기본값은 600 s 다. 이 워크로드의 웜 실행은 2 s, 콜드는 추정 20-35 s 이므로",
+    "600 s 는 런어웨이 잡 하나가 물 수 있는 금액을 필요 이상으로 크게 만든다.",
+    "120 s 는 콜드 최악(35 s)에 최장 발화와 여유를 얹고도 남으며, 잘못된 잡 하나의",
+    "비용 상한을 약 $0.019 로 묶는다.",
+    "공식 문서는 취소가 실행 중인 핸들러를 끊는지 말하지 않는다. 그래서 실질적인",
+    "비용 상한은 취소가 아니라 이 값이다."
+  ],
+
+  "flashBoot": true,
+  "_flashBoot_why": "공식 기본값. 콜드 스타트를 줄인다고 문서가 말하지만 그 폭은 측정하지 못했다.",
+
+  "scalerType": "QUEUE_DELAY",
+  "scalerValue": 4,
+  "_scaler_why": [
+    "provenance: estimated. 근거를 실측으로 대지 못한다 — 실제 큐 지연을 관측한",
+    "적이 없기 때문이다. maxWorkers 가 1 이므로 이 값은 사실상 동작하지 않으며,",
+    "maxWorkers 를 올릴 때 비로소 의미가 생긴다. 그때 관측값으로 다시 잡는다."
+  ],
+
+  "containerDiskGb": 20,
+  "_containerDisk_why": [
+    "P3 실측: docker images 보고 15.7 GB(containerd 스토어), 레이어 합계 9.95 GB,",
+    "레지스트리 콘텐츠 5.70 GB. RunPod 은 이미지 레이어를 호스트에 캐시하고 컨테이너",
+    "디스크는 쓰기 계층이므로 이 값이 이미지 전체를 담을 필요는 없지만, 그 경계를",
+    "공식 문서에서 확인하지 못했으므로 보수적으로 20 GB 로 둔다. 과금에 어떻게",
+    "잡히는지는 billing API 의 diskSpaceBilledGb 로 확인한다."
+  ],
+
+  "env": {
+    "_comment": "값은 RunPod 대시보드의 환경변수에 넣는다. 여기 적는 것은 이름과 기본값뿐이다.",
+    "DD_SUPERTONIC_PYTHON": "/opt/supertonic-venv/bin/python",
+    "DD_LAM_PYTHON": "/opt/lam-venv/bin/python",
+    "DD_WORKER_DIR": "/app/voice",
+    "DD_SUPERTONIC_MODEL_DIR": "/models/supertonic-3",
+    "DD_LAM_SRC": "/opt/LAM_Audio2Expression",
+    "DD_LAM_CKPT": "/models/lam/lam_audio2exp_streaming.tar",
+    "DD_VOICE_WORK_DIR": "/tmp/dd-voice",
+    "DD_SUPERTONIC_TIMEOUT_S": "60",
+    "DD_LAM_TIMEOUT_S": "60",
+    "DD_STARTUP_TIMEOUT_S": "180",
+    "DD_MAX_TEXT_LENGTH": "600",
+    "DD_MAX_AUDIO_BYTES": "3000000",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1"
+  }
+}

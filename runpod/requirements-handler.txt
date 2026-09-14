@@ -1,0 +1,2 @@
+# The orchestrator owns no model. It only needs the RunPod SDK.
+runpod==1.7.7
