@@ -1,7 +1,5 @@
-import {
-  voiceBackendConfigured,
-  voiceBackendHealth,
-} from "@/lib/docent/voiceWorkers";
+import { describeVoiceBackend } from "@/lib/docent/voiceProvider";
+import { voiceBackendHealth } from "@/lib/docent/voiceWorkers";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,14 +13,23 @@ export const dynamic = "force-dynamic";
  *
  * 경로·GPU 식별자·환경변수 값·스택트레이스는 내보내지 않는다. 상세 진단은
  * 서버 로그에 남는다.
+ *
+ * 원격 백엔드(RunPod)는 설정 유무만 답한다. 워커 상태는 이 프로세스가 알 수 없고,
+ * 알아보러 가는 것은 곧 깨우는 것이다 — scale-to-zero 엔드포인트는 첫 요청이
+ * 워커를 띄운다.
  */
 export async function GET() {
-  if (!voiceBackendConfigured()) {
+  const backend = describeVoiceBackend();
+  if (!backend.configured) {
     return Response.json(
-      { status: "unconfigured", supertonic: "unconfigured", lam: "unconfigured",
-        fallback: "browser_tts" },
+      { status: "unconfigured", provider: backend.backend,
+        supertonic: "unconfigured", lam: "unconfigured", fallback: "browser_tts" },
       { status: 503 },
     );
+  }
+  if (backend.backend === "runpod") {
+    return Response.json({ status: "configured", provider: "runpod",
+      supertonic: "remote", lam: "remote", fallback: "browser_tts" });
   }
 
   const health = voiceBackendHealth();

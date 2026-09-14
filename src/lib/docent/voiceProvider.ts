@@ -7,6 +7,7 @@ import {
   LAM_TIMEOUT_MS,
   SUPERTONIC_TIMEOUT_MS,
   getVoiceBackend,
+  voiceBackendConfigured,
   warmupVoiceBackend,
   type LamResult,
   type SupertonicResult,
@@ -472,6 +473,28 @@ class RunPodVoiceProvider implements VoiceProvider {
  * 엔드포인트 ID 를 소스에 박지 않는 것은 배포마다 달라지기 때문이고, API 키를
  * 박지 않는 것은 설명할 필요도 없다. 값은 오직 환경에서만 온다.
  */
+/**
+ * 어느 백엔드가 선택됐고 그 설정이 갖춰졌는지 — 값은 절대 내보내지 않는다.
+ *
+ * 헬스 라우트가 쓴다. 프로바이더를 만들지도, 엔드포인트를 깨우지도 않는다:
+ * "준비됐나?" 가 "준비시켜라" 로 바뀌면 안 되고, 원격 백엔드의 워커 상태는
+ * 여기서 알 수도 없다 (scale-to-zero 엔드포인트는 첫 요청이 워커를 띄운다).
+ */
+export function describeVoiceBackend(): {
+  backend: "local" | "runpod" | "unknown";
+  configured: boolean;
+} {
+  const backend = (process.env.DOCENT_VOICE_BACKEND ?? "local").trim().toLowerCase();
+  if (backend === "runpod") {
+    return {
+      backend,
+      configured: Boolean(process.env.RUNPOD_ENDPOINT_ID?.trim() && process.env.RUNPOD_API_KEY?.trim()),
+    };
+  }
+  if (backend === "local") return { backend, configured: voiceBackendConfigured() };
+  return { backend: "unknown", configured: false };
+}
+
 export function getVoiceProvider(): VoiceProvider {
   const backend = (process.env.DOCENT_VOICE_BACKEND ?? "local").trim().toLowerCase();
 
