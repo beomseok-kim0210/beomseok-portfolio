@@ -12,6 +12,7 @@ import { test } from "node:test";
 
 import {
   VoiceProviderError,
+  describeVoiceBackend,
   getVoiceProvider,
   type VoiceProvider,
 } from "../src/lib/docent/voiceProvider";
@@ -98,6 +99,22 @@ test("모르는 백엔드 이름은 거절한다", () => {
   withEnv({ DOCENT_VOICE_BACKEND: "modal" }, () => {
     assert.equal(caught(() => getVoiceProvider()).ddVoiceCode, "VOICE_UNCONFIGURED");
   });
+});
+
+test("헬스 라우트용 백엔드 서술은 값을 내보내지 않고 설정 유무만 말한다", () => {
+  // 프로덕션(runpod)에서 헬스가 로컬 DD_* 만 보고 unconfigured 라고 답했던 회귀.
+  withEnv({ DOCENT_VOICE_BACKEND: "runpod" }, () =>
+    assert.deepEqual(describeVoiceBackend(), { backend: "runpod", configured: false }));
+  withEnv({ DOCENT_VOICE_BACKEND: "runpod", RUNPOD_ENDPOINT_ID: FAKE_ENDPOINT, RUNPOD_API_KEY: FAKE_KEY }, () => {
+    const d = describeVoiceBackend();
+    assert.deepEqual(d, { backend: "runpod", configured: true });
+    assert.ok(!JSON.stringify(d).includes(FAKE_KEY));
+    assert.ok(!JSON.stringify(d).includes(FAKE_ENDPOINT));
+  });
+  withEnv({ DOCENT_VOICE_BACKEND: "modal" }, () =>
+    assert.deepEqual(describeVoiceBackend(), { backend: "unknown", configured: false }));
+  withEnv({ DOCENT_VOICE_BACKEND: "local" }, () =>
+    assert.equal(describeVoiceBackend().backend, "local"));
 });
 
 /* --------------------------------------------------- RunPod 왕복 (fetch 대역) */
