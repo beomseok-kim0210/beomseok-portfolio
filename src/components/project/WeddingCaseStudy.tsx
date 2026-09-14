@@ -74,7 +74,7 @@ function SectionHeading({
 export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
   return (
     <>
-      <section className="min-h-[88vh] max-w-[1100px] pt-32 pb-20 md:pt-44 md:pb-24">
+      <section className="min-h-[88vh] max-w-[1100px] pt-32 pb-20 md:pt-44 md:pb-24" data-docent-section="overview">
         <MotionBlock>
           <p className="project-section-label text-[#B98979]">AI Research Case Study</p>
           <h1 className="mt-8 text-2xl font-semibold text-slate-500">
@@ -104,7 +104,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
         </MotionBlock>
       </section>
 
-      <section className="py-24 md:py-[180px]">
+      <section className="py-24 md:py-[180px]" data-docent-section="problem">
         <SectionHeading
           label={weddingProblem.label}
           title={weddingProblem.title}
@@ -134,9 +134,9 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
         </MotionBlock>
       </section>
 
-      <WeddingResearchStats />
+      <div data-docent-section="metric"><WeddingResearchStats /></div>
 
-      <section className="py-24 md:py-[180px]">
+      <section className="py-24 md:py-[180px]" data-docent-section="problem">
         <SectionHeading
           label="Research Question"
           title="그래서 왜 3D를 검토했을까?"
@@ -153,11 +153,11 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
         </div>
       </section>
 
-      <section className="py-24 md:py-[180px]">
+      <section className="py-24 md:py-[180px]" data-docent-section="architecture">
         <WeddingEvaluationFramework />
       </section>
 
-      <section className="py-24 md:py-[180px]">
+      <section className="py-24 md:py-[180px]" data-docent-section="decision">
         <SectionHeading
           label="Model Research Timeline"
           title="2D → 3D Model Research Timeline"
@@ -210,7 +210,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
         </div>
       </section>
 
-      <section className="py-24 md:py-[180px]">
+      <section className="py-24 md:py-[180px]" data-docent-section="metric">
         <SectionHeading
           label="Quantitative Comparison"
           title="정량 비교는 참고했고,\n의사결정은 구조를 봤습니다."
@@ -221,15 +221,15 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
         </div>
       </section>
 
-      <section className="py-24 md:py-[180px]">
+      <section className="py-24 md:py-[180px]" data-docent-section="troubleshooting">
         <WeddingResearchInsight />
       </section>
 
-      <section className="py-24 md:py-[180px]">
+      <section className="py-24 md:py-[180px]" data-docent-section="troubleshooting">
         <WeddingEnvironmentChallenge />
       </section>
 
-      <section className="py-24 md:py-[180px]">
+      <section className="py-24 md:py-[180px]" data-docent-section="troubleshooting">
         <SectionHeading
           label="ECON Visual Analysis"
           title="달라붙는 드레스는 가능했지만,\n부피가 있는 드레스는 실패했습니다."
@@ -311,7 +311,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
         </MotionBlock>
       </section>
 
-      <section className="py-24 md:py-[180px]">
+      <section className="py-24 md:py-[180px]" data-docent-section="metric">
         <SectionHeading
           label="Failure Analysis Matrix"
           title="모델별 실패 원인 매트릭스"
@@ -322,7 +322,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
         </div>
       </section>
 
-      <section className="py-24 md:py-[180px]">
+      <section className="py-24 md:py-[180px]" data-docent-section="decision">
         <SectionHeading
           label="Technical Decision Pivot"
           title="기술을 고집하지 않기로 결정했습니다."
@@ -332,7 +332,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
         </div>
       </section>
 
-      <section className="py-24 md:py-[180px]">
+      <section className="py-24 md:py-[180px]" data-docent-section="architecture">
         <SectionHeading
           label="Multi-Agent Prompt Engineering"
           title="하나의 AI보다\n5명의 전문가가 더 정확했습니다."

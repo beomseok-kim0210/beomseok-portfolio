@@ -9,11 +9,13 @@ export const docentCopy = {
   label: "AI Docent",
   heading: "포트폴리오에게\n직접 물어보세요",
   subheading:
-    "Google GNM 파라메트릭 헤드 모델과 Claude API로 만든 3D 도슨트입니다. 김범석의 프로젝트, 기술, 여정에 대해 무엇이든 물어보세요.",
+    "Google GNM 파라메트릭 헤드 모델과 Claude API로 만든 3D 도슨트입니다. 지금 보고 있는 페이지를 알고, 포트폴리오에서 근거를 찾아 답합니다. 김범석의 프로젝트, 기술, 여정에 대해 무엇이든 물어보세요.",
   inputPlaceholder: "궁금한 것을 물어보세요…",
   listeningPlaceholder: "듣고 있어요… 말씀해 주세요",
   demoBadge: "데모 모드",
   demoNotice: "지금은 사전 준비된 답변으로 동작하는 데모 모드입니다.",
+  evidenceBadge: "근거 발췌",
+  evidenceNotice: "포트폴리오에서 검색한 근거를 그대로 읽어 드리는 모드입니다. LLM 답변은 아직 연결되지 않았습니다.",
   errorBubble: "죄송해요, 답변 중에 문제가 생겼어요. 잠시 후 다시 시도해 주세요.",
 } as const;
 

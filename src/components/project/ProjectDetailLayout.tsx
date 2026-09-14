@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import { navItems } from "@/data/navigation";
 import { projectDetails } from "@/data/projectDetails";
+import { DocentDock } from "@/features/docent/DocentDock";
 import type { ProjectDetail } from "@/types/portfolio";
 import { ProjectArchitecture } from "./ProjectArchitecture";
 import { ArmiCaseStudy } from "./ArmiCaseStudy";
@@ -101,6 +102,7 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
           </Link>
         </section>
       </div>
+      <DocentDock projectSlug={project.slug} projectTitle={project.title} />
     </main>
   );
 }

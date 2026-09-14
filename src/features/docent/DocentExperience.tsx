@@ -2,9 +2,10 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { DocentEmotion } from "@/types/docent";
+import type { DocentEmotion, DocentPageContext } from "@/types/docent";
 import { ChatPanel } from "./ChatPanel";
 import { useDocentChat } from "./useDocentChat";
+import { usePageContext } from "./usePageContext";
 import { useSupertonicVoice } from "./useSupertonicVoice";
 import { useVoice } from "./useVoice";
 
@@ -25,9 +26,17 @@ function AvatarSkeleton() {
 
 const DEV = process.env.NODE_ENV !== "production";
 
-export function DocentExperience() {
+interface DocentExperienceProps {
+  /** 라우터에서 유도한 값을 덮어쓴다 (예: 프로젝트 페이지의 도크). */
+  pageContext?: Partial<DocentPageContext>;
+  /** 도크(드로어) 안에서 세로로 쌓는 좁은 배치. */
+  compact?: boolean;
+}
+
+export function DocentExperience({ pageContext: override, compact = false }: DocentExperienceProps = {}) {
   const [emotion, setEmotion] = useState<DocentEmotion>("neutral");
-  const chat = useDocentChat({ onEmotion: setEmotion });
+  const pageContext = usePageContext(override);
+  const chat = useDocentChat({ onEmotion: setEmotion, pageContext });
   const voice = useVoice();
   const supertonic = useSupertonicVoice();
 
@@ -85,6 +94,8 @@ export function DocentExperience() {
     if (!DEV || typeof window === "undefined") return;
     (window as unknown as { __ddVoice?: unknown }).__ddVoice = {
       lastEngine,
+      pageContext,
+      lastAnswer: chat.lastAnswer,
       supertonic: {
         engine: supertonic.engine,
         speaking: supertonic.speaking,
@@ -101,9 +112,13 @@ export function DocentExperience() {
   });
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-      <AvatarCanvas emotion={emotion} viseme={voice.viseme} mouth={supertonic.mouth} />
-      <ChatPanel {...chat} voice={voice} />
+    <div
+      className={compact ? "grid gap-4" : "grid gap-6 lg:grid-cols-[0.9fr_1.1fr]"}
+      data-docent-page-type={pageContext.pageType}
+      data-docent-project={pageContext.projectSlug ?? ""}
+    >
+      <AvatarCanvas emotion={emotion} viseme={voice.viseme} mouth={supertonic.mouth} compact={compact} />
+      <ChatPanel {...chat} voice={voice} compact={compact} />
     </div>
   );
 }

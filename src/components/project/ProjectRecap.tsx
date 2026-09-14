@@ -24,7 +24,7 @@ export function ProjectRecap({
   accent = "#60A5FA",
 }: ProjectRecapProps) {
   return (
-    <section className="bg-[#0B1120] py-[96px] md:py-[160px]">
+    <section className="bg-[#0B1120] py-[96px] md:py-[160px]" data-docent-section="lesson">
       <div className="mx-auto max-w-[760px] px-5">
         <MotionBlock>
           <p className="step-label" style={{ color: accent }}>

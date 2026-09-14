@@ -6,7 +6,7 @@ type ProjectArchitectureProps = {
 
 export function ProjectArchitecture({ project }: ProjectArchitectureProps) {
   return (
-    <section className="py-20">
+    <section data-docent-section="architecture" className="py-20">
       <div className="max-w-[860px]">
         <p className="cinematic-label mb-6 text-blue-600">Product Flow</p>
         <h2 className="story-title">{project.architecture.title}</h2>

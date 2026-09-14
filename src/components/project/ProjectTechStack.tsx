@@ -6,7 +6,7 @@ type ProjectTechStackProps = {
 
 export function ProjectTechStack({ project }: ProjectTechStackProps) {
   return (
-    <section className="py-20">
+    <section data-docent-section="technology" className="py-20">
       <p className="cinematic-label mb-8 text-blue-600">Tech Stack</p>
       <div className="flex flex-wrap gap-3">
         {project.techStack.map((tech) => (

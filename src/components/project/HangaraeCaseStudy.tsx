@@ -323,7 +323,7 @@ function DemoFilm() {
   const demoSrc = resolvePublicAssetSrc(hangaraeDemoFilm.src);
 
   return (
-    <section className="py-[96px] md:py-[180px]">
+    <section className="py-[96px] md:py-[180px]" data-docent-section="overview">
       <div className="mx-auto max-w-[1280px]">
         <HangaraeSectionHeading
           label="Full Demo Film"
@@ -350,7 +350,7 @@ function DemoFilm() {
 export function HangaraeCaseStudy() {
   return (
     <>
-      <section className="py-[96px] md:py-[180px]">
+      <section className="py-[96px] md:py-[180px]" data-docent-section="overview">
         <div className="mx-auto max-w-[1280px]">
           <MotionBlock>
             <p className="project-section-label text-[#22C55E]">{hangaraeHero.eyebrow}</p>
@@ -380,7 +380,7 @@ export function HangaraeCaseStudy() {
 
       <DemoFilm />
 
-      <section className="py-[96px] md:py-[180px]">
+      <section className="py-[96px] md:py-[180px]" data-docent-section="troubleshooting">
         <div className="mx-auto max-w-[1280px]">
           <HangaraeSectionHeading
             label="Troubleshooting Overview"
@@ -413,6 +413,7 @@ export function HangaraeCaseStudy() {
           key={trouble.id}
           id={trouble.id}
           className="py-[96px] md:py-[160px]"
+          data-docent-section="troubleshooting"
         >
           <div className="mx-auto max-w-[1280px]">
             <div className="mb-12">
@@ -440,7 +441,7 @@ export function HangaraeCaseStudy() {
         </section>
       ))}
 
-      <section className="py-[96px] md:py-[180px]">
+      <section className="py-[96px] md:py-[180px]" data-docent-section="result">
         <div className="mx-auto max-w-[1280px]">
           <HangaraeSectionHeading
             label="Result"
@@ -467,7 +468,7 @@ export function HangaraeCaseStudy() {
         </div>
       </section>
 
-      <section className="py-[96px] md:py-[180px]">
+      <section className="py-[96px] md:py-[180px]" data-docent-section="technology">
         <div className="mx-auto max-w-[1280px]">
           <HangaraeSectionHeading
             label="Tech Stack"

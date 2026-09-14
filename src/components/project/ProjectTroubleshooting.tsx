@@ -8,7 +8,7 @@ export function ProjectTroubleshooting({ project }: ProjectTroubleshootingProps)
   if (project.troubleshooting.length === 0) return null;
 
   return (
-    <section className="py-20">
+    <section data-docent-section="troubleshooting" className="py-20">
       <p className="cinematic-label mb-6 text-blue-600">Troubleshooting</p>
       <h2 className="story-title max-w-[820px]">
         문제를 어떻게 다시 정의했는가.

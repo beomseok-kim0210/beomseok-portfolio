@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "note": "결정론적 검색 평가 셋. 모든 질문의 답은 실제 코퍼스(src/data/*, knowledge/<topic>.md)에 있다. acceptable 은 chunk id 또는 'prefix*' 패턴. page 는 클라이언트 PageContext. history 는 직전 사용자 발화(후속 질문용).",
+  "categories": {
+    "A": "direct project fact",
+    "B": "project role",
+    "C": "technical decision",
+    "D": "troubleshooting",
+    "E": "metric/result",
+    "F": "cross-project comparison",
+    "G": "current-page contextual question",
+    "H": "current-page override (asks about another project)",
+    "I": "unsupported question",
+    "J": "ambiguous/general profile question",
+    "K": "bounded follow-up"
+  },
+  "pages": {
+    "home": { "pathname": "/", "pageType": "home" },
+    "about": { "pathname": "/about", "pageType": "about" },
+    "armi": { "pathname": "/projects/armi", "pageType": "project", "projectSlug": "armi" },
+    "hangarae": { "pathname": "/projects/hangarae", "pageType": "project", "projectSlug": "hangarae" },
+    "wedding": { "pathname": "/projects/wedding", "pageType": "project", "projectSlug": "wedding" },
+    "claw-dev": { "pathname": "/projects/claw-dev", "pageType": "project", "projectSlug": "claw-dev" },
+    "playground": { "pathname": "/playground", "pageType": "playground", "projectSlug": "docent" }
+  },
+  "queries": [
+    { "id": "A1", "category": "A", "query": "ARMI가 뭔가요?", "page": "home", "project": "armi", "acceptable": ["project:armi:overview:*"] },
+    { "id": "A2", "category": "A", "query": "행가래는 어떤 프로젝트예요?", "page": "home", "project": "hangarae", "acceptable": ["project:hangarae:overview:*"] },
+    { "id": "A3", "category": "A", "query": "Wedding AI 프로젝트는 무슨 문제를 풀었어요?", "page": "home", "project": "wedding", "acceptable": ["project:wedding:problem:tour", "project:wedding:overview:*", "project:wedding:architecture:card:core-problem"] },
+    { "id": "A4", "category": "A", "query": "Claw Dev는 에이전트가 몇 개예요?", "page": "home", "project": "claw-dev", "acceptable": ["project:claw-dev:architecture:agents", "project:claw-dev:metric:hero-stats", "project:claw-dev:overview:*"] },
+    { "id": "A5", "category": "A", "query": "ARMI에서 LLM은 어디에 사용됐어요?", "page": "home", "project": "armi", "acceptable": ["project:armi:overview:recap", "project:armi:lesson:reflection:2", "project:armi:role:recap"] },
+    { "id": "A6", "category": "A", "query": "AI 도슨트는 어떻게 시작된 프로젝트야?", "page": "home", "project": "docent", "acceptable": ["project:docent:overview:origin"] },
+    { "id": "A7", "category": "A", "query": "Claw Dev에서 Gemini가 막히면 어떻게 돼?", "page": "home", "project": "claw-dev", "acceptable": ["project:claw-dev:decision:llm-fallback", "project:claw-dev:lesson:takeaways", "project:claw-dev:result:results"] },
+    { "id": "A8", "category": "A", "query": "웨딩 프로젝트에서 검토한 3D 모델 네 가지가 뭐야?", "page": "home", "project": "wedding", "acceptable": ["project:wedding:metric:research-stats", "project:wedding:decision:model:*", "project:wedding:metric:model-comparison", "project:wedding:troubleshooting:detail:*", "project:wedding:lesson:learned"] },
+
+    { "id": "B1", "category": "B", "query": "ARMI에서 본인이 한 역할이 뭐예요?", "page": "home", "project": "armi", "acceptable": ["project:armi:role:*"] },
+    { "id": "B2", "category": "B", "query": "행가래에서 맡은 역할은?", "page": "home", "project": "hangarae", "acceptable": ["project:hangarae:role:*"] },
+    { "id": "B3", "category": "B", "query": "Wedding AI에서 담당한 부분이 뭐였어요?", "page": "home", "project": "wedding", "acceptable": ["project:wedding:role:*"] },
+    { "id": "B4", "category": "B", "query": "Claw Dev는 혼자 만들었어요? 역할이 뭐예요?", "page": "home", "project": "claw-dev", "acceptable": ["project:claw-dev:role:*", "project:claw-dev:overview:recap"] },
+
+    { "id": "C1", "category": "C", "query": "행가래에서 왜 YOLOv11-M을 재학습했어요?", "page": "home", "project": "hangarae", "acceptable": ["project:hangarae:decision:trouble-01", "project:hangarae:troubleshooting:trouble-01", "project:hangarae:troubleshooting:detail:재활-동작에서-발끝과-뒤꿈치를-추적하지-못하던-문제"] },
+    { "id": "C2", "category": "C", "query": "웨딩 프로젝트에서 3D 복원을 왜 중단했어요?", "page": "home", "project": "wedding", "acceptable": ["project:wedding:decision:pivot", "project:wedding:troubleshooting:detail:기술적으로-가능했지만-제품에-맞지-않아-중단한-문제", "project:wedding:metric:highlight:decision", "project:wedding:troubleshooting:volume-collapse"] },
+    { "id": "C3", "category": "C", "query": "ARMI에서 웨이크워드 기술 교체를 왜 안 했어요?", "page": "home", "project": "armi", "acceptable": ["project:armi:troubleshooting:04-tech-decision", "project:armi:decision:04-tech-decision"] },
+    { "id": "C4", "category": "C", "query": "Claw Dev에서 LLM 출력을 왜 Zod로 검증해요?", "page": "home", "project": "claw-dev", "acceptable": ["project:claw-dev:lesson:takeaways", "project:claw-dev:architecture:verify-loop", "project:claw-dev:lesson:reflection:2", "project:claw-dev:metric:hero-stats"] },
+    { "id": "C5", "category": "C", "query": "행가래에서 절대 좌표 대신 관절 각도를 쓴 이유는?", "page": "home", "project": "hangarae", "acceptable": ["project:hangarae:decision:trouble-02", "project:hangarae:troubleshooting:trouble-02", "project:hangarae:lesson:reflection:2"] },
+    { "id": "C6", "category": "C", "query": "ARMI에서 TTS 중에 STT를 차단한 이유가 뭐야?", "page": "home", "project": "armi", "acceptable": ["project:armi:decision:tts-중-stt-차단", "project:armi:troubleshooting:02-conversation-loop", "project:armi:troubleshooting:detail:ai가-말하는-중에-다시-듣거나-말한-뒤-듣지-못하던-문제"] },
+
+    { "id": "D1", "category": "D", "query": "ARMI에서 마이크 충돌 문제는 어떻게 해결했어요?", "page": "home", "project": "armi", "acceptable": ["project:armi:troubleshooting:01-audio-ownership", "project:armi:troubleshooting:detail:마이크를-동시에-쓰는-기능들이-충돌하던-문제"] },
+    { "id": "D2", "category": "D", "query": "ARMI에서 WebSocket 연결은 됐는데 이벤트를 못 받던 문제는?", "page": "home", "project": "armi", "acceptable": ["project:armi:troubleshooting:03-realtime-subscription", "project:armi:troubleshooting:detail:연결은-됐지만-이벤트를-받지-못하던-문제"] },
+    { "id": "D3", "category": "D", "query": "행가래에서 피드백이 너무 많이 쏟아지던 문제는 어떻게 풀었어?", "page": "home", "project": "hangarae", "acceptable": ["project:hangarae:troubleshooting:trouble-03", "project:hangarae:decision:trouble-03"] },
+    { "id": "D4", "category": "D", "query": "웨딩 프로젝트에서 환경 구축이 왜 어려웠어요?", "page": "home", "project": "wedding", "acceptable": ["project:wedding:troubleshooting:environment", "project:wedding:decision:model:icon"] },
+    { "id": "D5", "category": "D", "query": "Galaxy Watch 알림이 폭탄처럼 울리던 문제는?", "page": "home", "project": "armi", "acceptable": ["project:armi:troubleshooting:detail:긴급-호출이-알림-폭탄이-되지-않게-해야-했던-문제", "project:armi:decision:긴급-호출-알림-정책"] },
+    { "id": "D6", "category": "D", "query": "행가래에서 센서 좌표가 화면과 어긋나던 문제는?", "page": "home", "project": "hangarae", "acceptable": ["project:hangarae:troubleshooting:trouble-04", "project:hangarae:decision:trouble-04"] },
+
+    { "id": "E1", "category": "E", "query": "행가래 Precision이 얼마나 올랐어요?", "page": "home", "project": "hangarae", "acceptable": ["project:hangarae:metric:trouble-01", "project:hangarae:metric:highlight:precision", "project:hangarae:metric:card", "project:hangarae:result:detail"] },
+    { "id": "E2", "category": "E", "query": "행가래 발 데이터는 몇 장 라벨링했어요?", "page": "home", "project": "hangarae", "acceptable": ["project:hangarae:metric:highlight:data", "project:hangarae:troubleshooting:trouble-01", "project:hangarae:decision:trouble-01", "project:hangarae:result:detail", "project:hangarae:troubleshooting:detail:재활-동작에서-발끝과-뒤꿈치를-추적하지-못하던-문제", "project:hangarae:metric:card"] },
+    { "id": "E3", "category": "E", "query": "웨딩 드레스 시착 비용이 얼마였어요?", "page": "home", "project": "wedding", "acceptable": ["project:wedding:metric:highlight:cost", "project:wedding:problem:tour", "project:wedding:overview:recap", "project:wedding:architecture:card:core-problem"] },
+    { "id": "E4", "category": "E", "query": "ECON의 CAPE Chamfer 수치는 어디서 나온 값이에요?", "page": "home", "project": "wedding", "acceptable": ["project:wedding:metric:model-comparison"] },
+    { "id": "E5", "category": "E", "query": "행가래 성과 수치의 근거가 뭐예요?", "page": "home", "project": "hangarae", "acceptable": ["project:hangarae:metric:*", "project:hangarae:troubleshooting:trouble-01", "project:hangarae:decision:trouble-01"] },
+    { "id": "E6", "category": "E", "query": "Claw Dev 검증 도구는 몇 개고 뭐예요?", "page": "home", "project": "claw-dev", "acceptable": ["project:claw-dev:metric:hero-stats", "project:claw-dev:architecture:verify-loop"] },
+
+    { "id": "F1", "category": "F", "query": "ARMI와 행가래 둘 다 SSAFY에서 한 프로젝트야?", "page": "home", "project": null, "acceptable": ["profile:journey:step-03", "profile:journey:timeline:armi-행가래", "profile:journey:timeline:ssafy"] },
+    { "id": "F2", "category": "F", "query": "이 사람의 AI 경험 중 RAG와 가장 관련 있는 경험은?", "page": "home", "project": null, "acceptable": ["project:claw-dev:architecture:memory", "project:claw-dev:metric:highlight:search", "project:claw-dev:role:detail", "project:claw-dev:architecture:detail", "profile:focus:generative-ai", "profile:journey:step-01", "profile:skill:toolbox", "project:claw-dev:technology:detail"] },
+    { "id": "F3", "category": "F", "query": "포트폴리오에 있는 프로젝트 중 백엔드 경험을 보여줘", "page": "home", "project": null, "acceptable": ["skill:backend:*", "project:armi:architecture:card:robot-state", "profile:skill:toolbox", "project:armi:technology:*", "project:armi:architecture:realtime-flow", "project:armi:architecture:detail"] },
+    { "id": "F4", "category": "F", "query": "웨딩 프로젝트 경험이 행가래에 어떻게 이어졌어?", "page": "home", "project": "wedding", "acceptable": ["project:wedding:lesson:learned"] },
+    { "id": "F5", "category": "F", "query": "MCP와 Blender를 쓴 프로젝트가 뭐야?", "page": "home", "project": null, "acceptable": ["project:hangarae:*", "project:wedding:*"] },
+
+    { "id": "G1", "category": "G", "query": "이 페이지에 있는 프로젝트를 설명해줘", "page": "armi", "project": "armi", "acceptable": ["project:armi:overview:*"] },
+    { "id": "G2", "category": "G", "query": "지금 보고 있는 프로젝트에서 가장 어려웠던 점은 뭐야?", "page": "hangarae", "project": "hangarae", "acceptable": ["project:hangarae:troubleshooting:*", "project:hangarae:lesson:reflection:1"] },
+    { "id": "G3", "category": "G", "query": "왜 이 기술을 선택했나요?", "page": "hangarae", "project": "hangarae", "acceptable": ["project:hangarae:decision:*", "project:hangarae:troubleshooting:*"] },
+    { "id": "G4", "category": "G", "query": "이 프로젝트에서 본인이 한 역할이 뭐예요?", "page": "wedding", "project": "wedding", "acceptable": ["project:wedding:role:*"] },
+    { "id": "G5", "category": "G", "query": "성과 수치의 근거가 뭐예요?", "page": "hangarae", "project": "hangarae", "acceptable": ["project:hangarae:metric:*", "project:hangarae:troubleshooting:trouble-01", "project:hangarae:decision:trouble-01"] },
+    { "id": "G6", "category": "G", "query": "여기서 LLM 폴백은 어떻게 동작해?", "page": "claw-dev", "project": "claw-dev", "acceptable": ["project:claw-dev:decision:llm-fallback"] },
+    { "id": "G7", "category": "G", "query": "이 프로젝트 기술 스택 알려줘", "page": "armi", "project": "armi", "acceptable": ["project:armi:technology:*"] },
+    { "id": "G8", "category": "G", "query": "얼굴을 사진과 닮게 하는 건 왜 실패했어?", "page": "playground", "project": "docent", "acceptable": ["project:docent:devlog:20260722:사진으로-얼굴-닮게-하기-첫-시도와-검증", "project:docent:devlog:20260723:얼굴-닮기-재도전-그리고-정직한-한계-인정"] },
+    { "id": "G9", "category": "G", "query": "어떤 문제를 풀려고 한 거예요?", "page": "wedding", "project": "wedding", "acceptable": ["project:wedding:problem:*", "project:wedding:overview:*", "project:wedding:architecture:card:core-problem", "project:wedding:troubleshooting:*"] },
+    { "id": "G10", "category": "G", "query": "결과적으로 뭘 배웠어요?", "page": "claw-dev", "project": "claw-dev", "acceptable": ["project:claw-dev:lesson:*", "project:claw-dev:result:*"] },
+
+    { "id": "H1", "category": "H", "query": "행가래 프로젝트에서 정확도를 어떻게 높였어?", "page": "armi", "project": "hangarae", "acceptable": ["project:hangarae:troubleshooting:trouble-01", "project:hangarae:decision:trouble-01", "project:hangarae:metric:trouble-01", "project:hangarae:troubleshooting:detail:재활-동작에서-발끝과-뒤꿈치를-추적하지-못하던-문제", "project:hangarae:metric:highlight:precision"] },
+    { "id": "H2", "category": "H", "query": "ARMI에서 마이크 충돌은 어떻게 풀었어요?", "page": "hangarae", "project": "armi", "acceptable": ["project:armi:troubleshooting:01-audio-ownership", "project:armi:troubleshooting:detail:마이크를-동시에-쓰는-기능들이-충돌하던-문제"] },
+    { "id": "H3", "category": "H", "query": "웨딩 프로젝트는 왜 3D를 포기했어?", "page": "claw-dev", "project": "wedding", "acceptable": ["project:wedding:decision:pivot", "project:wedding:troubleshooting:detail:기술적으로-가능했지만-제품에-맞지-않아-중단한-문제", "project:wedding:metric:highlight:decision", "project:wedding:troubleshooting:volume-collapse"] },
+    { "id": "H4", "category": "H", "query": "Claw Dev의 역할 에이전트 구성 알려줘", "page": "wedding", "project": "claw-dev", "acceptable": ["project:claw-dev:architecture:agents", "project:claw-dev:metric:hero-stats", "project:claw-dev:overview:*"] },
+    { "id": "H5", "category": "H", "query": "도슨트 립싱크는 어떻게 만들었어?", "page": "armi", "project": "docent", "acceptable": ["project:docent:devlog:20260722:립싱크를-사인파에서-한글-발음으로"] },
+
+    { "id": "I1", "category": "I", "query": "김범석의 혈액형이 뭐예요?", "page": "home", "project": null, "acceptable": [], "unsupported": true },
+    { "id": "I2", "category": "I", "query": "ARMI 팀원은 몇 명이었어요?", "page": "armi", "project": "armi", "acceptable": [], "unsupported": true },
+    { "id": "I3", "category": "I", "query": "오늘 서울 날씨 어때?", "page": "home", "project": null, "acceptable": [], "unsupported": true },
+    { "id": "I4", "category": "I", "query": "행가래의 월간 활성 사용자 수는?", "page": "hangarae", "project": "hangarae", "acceptable": [], "unsupported": true },
+    { "id": "I5", "category": "I", "query": "zzzzqqqq wwwwvvvv", "page": "home", "project": null, "acceptable": [], "unsupported": true },
+    { "id": "I6", "category": "I", "query": "파이썬으로 퀵소트 짜줘", "page": "home", "project": null, "acceptable": [], "unsupported": true },
+
+    { "id": "J1", "category": "J", "query": "어떤 기술을 다루나요?", "page": "about", "project": null, "acceptable": ["profile:skill:toolbox", "profile:focus:*", "skill:*"] },
+    { "id": "J2", "category": "J", "query": "김범석은 어떤 사람이에요?", "page": "about", "project": null, "acceptable": ["profile:profile:*"] },
+    { "id": "J3", "category": "J", "query": "어떤 상을 받았어요?", "page": "home", "project": null, "acceptable": ["profile:award:*", "project:hangarae:award:card", "project:wedding:award:card", "project:hangarae:metric:highlight:award", "project:wedding:metric:highlight:award"] },
+    { "id": "J4", "category": "J", "query": "SSAFY에서 뭘 배웠어요?", "page": "about", "project": null, "acceptable": ["profile:journey:step-03", "profile:journey:timeline:ssafy"] },
+    { "id": "J5", "category": "J", "query": "전공이 뭐예요?", "page": "about", "project": null, "acceptable": ["profile:profile:card", "profile:profile:introduction", "profile:journey:timeline:international-trade"] },
+
+    { "id": "K1", "category": "K", "query": "그중 가장 어려웠던 건?", "page": "home", "project": "armi", "history": ["ARMI에서 어떤 역할을 했어?"], "acceptable": ["project:armi:troubleshooting:*", "project:armi:lesson:reflection:1"] },
+    { "id": "K2", "category": "K", "query": "그럼 수치는 얼마나 좋아졌어?", "page": "home", "project": "hangarae", "history": ["행가래에서 YOLO를 왜 재학습했어?"], "acceptable": ["project:hangarae:metric:*", "project:hangarae:result:detail"] },
+    { "id": "K3", "category": "K", "query": "거기서 쓴 기술은?", "page": "armi", "project": "wedding", "history": ["웨딩 프로젝트 소개해줘"], "acceptable": ["project:wedding:technology:*", "project:wedding:architecture:expert-prompts"] }
+  ]
+}
