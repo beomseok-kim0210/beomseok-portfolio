@@ -1,0 +1,13 @@
+# LAM-A2E runtime — pinned to the environment that produced the validated
+# 102,113,044-parameter model load and the [N, 52] @ 30 fps timeline.
+# torch/torchaudio come from the cu121 index declared in the Dockerfile.
+torch==2.1.2+cu121
+torchaudio==2.1.2+cu121
+transformers==4.36.2
+librosa==0.11.0
+numpy==1.26.3
+scipy==1.15.3
+numba==0.67.0
+soundfile==0.14.0
+addict==2.4.0
+termcolor==3.0.1

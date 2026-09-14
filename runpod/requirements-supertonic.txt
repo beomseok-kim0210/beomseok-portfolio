@@ -1,0 +1,8 @@
+# Supertonic runtime — pinned to the environment the Human approved locally.
+# CPU only: the qualification record shows CPUExecutionProvider and gpu_used false.
+supertonic==1.3.1
+onnxruntime==1.23.2
+numpy==2.2.6
+soundfile==0.14.0
+cffi==2.1.1
+pycparser==3.0

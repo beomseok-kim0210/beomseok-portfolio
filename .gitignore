@@ -73,3 +73,4 @@ public/videos/*.mkv
 !public/videos/Responsive Avatar UI.mp4
 !public/videos/skeleton.mp4
 !public/videos/Watch Alert.mp4
+__pycache__/
