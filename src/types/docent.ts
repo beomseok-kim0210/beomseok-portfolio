@@ -56,7 +56,7 @@ export interface DocentTimings {
 
 // NDJSON 와이어 프로토콜 — 한 줄에 JSON 하나. 모르는 type 은 클라이언트가 무시한다.
 export type DocentStreamEvent =
-  | { type: "meta"; emotion: DocentEmotion; mode: DocentMode; provider?: "anthropic" | "none" }
+  | { type: "meta"; emotion: DocentEmotion; mode: DocentMode; provider?: "openai" | "anthropic" | "none" }
   | { type: "sources"; grounded: boolean; activeProject: string | null; sources: DocentSource[] }
   | { type: "delta"; text: string }
   | { type: "done"; timings?: DocentTimings }

@@ -24,7 +24,7 @@ export interface DocentLastAnswerDebug {
   activeProject: string | null;
   sources: DocentSource[];
   timings: DocentTimings | null;
-  provider: "anthropic" | "none" | null;
+  provider: "openai" | "anthropic" | "none" | null;
 }
 
 export interface DocentChatState {
