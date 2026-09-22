@@ -3,7 +3,7 @@ import { docentConfig } from "@/data/docent";
 // 나이브 IP별 레이트리미터.
 // 주의: Vercel 서버리스에서는 Lambda 인스턴스별로 Map이 분리되고 콜드스타트 시
 // 리셋된다. 어디까지나 속도 제한용 완충 장치이며, 실질적인 비용 방어선은
-// Anthropic Console의 워크스페이스 지출 상한이다.
+// LLM 프로바이더 콘솔(OpenAI Billing / Anthropic Console)의 지출 상한이다.
 const hits = new Map<string, number[]>();
 const MAX_TRACKED_IPS = 500;
 

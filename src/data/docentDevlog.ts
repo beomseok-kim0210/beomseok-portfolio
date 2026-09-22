@@ -70,7 +70,7 @@ export const docentRoadmap = [
   },
   {
     title: "Claude 라이브 모드 전환",
-    body: "지금은 비용 0원의 데모 모드로 동작합니다. Anthropic API 키를 연결하면 knowledge 노트까지 검색해 답하는 실시간 대화로 전환됩니다(코드 수정 없이 환경변수만).",
+    body: "지금은 비용 0원의 데모 모드로 동작합니다. OpenAI API 키를 연결하면 knowledge 노트까지 검색해 답하는 실시간 대화로 전환됩니다(코드 수정 없이 환경변수만).",
   },
   {
     title: "질감·헤어라인 다듬기",

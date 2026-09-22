@@ -9,7 +9,7 @@ export const docentCopy = {
   label: "AI Docent",
   heading: "포트폴리오에게\n직접 물어보세요",
   subheading:
-    "Google GNM 파라메트릭 헤드 모델과 Claude API로 만든 3D 도슨트입니다. 지금 보고 있는 페이지를 알고, 포트폴리오에서 근거를 찾아 답합니다. 김범석의 프로젝트, 기술, 여정에 대해 무엇이든 물어보세요.",
+    "Google GNM 파라메트릭 헤드 모델과 GPT API로 만든 3D 도슨트입니다. 지금 보고 있는 페이지를 알고, 포트폴리오에서 근거를 찾아 답합니다. 김범석의 프로젝트, 기술, 여정에 대해 무엇이든 물어보세요.",
   inputPlaceholder: "궁금한 것을 물어보세요…",
   listeningPlaceholder: "듣고 있어요… 말씀해 주세요",
   demoBadge: "데모 모드",
@@ -22,7 +22,6 @@ export const docentCopy = {
 export const docentConfig = {
   maxInputLength: 500,
   maxHistoryMessages: 8,
-  model: process.env.DOCENT_MODEL ?? "claude-haiku-4-5",
   maxTokens: 1024,
   rateLimit: { windowMs: 60_000, maxRequests: 10 },
 } as const;

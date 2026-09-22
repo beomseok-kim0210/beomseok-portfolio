@@ -9,6 +9,7 @@ import { test } from "node:test";
 import type { DocentStreamEvent } from "@/types/docent";
 
 delete process.env.ANTHROPIC_API_KEY;
+delete process.env.OPENAI_API_KEY;
 const { POST } = await import("@/app/api/docent/chat/route");
 
 let ipCounter = 0;
