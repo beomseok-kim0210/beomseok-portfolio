@@ -335,9 +335,12 @@ class RunPodVoiceProvider implements VoiceProvider {
     const envelope = await this.runSync({ text, utteranceId });
 
     if (envelope.status && envelope.status !== "COMPLETED") {
-      throw new VoiceProviderError("transport", `runpod job ${envelope.status}`, {
+      // 봉투의 error 는 워커 안에서 무엇이 죽었는지 말해 주는 유일한 단서다.
+      // 버리면 "transport 실패" 라는 말만 남아 원격에서는 진단할 방법이 없어진다.
+      throw new VoiceProviderError("transport", `runpod job ${envelope.status}: ${envelope.error ?? "no error detail"}`, {
         status: envelope.status,
         jobId: envelope.id,
+        runpodError: envelope.error,
       });
     }
     const out = envelope.output;
