@@ -120,10 +120,21 @@ export class VoiceProviderUnavailable extends Error {
   readonly ddVoiceCode = "VOICE_UNCONFIGURED";
 }
 
+/** `warm()` 이 한 일. 비용이 드는 것은 `started` 뿐이다. */
+export type WarmOutcome = "already-warm" | "started" | "unavailable";
+
 export interface VoiceProvider {
   readonly name: "local" | "runpod";
   /** 웜업 기회. 로컬은 워커를 겹쳐 올리고, RunPod 은 아무것도 하지 않는다. */
   prepare(): Promise<void>;
+  /**
+   * 요청이 오기 전에 워커를 미리 깨운다.
+   *
+   * scale-to-zero 엔드포인트의 콜드 스타트는 대부분 우리 코드 밖(GPU 배정 + 컨테이너
+   * 기동)이라 합성 시점에는 줄일 수 없다. 사용자가 음성을 켜는 순간처럼 **합성보다
+   * 앞선 신호**에 이것을 걸어야 그 시간이 타이핑·답변 생성과 겹친다.
+   */
+  warm(): Promise<WarmOutcome>;
   synthesize(text: string, utteranceId: string): Promise<VoiceResult>;
 }
 
@@ -153,6 +164,12 @@ class LocalVoiceProvider implements VoiceProvider {
         reason: err instanceof Error ? err.message.slice(0, 300) : String(err),
       });
     }
+  }
+
+  /** 로컬은 prepare() 가 곧 웜업이다 — 따로 할 일이 없다. */
+  async warm(): Promise<WarmOutcome> {
+    await this.prepare();
+    return "already-warm";
   }
 
   async synthesize(text: string, utteranceId: string): Promise<VoiceResult> {
@@ -284,6 +301,12 @@ interface RunPodEnvelope {
   delayTime?: number;
 }
 
+/**
+ * 예열용 최소 발화. 짧을수록 GPU 시간이 덜 든다 — 목적은 소리가 아니라 워커 기동이다.
+ * Supertonic 은 빈 문자열을 거부하므로 한 음절은 필요하다.
+ */
+const WARM_TEXT = "네";
+
 /** 핸들러가 낼 수 있는 코드 → 라우트가 아는 단계. */
 const RUNPOD_STAGE: Record<string, VoiceFailureStage> = {
   INVALID_INPUT: "voice",
@@ -330,6 +353,39 @@ class RunPodVoiceProvider implements VoiceProvider {
    * 띄우는 유일한 이유는 실제 발화 요청이어야 한다.
    */
   async prepare(): Promise<void> {}
+
+  /**
+   * 먼저 `/health` 로 물어본다 — 조회는 공짜이고 워커를 깨우지 않는다. 이미 떠 있으면
+   * 아무것도 하지 않는다. 비어 있을 때만 짧은 작업 하나를 **비동기**(`/run`)로 던져
+   * 워커를 올린다. 결과는 쓰지 않는다 — 목적은 산출물이 아니라 기동이다.
+   *
+   * 실패는 삼킨다. 예열은 최선 노력이고, 실패해도 실제 합성 요청이 평소대로 콜드를
+   * 겪을 뿐 사용자에게 보일 오류가 아니다.
+   */
+  async warm(): Promise<WarmOutcome> {
+    const health = await probeRunPod(5000);
+    if (!health.reachable) return "unavailable";
+    const w = (health.workers ?? {}) as Record<string, number>;
+    if ((w.ready ?? 0) > 0 || (w.idle ?? 0) > 0 || (w.running ?? 0) > 0 || (w.initializing ?? 0) > 0) {
+      return "already-warm";
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    try {
+      const res = await fetch(`https://api.runpod.ai/v2/${this.endpointId}/run`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${this.apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ input: { text: WARM_TEXT, utteranceId: `warm-${Date.now()}` } }),
+        signal: controller.signal,
+      });
+      return res.ok ? "started" : "unavailable";
+    } catch {
+      return "unavailable";
+    } finally {
+      clearTimeout(timer);
+    }
+  }
 
   async synthesize(text: string, utteranceId: string): Promise<VoiceResult> {
     const envelope = await this.runSync({ text, utteranceId });

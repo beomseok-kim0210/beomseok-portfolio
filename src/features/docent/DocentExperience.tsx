@@ -88,6 +88,33 @@ export function DocentExperience({ pageContext: override, compact = false }: Doc
     }
   }, [voice.voiceEnabled, supertonic, voice]);
 
+  /**
+   * 음성을 켜는 순간 원격 워커를 미리 깨운다.
+   *
+   * 합성은 답변 스트리밍이 끝난 뒤에야 시작되는데, scale-to-zero 워커의 콜드 스타트는
+   * 그 시점에 줄일 수 있는 것이 아니다(측정: 콜드 84 초 중 컨테이너 내부 준비는 7 초,
+   * 나머지는 GPU 배정·기동). 음성을 켜는 것은 합성보다 한참 앞선 신호라, 여기서 걸면
+   * 그 시간이 사용자의 타이핑·답변 생성과 겹친다.
+   *
+   * 서버가 공짜 조회로 "이미 떠 있음" 을 먼저 확인하므로 켰다 껐다 해도 비용이 쌓이지
+   * 않는다. 실패는 무시한다 — 예열이 안 되면 평소대로 콜드를 겪을 뿐이다.
+   */
+  useEffect(() => {
+    if (!voice.voiceEnabled) return;
+    const controller = new AbortController();
+    void fetch("/api/docent/voice/warm", { method: "POST", signal: controller.signal }).catch(() => undefined);
+    return () => controller.abort();
+  }, [voice.voiceEnabled]);
+
+  // 질문을 보낼 때도 한 번 더. 음성을 켜 둔 채 오래 머물면 워커가 다시 잠들기 때문이다
+  // (idle timeout). 답변 생성과 기동이 겹치므로 여기가 마지막으로 남은 겹칠 기회다.
+  const sendWithWarm = useCallback((text: string) => {
+    if (voice.voiceEnabled) {
+      void fetch("/api/docent/voice/warm", { method: "POST" }).catch(() => undefined);
+    }
+    chat.send(text);
+  }, [voice.voiceEnabled, chat]);
+
   // 진단 전역. 렌더에서 걸면 StrictMode 의 이중 호출이 cleanup 을 먼저 돌려 값을
   // 지워 버리므로, 매 렌더 뒤 effect 에서 새로 걸고 언마운트에서만 지운다.
   useEffect(() => {
@@ -118,7 +145,7 @@ export function DocentExperience({ pageContext: override, compact = false }: Doc
       data-docent-project={pageContext.projectSlug ?? ""}
     >
       <AvatarCanvas emotion={emotion} viseme={voice.viseme} mouth={supertonic.mouth} compact={compact} />
-      <ChatPanel {...chat} voice={voice} compact={compact} />
+      <ChatPanel {...chat} send={sendWithWarm} voice={voice} compact={compact} />
     </div>
   );
 }
