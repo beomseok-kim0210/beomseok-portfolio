@@ -12,6 +12,7 @@ import {
   type VoiceResult,
 } from "@/lib/docent/voiceProvider";
 import { checkRateLimit } from "@/lib/docent/rateLimit";
+import { sanitizeForTts } from "@/lib/docent/ttsText";
 
 // 로컬 백엔드가 child_process 와 파일시스템을 쓰므로 Node 런타임이 필수다.
 export const runtime = "nodejs";
@@ -117,6 +118,11 @@ export async function POST(request: Request) {
     return Response.json({ error: `text exceeds ${MAX_TEXT_LENGTH} characters` }, { status: 413 });
   }
 
+  // 길이 검사 뒤에 정화한다 — 대체가 글자 수를 늘릴 수 있으므로 한도는 원문 기준이다.
+  const sanitized = sanitizeForTts(text);
+  if (!sanitized.text) return Response.json({ error: "text is empty" }, { status: 400 });
+  text = sanitized.text;
+
   let provider: VoiceProvider;
   try {
     provider = getVoiceProvider();
@@ -179,6 +185,7 @@ export async function POST(request: Request) {
     // 구조화 로그. 사용자 발화 내용도, 오디오 바이트도, 경로도 담지 않는다.
     console.info("[voice]", JSON.stringify({
       requestId, utteranceId, engine: "supertonic+lam", provider: provider.name,
+      ...(sanitized.replaced.length ? { ttsSanitized: sanitized.replaced } : {}),
       coldStart: result.diagnostics.coldStart,
       ttsMs: result.diagnostics.synthesisMs, lamMs: result.diagnostics.inferenceMs,
       queueWaitMs: result.diagnostics.serverlessQueueMs,
