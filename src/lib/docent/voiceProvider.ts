@@ -480,6 +480,41 @@ class RunPodVoiceProvider implements VoiceProvider {
  * "준비됐나?" 가 "준비시켜라" 로 바뀌면 안 되고, 원격 백엔드의 워커 상태는
  * 여기서 알 수도 없다 (scale-to-zero 엔드포인트는 첫 요청이 워커를 띄운다).
  */
+/**
+ * RunPod 엔드포인트에 실제로 닿는지 확인한다. `/health` 는 워커 수와 큐 통계만 주는
+ * 조회라서 워커를 깨우지 않고 GPU 과금도 없다 — `/runsync` 와 다르다.
+ *
+ * 자격증명·엔드포인트 ID 는 반환값에 넣지 않는다. 나가는 것은 HTTP 상태와 워커 수뿐이다.
+ */
+export async function probeRunPod(timeoutMs = 8000): Promise<{
+  reachable: boolean;
+  httpStatus: number | null;
+  workers?: Record<string, unknown>;
+  jobs?: Record<string, unknown>;
+  error?: string;
+}> {
+  const endpointId = process.env.RUNPOD_ENDPOINT_ID?.trim();
+  const apiKey = process.env.RUNPOD_API_KEY?.trim();
+  if (!endpointId || !apiKey) return { reachable: false, httpStatus: null, error: "not configured" };
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(`https://api.runpod.ai/v2/${endpointId}/health`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+      signal: controller.signal,
+    });
+    if (!res.ok) return { reachable: false, httpStatus: res.status };
+    const body = (await res.json()) as { workers?: Record<string, unknown>; jobs?: Record<string, unknown> };
+    return { reachable: true, httpStatus: res.status, workers: body.workers, jobs: body.jobs };
+  } catch (err) {
+    const aborted = err instanceof Error && err.name === "AbortError";
+    return { reachable: false, httpStatus: null, error: aborted ? "timeout" : "request failed" };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export function describeVoiceBackend(): {
   backend: "local" | "runpod" | "unknown";
   configured: boolean;

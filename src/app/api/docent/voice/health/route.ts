@@ -1,4 +1,4 @@
-import { describeVoiceBackend } from "@/lib/docent/voiceProvider";
+import { describeVoiceBackend, probeRunPod } from "@/lib/docent/voiceProvider";
 import { voiceBackendHealth } from "@/lib/docent/voiceWorkers";
 
 export const runtime = "nodejs";
@@ -14,11 +14,13 @@ export const dynamic = "force-dynamic";
  * 경로·GPU 식별자·환경변수 값·스택트레이스는 내보내지 않는다. 상세 진단은
  * 서버 로그에 남는다.
  *
- * 원격 백엔드(RunPod)는 설정 유무만 답한다. 워커 상태는 이 프로세스가 알 수 없고,
- * 알아보러 가는 것은 곧 깨우는 것이다 — scale-to-zero 엔드포인트는 첫 요청이
- * 워커를 띄운다.
+ * 원격 백엔드(RunPod)는 기본적으로 설정 유무만 답한다. `?probe=1` 을 붙이면 RunPod
+ * `/health` 를 한 번 조회한다 — 워커 수·큐 통계만 주는 조회라 워커를 깨우지 않고
+ * GPU 과금도 없다(합성을 시키는 `/runsync` 와 다르다). 설정만 보고 "configured" 라고
+ * 답하는 헬스체크는 자격증명이 만료되거나 잔액이 0이 돼도 정상이라고 거짓말한다.
  */
-export async function GET() {
+export async function GET(request: Request) {
+  const probe = new URL(request.url).searchParams.get("probe") === "1";
   const backend = describeVoiceBackend();
   if (!backend.configured) {
     return Response.json(
@@ -28,8 +30,15 @@ export async function GET() {
     );
   }
   if (backend.backend === "runpod") {
-    return Response.json({ status: "configured", provider: "runpod",
-      supertonic: "remote", lam: "remote", fallback: "browser_tts" });
+    const base = { provider: "runpod" as const, supertonic: "remote", lam: "remote", fallback: "browser_tts" };
+    if (!probe) return Response.json({ status: "configured", ...base });
+
+    const p = await probeRunPod();
+    return Response.json(
+      { status: p.reachable ? "reachable" : "unreachable", ...base,
+        runpod: { httpStatus: p.httpStatus, workers: p.workers, jobs: p.jobs, error: p.error } },
+      { status: p.reachable ? 200 : 503 },
+    );
   }
 
   const health = voiceBackendHealth();
