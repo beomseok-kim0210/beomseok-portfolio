@@ -7,13 +7,15 @@ import { docentConfig, docentCopy, docentStarterQuestions } from "@/data/docent"
 import type { DocentChatState } from "./useDocentChat";
 import type { VoiceState } from "./useVoice";
 import type { DocentFailure } from "@/types/docent";
-import { DOCENT_STATUS_COPY, resolveDocentSurfaceStatus } from "./docentStatus";
+import { ACTIVATION_PENDING_COPY, DOCENT_STATUS_COPY, resolveDocentSurfaceStatus } from "./docentStatus";
 
 type ChatPanelProps = DocentChatState & {
   voice: VoiceState;
   compact?: boolean;
   fill?: boolean;
   focusInputToken?: number;
+  /** 3D 얼굴이 돌아오는 중 — 이때 들어온 질문에는 "곧 활성화" 안내를 보인다. */
+  avatarRecovering?: boolean;
 };
 
 function VoiceLifecycleIndicator({ voice }: { voice: VoiceState }) {
@@ -129,6 +131,7 @@ export function ChatPanel({
   compact = false,
   fill = false,
   focusInputToken = 0,
+  avatarRecovering = false,
 }: ChatPanelProps) {
   const reduceMotion = useReducedMotion();
   const [input, setInput] = useState("");
@@ -238,7 +241,11 @@ export function ChatPanel({
         className="flex min-h-9 shrink-0 items-center gap-2 border-b border-white/[0.07] bg-sky-300/[0.035] px-4 text-[11px] text-slate-400 sm:px-6"
       >
         <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${surfaceStatus === "failed" ? "bg-amber-300" : surfaceStatus === "ready" ? "bg-emerald-300" : "bg-sky-300"} ${surfaceStatus === "searching" || surfaceStatus === "answering" || surfaceStatus === "warming_voice" || surfaceStatus === "delayed" ? "animate-pulse motion-reduce:animate-none" : ""}`} />
-        <span>{DOCENT_STATUS_COPY[surfaceStatus]}</span>
+        <span>
+          {avatarRecovering && surfaceStatus !== "ready" && surfaceStatus !== "failed"
+            ? ACTIVATION_PENDING_COPY
+            : DOCENT_STATUS_COPY[surfaceStatus]}
+        </span>
         {voice.voiceEnabled && requestState.status !== "ready" ? (
           <span className="ml-auto hidden text-slate-500 sm:inline">텍스트 우선</span>
         ) : null}

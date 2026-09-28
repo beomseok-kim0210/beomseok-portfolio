@@ -1,4 +1,5 @@
 import type { DocentStage } from "@/types/docent";
+import { ACTIVATION_PENDING_COPY } from "./docentStatus";
 
 export type VoiceLifecycle =
   | "VOICE_OFF"
@@ -70,7 +71,8 @@ export function voiceLifecycleReducer(
 }
 
 export const VOICE_STATUS_COPY: Record<Exclude<VoiceLifecycle, "VOICE_OFF">, string> = {
-  VOICE_WARMING: "음성 기능을 준비하고 있어요…",
+  // 음성 워커는 쉬면 꺼진다(scale-to-zero). 다시 켜지는 동안의 문구.
+  VOICE_WARMING: ACTIVATION_PENDING_COPY,
   VOICE_DELAYED: "텍스트 답변은 먼저 확인하실 수 있어요.",
   VOICE_READY: "음성 준비 완료",
   VOICE_SYNTHESIZING: "음성을 생성하고 있어요…",

@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { projectEntity } from "@/lib/docent/rag/entities";
 import { ChatPanel } from "./ChatPanel";
 import { useDocentRuntime } from "./DocentRuntime";
@@ -40,6 +40,12 @@ export function DocentExperience({ focusInputToken = 0, layout = "workspace" }: 
     const current = (window as unknown as { __ddGlobal?: Record<string, unknown> }).__ddGlobal;
     if (current) Object.assign(current, readDocentMountMetrics());
   }, []);
+
+  // 3D 얼굴이 새 WebGL 컨텍스트로 돌아오는 중이면 질문에 "곧 활성화" 안내를 붙인다.
+  const [avatarActive, setAvatarActive] = useState(true);
+  const questionPending = runtime.chat.requestState.status === "searching"
+    || runtime.chat.requestState.status === "answering"
+    || runtime.chat.requestState.status === "delayed";
 
   const hologramState = resolveHologramState(
     runtime.chat.requestState.status,
@@ -103,6 +109,8 @@ export function DocentExperience({ focusInputToken = 0, layout = "workspace" }: 
           mouth={runtime.supertonic.mouth}
           shell
           sidecar={sidecar}
+          questionPending={questionPending}
+          onActiveChange={setAvatarActive}
         />
 
         {sidecar ? (
@@ -137,6 +145,7 @@ export function DocentExperience({ focusInputToken = 0, layout = "workspace" }: 
           compact
           fill
           focusInputToken={focusInputToken}
+          avatarRecovering={!avatarActive}
         />
       </section>
     </div>

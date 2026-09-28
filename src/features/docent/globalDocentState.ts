@@ -26,8 +26,12 @@ export const DESKTOP_DOCENT_CANVAS_GAP = 24;
 /** 사이드 패널이 차지하는 오른쪽 폭(패널 + 바깥 여백 + 본문과의 간격). */
 export const DESKTOP_DOCENT_RESERVED_WIDTH =
   DESKTOP_DOCENT_PANEL_WIDTH + DESKTOP_DOCENT_EDGE_MARGIN + DESKTOP_DOCENT_CANVAS_GAP;
-/** 이 폭부터 사이드 패널로 붙는다. 아래는 헤더 아래 전체를 쓰는 시트가 된다. */
-export const DOCENT_DOCK_MIN_VIEWPORT_WIDTH = 1024;
+/**
+ * 이 폭부터 사이드 패널로 붙는다. 아래는 헤더 아래 전체를 쓰는 시트가 된다.
+ * 1024 에서는 본문에 ~540px 만 남아 Playground 그리드가 왼쪽 밖으로 넘쳤다 —
+ * 뷰포트 기준 브레이크포인트(lg:)는 비켜진 폭을 모른다. 1280 이면 본문이 ~800px.
+ */
+export const DOCENT_DOCK_MIN_VIEWPORT_WIDTH = 1280;
 
 export function canDockGlobalDocent(viewportWidth: number): boolean {
   return viewportWidth >= DOCENT_DOCK_MIN_VIEWPORT_WIDTH;

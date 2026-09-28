@@ -1,12 +1,14 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { Component, Suspense, useEffect, useState, type ReactNode } from "react";
-import { ACESFilmicToneMapping } from "three";
+import { Component, Suspense, useCallback, useEffect, useReducer, type ReactNode } from "react";
+import { ACESFilmicToneMapping, type WebGLRenderer } from "three";
 import type { VisemeKey } from "@/lib/docent/visemes";
 import type { SemanticMouthPose } from "@/lib/docent/semanticMouth";
 import type { DocentEmotion } from "@/types/docent";
 import { AvatarFallback } from "./AvatarFallback";
+import { AVATAR_RECOVERY, avatarGlReducer, initialAvatarGlState } from "./avatarRecovery";
+import { ACTIVATION_PENDING_COPY } from "./docentStatus";
 import { DocentHead } from "./DocentHead";
 import type { HologramState } from "./hologram/hologramConfig";
 import { HologramChamber } from "./hologram/HologramChamber";
@@ -25,19 +27,27 @@ interface AvatarCanvasProps {
   shell?: boolean;
   /** shell 이 오른쪽 사이드 패널 안에 있을 때. */
   sidecar?: boolean;
+  /** 질문이 처리 중이다 — 얼굴이 돌아오는 중이면 "곧 활성화" 안내를 보인다. */
+  questionPending?: boolean;
+  /** 3D 얼굴이 떠 있는지(false = 컨텍스트 복원 중이거나 쓸 수 없음). */
+  onActiveChange?: (active: boolean) => void;
 }
 
-// GLB 파싱 실패 등 Suspense 내부 throw를 흡수한다.
+// GLB 파싱 실패 등 Suspense 내부 throw를 흡수한다. 영구 폴백이 아니라 한 번 더
+// 새 캔버스로 시도하도록 위로 알린다 — 부모가 key 를 바꾸면 이 경계도 새로 시작한다.
 class AvatarErrorBoundary extends Component<
-  { fallback: ReactNode; children: ReactNode },
+  { onError: () => void; children: ReactNode },
   { failed: boolean }
 > {
   state = { failed: false };
   static getDerivedStateFromError() {
     return { failed: true };
   }
+  componentDidCatch() {
+    this.props.onError();
+  }
   render() {
-    return this.state.failed ? this.props.fallback : this.props.children;
+    return this.state.failed ? null : this.props.children;
   }
 }
 
@@ -60,12 +70,46 @@ export default function AvatarCanvas({
   shell = false,
   sidecar = false,
   hologramState = "ready",
+  questionPending = false,
+  onActiveChange,
 }: AvatarCanvasProps) {
-  const [webglOk, setWebglOk] = useState<boolean | null>(null);
+  const [gl, dispatch] = useReducer(avatarGlReducer, initialAvatarGlState);
 
   useEffect(() => {
-    setWebglOk(webglAvailable());
+    dispatch({ type: "PROBED", available: webglAvailable() });
   }, []);
+
+  // 컨텍스트를 잃으면 잠깐 복원을 기다렸다가, 안 오면 새 컨텍스트로 다시 마운트한다.
+  useEffect(() => {
+    if (gl.status !== "recovering") return;
+    const timer = window.setTimeout(() => dispatch({ type: "REMOUNT" }), AVATAR_RECOVERY.restoreWaitMs);
+    // 숨은 탭에서는 타이머가 늦어진다 — 다시 보이는 즉시 되살린다.
+    const onVisible = () => {
+      if (document.visibilityState === "visible") dispatch({ type: "REMOUNT" });
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [gl.status, gl.canvasKey]);
+
+  const active = gl.status === "ready" || gl.status === "checking";
+  useEffect(() => {
+    onActiveChange?.(active);
+  }, [active, onActiveChange]);
+
+  const onCreated = useCallback(({ gl: renderer }: { gl: WebGLRenderer }) => {
+    const canvas = renderer.domElement;
+    // preventDefault 가 있어야 브라우저가 이 컨텍스트를 복원해 준다.
+    canvas.addEventListener("webglcontextlost", (event) => {
+      event.preventDefault();
+      dispatch({ type: "LOST", now: Date.now() });
+    });
+    canvas.addEventListener("webglcontextrestored", () => dispatch({ type: "RESTORED" }));
+    dispatch({ type: "CREATED" });
+  }, []);
+  const onRenderError = useCallback(() => dispatch({ type: "RENDER_ERROR", now: Date.now() }), []);
 
   const stageClass = shell && sidecar
     ? // 440px 사이드 패널: 정사각형이면 채팅 자리가 없다. 화면 높이에 따라 늘고 준다.
@@ -83,10 +127,10 @@ export default function AvatarCanvas({
            (hologram/HologramChamber) 안에 있다 — DOM 층을 얼굴 위에 겹치지 않는다. */
         <div aria-hidden="true" data-chamber-layer="depth" className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_50%_36%,rgba(30,64,175,0.14)_0%,rgba(5,11,23,0)_62%),linear-gradient(180deg,#06111f_0%,#050b17_70%,#03070f_100%)]" />
       ) : null}
-      {webglOk === false ? (
+      {gl.status === "unavailable" ? (
         <AvatarFallback emotion={emotion} shell={shell} />
       ) : (
-      <AvatarErrorBoundary fallback={<AvatarFallback emotion={emotion} shell={shell} />}>
+      <AvatarErrorBoundary key={gl.canvasKey} onError={onRenderError}>
         <Canvas
           className="relative z-10"
           camera={{ position: [0, 0, 0.7], fov: 30 }}
@@ -99,11 +143,7 @@ export default function AvatarCanvas({
             toneMapping: ACESFilmicToneMapping,
             toneMappingExposure: 1.05,
           }}
-          onCreated={({ gl }) =>
-            gl.domElement.addEventListener("webglcontextlost", () =>
-              setWebglOk(false)
-            )
-          }
+          onCreated={onCreated}
         >
           <SceneLighting hologram={shell} />
           <Suspense fallback={null}>
@@ -115,6 +155,22 @@ export default function AvatarCanvas({
         </Canvas>
       </AvatarErrorBoundary>
       )}
+      {gl.status === "recovering" ? (
+        /* 얼굴이 새 컨텍스트로 돌아오는 짧은 동안. 이모지 대신 조용한 표시, 질문이 들어오면
+           곧 활성화된다는 안내를 보인다. */
+        <div
+          role="status"
+          data-avatar-recovering
+          className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-[#050b17]/60"
+        >
+          <span aria-hidden="true" className="h-2 w-2 animate-pulse rounded-full bg-sky-300 motion-reduce:animate-none" />
+          {questionPending ? (
+            <p className="px-6 text-center text-xs leading-5 text-slate-300">{ACTIVATION_PENDING_COPY}</p>
+          ) : (
+            <span className="sr-only">3D 도슨트를 다시 불러오는 중</span>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { ArrowUpRight, Fingerprint } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-export const CRIME_SCENE_URL = "https://crime-scene.vercel.app";
+export const CRIME_SCENE_URL = "https://crime-scene-kohl.vercel.app";
 const LAUNCH_DELAY_MS = 520;
 
 export function CrimeSceneLaunchButton({

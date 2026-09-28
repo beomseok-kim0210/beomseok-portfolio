@@ -64,7 +64,8 @@ test("E. 답변 합성은 SYNTHESIZING → SPEAKING 으로 전이한다", () => 
 
 test("F. 5초/20초 지연 문구와 백오프에 숫자 ETA가 없다", () => {
   const warming = voiceLifecycleReducer(initialVoiceLifecycleState, { type: "ENABLE", now: 0 });
-  assert.equal(voiceStatusMessage(warming, 4_999), "음성 기능을 준비하고 있어요…");
+  // 음성 워커가 식어 있다 다시 켜지는 동안 — 사용자 지정 문구.
+  assert.equal(voiceStatusMessage(warming, 4_999), "잠시만 기다려 주세요. 곧 활성화될 예정입니다.");
   const delayed = voiceLifecycleReducer(warming, { type: "HEALTH_WAITING", now: 5_000 });
   assert.equal(voiceStatusMessage(delayed, 5_000), "텍스트 답변은 먼저 확인하실 수 있어요.");
   assert.equal(voiceStatusMessage(delayed, 20_000), "텍스트 답변은 먼저 확인하실 수 있어요.");

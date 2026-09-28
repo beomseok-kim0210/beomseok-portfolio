@@ -58,10 +58,16 @@ export function resolveDocentSurfaceStatus(
   return "ready";
 }
 
+/**
+ * 도슨트가 아직 깨어나는 중일 때(음성 워커가 식어 있다 다시 켜지는 중, 또는 3D 얼굴이
+ * 새 WebGL 컨텍스트로 돌아오는 중) 질문하면 보여 주는 한 줄. 텍스트 답변은 그대로 진행된다.
+ */
+export const ACTIVATION_PENDING_COPY = "잠시만 기다려 주세요. 곧 활성화될 예정입니다.";
+
 export const DOCENT_STATUS_COPY: Record<DocentSurfaceStatus, string> = {
   searching: "현재 페이지를 바탕으로 답변을 정리하는 중이에요…",
   answering: "답변을 작성하고 있어요…",
-  warming_voice: "음성 기능을 준비하고 있어요…",
+  warming_voice: ACTIVATION_PENDING_COPY,
   ready: "질문할 준비가 되었어요",
   delayed: "텍스트 답변은 먼저 확인하실 수 있어요.",
   failed: "답변을 마치지 못했어요",

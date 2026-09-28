@@ -58,6 +58,9 @@ test("narrow first visit minimizes while a stored user choice takes precedence",
   assert.equal(defaultGlobalDocentView(375), "minimized");
   assert.equal(defaultGlobalDocentView(768), "minimized");
   assert.equal(defaultGlobalDocentView(1023), "minimized");
+  // 1024–1279 는 비켜 준 뒤 본문 폭이 너무 좁다(Playground 가 왼쪽 밖으로 넘쳤다).
+  assert.equal(defaultGlobalDocentView(1024), "minimized");
+  assert.equal(defaultGlobalDocentView(1279), "minimized");
 
   const values = new Map<string, string>();
   const storage = {
@@ -71,9 +74,12 @@ test("narrow first visit minimizes while a stored user choice takes precedence",
 
 test("desktop docks on the right and pushes the content only as far as it must", () => {
   assert.equal(PORTFOLIO_CANONICAL_CONTENT_WIDTH, 1440);
-  assert.equal(DOCENT_DOCK_MIN_VIEWPORT_WIDTH, 1024);
+  assert.equal(DOCENT_DOCK_MIN_VIEWPORT_WIDTH, 1280);
   assert.equal(DESKTOP_DOCENT_RESERVED_WIDTH, 480);
-  for (const width of [1024, 1280, 1440, 1920, 2560]) {
+  assert.equal(canDockGlobalDocent(1279), false);
+  for (const width of [1280, 1440, 1920, 2560]) {
+    // 비켜 준 뒤에도 본문이 최소 ~800px 남는다
+    assert.ok(width - dockedContentInset(width) >= 800, `${width}px`);
     assert.equal(canDockGlobalDocent(width), true);
     assert.equal(defaultGlobalDocentView(width), "docked");
   }
@@ -100,11 +106,14 @@ test("content is pushed (never scaled) only while docked on desktop", () => {
   assert.match(layout, /data-global-docent-layout/);
   assert.match(shell, /dataset\.globalDocentView = state/);
   assert.match(styles, /\.global-docent-layout\s*\{[^}]*padding-right:\s*0;/);
-  // CSS 식은 dockedContentInset 과 같아야 한다.
+  // CSS 식은 dockedContentInset 과 같아야 한다 — 한 변수(--docent-inset)로 둔다.
   assert.match(
     styles,
-    /@media \(min-width: 1024px\)\s*\{\s*html\[data-global-docent-view="docked"\] \.global-docent-layout\s*\{\s*padding-right: clamp\(0px, calc\(2 \* 480px \+ 1440px - 100vw\), 480px\);/,
+    /@media \(min-width: 1280px\)\s*\{\s*html\[data-global-docent-view="docked"\]\s*\{\s*--docent-inset: clamp\(0px, calc\(2 \* 480px \+ 1440px - 100vw\), 480px\);/,
   );
+  assert.match(styles, /html\[data-global-docent-view="docked"\] \.global-docent-layout\s*\{\s*padding-right: var\(--docent-inset\);/);
+  // 풀블리드 섹션도 같은 변수를 따른다 — 뷰포트 기준 계산이 비킴을 무시하던 버그.
+  assert.match(styles, /\.scene-shell\s*\{[^}]*margin-left: calc\(50% - 50vw \+ var\(--docent-inset, 0px\) \/ 2\);[^}]*border-right: var\(--docent-inset, 0px\) solid transparent;/);
   assert.doesNotMatch(styles, /data-global-docent-view="fullscreen"/);
   assert.doesNotMatch(styles, /global-docent-layout[\s\S]{0,160}transition:\s*padding-right/);
   assert.doesNotMatch(styles, /global-docent-layout[^{]*\{[^}]*(zoom|scale)/);
@@ -166,7 +175,8 @@ test("Playground makes Crime Scene primary and launches only the verified deploy
   assert.match(playground, /마지막 추리/);
   assert.match(playground, /<CrimeSceneLaunchButton \/>/);
   assert.match(playground, /href="\/projects\/crime-scene"/);
-  assert.match(launch, /https:\/\/crime-scene\.vercel\.app/);
+  // 실제 배포 주소 (2026-09-28 확인: 200, "마지막 라이브 — 온라인 크라임씬")
+  assert.match(launch, /"https:\/\/crime-scene-kohl\.vercel\.app"/);
   assert.match(launch, /window\.location\.assign\(CRIME_SCENE_URL\)/);
   assert.match(launch, /수사를 시작합니다/);
   assert.doesNotMatch(playground, /DocentDevlog|OpenGlobalDocentButton|ReflexGame/);
