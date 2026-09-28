@@ -169,4 +169,59 @@ export const projects: Project[] = [
       "기술적으로 가능해도 제품에 맞지 않으면 멈추는 판단을 통해 최우수상 수상으로 이어졌습니다.",
     theme: "warm",
   },
+  {
+    key: "docent",
+    name: "AI Docent",
+    label: "Conversational Portfolio",
+    headline: "프로젝트를 찾는 시간을 줄이고,\n질문에서 바로 맥락으로 연결합니다.",
+    description:
+      "방문자가 여러 프로젝트와 기술을 직접 뒤지지 않아도, 현재 페이지의 맥락과 검색 근거를 바탕으로 대화하며 포트폴리오를 탐색할 수 있게 했습니다.",
+    background: "#0B1120",
+    foreground: "text-white",
+    muted: "text-slate-300",
+    core: "많은 프로젝트 속에서\n방문자는 어떻게\n자신의 질문으로 탐색할까?",
+    sections: ["Page Context", "RAG", "Conversational UI", "3D UX"],
+    points: ["Page Context", "RAG", "Conversational UI", "3D UX"],
+    identity: "페이지 맥락과 검색 근거를 연결한 대화형 포트폴리오 가이드",
+    role: "Frontend / RAG / Voice UX / 3D Avatar Integration",
+    technologies: [
+      "React",
+      "Next.js",
+      "RAG",
+      "Prompt Engineering",
+      "React Three Fiber",
+      "3D UX",
+      "Web Speech",
+      "Generative AI",
+    ],
+    productCards: [
+      {
+        title: "Page Context",
+        description:
+          "현재 pathname과 화면에서 가장 많이 보이는 섹션을 구조화된 문맥으로 전달해 질문의 의도를 좁힙니다.",
+        keywords: ["Next.js", "Frontend", "Context"],
+      },
+      {
+        title: "Retrieval",
+        description:
+          "프로젝트 데이터와 기록에서 질문에 맞는 근거를 찾고, 답변이 포트폴리오의 실제 내용에 머물도록 합니다.",
+        keywords: ["RAG", "AI Search"],
+      },
+      {
+        title: "Conversational UI",
+        description:
+          "스트리밍 텍스트, 선택형 음성, 페이지 간 대화 지속을 하나의 전역 인터페이스로 구성했습니다.",
+        keywords: ["Generative AI", "Voice AI", "Realtime UX"],
+      },
+      {
+        title: "Avatar Feedback",
+        description:
+          "답변 감정과 음성 타이밍을 3D 얼굴의 표정과 입모양으로 연결했습니다.",
+        keywords: ["React Three Fiber", "3D UX", "Web Speech"],
+      },
+    ],
+    impact:
+      "질문 → 페이지 문맥 → 검색 → LLM → TTS → 아바타 애니메이션을 하나의 탐색 경험으로 연결했습니다.",
+    theme: "dark",
+  },
 ];

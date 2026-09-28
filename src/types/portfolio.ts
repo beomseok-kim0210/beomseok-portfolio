@@ -15,7 +15,7 @@ export type TimelineItem = {
 export type ProjectTheme = "dark" | "mint" | "warm" | "light";
 
 export type Project = {
-  key: "armi" | "hangarae" | "wedding";
+  key: "armi" | "hangarae" | "wedding" | "docent";
   name: string;
   label: string;
   headline: string;
@@ -96,7 +96,13 @@ export type KnowledgeCategory = {
   description: string;
 };
 
-export type ProjectSlug = "armi" | "hangarae" | "wedding" | "claw-dev";
+export type ProjectSlug =
+  | "armi"
+  | "hangarae"
+  | "wedding"
+  | "claw-dev"
+  | "ai-docent"
+  | "crime-scene";
 
 export type TroubleshootingItem = {
   title: string;

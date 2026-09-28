@@ -7,7 +7,64 @@ import { docentConfig, docentCopy, docentStarterQuestions } from "@/data/docent"
 import type { DocentChatState } from "./useDocentChat";
 import type { VoiceState } from "./useVoice";
 
-type ChatPanelProps = DocentChatState & { voice: VoiceState; compact?: boolean };
+type ChatPanelProps = DocentChatState & {
+  voice: VoiceState;
+  compact?: boolean;
+  fill?: boolean;
+  focusInputToken?: number;
+};
+
+function VoiceLifecycleIndicator({ voice }: { voice: VoiceState }) {
+  const reduceMotion = useReducedMotion();
+  const [showReady, setShowReady] = useState(false);
+
+  useEffect(() => {
+    if (voice.lifecycle !== "VOICE_READY") {
+      setShowReady(false);
+      return;
+    }
+    setShowReady(true);
+    const timer = setTimeout(() => setShowReady(false), 2_500);
+    return () => clearTimeout(timer);
+  }, [voice.lifecycle]);
+
+  const visible = voice.lifecycle !== "VOICE_OFF"
+    && (voice.lifecycle !== "VOICE_READY" || showReady)
+    && Boolean(voice.statusMessage);
+  const active = voice.lifecycle === "VOICE_WARMING"
+    || voice.lifecycle === "VOICE_DELAYED"
+    || voice.lifecycle === "VOICE_SYNTHESIZING";
+  const dotColor = voice.lifecycle === "VOICE_ERROR" ? "bg-amber-300" : "bg-blue-300";
+
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      data-voice-status={voice.lifecycle}
+      className="min-h-4"
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        {visible ? (
+          <motion.div
+            key={`${voice.lifecycle}:${voice.statusMessage}`}
+            initial={reduceMotion ? false : { opacity: 0, y: 2 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -2 }}
+            transition={{ duration: reduceMotion ? 0 : 0.18 }}
+            className="flex max-w-[min(58vw,24rem)] items-center justify-end gap-2 text-right text-[11px] leading-4 text-slate-400"
+          >
+            <span
+              aria-hidden="true"
+              className={`h-1.5 w-1.5 shrink-0 rounded-full ${dotColor} ${active ? "animate-pulse motion-reduce:animate-none" : ""}`}
+            />
+            <span>{voice.statusMessage}</span>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export function ChatPanel({
   messages,
@@ -17,10 +74,13 @@ export function ChatPanel({
   voice,
   lastAnswer,
   compact = false,
+  fill = false,
+  focusInputToken = 0,
 }: ChatPanelProps) {
   const reduceMotion = useReducedMotion();
   const [input, setInput] = useState("");
   const listRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const nearBottomRef = useRef(true);
 
   // 사용자가 위로 스크롤해 읽는 중이면 자동 스크롤하지 않는다.
@@ -35,6 +95,10 @@ export function ChatPanel({
     const el = listRef.current;
     if (el && nearBottomRef.current) el.scrollTop = el.scrollHeight;
   }, [messages.length, lastContent]);
+
+  useEffect(() => {
+    if (focusInputToken > 0) inputRef.current?.focus();
+  }, [focusInputToken]);
 
   const submit = () => {
     if (isStreaming) return;
@@ -57,15 +121,17 @@ export function ChatPanel({
 
   return (
     <div
-      className={compact
-        ? "flex h-[52vh] min-h-[360px] flex-col rounded-[24px] border border-white/10 bg-white/[0.04] backdrop-blur-sm"
+      className={fill
+        ? "flex min-h-0 flex-1 flex-col rounded-[22px] border border-white/10 bg-white/[0.04] backdrop-blur-sm"
+        : compact
+          ? "flex h-[52vh] min-h-[360px] flex-col rounded-[24px] border border-white/10 bg-white/[0.04] backdrop-blur-sm"
         : "flex h-[60vh] min-h-[420px] flex-col rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm lg:h-[560px]"}
       data-docent-mode={mode ?? ""}
       data-docent-grounded={lastAnswer ? String(lastAnswer.grounded) : ""}
       data-docent-active-project={lastAnswer?.activeProject ?? ""}
     >
-      <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
-        <p className="small-label text-slate-400">Ask the docent</p>
+      <div className="flex items-center justify-between border-b border-white/10 px-4 py-3 sm:px-6 sm:py-4">
+        <p className="hidden small-label text-slate-400 sm:block">Ask the docent</p>
         <div className="flex items-center gap-2">
           {mode === "fallback" ? (
             <span
@@ -82,6 +148,7 @@ export function ChatPanel({
               {docentCopy.evidenceBadge}
             </span>
           ) : null}
+          {voice.ttsSupported ? <VoiceLifecycleIndicator voice={voice} /> : null}
           {voice.ttsSupported ? (
             <button
               type="button"
@@ -109,10 +176,10 @@ export function ChatPanel({
         ref={listRef}
         onScroll={handleScroll}
         data-lenis-prevent
-        className="flex-1 space-y-4 overflow-y-auto px-6 py-6"
+        className="flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 pb-4 pt-5 sm:px-6 sm:pb-6 sm:pt-6"
       >
         {messages.length === 0 ? (
-          <div className="flex h-full flex-col justify-end gap-2">
+          <div className="flex min-h-full flex-col justify-end gap-2" data-docent-starters>
             <p className="mb-2 text-sm text-slate-400">
               이런 질문으로 시작해 보세요:
             </p>
@@ -165,10 +232,11 @@ export function ChatPanel({
           event.preventDefault();
           submit();
         }}
-        className="border-t border-white/10 p-4"
+        className="border-t border-white/10 p-3 sm:p-4"
       >
         <div className="flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] pl-5 pr-2">
           <input
+            ref={inputRef}
             type="text"
             value={input}
             onChange={(event) => setInput(event.target.value)}

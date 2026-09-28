@@ -3,7 +3,8 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import { navItems } from "@/data/navigation";
 import { projectDetails } from "@/data/projectDetails";
-import { DocentDock } from "@/features/docent/DocentDock";
+import { OpenGlobalDocentButton } from "@/features/docent/OpenGlobalDocentButton";
+import { CrimeSceneLaunchButton } from "@/features/playground/CrimeSceneLaunchButton";
 import type { ProjectDetail } from "@/types/portfolio";
 import { ProjectArchitecture } from "./ProjectArchitecture";
 import { ArmiCaseStudy } from "./ArmiCaseStudy";
@@ -29,6 +30,8 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
   const isArmiCaseStudy = project.slug === "armi";
   const isHangaraeCaseStudy = project.slug === "hangarae";
   const isClawDevCaseStudy = project.slug === "claw-dev";
+  const isDocentCaseStudy = project.slug === "ai-docent";
+  const isCrimeSceneCaseStudy = project.slug === "crime-scene";
 
   const mainBg = isClawDevCaseStudy
     ? "bg-[#0B1120]"
@@ -68,6 +71,34 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
         ) : (
           <>
             <ProjectHero project={project} />
+            {isDocentCaseStudy ? (
+              <section className="rounded-[32px] bg-[#0B1120] px-6 py-10 text-white md:px-10" data-docent-section="overview">
+                <p className="cinematic-label text-blue-300">Try the global experience</p>
+                <h2 className="mt-4 max-w-[20ch] text-3xl font-semibold tracking-[-0.03em]">
+                  읽던 흐름 그대로, 도슨트에게 질문해 보세요.
+                </h2>
+                <p className="mt-4 max-w-[58ch] text-sm leading-7 text-slate-300">
+                  아래 버튼은 새 채팅을 만들지 않습니다. 지금 모든 페이지에 떠 있는 하나의 도슨트 런타임을 확장합니다.
+                </p>
+                <div className="mt-7">
+                  <OpenGlobalDocentButton label="도슨트 체험하기" />
+                </div>
+              </section>
+            ) : null}
+            {isCrimeSceneCaseStudy ? (
+              <section className="rounded-[32px] bg-[#0B1120] px-6 py-10 text-white md:px-10" data-docent-section="overview">
+                <p className="cinematic-label text-blue-300">Playable Build</p>
+                <h2 className="mt-4 max-w-[22ch] text-3xl font-semibold tracking-[-0.03em]">
+                  사건 현장으로 들어가 직접 수사해 보세요.
+                </h2>
+                <p className="mt-4 max-w-[58ch] text-sm leading-7 text-slate-300">
+                  게임은 별도 앱으로 이동하며, 브라우저의 뒤로 가기로 포트폴리오에 돌아올 수 있습니다.
+                </p>
+                <div className="mt-7">
+                  <CrimeSceneLaunchButton />
+                </div>
+              </section>
+            ) : null}
             <ProjectOverview project={project} />
             <ProjectMediaSection project={project} />
             <ProjectRole project={project} />
@@ -102,7 +133,6 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
           </Link>
         </section>
       </div>
-      <DocentDock projectSlug={project.slug} projectTitle={project.title} />
     </main>
   );
 }

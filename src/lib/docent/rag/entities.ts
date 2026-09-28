@@ -17,7 +17,7 @@ export const PROJECT_ENTITIES: readonly ProjectEntity[] = [
   { id: "hangarae", title: "행가래", aliases: ["행가래", "hangarae", "항가래"], pathname: "/projects/hangarae" },
   { id: "wedding", title: "Wedding AI", aliases: ["wedding", "웨딩", "드레스", "dress"], pathname: "/projects/wedding" },
   { id: "claw-dev", title: "Claw Dev", aliases: ["claw dev", "claw-dev", "clawdev", "claw", "클로 데브", "클로데브", "클로"], pathname: "/projects/claw-dev" },
-  { id: "docent", title: "AI Docent", aliases: ["도슨트", "docent", "디지털 도슨트", "3d 아바타", "아바타", "gnm"], pathname: "/playground" },
+  { id: "docent", title: "AI Docent", aliases: ["도슨트", "docent", "디지털 도슨트", "3d 아바타", "아바타", "gnm"], pathname: "/projects/ai-docent" },
 ];
 
 export function projectEntity(id: string | undefined): ProjectEntity | undefined {

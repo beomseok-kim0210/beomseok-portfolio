@@ -180,6 +180,8 @@ function projectsCards(): Draft[] {
   const src = "src/data/projects.ts";
   const out: Draft[] = [];
   for (const p of projects) {
+    // AI Docent already has its dedicated, higher-fidelity docentChunks source.
+    if (p.key === "docent") continue;
     const id = p.key as ProjectId;
     const base = { sourceType: "structured_data" as const, sourcePath: src, sourceId: `projects:${id}`, entityType: "project" as const, entityId: id, projectId: id, priority: PRIORITY.projectCard };
     out.push({ ...base, id: `project:${id}:overview:card`, section: "overview", title: `${p.name} — ${p.label}`,
@@ -204,7 +206,11 @@ function projectDetailChunks(): Draft[] {
   const src = "src/data/projectDetails.ts";
   const out: Draft[] = [];
   for (const d of projectDetails) {
-    const id = d.slug;
+    // AI Docent already has dedicated devlog chunks; Crime Scene intentionally
+    // has no portfolio RAG corpus yet. Keep the established retrieval set stable.
+    const entity = d.slug === "ai-docent" ? undefined : projectEntity(d.slug);
+    if (!entity) continue;
+    const id = entity.id;
     const base = { sourceType: "structured_data" as const, sourcePath: src, sourceId: `projectDetails:${id}`, entityType: "project" as const, entityId: id, projectId: id, priority: PRIORITY.projectDetail };
     out.push({ ...base, id: `project:${id}:overview:detail`, section: "overview", title: `${d.title} — ${d.subtitle}`, text: `${d.title}(${d.label}): ${d.description} 핵심 질문: ${d.problemQuestion.join(" ")}`, tags: [d.label], provenance: `projectDetails.ts → [slug=${id}] description/problemQuestion` });
     out.push({ ...base, id: `project:${id}:role:detail`, section: "role", title: `${d.title}에서 맡은 역할`, text: `${d.title}에서 김범석이 맡은 역할: ${list(d.role)}`, tags: [...d.role], provenance: `projectDetails.ts → [slug=${id}].role` });

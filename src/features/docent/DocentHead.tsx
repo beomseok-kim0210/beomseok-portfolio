@@ -1,9 +1,9 @@
 "use client";
 
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Group, MathUtils, Mesh } from "three";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Box3, Group, MathUtils, Mesh, PerspectiveCamera, Vector3 } from "three";
 import type { VisemeKey } from "@/lib/docent/visemes";
 import {
   DEPRECATED_LEGACY_MOUTH_MORPHS,
@@ -170,6 +170,7 @@ function usePrefersReducedMotion(): boolean {
 export function DocentHead({ emotion, viseme, mouth: lamMouth = null }: DocentHeadProps) {
   const group = useRef<Group>(null);
   const { scene } = useGLTF(MODEL_URL);
+  const { camera, size } = useThree();
   const reduced = usePrefersReducedMotion();
   const blink = useRef({ nextAt: 2.5, closing: false });
   // 액추에이터는 라벨이 아니라 연속값이므로 목표가 아니라 현재 상태를 들고 간다
@@ -190,6 +191,42 @@ export function DocentHead({ emotion, viseme, mouth: lamMouth = null }: DocentHe
     });
     return buildRig(found, MODEL_URL);
   }, [scene]);
+
+  // Fit from the loaded model's real bounds. The old fixed camera left almost no
+  // hairline margin in the shallow dock and could crop during idle rotation.
+  useLayoutEffect(() => {
+    if (!(camera instanceof PerspectiveCamera) || !group.current) return;
+    group.current.updateWorldMatrix(true, true);
+    const bounds = new Box3().setFromObject(group.current);
+    if (bounds.isEmpty()) return;
+
+    const dimensions = bounds.getSize(new Vector3());
+    const center = bounds.getCenter(new Vector3());
+    const verticalFov = MathUtils.degToRad(camera.fov);
+    const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * camera.aspect);
+    const fitHeight = dimensions.y / (2 * Math.tan(verticalFov / 2));
+    const fitWidth = dimensions.x / (2 * Math.tan(horizontalFov / 2));
+    const distance = Math.max(fitHeight, fitWidth) * 1.08 + dimensions.z / 2;
+
+    camera.position.set(center.x, center.y, center.z + distance);
+    camera.near = Math.max(0.001, distance / 100);
+    camera.far = Math.max(10, distance * 100);
+    camera.lookAt(center);
+    camera.updateProjectionMatrix();
+
+    if (DEV && typeof window !== "undefined") {
+      (window as unknown as { __ddAvatarFrame?: unknown }).__ddAvatarFrame = {
+        bounds: {
+          width: dimensions.x,
+          height: dimensions.y,
+          depth: dimensions.z,
+        },
+        stage: { width: size.width, height: size.height },
+        cameraDistance: distance,
+        target: center.toArray(),
+      };
+    }
+  }, [camera, scene, size.height, size.width]);
 
   // 계약 위반은 조용히 굳은 얼굴로 흘려보내지 않는다. 여기서 던지면
   // AvatarErrorBoundary가 2D 폴백으로 내려보내므로 실패가 눈에 보인다.

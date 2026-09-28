@@ -12,7 +12,9 @@ const read = (p: string) => readFileSync(p, "utf8").replace(/\r\n/g, "\n");
 
 const providerSrc = read("src/lib/docent/voiceProvider.ts");
 const warmRouteSrc = read("src/app/api/docent/voice/warm/route.ts");
-const experienceSrc = read("src/features/docent/DocentExperience.tsx");
+const runtimeSrc = read("src/features/docent/DocentRuntime.tsx");
+const voiceSrc = read("src/features/docent/useVoice.ts");
+const warmClientSrc = read("src/features/docent/voiceWarmClient.ts");
 
 test("예열은 공짜 조회로 먼저 확인하고, 워커가 있으면 작업을 던지지 않는다", () => {
   // RunPod 쪽 warm() 만 본다 — 로컬 구현은 prepare() 위임이라 관심 밖이다.
@@ -24,7 +26,7 @@ test("예열은 공짜 조회로 먼저 확인하고, 워커가 있으면 작업
   const runAt = body.indexOf("/run`");
   assert.ok(healthAt >= 0 && runAt > healthAt, "probeRunPod 가 /run 보다 먼저여야 한다");
   // 워커가 하나라도 있으면 already-warm 으로 빠져나간다
-  assert.match(body, /ready.*idle.*running.*initializing/s);
+  assert.match(body, /ready[\s\S]*idle[\s\S]*running[\s\S]*initializing/);
   assert.match(body, /return "already-warm"/);
 });
 
@@ -46,12 +48,12 @@ test("예열도 레이트리밋을 거친다 — GPU 를 쓰는 행위다", () =
 });
 
 test("예열은 음성이 켜져 있을 때만 걸린다", () => {
-  assert.match(experienceSrc, /if \(!voice\.voiceEnabled\) return;[\s\S]{0,400}voice\/warm/);
-  assert.match(experienceSrc, /if \(voice\.voiceEnabled\) \{[\s\S]{0,200}voice\/warm/);
+  assert.match(voiceSrc, /if \(!voiceEnabledRef\.current \|\| warmCycleRef\.current\) return/);
+  assert.match(runtimeSrc, /if \(voiceEnabled\) ensureReady\(\)/);
 });
 
 test("예열이 합성을 대신하지 않는다 — 발화는 여전히 speak 경로로만 나간다", () => {
-  const warmCalls = experienceSrc.match(/voice\/warm/g) ?? [];
-  assert.equal(warmCalls.length, 2, "예열 호출 지점은 음성 켜기와 질문 보내기 둘뿐이다");
-  assert.match(experienceSrc, /supertonic\.speak\(content\)/);
+  const warmCalls = warmClientSrc.match(/\/api\/docent\/voice\/warm/g) ?? [];
+  assert.equal(warmCalls.length, 1, "예열 POST 는 공유 가드 한 곳에서만 나가야 한다");
+  assert.match(runtimeSrc, /supertonic\.speak\(content\)/);
 });

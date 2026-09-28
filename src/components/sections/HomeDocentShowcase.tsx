@@ -19,7 +19,7 @@ export function HomeDocentShowcase() {
         </h2>
         <SplitHeadline
           lines={[
-            "Google GNM 3D 헤드가 Claude의 답변에 맞춰",
+            "Google GNM 3D 헤드가 LLM의 답변에 맞춰",
             "표정으로 반응하는 인터랙티브 도슨트입니다.",
           ]}
           className="mx-auto mt-4 max-w-[860px] text-[clamp(18px,1.8vw,26px)] font-medium leading-[1.4] tracking-normal opacity-60"
@@ -45,10 +45,10 @@ export function HomeDocentShowcase() {
 
       <ShowcaseMotion delay={0.25} className="mt-8 text-center">
         <Link
-          href="/playground"
+          href="/projects/ai-docent"
           className="inline-flex h-[48px] items-center gap-2 rounded-full bg-white px-6 text-[14px] font-semibold text-[#111827] transition-transform hover:-translate-y-0.5"
         >
-          Playground에서 만나기 <ArrowRight className="h-4 w-4" />
+          AI Docent Case Study <ArrowRight className="h-4 w-4" />
         </Link>
       </ShowcaseMotion>
     </section>

@@ -16,6 +16,8 @@ interface AvatarCanvasProps {
   mouth?: SemanticMouthPose | null;
   /** 도크 안의 낮은 캔버스. */
   compact?: boolean;
+  /** 전역 패널 안에서 채팅 영역을 침범하지 않는 얕은 캔버스. */
+  shell?: boolean;
 }
 
 // GLB 파싱 실패 등 Suspense 내부 throw를 흡수한다.
@@ -43,22 +45,36 @@ function webglAvailable(): boolean {
   }
 }
 
-export default function AvatarCanvas({ emotion, viseme, mouth = null, compact = false }: AvatarCanvasProps) {
+export default function AvatarCanvas({ emotion, viseme, mouth = null, compact = false, shell = false }: AvatarCanvasProps) {
   const [webglOk, setWebglOk] = useState<boolean | null>(null);
 
   useEffect(() => {
     setWebglOk(webglAvailable());
   }, []);
 
-  if (webglOk === false) return <AvatarFallback emotion={emotion} />;
+  const stageClass = shell
+    ? "relative h-[136px] w-full shrink-0 overflow-hidden rounded-[22px] border border-blue-300/10 bg-[radial-gradient(ellipse_at_50%_42%,rgba(59,130,246,0.25),rgba(11,17,32,0.72)_62%,rgba(5,10,22,0.96))] sm:h-[204px]"
+    : compact
+      ? "relative h-[220px] w-full overflow-hidden rounded-[24px] bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.15),rgba(11,17,32,0.6))]"
+      : "relative h-[42vh] min-h-[300px] w-full overflow-hidden rounded-[32px] bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.15),rgba(11,17,32,0.6))] lg:h-[560px]";
 
   return (
-    <div className={compact
-      ? "relative h-[220px] w-full overflow-hidden rounded-[24px] bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.15),rgba(11,17,32,0.6))]"
-      : "relative h-[42vh] min-h-[300px] w-full overflow-hidden rounded-[32px] bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.15),rgba(11,17,32,0.6))] lg:h-[560px]"}>
-      <AvatarErrorBoundary fallback={<AvatarFallback emotion={emotion} />}>
+    <div className={stageClass} data-avatar-stage>
+      {shell ? (
+        <>
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-[18%] top-[6%] z-0 aspect-square rounded-full border border-blue-300/20 shadow-[0_0_32px_rgba(59,130,246,0.12)] motion-safe:animate-[spin_20s_linear_infinite]" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-[27%] top-[18%] z-0 aspect-square rounded-full border border-dashed border-cyan-200/15" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-[18%] bottom-[6%] z-0 h-[14%] rounded-[50%] border border-blue-300/30 bg-blue-400/10 shadow-[0_0_28px_rgba(59,130,246,0.2)]" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 opacity-[0.12] [background-image:linear-gradient(rgba(125,211,252,0.2)_1px,transparent_1px)] [background-size:100%_8px]" />
+        </>
+      ) : null}
+      {webglOk === false ? (
+        <AvatarFallback emotion={emotion} shell={shell} />
+      ) : (
+      <AvatarErrorBoundary fallback={<AvatarFallback emotion={emotion} shell={shell} />}>
         <Canvas
-          camera={{ position: [0, 0.05, 0.62], fov: 30 }}
+          className="relative z-10"
+          camera={{ position: [0, 0, 0.7], fov: 30 }}
           dpr={[1, 1.75]}
           gl={{
             antialias: true,
@@ -83,6 +99,10 @@ export default function AvatarCanvas({ emotion, viseme, mouth = null, compact = 
           </Suspense>
         </Canvas>
       </AvatarErrorBoundary>
+      )}
+      {shell ? (
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[22%] bg-gradient-to-t from-[#07101f] via-[#0b1830]/70 to-transparent" />
+      ) : null}
     </div>
   );
 }

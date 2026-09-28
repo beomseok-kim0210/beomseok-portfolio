@@ -53,6 +53,11 @@ body {
   text-rendering: geometricPrecision;
 }
 
+.global-docent-layout {
+  min-width: 0;
+  padding-right: 0;
+}
+
 p,
 li,
 h1,

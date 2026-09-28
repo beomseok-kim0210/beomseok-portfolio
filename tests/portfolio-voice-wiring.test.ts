@@ -1,7 +1,7 @@
 // 실제 포트폴리오 경로가 Supertonic/LAM 을 쓰는지 파일로 따라간다.
 //
 // 진단 페이지나 스크립트가 아니라 사이트가 실제로 렌더하는 체인이어야 한다:
-// /playground → DocentExperience → AvatarCanvas → DocentHead.
+// root layout → GlobalDocent → persistent runtime/presentation → AvatarCanvas → DocentHead.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -11,23 +11,26 @@ import { test } from "node:test";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (...p: string[]) => readFileSync(path.join(root, ...p), "utf8");
 
-const playground = read("src", "app", "playground", "page.tsx");
+const layout = read("src", "app", "layout.tsx");
+const globalDocent = read("src", "features", "docent", "GlobalDocent.tsx");
+const runtime = read("src", "features", "docent", "DocentRuntime.tsx");
 const experience = read("src", "features", "docent", "DocentExperience.tsx");
 const canvas = read("src", "features", "docent", "AvatarCanvas.tsx");
 const head = read("src", "features", "docent", "DocentHead.tsx");
 const hook = read("src", "features", "docent", "useSupertonicVoice.ts");
 const voice = read("src", "features", "docent", "useVoice.ts");
 
-test("도슨트가 붙은 페이지가 DocentExperience 를 렌더한다", () => {
-  assert.match(playground, /from "@\/features\/docent\/DocentExperience"/);
-  assert.match(playground, /<DocentExperience\s*\/>/);
+test("루트 레이아웃이 전역 도슨트를 한 번 렌더한다", () => {
+  assert.match(layout, /from "@\/features\/docent\/GlobalDocent"/);
+  assert.equal((layout.match(/<GlobalDocent\s*\/>/g) ?? []).length, 1);
+  assert.match(globalDocent, /<DocentRuntimeProvider>/);
 });
 
 test("주 음성 경로가 프로덕션 컴포넌트 안에 있다", () => {
-  assert.match(experience, /from "\.\/useSupertonicVoice"/);
-  assert.match(experience, /const supertonic = useSupertonicVoice\(\)/);
+  assert.match(runtime, /from "\.\/useSupertonicVoice"/);
+  assert.match(runtime, /const supertonic = useSupertonicVoice\(\)/);
   // LAM 자세가 아바타까지 내려가야 한다
-  assert.match(experience, /<AvatarCanvas[^>]*mouth=\{supertonic\.mouth\}/);
+  assert.match(experience, /mouth=\{runtime\.supertonic\.mouth\}/);
   assert.match(canvas, /<DocentHead[^>]*mouth=\{mouth\}/);
 });
 
@@ -37,16 +40,16 @@ test("LAM 자세가 viseme 라벨을 이긴다", () => {
 
 test("폴백은 주 경로가 실패했을 때만 쓰인다", () => {
   // 조용히 내려가면 안 된다 — 실패한 뒤에만, 그리고 어느 엔진인지 남기면서
-  assert.match(experience, /const outcome = await supertonic\.speak\(content\)/);
-  assert.match(experience, /if \(outcome === "ok"\) \{\s*setLastEngine\("supertonic"\);\s*return;/);
-  assert.match(experience, /setLastEngine\("browser_tts"\);\s*voice\.speak\(content\)/);
+  assert.match(runtime, /const outcome = await supertonic\.speak\(content\)/);
+  assert.match(runtime, /if \(outcome === "ok"\) \{\s*setLastEngine\("supertonic"\);\s*return;/);
+  assert.match(runtime, /setLastEngine\("browser_tts"\);\s*voice\.speak\(content\)/);
 });
 
 test("교체된 발화는 폴백을 켜지 않는다", () => {
   // A 가 B 로 교체됐을 때 A 의 호출부가 폴백을 켜면 두 목소리가 겹친다.
   // 실패와 교체가 같은 값으로 돌아오면 그 구분 자체가 불가능해진다.
   assert.match(hook, /export type SpeakOutcome = "ok" \| "failed" \| "superseded"/);
-  assert.match(experience, /if \(outcome === "superseded"\) \{[\s\S]*?return;\s*\}/);
+  assert.match(runtime, /if \(outcome === "superseded"\) return;/);
   // 교체 판정은 세대 비교에서만 나와야 한다
   const supersededReturns = (hook.match(/return "superseded"/g) ?? []).length;
   assert.ok(supersededReturns >= 4, `expected every generation check to return superseded, got ${supersededReturns}`);
@@ -190,13 +193,13 @@ test("텔레메트리에 사용자 발화 내용이 들어가지 않는다", () 
 
 test("개발 진단 전역은 effect 에서 걸고 언마운트에서 사라진다", () => {
   // 렌더에서 걸면 StrictMode 의 이중 호출이 cleanup 을 먼저 돌려 값을 지운다
-  assert.match(experience, /delete \(window as unknown as \{ __ddVoice\?: unknown \}\)\.__ddVoice/);
+  assert.match(runtime, /delete \(window as unknown as \{ __ddVoice\?: unknown \}\)\.__ddVoice/);
   assert.match(head, /delete w\.__ddHeadProbe/);
   assert.match(head, /delete w\.__ddHeadAudit/);
   assert.match(head, /w\.__ddHeadAudit = audit/);
   // 프로덕션 빌드에는 아예 존재하지 않아야 한다
   assert.match(head, /const DEV = process\.env\.NODE_ENV !== "production"/);
-  assert.match(experience, /const DEV = process\.env\.NODE_ENV !== "production"/);
+  assert.match(runtime, /const DEV = process\.env\.NODE_ENV !== "production"/);
 });
 
 test("브라우저 speechSynthesis 는 주 엔진이 아니다", () => {

@@ -295,6 +295,145 @@ export const projectDetails: ProjectDetail[] = [
       "대표 프로젝트가 아니라 개인 연구 공간으로 유지합니다.",
     ],
   },
+  {
+    slug: "ai-docent",
+    title: "AI Docent",
+    subtitle: "Context-aware Conversational Portfolio",
+    label: "Conversational AI",
+    theme: "lab",
+    problemQuestion: ["프로젝트가 많아질수록", "방문자는 왜 더 오래", "정보를 찾아야 할까?"],
+    description:
+      "방문자가 여러 프로젝트와 기술을 직접 뒤지지 않아도, 지금 보고 있는 페이지를 이해하고 포트폴리오의 근거를 찾아 대화로 안내하는 AI 도슨트입니다.",
+    role: [
+      "전역 대화 런타임과 라우트 간 상태 지속 설계",
+      "PageContext 기반 검색 문맥 연결",
+      "RAG 근거 검색과 스트리밍 대화 UI 구현",
+      "TTS와 3D 얼굴 애니메이션 통합",
+    ],
+    techStack: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "RAG",
+      "LLM Provider",
+      "React Three Fiber",
+      "Web Speech API",
+      "Supertonic TTS",
+      "LAM Audio-to-Expression",
+    ],
+    media: {
+      caption: "AI Docent — 페이지 맥락, 근거 검색, 대화, 음성, 3D 표정이 이어지는 전역 인터페이스",
+    },
+    highlights: [
+      { label: "Context", value: "PageContext", description: "pathname과 현재 섹션을 질문 문맥으로 전달" },
+      { label: "Grounding", value: "RAG", description: "프로젝트 원문 근거를 검색해 답변에 연결" },
+      { label: "Runtime", value: "Global", description: "페이지가 바뀌어도 대화와 아바타 상태를 유지" },
+    ],
+    architecture: {
+      title: "질문이 현재 페이지의 맥락을 만나고, 근거 있는 답변이 얼굴의 움직임으로 돌아옵니다.",
+      description:
+        "클라이언트의 `PageContext`는 위치 힌트만 전달하고, 서버의 retrieval이 포트폴리오 근거를 선택합니다. LLM 응답은 텍스트로 먼저 스트리밍되며, 사용자가 음성을 켠 경우에만 TTS와 avatar animation이 뒤따릅니다.",
+      items: [
+        {
+          title: "1. Question → PageContext",
+          description:
+            "질문과 함께 현재 pathname, projectSlug, 화면의 data-docent-section을 구조화해 전달합니다.",
+          tech: ["usePageContext", "IntersectionObserver"],
+        },
+        {
+          title: "2. PageContext → Retrieval",
+          description:
+            "검증된 페이지 문맥을 검색 힌트로 사용해 프로젝트 데이터와 기록에서 관련 근거를 찾습니다.",
+          tech: ["RAG", "PageContext validation"],
+        },
+        {
+          title: "3. Retrieval → LLM",
+          description:
+            "검색 근거와 대화 기록을 LLM provider에 전달하고 답변을 스트리밍합니다. 공급자가 없을 때도 근거/폴백 경로를 유지합니다.",
+          tech: ["LLM Provider", "Streaming"],
+        },
+        {
+          title: "4. LLM → TTS → Avatar Animation",
+          description:
+            "음성을 명시적으로 켠 경우에만 Supertonic TTS를 준비하고, LAM mouth pose 또는 브라우저 viseme을 3D 얼굴에 반영합니다.",
+          tech: ["Supertonic", "LAM", "React Three Fiber"],
+        },
+      ],
+    },
+    troubleshooting: [],
+    result: [
+      "도슨트를 루트 레이아웃의 단일 런타임으로 옮겨 모든 페이지에서 같은 대화를 이어갑니다.",
+      "페이지 문맥과 검색 근거를 분리해 화면 텍스트를 보내지 않고도 관련 답변을 제공합니다.",
+      "텍스트 응답과 음성 준비를 분리해 음성을 켜지 않은 방문에는 워커 비용이 발생하지 않습니다.",
+    ],
+  },
+  {
+    slug: "crime-scene",
+    title: "Crime Scene",
+    subtitle: "3D AI Murder Mystery",
+    label: "Interactive AI Game",
+    theme: "lab",
+    problemQuestion: ["단서를 보는 게임에서", "질문하고 의심하고 증명하는", "수사 경험으로"],
+    description:
+      "3D 공간을 직접 탐색해 단서를 수집하고, 용의자에게 자유롭게 질문하고, 증거를 제시한 뒤 마지막 추리로 범인을 지목하는 웹 기반 크라임씬입니다.",
+    role: [
+      "3D 1인칭 탐사와 조사 상호작용 설계",
+      "단서 공개·권한·라운드 상태 모델링",
+      "자유형 AI 심문과 대화 기억 흐름 구현",
+      "증거 제시와 최종 추리 경험 연결",
+    ],
+    techStack: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "React Three Fiber",
+      "Zustand",
+      "Generative AI",
+      "Web Audio",
+      "Supabase Realtime",
+    ],
+    media: {
+      caption: "Crime Scene — 3D 탐색, 단서 수집, AI 심문, 증거 제시, 최종 추리",
+    },
+    highlights: [
+      { label: "Explore", value: "3D", description: "10개 공간을 걷고 사물을 직접 조사" },
+      { label: "Evidence", value: "Clues", description: "발견한 단서와 개인 정보를 권한에 맞게 공개" },
+      { label: "Interrogate", value: "AI", description: "정해진 선택지 밖의 질문까지 이어지는 심문" },
+    ],
+    architecture: {
+      title: "탐색에서 심문과 추리까지, 플레이어의 증거가 다음 행동을 엽니다.",
+      description:
+        "클라이언트의 3D 탐사와 서버의 비밀 정보 경계를 나누고, 수집한 단서·라운드 상태·심문 기억이 증거 제시와 최종 판정으로 이어지도록 구성했습니다.",
+      items: [
+        {
+          title: "3D Exploration",
+          description: "React Three Fiber 공간에서 이동하고, 조준한 사물과 상호작용해 단서를 수집합니다.",
+          tech: ["React Three Fiber", "Pointer Lock"],
+        },
+        {
+          title: "Clue Visibility",
+          description: "라운드와 역할별로 볼 수 있는 정보만 서버가 투영해 추리의 정보 비대칭을 지킵니다.",
+          tech: ["Server API", "Visibility rules"],
+        },
+        {
+          title: "AI Interrogation",
+          description: "용의자에게 자유형 질문을 보내고, 해금된 정보와 대화 기억 범위 안에서 답을 이어갑니다.",
+          tech: ["LLM", "Interview memory"],
+        },
+        {
+          title: "Evidence → Deduction",
+          description: "증거를 제시해 주장과 연결하고, 마지막 추리와 투표 결과로 사건을 마무리합니다.",
+          tech: ["Reasoning", "Vote resolution"],
+        },
+      ],
+    },
+    troubleshooting: [],
+    result: [
+      "탐색·단서·대화·추리를 하나의 브라우저 게임 흐름으로 연결했습니다.",
+      "정답과 비밀 단서를 서버 경계 안에 두고 플레이어별 공개 범위를 분리했습니다.",
+      "혼자서도 NPC와 플레이할 수 있고, 선택적으로 실시간 멀티플레이를 연결할 수 있습니다.",
+    ],
+  },
 ];
 
 export function getProjectDetail(slug: string) {

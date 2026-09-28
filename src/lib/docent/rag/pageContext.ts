@@ -16,11 +16,11 @@ const PAGE_TYPES = ["home", "about", "project", "playground", "knowledge", "skil
 export function pageContextFromPathname(pathname: string, sectionId?: string | null): PageContext {
   const clean = normalizePathname(pathname);
   const project = PROJECT_ENTITIES.find((p) => p.pathname === clean);
-  if (project && project.id !== "docent") {
+  if (project) {
     return withSection({ pathname: clean, pageType: "project", projectSlug: project.id, projectTitle: project.title }, sectionId);
   }
   if (clean === "/playground") {
-    return withSection({ pathname: clean, pageType: "playground", projectSlug: "docent", projectTitle: "AI Docent" }, sectionId);
+    return withSection({ pathname: clean, pageType: "playground" }, sectionId);
   }
   if (clean === "/") return withSection({ pathname: clean, pageType: "home" }, sectionId);
   if (clean === "/about") return withSection({ pathname: clean, pageType: "about" }, sectionId);
