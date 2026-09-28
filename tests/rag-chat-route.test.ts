@@ -32,10 +32,11 @@ const sources = (events: DocentStreamEvent[]) => events.find((e): e is Extract<D
 const text = (events: DocentStreamEvent[]) => events.filter((e): e is Extract<DocentStreamEvent, { type: "delta" }> => e.type === "delta").map((e) => e.text).join("");
 const done = (events: DocentStreamEvent[]) => events.find((e): e is Extract<DocentStreamEvent, { type: "done" }> => e.type === "done");
 
-test("LLM 이 없으면 근거 발췌 모드로 답하고 프로토콜 순서가 meta → sources → delta → done 이다", async () => {
+test("LLM 이 없으면 단계 계측 뒤 근거 발췌 프로토콜로 답한다", async () => {
   const { status, events, raw } = await call({ messages: [{ role: "user", content: "ARMI에서 본인이 한 역할이 뭐예요?" }], pageContext: { pathname: "/", pageType: "home" } });
   assert.equal(status, 200);
-  assert.deepEqual(events.map((e) => e.type).filter((t, i, a) => a.indexOf(t) === i), ["meta", "sources", "delta", "done"]);
+  assert.deepEqual(events.map((e) => e.type).filter((t, i, a) => a.indexOf(t) === i), ["stage", "meta", "sources", "delta", "done"]);
+  assert.deepEqual(events.filter((e) => e.type === "stage").map((e) => e.stage), ["context", "retrieval"]);
   assert.equal(meta(events)?.mode, "evidence");
   assert.equal(meta(events)?.provider, "none");
   const s = sources(events);
@@ -45,6 +46,8 @@ test("LLM 이 없으면 근거 발췌 모드로 답하고 프로토콜 순서가
   assert.ok(text(events).includes("역할"));
   const t = done(events)?.timings;
   assert.ok(t && t.retrievalMs >= 0 && t.pageContextMs >= 0 && t.llmTtfbMs === null && t.llmTotalMs === null && t.chatTotalMs >= t.retrievalMs);
+  assert.equal(t?.failureStage, null);
+  assert.equal(t?.stages.context, t?.pageContextMs);
   assert.ok(!/src\/data|knowledge\/|C:\\|API_KEY|process\.env/.test(raw));
 });
 

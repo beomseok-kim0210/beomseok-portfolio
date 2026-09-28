@@ -58,6 +58,15 @@ body {
   padding-right: 0;
 }
 
+/* 도슨트가 오른쪽 사이드 패널로 붙어 있을 때만 본문을 비켜 준다. 본문은 확대·축소하지
+   않고, 가운데 정렬된 1440px 의 오른쪽 여백이 모자란 만큼만 민다 (0 ~ 예약 폭).
+   예약 폭 = 패널 440 + 바깥 여백 16 + 본문 간격 24 — globalDocentState 와 같은 값. */
+@media (min-width: 1024px) {
+  html[data-global-docent-view="docked"] .global-docent-layout {
+    padding-right: clamp(0px, calc(2 * 480px + 1440px - 100vw), 480px);
+  }
+}
+
 p,
 li,
 h1,

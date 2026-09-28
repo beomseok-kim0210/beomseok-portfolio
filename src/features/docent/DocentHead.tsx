@@ -15,6 +15,8 @@ import {
   type SemanticMouthPose,
 } from "@/lib/docent/semanticMouth";
 import type { DocentEmotion } from "@/types/docent";
+import { DOCENT_PORTRAIT_FRAME, frameAvatarPortrait } from "./avatarFraming";
+import { applyNeckDissolve } from "./hologram/neckDissolve";
 
 /**
  * 임시 head-only 런타임. 입은 M2.13 semantic 액추에이터가 구동하고, 눈깜빡임과
@@ -153,6 +155,11 @@ interface DocentHeadProps {
    * 값이 있으면 이것이 이긴다 — 라벨 경로는 쳐다보지 않는다.
    */
   mouth?: SemanticMouthPose | null;
+  /**
+   * 홀로그램 챔버 안에서만 켠다. 턱 아래 목 구간이 투사광으로 녹아 사라진다.
+   * 모프·UV·얼굴 색은 건드리지 않는다 — hologram/neckDissolve 참고.
+   */
+  projection?: boolean;
 }
 
 function usePrefersReducedMotion(): boolean {
@@ -167,9 +174,14 @@ function usePrefersReducedMotion(): boolean {
   return reduced;
 }
 
-export function DocentHead({ emotion, viseme, mouth: lamMouth = null }: DocentHeadProps) {
+export function DocentHead({ emotion, viseme, mouth: lamMouth = null, projection = false }: DocentHeadProps) {
   const group = useRef<Group>(null);
   const { scene } = useGLTF(MODEL_URL);
+
+  useLayoutEffect(() => {
+    if (!projection) return;
+    return applyNeckDissolve(scene);
+  }, [projection, scene]);
   const { camera, size } = useThree();
   const reduced = usePrefersReducedMotion();
   const blink = useRef({ nextAt: 2.5, closing: false });
@@ -192,26 +204,33 @@ export function DocentHead({ emotion, viseme, mouth: lamMouth = null }: DocentHe
     return buildRig(found, MODEL_URL);
   }, [scene]);
 
-  // Fit from the loaded model's real bounds. The old fixed camera left almost no
-  // hairline margin in the shallow dock and could crop during idle rotation.
+  // Compose from the real head bounds rather than their centre. The framing
+  // helper reserves the measured idle-motion envelope and derives an eye line.
   useLayoutEffect(() => {
     if (!(camera instanceof PerspectiveCamera) || !group.current) return;
+    // A resize can occur mid-idle. Measure the asset in its authored pose so
+    // transient float/rotation never feeds back into the next camera fit.
+    group.current.position.set(0, 0, 0);
+    group.current.rotation.set(0, 0, 0);
     group.current.updateWorldMatrix(true, true);
     const bounds = new Box3().setFromObject(group.current);
     if (bounds.isEmpty()) return;
 
     const dimensions = bounds.getSize(new Vector3());
-    const center = bounds.getCenter(new Vector3());
-    const verticalFov = MathUtils.degToRad(camera.fov);
-    const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * camera.aspect);
-    const fitHeight = dimensions.y / (2 * Math.tan(verticalFov / 2));
-    const fitWidth = dimensions.x / (2 * Math.tan(horizontalFov / 2));
-    const distance = Math.max(fitHeight, fitWidth) * 1.08 + dimensions.z / 2;
+    const portrait = frameAvatarPortrait(
+      {
+        min: { x: bounds.min.x, y: bounds.min.y, z: bounds.min.z },
+        max: { x: bounds.max.x, y: bounds.max.y, z: bounds.max.z },
+      },
+      camera.aspect,
+      camera.fov,
+    );
+    const target = new Vector3(portrait.target.x, portrait.target.y, portrait.target.z);
 
-    camera.position.set(center.x, center.y, center.z + distance);
-    camera.near = Math.max(0.001, distance / 100);
-    camera.far = Math.max(10, distance * 100);
-    camera.lookAt(center);
+    camera.position.set(target.x, target.y, target.z + portrait.distance);
+    camera.near = Math.max(0.001, portrait.distance / 100);
+    camera.far = Math.max(10, portrait.distance * 100);
+    camera.lookAt(target);
     camera.updateProjectionMatrix();
 
     if (DEV && typeof window !== "undefined") {
@@ -222,8 +241,17 @@ export function DocentHead({ emotion, viseme, mouth: lamMouth = null }: DocentHe
           depth: dimensions.z,
         },
         stage: { width: size.width, height: size.height },
-        cameraDistance: distance,
-        target: center.toArray(),
+        cameraDistance: portrait.distance,
+        target: target.toArray(),
+        visibleHeight: portrait.visibleHeight,
+        visibleWidth: portrait.visibleWidth,
+        subjectHeightOccupancy: portrait.subjectHeightOccupancy,
+        subjectWidthOccupancy: portrait.subjectWidthOccupancy,
+        headroom: portrait.headroom,
+        worstCaseIdleHeadroom: portrait.worstCaseIdleHeadroom,
+        worstCaseInteractiveHeadroom: portrait.worstCaseInteractiveHeadroom,
+        eyeLine: portrait.eyeLine,
+        idleEnvelope: portrait.idleEnvelope,
       };
     }
   }, [camera, scene, size.height, size.width]);
@@ -358,7 +386,9 @@ export function DocentHead({ emotion, viseme, mouth: lamMouth = null }: DocentHe
     // 4) 아이들 모션: 미세 스웨이 + 포인터 시선 추적
     if (group.current && !reduced) {
       const gazeX = MathUtils.clamp(state.pointer.x, -1, 1) * 0.22;
-      const gazeY = MathUtils.clamp(state.pointer.y, -1, 1) * 0.12;
+      // Keep interactive pitch inside the portrait's vertical safety margin.
+      const gazeY = MathUtils.clamp(state.pointer.y, -1, 1)
+        * DOCENT_PORTRAIT_FRAME.pointerPitchRadians;
       group.current.rotation.y = MathUtils.damp(
         group.current.rotation.y,
         gazeX + Math.sin(t * 0.4) * 0.04,

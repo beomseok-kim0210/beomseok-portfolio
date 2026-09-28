@@ -62,9 +62,11 @@ export interface VoiceState {
   voiceEnabled: boolean;
   lifecycle: VoiceLifecycle;
   statusMessage: string | null;
+  failureStage: import("@/types/docent").DocentStage | null;
   /** 현재 발음 중인 입모양. 말하고 있지 않으면 null. */
   viseme: VisemeKey | null;
   toggleVoice: () => void;
+  disableVoice: () => void;
   /** 실제 헬스 신호를 확인하고, 필요할 때만 예열을 시작한다. 호출자는 기다리지 않는다. */
   ensureReady: () => void;
   beginSynthesis: () => void;
@@ -161,7 +163,7 @@ export function useVoice(): VoiceState {
           });
           payload = await response.json().catch(() => null);
         } catch {
-          if (!controller.signal.aborted) dispatchLifecycle({ type: "FAILED" });
+          if (!controller.signal.aborted) dispatchLifecycle({ type: "FAILED", stage: "voice_warm" });
           return;
         }
 
@@ -170,7 +172,7 @@ export function useVoice(): VoiceState {
           return;
         }
         if (!response.ok) {
-          dispatchLifecycle({ type: "FAILED" });
+          dispatchLifecycle({ type: "FAILED", stage: "voice_warm" });
           return;
         }
 
@@ -180,7 +182,7 @@ export function useVoice(): VoiceState {
           prepareIssuedRef.current = true;
           const requested = await requestVoiceWarm(controller.signal);
           if (!requested && !controller.signal.aborted) {
-            dispatchLifecycle({ type: "FAILED" });
+            dispatchLifecycle({ type: "FAILED", stage: "voice_warm" });
             return;
           }
         }
@@ -332,7 +334,7 @@ export function useVoice(): VoiceState {
       utterance.onerror = () => {
         setTtsSpeaking(false);
         stopVisemeLoop();
-        dispatchLifecycle({ type: "FAILED" });
+        dispatchLifecycle({ type: "FAILED", stage: "tts" });
       };
 
       synth.speak(utterance);
@@ -365,6 +367,18 @@ export function useVoice(): VoiceState {
     stopVisemeLoop();
   }, [cancelWarmCycle, ensureReady, stopVisemeLoop]);
 
+  const disableVoice = useCallback(() => {
+    if (!voiceEnabledRef.current) return;
+    voiceEnabledRef.current = false;
+    setVoiceEnabled(false);
+    prepareIssuedRef.current = false;
+    cancelWarmCycle();
+    dispatchLifecycle({ type: "DISABLE" });
+    window.speechSynthesis?.cancel();
+    setTtsSpeaking(false);
+    stopVisemeLoop();
+  }, [cancelWarmCycle, stopVisemeLoop]);
+
   const beginSynthesis = useCallback(() => {
     dispatchLifecycle({ type: "SYNTHESIS_STARTED" });
   }, []);
@@ -375,7 +389,7 @@ export function useVoice(): VoiceState {
     dispatchLifecycle({ type: "PLAYBACK_FINISHED" });
   }, []);
   const reportError = useCallback(() => {
-    dispatchLifecycle({ type: "FAILED" });
+    dispatchLifecycle({ type: "FAILED", stage: "tts" });
   }, []);
 
   const statusMessage = voiceStatusMessage(
@@ -391,8 +405,10 @@ export function useVoice(): VoiceState {
     voiceEnabled,
     lifecycle: lifecycleState.status,
     statusMessage,
+    failureStage: lifecycleState.failureStage,
     viseme,
     toggleVoice,
+    disableVoice,
     ensureReady,
     beginSynthesis,
     beginSpeaking,

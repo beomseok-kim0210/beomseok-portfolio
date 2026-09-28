@@ -1,6 +1,12 @@
 import { docentConfig } from "@/data/docent";
 import { getLlmProvider } from "@/lib/docent/llmProvider";
-import { answerFromEvidence, buildGroundedSystemPrompt, leaksInternalPath, toSourceDescriptors } from "@/lib/docent/rag/grounding";
+import {
+  answerFromEvidence,
+  buildGroundedSystemPrompt,
+  leaksInternalPath,
+  resolveAnswerDepth,
+  toSourceDescriptors,
+} from "@/lib/docent/rag/grounding";
 import { validatePageContext } from "@/lib/docent/rag/pageContext";
 import { retrieve, type RetrievalResult } from "@/lib/docent/rag/retrieval";
 import type { PageContext } from "@/lib/docent/rag/types";
@@ -9,6 +15,7 @@ import {
   isDocentEmotion,
   type DocentChatMessage,
   type DocentEmotion,
+  type DocentStage,
   type DocentStreamEvent,
   type DocentTimings,
 } from "@/types/docent";
@@ -93,7 +100,7 @@ function ground(parsed: Parsed): Grounded {
   const recentUserQueries = users.slice(0, -1).slice(-3);
 
   const t1 = performance.now();
-  const retrieval = retrieve(question, page, { recentUserQueries });
+  const retrieval = retrieve(question, page, { recentUserQueries, topK: 8 });
   const retrievalMs = performance.now() - t1;
   return { page, retrieval, pageContextMs, retrievalMs, startedAt };
 }
@@ -103,21 +110,44 @@ function sourcesEvent(g: Grounded): DocentStreamEvent {
   return { type: "sources", grounded: g.retrieval.supported, activeProject: g.retrieval.activeProject, sources };
 }
 
-function timings(g: Grounded, llm: { ttfb: number | null; total: number | null }): DocentTimings {
+function timings(
+  g: Grounded,
+  llm: { ttfb: number | null; total: number | null },
+  failureStage: DocentStage | null = null,
+): DocentTimings {
   const r = (x: number | null) => (x === null ? null : Math.round(x * 10) / 10);
+  const context = r(g.pageContextMs) as number;
+  const retrieval = r(g.retrievalMs) as number;
+  const llmTotal = r(llm.total);
   return {
-    pageContextMs: r(g.pageContextMs) as number,
-    retrievalMs: r(g.retrievalMs) as number,
+    pageContextMs: context,
+    retrievalMs: retrieval,
     llmTtfbMs: r(llm.ttfb),
-    llmTotalMs: r(llm.total),
+    llmTotalMs: llmTotal,
     chatTotalMs: r(performance.now() - g.startedAt) as number,
+    stages: {
+      context,
+      retrieval,
+      llm: llmTotal,
+      voice_warm: null,
+      tts: null,
+      network: null,
+      unknown: null,
+    },
+    failureStage,
   };
 }
 
 function logChat(g: Grounded, mode: string, extra: Record<string, unknown>) {
+  const entitiesUsed = [...new Set(
+    g.retrieval.results.map((item) => item.chunk.entityId).filter(Boolean),
+  )];
   // 질문 본문·근거 본문·경로는 남기지 않는다.
   console.info("[chat]", JSON.stringify({
     mode,
+    answer_depth: resolveAnswerDepth(g.retrieval),
+    question_intent: g.retrieval.intents[0] ?? "unknown",
+    entities_used: entitiesUsed,
     pageType: g.page?.pageType ?? null,
     pageProject: g.page?.projectSlug ?? null,
     activeProject: g.retrieval.activeProject,
@@ -143,13 +173,15 @@ function evidenceResponse(parsed: Parsed): Response {
   const stream = new ReadableStream({
     start(controller) {
       const send = (e: DocentStreamEvent) => controller.enqueue(encoder.encode(line(e)));
+      send({ type: "stage", stage: "context", status: "complete", elapsedMs: g.pageContextMs });
+      send({ type: "stage", stage: "retrieval", status: "complete", elapsedMs: g.retrievalMs });
       send({ type: "meta", emotion, mode, provider: "none" });
       send(sourcesEvent(g));
       enqueueChunkedAnswer(send, answer);
       const t = timings(g, { ttfb: null, total: null });
       send({ type: "done", timings: t });
       controller.close();
-      logChat(g, mode, { answerKind: kind, chatTotalMs: t.chatTotalMs });
+      logChat(g, mode, { answerKind: kind, visible_answer_chars: answer.length, chatTotalMs: t.chatTotalMs });
     },
   });
   return new Response(stream, { headers: NDJSON_HEADERS });
@@ -167,9 +199,12 @@ function liveResponse(parsed: Parsed): Response {
   const stream = new ReadableStream({
     async start(controller) {
       const send = (event: DocentStreamEvent) => controller.enqueue(encoder.encode(line(event)));
+      send({ type: "stage", stage: "context", status: "complete", elapsedMs: g.pageContextMs });
+      send({ type: "stage", stage: "retrieval", status: "complete", elapsedMs: g.retrievalMs });
       send(sourcesEvent(g));
 
       let buffer = "";
+      let visibleAnswer = "";
       let metaSent = false;
       let firstTokenAt: number | null = null;
       const llmStart = performance.now();
@@ -177,14 +212,19 @@ function liveResponse(parsed: Parsed): Response {
       const flushMeta = (emotion: DocentEmotion, rest: string) => {
         send({ type: "meta", emotion, mode: "live", provider: provider.name });
         metaSent = true;
-        if (rest) send({ type: "delta", text: rest });
+        if (rest) {
+          visibleAnswer += rest;
+          send({ type: "delta", text: rest });
+        }
       };
 
       try {
+        send({ type: "stage", stage: "llm", status: "started" });
         const system = buildGroundedSystemPrompt(g.page, g.retrieval);
         for await (const text of provider.stream({ system, messages: parsed.messages, maxTokens: docentConfig.maxTokens })) {
           if (firstTokenAt === null) firstTokenAt = performance.now();
           if (metaSent) {
+            visibleAnswer += text;
             send({ type: "delta", text });
             continue;
           }
@@ -199,8 +239,9 @@ function liveResponse(parsed: Parsed): Response {
         }
         if (!metaSent) flushMeta("neutral", buffer);
         const t = timings(g, { ttfb: firstTokenAt === null ? null : firstTokenAt - llmStart, total: performance.now() - llmStart });
+        send({ type: "stage", stage: "llm", status: "complete", elapsedMs: t.llmTotalMs ?? undefined });
         send({ type: "done", timings: t });
-        logChat(g, "live", { provider: provider.name, model: provider.model, llmTtfbMs: t.llmTtfbMs, llmTotalMs: t.llmTotalMs, chatTotalMs: t.chatTotalMs });
+        logChat(g, "live", { provider: provider.name, model: provider.model, visible_answer_chars: visibleAnswer.length, llmTtfbMs: t.llmTtfbMs, llmTotalMs: t.llmTotalMs, chatTotalMs: t.chatTotalMs });
       } catch (err) {
         if (!metaSent) {
           // 첫 토큰 전에 죽었다 — 아직 아무 말도 안 했으니 근거 발췌로 조용히 내려간다.
@@ -210,14 +251,14 @@ function liveResponse(parsed: Parsed): Response {
           enqueueChunkedAnswer(send, answer);
           const t = timings(g, { ttfb: null, total: performance.now() - llmStart });
           send({ type: "done", timings: t });
-          logChat(g, mode, { providerFailed: provider.name, rateLimited: provider.isRateLimit(err), error: err instanceof Error ? err.name : "unknown", chatTotalMs: t.chatTotalMs });
+          logChat(g, mode, { providerFailed: provider.name, rateLimited: provider.isRateLimit(err), error: err instanceof Error ? err.name : "unknown", visible_answer_chars: answer.length, chatTotalMs: t.chatTotalMs });
         } else {
           // 스트리밍 시작 후에는 상태코드를 바꿀 수 없으므로 error 이벤트로 전달.
           const message = provider.isRateLimit(err)
             ? "지금 질문이 많아요. 잠시 후 다시 시도해 주세요."
             : "답변 생성 중 문제가 생겼어요.";
-          send({ type: "error", message });
-          logChat(g, "live", { providerFailed: provider.name, midStream: true, error: err instanceof Error ? err.name : "unknown" });
+          send({ type: "error", message, failureStage: "llm" });
+          logChat(g, "live", { providerFailed: provider.name, midStream: true, error: err instanceof Error ? err.name : "unknown", visible_answer_chars: visibleAnswer.length });
         }
       } finally {
         controller.close();
@@ -232,7 +273,7 @@ export async function POST(request: Request) {
   const rate = checkRateLimit(clientIpFrom(request.headers));
   if (!rate.ok) {
     return Response.json(
-      { error: "요청이 너무 잦아요. 잠시 후 다시 시도해 주세요." },
+      { error: "요청이 너무 잦아요. 잠시 후 다시 시도해 주세요.", failure_stage: "network" },
       { status: 429, headers: { "Retry-After": String(rate.retryAfterSec ?? 30) } }
     );
   }
@@ -241,12 +282,12 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return Response.json({ error: "잘못된 JSON입니다." }, { status: 400 });
+    return Response.json({ error: "잘못된 JSON입니다.", failure_stage: "context" }, { status: 400 });
   }
 
   const parsed = validate(body);
   if ("error" in parsed) {
-    return Response.json({ error: parsed.error }, { status: 400 });
+    return Response.json({ error: parsed.error, failure_stage: "context" }, { status: 400 });
   }
 
   // 프로바이더 자격증명이 없으면 근거 발췌 모드 — 요청마다 체크하므로 키 추가만으로 라이브 전환.

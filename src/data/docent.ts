@@ -16,12 +16,11 @@ export const docentCopy = {
   demoNotice: "지금은 사전 준비된 답변으로 동작하는 데모 모드입니다.",
   evidenceBadge: "근거 발췌",
   evidenceNotice: "포트폴리오에서 검색한 근거를 그대로 읽어 드리는 모드입니다. LLM 답변은 아직 연결되지 않았습니다.",
-  errorBubble: "죄송해요, 답변 중에 문제가 생겼어요. 잠시 후 다시 시도해 주세요.",
 } as const;
 
 export const docentConfig = {
   maxInputLength: 500,
   maxHistoryMessages: 8,
-  maxTokens: 1024,
+  maxTokens: 2048,
   rateLimit: { windowMs: 60_000, maxRequests: 10 },
 } as const;

@@ -19,7 +19,7 @@ const read = (path: string) => readFileSync(path, "utf8").replace(/\r\n/g, "\n")
 
 test("A. OFF → ON 은 즉시 WARMING 이고 실제 준비 신호에서 READY 가 된다", () => {
   const warming = voiceLifecycleReducer(initialVoiceLifecycleState, { type: "ENABLE", now: 1_000 });
-  assert.deepEqual(warming, { status: "VOICE_WARMING", warmingSince: 1_000 });
+  assert.deepEqual(warming, { status: "VOICE_WARMING", warmingSince: 1_000, failureStage: null });
   assert.equal(isVoiceHealthReady({ status: "reachable", runpod: { workers: { ready: 1 } } }), true);
   assert.equal(isVoiceHealthReady({ status: "reachable", runpod: { workers: { idle: 1 } } }), true);
   assert.equal(isVoiceHealthReady({ status: "reachable", runpod: { workers: { initializing: 1 } } }), false);
@@ -66,8 +66,8 @@ test("F. 5초/20초 지연 문구와 백오프에 숫자 ETA가 없다", () => {
   const warming = voiceLifecycleReducer(initialVoiceLifecycleState, { type: "ENABLE", now: 0 });
   assert.equal(voiceStatusMessage(warming, 4_999), "음성 기능을 준비하고 있어요…");
   const delayed = voiceLifecycleReducer(warming, { type: "HEALTH_WAITING", now: 5_000 });
-  assert.equal(voiceStatusMessage(delayed, 5_000), "음성을 준비 중이에요. 텍스트 답변은 먼저 확인할 수 있습니다.");
-  assert.equal(voiceStatusMessage(delayed, 20_000), "음성을 준비 중이에요. 텍스트 답변은 먼저 확인할 수 있습니다.");
+  assert.equal(voiceStatusMessage(delayed, 5_000), "텍스트 답변은 먼저 확인하실 수 있어요.");
+  assert.equal(voiceStatusMessage(delayed, 20_000), "텍스트 답변은 먼저 확인하실 수 있어요.");
   assert.deepEqual([0, 1, 2, 3, 4].map(voicePollDelay), [2_000, 4_000, 8_000, 10_000, 10_000]);
   for (const at of [4_999, 5_000, 20_000]) {
     assert.doesNotMatch(voiceStatusMessage(at < 5_000 ? warming : delayed, at) ?? "", /\d+\s*(초|%)/);

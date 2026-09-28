@@ -16,9 +16,27 @@ export const DOCENT_EMOTIONS: readonly DocentEmotion[] = [
 
 export type DocentChatRole = "user" | "assistant";
 
+export type DocentStage =
+  | "context"
+  | "retrieval"
+  | "llm"
+  | "voice_warm"
+  | "tts"
+  | "network"
+  | "unknown";
+
+export interface DocentFailure {
+  message: string;
+  stage: DocentStage;
+  retryAfterSeconds?: number;
+  retryAt?: number;
+}
+
 export interface DocentChatMessage {
   role: DocentChatRole;
   content: string;
+  /** Client-only presentation metadata. It is stripped from request history. */
+  failure?: DocentFailure;
 }
 
 /**
@@ -52,15 +70,18 @@ export interface DocentTimings {
   llmTtfbMs: number | null;
   llmTotalMs: number | null;
   chatTotalMs: number;
+  stages: Record<DocentStage, number | null>;
+  failureStage: DocentStage | null;
 }
 
 // NDJSON 와이어 프로토콜 — 한 줄에 JSON 하나. 모르는 type 은 클라이언트가 무시한다.
 export type DocentStreamEvent =
+  | { type: "stage"; stage: DocentStage; status: "started" | "complete"; elapsedMs?: number }
   | { type: "meta"; emotion: DocentEmotion; mode: DocentMode; provider?: "openai" | "anthropic" | "none" }
   | { type: "sources"; grounded: boolean; activeProject: string | null; sources: DocentSource[] }
   | { type: "delta"; text: string }
   | { type: "done"; timings?: DocentTimings }
-  | { type: "error"; message: string };
+  | { type: "error"; message: string; failureStage: DocentStage; retryAfterSeconds?: number };
 
 export function isDocentEmotion(value: unknown): value is DocentEmotion {
   return (

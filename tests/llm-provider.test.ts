@@ -85,13 +85,13 @@ test("DOCENT_MODEL 은 같은 프로바이더 이름일 때만 쓰고, 엇갈리
   assert.equal(resolveModel("openai", { DOCENT_MODEL: "   " }), "gpt-5.6-luna");
 });
 
-test("reasoning effort 는 허용값만 받고 기본은 medium 이다", () => {
-  assert.equal(resolveReasoningEffort({}), "medium");
+test("reasoning effort 는 허용값만 받고 기본은 low 이다", () => {
+  assert.equal(resolveReasoningEffort({}), "low");
   assert.equal(resolveReasoningEffort({ DOCENT_REASONING_EFFORT: "low" }), "low");
   assert.equal(resolveReasoningEffort({ DOCENT_REASONING_EFFORT: "xhigh" }), "xhigh");
-  assert.equal(resolveReasoningEffort({ DOCENT_REASONING_EFFORT: "turbo" }), "medium");
+  assert.equal(resolveReasoningEffort({ DOCENT_REASONING_EFFORT: "turbo" }), "low");
   // gpt-5.6 (sol) 이 거부하는 값 — 받아들이면 매 요청이 조용히 폴백된다
-  assert.equal(resolveReasoningEffort({ DOCENT_REASONING_EFFORT: "minimal" }), "medium");
+  assert.equal(resolveReasoningEffort({ DOCENT_REASONING_EFFORT: "minimal" }), "low");
 });
 
 test("정상 스트림: 델타를 순서대로 내고 completed 에서 끝난다 (감정 태그가 쪼개져 와도 그대로 전달)", async () => {

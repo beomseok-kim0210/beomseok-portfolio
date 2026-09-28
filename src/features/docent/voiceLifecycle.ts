@@ -1,3 +1,5 @@
+import type { DocentStage } from "@/types/docent";
+
 export type VoiceLifecycle =
   | "VOICE_OFF"
   | "VOICE_WARMING"
@@ -10,6 +12,7 @@ export type VoiceLifecycle =
 export interface VoiceLifecycleState {
   status: VoiceLifecycle;
   warmingSince: number | null;
+  failureStage: DocentStage | null;
 }
 
 export type VoiceLifecycleEvent =
@@ -19,12 +22,13 @@ export type VoiceLifecycleEvent =
   | { type: "SYNTHESIS_STARTED" }
   | { type: "PLAYBACK_STARTED" }
   | { type: "PLAYBACK_FINISHED" }
-  | { type: "FAILED" }
+  | { type: "FAILED"; stage?: DocentStage }
   | { type: "DISABLE" };
 
 export const initialVoiceLifecycleState: VoiceLifecycleState = {
   status: "VOICE_OFF",
   warmingSince: null,
+  failureStage: null,
 };
 
 export function voiceLifecycleReducer(
@@ -33,32 +37,33 @@ export function voiceLifecycleReducer(
 ): VoiceLifecycleState {
   switch (event.type) {
     case "ENABLE":
-      return { status: "VOICE_WARMING", warmingSince: event.now };
+      return { status: "VOICE_WARMING", warmingSince: event.now, failureStage: null };
     case "HEALTH_WAITING": {
       const warmingSince = state.warmingSince ?? event.now;
       return {
         status: event.now - warmingSince >= 5_000 ? "VOICE_DELAYED" : "VOICE_WARMING",
         warmingSince,
+        failureStage: null,
       };
     }
     case "HEALTH_READY":
-      return { status: "VOICE_READY", warmingSince: null };
+      return { status: "VOICE_READY", warmingSince: null, failureStage: null };
     case "SYNTHESIS_STARTED":
       return state.status === "VOICE_OFF"
         ? state
-        : { status: "VOICE_SYNTHESIZING", warmingSince: null };
+        : { status: "VOICE_SYNTHESIZING", warmingSince: null, failureStage: null };
     case "PLAYBACK_STARTED":
       return state.status === "VOICE_OFF"
         ? state
-        : { status: "VOICE_SPEAKING", warmingSince: null };
+        : { status: "VOICE_SPEAKING", warmingSince: null, failureStage: null };
     case "PLAYBACK_FINISHED":
       return state.status === "VOICE_OFF"
         ? state
-        : { status: "VOICE_READY", warmingSince: null };
+        : { status: "VOICE_READY", warmingSince: null, failureStage: null };
     case "FAILED":
       return state.status === "VOICE_OFF"
         ? state
-        : { status: "VOICE_ERROR", warmingSince: null };
+        : { status: "VOICE_ERROR", warmingSince: null, failureStage: event.stage ?? "unknown" };
     case "DISABLE":
       return initialVoiceLifecycleState;
   }
@@ -66,7 +71,7 @@ export function voiceLifecycleReducer(
 
 export const VOICE_STATUS_COPY: Record<Exclude<VoiceLifecycle, "VOICE_OFF">, string> = {
   VOICE_WARMING: "음성 기능을 준비하고 있어요…",
-  VOICE_DELAYED: "음성을 준비 중이에요. 텍스트 답변은 먼저 확인할 수 있습니다.",
+  VOICE_DELAYED: "텍스트 답변은 먼저 확인하실 수 있어요.",
   VOICE_READY: "음성 준비 완료",
   VOICE_SYNTHESIZING: "음성을 생성하고 있어요…",
   VOICE_SPEAKING: "DD가 설명 중입니다",

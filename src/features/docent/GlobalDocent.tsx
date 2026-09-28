@@ -1,16 +1,20 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Bot, Sparkles, X } from "lucide-react";
+import { Bot, Maximize2, Minimize2, Minus, Sparkles, X } from "lucide-react";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { DocentRuntimeProvider, useDocentRuntime } from "./DocentRuntime";
 import {
+  DOCENT_DOCK_MIN_VIEWPORT_WIDTH,
   globalDocentPresentationReducer,
   initialGlobalDocentState,
   defaultGlobalDocentView,
   persistGlobalDocentView,
   readGlobalDocentView,
 } from "./globalDocentState";
+
+const CONTROL_BUTTON_CLASS =
+  "inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-slate-300 outline-none transition-colors hover:border-sky-200/30 hover:text-white focus-visible:ring-2 focus-visible:ring-blue-400";
 import { OPEN_GLOBAL_DOCENT_EVENT } from "./globalDocentEvents";
 import { useContextualHint } from "./useContextualHint";
 
@@ -38,14 +42,28 @@ function GlobalDocentPresentation() {
   );
   const [focusInputToken, setFocusInputToken] = useState(0);
   const [storageReady, setStorageReady] = useState(false);
+  const [canDock, setCanDock] = useState(false);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const { hint, dismiss } = useContextualHint(runtime.pageContext, state);
-  const isOpen = state === "expanded";
+  const isOpen = state !== "minimized";
+  // 좁은 화면에는 옆에 붙을 자리가 없다 — docked 도 헤더 아래 전체 시트로 그린다.
+  const sidecar = state === "docked" && canDock;
+
+  useEffect(() => {
+    const query = window.matchMedia(`(min-width: ${DOCENT_DOCK_MIN_VIEWPORT_WIDTH}px)`);
+    setCanDock(query.matches);
+    const listener = (event: MediaQueryListEvent) => setCanDock(event.matches);
+    query.addEventListener("change", listener);
+    return () => query.removeEventListener("change", listener);
+  }, []);
 
   const open = useCallback(() => {
-    dispatch({ type: "EXPAND" });
+    dispatch({ type: "DOCK" });
     setFocusInputToken((token) => token + 1);
   }, []);
+
+  const enterFullscreen = useCallback(() => dispatch({ type: "FULLSCREEN" }), []);
+  const exitFullscreen = useCallback(() => dispatch({ type: "DOCK" }), []);
 
   const minimize = useCallback(() => {
     dispatch({ type: "MINIMIZE" });
@@ -126,37 +144,79 @@ function GlobalDocentPresentation() {
       ) : null}
 
       <section
-          id="global-docent-panel"
-          role="dialog"
-          aria-modal="false"
-          aria-label="포트폴리오 AI 도슨트"
-          aria-hidden={!isOpen}
-          data-docent-panel
-          style={{ maxHeight: "calc(100dvh - 5rem - env(safe-area-inset-bottom))" }}
-          className={`pointer-events-auto fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] right-3 flex h-[430px] w-[min(390px,calc(100vw-24px))] flex-col overflow-hidden rounded-[26px] border border-white/10 bg-[#0B1120]/[0.98] p-3 text-white shadow-[0_24px_90px_rgba(0,0,0,0.45)] backdrop-blur transition-[opacity,transform,visibility] duration-200 motion-reduce:transition-none sm:bottom-[max(1.25rem,env(safe-area-inset-bottom))] sm:right-5 sm:h-[700px] sm:w-[360px] sm:p-4 xl:right-6 xl:w-[390px] ${
-            isOpen
-              ? "visible translate-y-0 scale-100 opacity-100"
-              : "invisible translate-y-3 scale-[0.96] opacity-0"
+        id="global-docent-panel"
+        role="dialog"
+        aria-modal="false"
+        aria-label="포트폴리오 AI 도슨트"
+        aria-hidden={!isOpen}
+        data-docent-panel
+        data-docent-workspace
+        data-docent-view={sidecar ? "sidecar" : "workspace"}
+        /* 사이드 패널: 헤더(56px) 아래 12px 부터 바닥 12px 까지, 오른쪽 16px 여백에 440px.
+           전체 화면/좁은 화면: 헤더 아래 전체 (fixed inset-x-0 bottom-0 top-14). */
+        className={`pointer-events-auto fixed flex flex-col overflow-hidden bg-[#030711]/[0.985] text-white backdrop-blur-xl transition-[opacity,transform,visibility] duration-200 motion-reduce:transition-none ${
+          sidecar
+            ? "bottom-3 right-4 top-[68px] w-[440px] rounded-[28px] border border-white/10 shadow-[0_24px_90px_rgba(2,6,23,0.45)]"
+            : "fixed inset-x-0 bottom-0 top-14 shadow-[0_-18px_70px_rgba(0,0,0,0.38)]"
+        } ${
+          isOpen
+            ? "visible translate-y-0 opacity-100"
+            : "invisible translate-y-3 opacity-0"
+        }`}
+      >
+        <div
+          className={`flex shrink-0 items-center justify-between gap-3 border-b border-white/[0.06] ${
+            sidecar ? "h-12 px-4" : "h-12 px-3 sm:px-5 lg:px-8"
           }`}
+          data-docent-controls
         >
-          <div className="flex shrink-0 items-center justify-between px-1 pb-3">
-            <div>
-              <p className="cinematic-label text-blue-300">AI Docent</p>
-              <p className="mt-1 text-xs text-slate-400">현재 페이지를 바탕으로 답합니다.</p>
-            </div>
+          <div className="flex min-w-0 items-center gap-2">
+            <Bot aria-hidden="true" className="h-4 w-4 shrink-0 text-sky-300" />
+            <p className="cinematic-label truncate text-[11px] text-sky-200">AI DOCENT</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-1.5">
+            {state === "fullscreen" ? (
+              <button
+                type="button"
+                onClick={exitFullscreen}
+                aria-label="사이드 패널로 축소"
+                title="축소하기"
+                className={CONTROL_BUTTON_CLASS}
+              >
+                <Minimize2 aria-hidden="true" className="h-4 w-4" />
+              </button>
+            ) : (
+              /* 좁은 화면은 이미 헤더 아래 전체를 쓰므로 전체 화면 버튼이 없다. */
+              <button
+                type="button"
+                onClick={enterFullscreen}
+                aria-label="전체 화면으로 보기"
+                title="전체 화면"
+                className={`${CONTROL_BUTTON_CLASS} ${canDock ? "" : "hidden"}`}
+              >
+                <Maximize2 aria-hidden="true" className="h-4 w-4" />
+              </button>
+            )}
             <button
               type="button"
               onClick={minimize}
-              aria-label="AI Docent 최소화"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-slate-300 outline-none hover:text-white focus-visible:ring-2 focus-visible:ring-blue-400"
+              aria-label="AI Docent 내리기"
+              title="내리기"
+              className={CONTROL_BUTTON_CLASS}
             >
-              <X aria-hidden="true" className="h-4 w-4" />
+              <Minus aria-hidden="true" className="h-4 w-4" />
             </button>
           </div>
-          <div className="min-h-0 flex-1" data-lenis-prevent>
-            <DocentExperience focusInputToken={focusInputToken} />
-          </div>
-        </section>
+        </div>
+        <div
+          className={`min-h-0 w-full flex-1 ${
+            sidecar ? "p-3" : "mx-auto max-w-[1600px] px-3 py-3 sm:px-5 sm:py-5 lg:px-8 lg:py-6"
+          }`}
+          data-lenis-prevent
+        >
+          <DocentExperience focusInputToken={focusInputToken} layout={sidecar ? "sidecar" : "workspace"} />
+        </div>
+      </section>
 
       <button
         ref={launcherRef}

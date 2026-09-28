@@ -40,7 +40,7 @@ const DEFAULT_MODEL: Record<LlmProviderName, string> = {
 // gpt-5.6 계열은 minimal 을 받지 않는다 — 넣으면 매 요청이 실패해 조용히 폴백된다. 그래서 목록에서 뺀다.
 const REASONING_EFFORTS = ["none", "low", "medium", "high", "xhigh", "max"] as const;
 export type ReasoningEffort = (typeof REASONING_EFFORTS)[number];
-const DEFAULT_REASONING_EFFORT: ReasoningEffort = "medium";
+const DEFAULT_REASONING_EFFORT: ReasoningEffort = "low";
 
 type Env = Record<string, string | undefined>;
 
@@ -54,7 +54,7 @@ export function resolveModel(provider: LlmProviderName, env: Env = process.env):
   return requested;
 }
 
-/** DOCENT_REASONING_EFFORT 가 유효한 값이면 그것, 아니면 medium. */
+/** DOCENT_REASONING_EFFORT 가 유효한 값이면 그것, 아니면 low. */
 export function resolveReasoningEffort(env: Env = process.env): ReasoningEffort {
   const requested = env.DOCENT_REASONING_EFFORT?.trim();
   return (REASONING_EFFORTS as readonly string[]).includes(requested ?? "")

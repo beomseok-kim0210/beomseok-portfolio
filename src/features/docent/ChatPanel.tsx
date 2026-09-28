@@ -1,11 +1,13 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Mic, SendHorizontal, Volume2, VolumeX } from "lucide-react";
+import { Mic, RotateCcw, SendHorizontal, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { docentConfig, docentCopy, docentStarterQuestions } from "@/data/docent";
 import type { DocentChatState } from "./useDocentChat";
 import type { VoiceState } from "./useVoice";
+import type { DocentFailure } from "@/types/docent";
+import { DOCENT_STATUS_COPY, resolveDocentSurfaceStatus } from "./docentStatus";
 
 type ChatPanelProps = DocentChatState & {
   voice: VoiceState;
@@ -66,11 +68,62 @@ function VoiceLifecycleIndicator({ voice }: { voice: VoiceState }) {
   );
 }
 
+function FailureRecovery({
+  failure,
+  retry,
+  continueTextOnly,
+  send,
+}: {
+  failure: DocentFailure;
+  retry: () => void;
+  continueTextOnly: () => void;
+  send: (text: string) => void;
+}) {
+  const [now, setNow] = useState(Date.now());
+  const waitSeconds = failure.retryAt
+    ? Math.max(0, Math.ceil((failure.retryAt - now) / 1000))
+    : 0;
+
+  useEffect(() => {
+    if (!failure.retryAt || failure.retryAt <= Date.now()) return;
+    const timer = setInterval(() => setNow(Date.now()), 1_000);
+    return () => clearInterval(timer);
+  }, [failure.retryAt]);
+
+  return (
+    <div
+      className="mt-2 max-w-[92%] rounded-xl border border-amber-300/20 bg-amber-300/[0.07] p-3 text-xs text-amber-50"
+      data-docent-failure={failure.stage}
+    >
+      {/* 단계 이름은 진단용이다 — data-docent-failure 로만 남기고 방문자에게 보이지 않는다. */}
+      <p className="leading-5">{failure.message}</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button type="button" onClick={retry} disabled={waitSeconds > 0} className="inline-flex items-center gap-1.5 rounded-full border border-amber-200/25 px-3 py-1.5 text-amber-100 disabled:cursor-wait disabled:opacity-45">
+          <RotateCcw className="h-3 w-3" />
+          {waitSeconds > 0 ? `${waitSeconds}초 후 다시 시도` : "다시 시도"}
+        </button>
+        <button type="button" onClick={continueTextOnly} disabled={waitSeconds > 0} className="rounded-full border border-white/15 px-3 py-1.5 text-slate-200 disabled:cursor-wait disabled:opacity-45">
+          텍스트로 계속
+        </button>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-1.5" aria-label="추천 질문">
+        {docentStarterQuestions.slice(0, 2).map((question) => (
+          <button key={question} type="button" onClick={() => send(question)} className="rounded-full bg-white/[0.06] px-2.5 py-1 text-left text-[11px] text-slate-300 hover:bg-white/[0.1]">
+            {question}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function ChatPanel({
   messages,
   isStreaming,
   mode,
   send,
+  retryLast,
+  requestState,
   voice,
   lastAnswer,
   compact = false,
@@ -82,6 +135,11 @@ export function ChatPanel({
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const nearBottomRef = useRef(true);
+  const surfaceStatus = resolveDocentSurfaceStatus(requestState.status, voice.lifecycle);
+  const surfaceStage = voice.failureStage
+    ?? (voice.lifecycle === "VOICE_WARMING" || voice.lifecycle === "VOICE_DELAYED" ? "voice_warm" : null)
+    ?? (voice.lifecycle === "VOICE_SYNTHESIZING" || voice.lifecycle === "VOICE_SPEAKING" ? "tts" : null)
+    ?? requestState.stage;
 
   // 사용자가 위로 스크롤해 읽는 중이면 자동 스크롤하지 않는다.
   const handleScroll = () => {
@@ -122,7 +180,7 @@ export function ChatPanel({
   return (
     <div
       className={fill
-        ? "flex min-h-0 flex-1 flex-col rounded-[22px] border border-white/10 bg-white/[0.04] backdrop-blur-sm"
+        ? "flex h-full min-h-0 flex-1 flex-col rounded-[26px] border border-white/10 bg-white/[0.04] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] backdrop-blur-sm lg:rounded-[32px]"
         : compact
           ? "flex h-[52vh] min-h-[360px] flex-col rounded-[24px] border border-white/10 bg-white/[0.04] backdrop-blur-sm"
         : "flex h-[60vh] min-h-[420px] flex-col rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm lg:h-[560px]"}
@@ -173,10 +231,26 @@ export function ChatPanel({
       </div>
 
       <div
+        role="status"
+        aria-live="polite"
+        data-docent-status={surfaceStatus}
+        data-docent-stage={surfaceStage}
+        className="flex min-h-9 shrink-0 items-center gap-2 border-b border-white/[0.07] bg-sky-300/[0.035] px-4 text-[11px] text-slate-400 sm:px-6"
+      >
+        <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${surfaceStatus === "failed" ? "bg-amber-300" : surfaceStatus === "ready" ? "bg-emerald-300" : "bg-sky-300"} ${surfaceStatus === "searching" || surfaceStatus === "answering" || surfaceStatus === "warming_voice" || surfaceStatus === "delayed" ? "animate-pulse motion-reduce:animate-none" : ""}`} />
+        <span>{DOCENT_STATUS_COPY[surfaceStatus]}</span>
+        {voice.voiceEnabled && requestState.status !== "ready" ? (
+          <span className="ml-auto hidden text-slate-500 sm:inline">텍스트 우선</span>
+        ) : null}
+      </div>
+
+      {/* overflow-x 를 명시하지 않으면 y축이 auto 인 순간 x축도 auto 로 계산된다 —
+          긴 URL 하나에 가로 스크롤바가 생긴다. 대화 목록은 세로로만 스크롤한다. */}
+      <div
         ref={listRef}
         onScroll={handleScroll}
         data-lenis-prevent
-        className="flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 pb-4 pt-5 sm:px-6 sm:pb-6 sm:pt-6"
+        className="mx-auto w-full max-w-[860px] flex-1 space-y-4 overflow-y-auto overflow-x-hidden overscroll-contain px-4 pb-4 pt-5 sm:px-6 sm:pb-6 sm:pt-6 lg:px-8 lg:pb-8 lg:pt-8"
       >
         {messages.length === 0 ? (
           <div className="flex min-h-full flex-col justify-end gap-2" data-docent-starters>
@@ -200,26 +274,55 @@ export function ChatPanel({
               const isUser = message.role === "user";
               const isLast = index === messages.length - 1;
               const showCaret = isLast && !isUser && isStreaming;
+              const failure = !isUser ? message.failure : undefined;
               return (
                 <motion.div
                   key={index}
                   initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.25 }}
-                  className={isUser ? "flex justify-end" : "flex justify-start"}
+                  className={isUser ? "flex justify-end" : "flex flex-col items-start"}
                 >
-                  <div
+                  {message.content || showCaret ? <div
                     className={
                       isUser
-                        ? "max-w-[85%] rounded-2xl rounded-br-md bg-blue-500/90 px-4 py-3 text-sm leading-relaxed text-white"
-                        : "max-w-[85%] rounded-2xl rounded-bl-md border border-white/10 bg-white/[0.07] px-4 py-3 text-sm leading-relaxed text-slate-100"
+                        ? "max-w-[85%] break-words rounded-2xl rounded-br-md bg-blue-500/90 px-4 py-3 text-sm leading-relaxed text-white"
+                        : "max-w-[85%] break-words rounded-2xl rounded-bl-md border border-white/10 bg-white/[0.07] px-4 py-3 text-sm leading-relaxed text-slate-100"
                     }
                   >
-                    {message.content || (showCaret ? "" : "…")}
-                    {showCaret ? (
-                      <span className="ml-0.5 inline-block h-4 w-[2px] animate-pulse bg-blue-300 align-middle" />
-                    ) : null}
-                  </div>
+                    {/* 아직 한 글자도 오지 않은 동안 커서만 두면 입력칸처럼 보인다 —
+                        기다리는 중이라는 걸 점 세 개로 말한다. */}
+                    {!message.content && showCaret ? (
+                      <span className="flex items-center gap-1 py-0.5" role="status" aria-label="답변을 작성하는 중이에요">
+                        {[0, 160, 320].map((delay) => (
+                          <span
+                            key={delay}
+                            aria-hidden="true"
+                            className="h-1.5 w-1.5 animate-pulse rounded-full bg-slate-400 motion-reduce:animate-none"
+                            style={{ animationDelay: `${delay}ms`, animationDuration: "1.1s" }}
+                          />
+                        ))}
+                      </span>
+                    ) : (
+                      <>
+                        {message.content || "…"}
+                        {showCaret ? (
+                          <span className="ml-0.5 inline-block h-4 w-[2px] animate-pulse bg-blue-300 align-middle motion-reduce:animate-none" />
+                        ) : null}
+                      </>
+                    )}
+                  </div> : null}
+                  {failure ? (
+                    <FailureRecovery
+                      failure={failure}
+                      retry={retryLast}
+                      continueTextOnly={() => {
+                        voice.disableVoice();
+                        retryLast();
+                      }}
+                      send={send}
+                    />
+                  ) : null}
                 </motion.div>
               );
             })}
@@ -234,7 +337,7 @@ export function ChatPanel({
         }}
         className="border-t border-white/10 p-3 sm:p-4"
       >
-        <div className="flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] pl-5 pr-2">
+        <div className="mx-auto flex w-full max-w-[860px] items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] pl-5 pr-2">
           <input
             ref={inputRef}
             type="text"

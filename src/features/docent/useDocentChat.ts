@@ -1,24 +1,34 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { docentConfig, docentCopy } from "@/data/docent";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { docentConfig } from "@/data/docent";
 import type {
   DocentChatMessage,
   DocentEmotion,
+  DocentFailure,
   DocentMode,
   DocentPageContext,
   DocentSource,
   DocentStreamEvent,
   DocentTimings,
 } from "@/types/docent";
+import {
+  failureFromResponse,
+  failureFromStreamError,
+  preserveAssistantFailure,
+  safeFailureMessage,
+} from "./chatFailure";
+import {
+  docentRequestReducer,
+  initialDocentRequestState,
+  type DocentRequestState,
+} from "./docentStatus";
 
 interface UseDocentChatOptions {
   onEmotion: (emotion: DocentEmotion) => void;
-  /** 지금 보고 있는 페이지. 서버가 검색 순위의 힌트로 쓴다. */
   pageContext?: DocentPageContext;
 }
 
-/** 마지막 답변의 근거·타이밍 — 화면에는 그리지 않고 진단용으로만 둔다. */
 export interface DocentLastAnswerDebug {
   grounded: boolean;
   activeProject: string | null;
@@ -32,6 +42,8 @@ export interface DocentChatState {
   isStreaming: boolean;
   mode: DocentMode | null;
   send: (text: string) => void;
+  retryLast: () => void;
+  requestState: DocentRequestState;
   lastAnswer: DocentLastAnswerDebug | null;
 }
 
@@ -40,11 +52,17 @@ export function useDocentChat({ onEmotion, pageContext }: UseDocentChatOptions):
   const [isStreaming, setIsStreaming] = useState(false);
   const [mode, setMode] = useState<DocentMode | null>(null);
   const [lastAnswer, setLastAnswer] = useState<DocentLastAnswerDebug | null>(null);
+  const [requestState, dispatchRequest] = useReducer(docentRequestReducer, initialDocentRequestState);
   const abortRef = useRef<AbortController | null>(null);
+  const delayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastQuestionRef = useRef("");
   const pageRef = useRef(pageContext);
   pageRef.current = pageContext;
 
-  useEffect(() => () => abortRef.current?.abort(), []);
+  useEffect(() => () => {
+    abortRef.current?.abort();
+    if (delayTimerRef.current) clearTimeout(delayTimerRef.current);
+  }, []);
 
   const send = useCallback(
     (text: string) => {
@@ -52,9 +70,10 @@ export function useDocentChat({ onEmotion, pageContext }: UseDocentChatOptions):
       if (!question || abortRef.current) return;
 
       const history: DocentChatMessage[] = [
-        ...messages,
+        ...messages.map(({ role, content }) => ({ role, content })),
         { role: "user" as const, content: question },
       ].slice(-docentConfig.maxHistoryMessages);
+      lastQuestionRef.current = question;
 
       setMessages((prev) => [
         ...prev,
@@ -63,7 +82,9 @@ export function useDocentChat({ onEmotion, pageContext }: UseDocentChatOptions):
       ]);
       setIsStreaming(true);
       setLastAnswer(null);
-      onEmotion("thinking"); // meta 도착 전까지 고민하는 표정
+      dispatchRequest({ type: "SEND", now: Date.now() });
+      delayTimerRef.current = setTimeout(() => dispatchRequest({ type: "DELAYED" }), 3_500);
+      onEmotion("thinking");
 
       const appendToAssistant = (delta: string) =>
         setMessages((prev) => {
@@ -73,22 +94,18 @@ export function useDocentChat({ onEmotion, pageContext }: UseDocentChatOptions):
           return next;
         });
 
-      const failAssistant = () => {
-        setMessages((prev) => {
-          const next = [...prev];
-          next[next.length - 1] = {
-            role: "assistant",
-            content: docentCopy.errorBubble,
-          };
-          return next;
-        });
+      const failAssistant = (failure: DocentFailure) => {
+        setMessages((prev) => preserveAssistantFailure(prev, failure));
+        dispatchRequest({ type: "FAILED", stage: failure.stage });
         onEmotion("sad");
       };
 
       const controller = new AbortController();
       abortRef.current = controller;
 
-      (async () => {
+      void (async () => {
+        let activeStage: DocentFailure["stage"] = "network";
+        let terminalEvent = false;
         try {
           const res = await fetch("/api/docent/chat", {
             method: "POST",
@@ -96,8 +113,14 @@ export function useDocentChat({ onEmotion, pageContext }: UseDocentChatOptions):
             body: JSON.stringify({ messages: history, pageContext: pageRef.current }),
             signal: controller.signal,
           });
-          if (!res.ok || !res.body) {
-            failAssistant();
+          if (!res.ok) {
+            terminalEvent = true;
+            failAssistant(await failureFromResponse(res));
+            return;
+          }
+          if (!res.body) {
+            terminalEvent = true;
+            failAssistant({ message: safeFailureMessage(null), stage: "network" });
             return;
           }
 
@@ -114,25 +137,39 @@ export function useDocentChat({ onEmotion, pageContext }: UseDocentChatOptions):
               return;
             }
             switch (event.type) {
+              case "stage":
+                activeStage = event.stage;
+                dispatchRequest({ type: "STAGE", stage: event.stage });
+                break;
               case "meta":
                 setMode(event.mode);
                 onEmotion(event.emotion);
-                setLastAnswer((prev) => ({ ...(prev ?? { grounded: false, activeProject: null, sources: [], timings: null }), provider: event.provider ?? null }));
+                setLastAnswer((prev) => ({
+                  ...(prev ?? { grounded: false, activeProject: null, sources: [], timings: null }),
+                  provider: event.provider ?? null,
+                }));
                 break;
               case "sources":
-                setLastAnswer((prev) => ({ grounded: event.grounded, activeProject: event.activeProject, sources: event.sources, timings: null, provider: prev?.provider ?? null }));
+                setLastAnswer((prev) => ({
+                  grounded: event.grounded,
+                  activeProject: event.activeProject,
+                  sources: event.sources,
+                  timings: null,
+                  provider: prev?.provider ?? null,
+                }));
                 break;
               case "delta":
                 appendToAssistant(event.text);
                 break;
-              case "error":
-                failAssistant();
+              case "error": {
+                terminalEvent = true;
+                failAssistant(failureFromStreamError(event));
                 break;
+              }
               case "done":
+                terminalEvent = true;
+                dispatchRequest({ type: "DONE" });
                 setLastAnswer((prev) => (prev ? { ...prev, timings: event.timings ?? null } : prev));
-                break;
-              default:
-                // 모르는 이벤트는 프로토콜이 앞서 나간 것 — 조용히 무시한다.
                 break;
             }
           };
@@ -146,18 +183,29 @@ export function useDocentChat({ onEmotion, pageContext }: UseDocentChatOptions):
             lines.forEach(handleLine);
           }
           if (buffer) handleLine(buffer);
+          if (!terminalEvent) {
+            failAssistant({ message: safeFailureMessage(null), stage: activeStage });
+          }
         } catch (err) {
           if (!(err instanceof DOMException && err.name === "AbortError")) {
-            failAssistant();
+            failAssistant({ message: safeFailureMessage(null), stage: activeStage });
           }
         } finally {
           abortRef.current = null;
+          if (delayTimerRef.current) {
+            clearTimeout(delayTimerRef.current);
+            delayTimerRef.current = null;
+          }
           setIsStreaming(false);
         }
       })();
     },
-    [messages, onEmotion]
+    [messages, onEmotion],
   );
 
-  return { messages, isStreaming, mode, send, lastAnswer };
+  const retryLast = useCallback(() => {
+    if (!isStreaming && lastQuestionRef.current) send(lastQuestionRef.current);
+  }, [isStreaming, send]);
+
+  return { messages, isStreaming, mode, send, retryLast, requestState, lastAnswer };
 }

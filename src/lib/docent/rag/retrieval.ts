@@ -129,6 +129,20 @@ export function detectIntents(query: string): Intent[] {
   return out.length > 1 ? out.filter((i) => i !== "overview") : out;
 }
 
+/**
+ * A project-page prior must not turn a portfolio-wide question into a question
+ * about only the current project. Keep this deliberately small and lexical:
+ * it is routing, not another model or a second relevance score.
+ */
+export function isBroadPortfolioOverviewQuery(
+  query: string,
+  intents: Intent[] = detectIntents(query),
+  explicitProjects: ProjectId[] = detectProjects(query),
+): boolean {
+  if (!intents.includes("overview") || explicitProjects.length > 0) return false;
+  return /(어떤|무슨|대표|주요|여러)\s*(프로젝트|작업)|프로젝트(들|를|가|는)?[^?.!]{0,16}(만들|했|진행|있)|포트폴리오[^?.!]{0,16}(프로젝트|작업)|what\s+(projects|have you built)|which\s+projects/i.test(query);
+}
+
 // 정규식 소스 문자열을 만들 때 문자 클래스 안에 backslash 리터럴을 직접 쓰면 이스케이프
 // 계산이 어긋나기 쉽다(이 함수의 이전 버전이 그 실수로 문자 하나를 흘렸다). 한 글자씩
 // 순회하며 필요한 문자에만 backslash 를 붙이는 쪽이 훨씬 덜 틀린다.
@@ -346,6 +360,16 @@ export function retrieve(
     : Boolean(top) && top.lexical >= SUPPORT_THRESHOLD && focusWords.length > 0
       && focusWords.some((w) => wordMatched(w, top.matched));
 
+  // Evidence selection is intentionally downstream of scoring. BM25 and every
+  // existing prior above remain the source of relevance; this layer only keeps
+  // one entity from monopolising a broad package and reserves section evidence
+  // when the question clearly points at an active project.
+  if (isBroadPortfolioOverviewQuery(query, intents, explicitProjects)) {
+    results = diversifiedPortfolioOverview(ix, scored, topK);
+  } else if (activeProject && intents.length > 0) {
+    results = guaranteeActiveProjectSections(ix, scored, results, activeProject, intents, topK);
+  }
+
   return {
     query,
     explicitProjects,
@@ -359,6 +383,99 @@ export function retrieve(
     supportThreshold: SUPPORT_THRESHOLD,
     tookMs: Math.round((performance.now() - t0) * 100) / 100,
   };
+}
+
+const OVERVIEW_EVIDENCE_SECTIONS: readonly Section[] = ["overview", "role", "result"];
+
+function scoredOrNeutral(
+  chunk: RagChunk,
+  scoredById: Map<string, RetrievedChunk>,
+): RetrievedChunk {
+  return scoredById.get(chunk.id) ?? {
+    chunk,
+    // A guaranteed canonical chunk did not lexically match, so it has no BM25
+    // score. Preserve that fact in `lexical` and expose source priority as its
+    // deterministic assembly score rather than pretending it was irrelevant.
+    score: chunk.priority,
+    lexical: 0,
+    priors: { entity: 1, page: 1, section: 1, source: chunk.priority },
+    matched: [],
+  };
+}
+
+function diversifiedPortfolioOverview(
+  ix: Index,
+  scored: RetrievedChunk[],
+  topK: number,
+): RetrievedChunk[] {
+  const scoredById = new Map(scored.map((item) => [item.chunk.id, item]));
+  const chosen: RetrievedChunk[] = [];
+
+  for (const project of PROJECT_ENTITIES) {
+    const candidates = ix.docs
+      .map((doc) => doc.chunk)
+      .filter((chunk) => chunk.projectId === project.id && OVERVIEW_EVIDENCE_SECTIONS.includes(chunk.section))
+      .sort((a, b) => {
+        const section = OVERVIEW_EVIDENCE_SECTIONS.indexOf(a.section) - OVERVIEW_EVIDENCE_SECTIONS.indexOf(b.section);
+        if (section !== 0) return section;
+        const priority = b.priority - a.priority;
+        if (priority !== 0) return priority;
+        const score = (scoredById.get(b.id)?.score ?? 0) - (scoredById.get(a.id)?.score ?? 0);
+        return score || a.id.localeCompare(b.id);
+      });
+    if (candidates[0]) chosen.push(scoredOrNeutral(candidates[0], scoredById));
+    if (chosen.length >= topK) break;
+  }
+
+  // If topK leaves room, add only portfolio-level supporting sections and keep
+  // the per-entity cap at two. Dated implementation diaries never enter this path.
+  const counts = new Map<string, number>();
+  for (const item of chosen) counts.set(item.chunk.entityId, 1);
+  for (const item of scored) {
+    if (chosen.length >= topK) break;
+    if (!item.chunk.projectId || item.chunk.section === "devlog") continue;
+    if (!OVERVIEW_EVIDENCE_SECTIONS.includes(item.chunk.section)) continue;
+    if ((counts.get(item.chunk.entityId) ?? 0) >= 2) continue;
+    if (chosen.some((entry) => entry.chunk.id === item.chunk.id)) continue;
+    chosen.push(item);
+    counts.set(item.chunk.entityId, (counts.get(item.chunk.entityId) ?? 0) + 1);
+  }
+  return chosen;
+}
+
+function guaranteeActiveProjectSections(
+  ix: Index,
+  scored: RetrievedChunk[],
+  ranked: RetrievedChunk[],
+  activeProject: ProjectId,
+  intents: Intent[],
+  topK: number,
+): RetrievedChunk[] {
+  const primarySections = [...new Set(intents.map((intent) => SECTION_FOR_INTENT[intent][0]))];
+  const alreadyGuaranteed = ranked.filter(
+    (item) => item.chunk.projectId === activeProject && primarySections.includes(item.chunk.section),
+  );
+  if (alreadyGuaranteed.length > 0) return ranked;
+
+  const scoredById = new Map(scored.map((item) => [item.chunk.id, item]));
+  const guaranteed = ix.docs
+    .map((doc) => doc.chunk)
+    .filter((chunk) => chunk.projectId === activeProject && primarySections.includes(chunk.section))
+    .sort((a, b) => {
+      const section = primarySections.indexOf(a.section) - primarySections.indexOf(b.section);
+      if (section !== 0) return section;
+      const score = (scoredById.get(b.id)?.score ?? 0) - (scoredById.get(a.id)?.score ?? 0);
+      return score || b.priority - a.priority || a.id.localeCompare(b.id);
+    })
+    .slice(0, Math.min(2, topK))
+    .map((chunk) => scoredOrNeutral(chunk, scoredById));
+
+  if (guaranteed.length === 0) return ranked;
+  const ids = new Set(guaranteed.map((item) => item.chunk.id));
+  return [
+    ...guaranteed,
+    ...ranked.filter((item) => !ids.has(item.chunk.id)),
+  ].slice(0, topK);
 }
 
 

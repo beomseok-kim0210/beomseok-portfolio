@@ -33,8 +33,8 @@ test("global availability: root layout owns exactly one DD outside route childre
 test("route persistence: presentation closes without destroying the persistent runtime", () => {
   let state = globalDocentPresentationReducer(initialGlobalDocentState, { type: "MINIMIZE" });
   assert.equal(state, "minimized");
-  state = globalDocentPresentationReducer(state, { type: "EXPAND" });
-  assert.equal(state, "expanded");
+  state = globalDocentPresentationReducer(state, { type: "DOCK" });
+  assert.equal(state, "docked");
   assert.match(globalShell, /aria-hidden=\{!isOpen\}/);
   assert.match(globalShell, /<DocentRuntimeProvider>/);
   assert.match(chat, /const \[messages, setMessages\]/);
@@ -84,8 +84,9 @@ test("dismissed hints are suppressed for the browser session", () => {
   assert.equal(isContextualHintDismissed("hint-b", storage), false);
 });
 
-test("contextual suggestions do not introduce a third presentation state", () => {
-  assert.equal(canOfferContextualHint("expanded"), false);
+test("contextual suggestions appear only while minimized and add no presentation state", () => {
+  assert.equal(canOfferContextualHint("docked"), false);
+  assert.equal(canOfferContextualHint("fullscreen"), false);
   assert.equal(canOfferContextualHint("minimized"), true);
   assert.doesNotMatch(read("src/features/docent/globalDocentState.ts"), /RESTING|SUGGESTING|SPEAKING/);
 });
@@ -110,7 +111,7 @@ test("navigation, hints, opening, and text-only chat contain no voice warm call"
 
 test("avatar mounts in the initially expanded panel and is retained when minimized", () => {
   assert.match(globalShell, /const DocentExperience = dynamic\(/);
-  assert.match(globalShell, /<DocentExperience focusInputToken=\{focusInputToken\} \/>/);
+  assert.match(globalShell, /<DocentExperience focusInputToken=\{focusInputToken\} layout=\{sidecar \? "sidecar" : "workspace"\} \/>/);
   assert.match(runtime, /\.\.\.readDocentMountMetrics\(\)/);
   const metrics = read("src/features/docent/docentMetrics.ts");
   assert.match(metrics, /runtimeMountCount: runtimeIds\.size/);
@@ -118,17 +119,32 @@ test("avatar mounts in the initially expanded panel and is retained when minimiz
   assert.match(metrics, /\/models\/docent-/);
 });
 
-test("mobile shell is a bounded bottom sheet with internal scrolling and send form", () => {
-  assert.match(globalShell, /w-\[min\(390px,calc\(100vw-24px\)\)\]/);
-  assert.match(globalShell, /100dvh - 5rem - env\(safe-area-inset-bottom\)/);
+test("docked sidecar sits on the right, below the nav, down to the bottom", () => {
+  // 헤더 56px + 12px 아래에서 시작, 바닥 12px, 오른쪽 16px, 폭 440px.
+  assert.match(globalShell, /bottom-3 right-4 top-\[68px\] w-\[440px\]/);
+  assert.match(globalShell, /const sidecar = state === "docked" && canDock/);
+  // 컨트롤은 절대 배치가 아니라 자기 줄에 있다 — 채팅의 음성 버튼과 겹치지 않는다.
+  assert.match(globalShell, /data-docent-controls/);
+  assert.doesNotMatch(globalShell, /absolute right-3 top-3/);
+});
+
+test("expanded shell is a header-safe workspace with a stacked mobile fallback", () => {
+  assert.match(globalShell, /fixed inset-x-0 bottom-0 top-14/);
+  assert.match(globalShell, /data-docent-workspace/);
   assert.match(globalShell, /data-lenis-prevent/);
-  assert.match(read("src/features/docent/ChatPanel.tsx"), /flex min-h-0 flex-1 flex-col/);
+  const experience = read("src/features/docent/DocentExperience.tsx");
+  assert.match(experience, /grid-rows-\[auto_minmax\(0,1fr\)\]/);
+  assert.match(experience, /lg:grid-cols-\[minmax\(360px,42%\)_minmax\(0,58%\)\]/);
+  assert.match(experience, /data-docent-conversation-region/);
+  assert.match(read("src/features/docent/ChatPanel.tsx"), /h-full min-h-0 flex-1 flex-col/);
 });
 
 test("launcher, hint, dialog, focus, labels, and reduced motion affordances are wired", () => {
   assert.match(globalShell, /aria-expanded=\{isOpen\}/);
   assert.match(globalShell, /role="dialog"/);
-  assert.match(globalShell, /aria-label="AI Docent 최소화"/);
+  assert.match(globalShell, /aria-label="AI Docent 내리기"/);
+  assert.match(globalShell, /aria-label="전체 화면으로 보기"/);
+  assert.match(globalShell, /aria-label="사이드 패널로 축소"/);
   assert.match(globalShell, /aria-label="AI Docent 열기"/);
   assert.match(globalShell, /launcherRef\.current\?\.focus\(\)/);
   assert.match(globalShell, /motion-reduce:transition-none/);

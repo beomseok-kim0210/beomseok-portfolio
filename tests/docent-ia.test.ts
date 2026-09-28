@@ -5,11 +5,13 @@ import { test } from "node:test";
 import { projectDetails } from "@/data/projectDetails";
 import { projects } from "@/data/projects";
 import {
+  DESKTOP_DOCENT_RESERVED_WIDTH,
   DOCENT_DOCK_MIN_VIEWPORT_WIDTH,
   GLOBAL_DOCENT_VIEW_STORAGE_KEY,
   PORTFOLIO_CANONICAL_CONTENT_WIDTH,
   canDockGlobalDocent,
   defaultGlobalDocentView,
+  dockedContentInset,
   globalDocentPresentationReducer,
   initialGlobalDocentState,
   persistGlobalDocentView,
@@ -18,35 +20,44 @@ import {
 
 const read = (path: string) => readFileSync(path, "utf8").replace(/\r\n/g, "\n");
 
-test("view state has exactly expanded/minimized transitions and defaults expanded", () => {
-  assert.equal(initialGlobalDocentState, "expanded");
-  const minimized = globalDocentPresentationReducer(initialGlobalDocentState, { type: "MINIMIZE" });
+test("view state is docked / fullscreen / minimized and opens docked", () => {
+  assert.equal(initialGlobalDocentState, "docked");
+  const full = globalDocentPresentationReducer(initialGlobalDocentState, { type: "FULLSCREEN" });
+  assert.equal(full, "fullscreen");
+  // 전체 화면의 "축소"는 사이드 패널로, "내리기"는 버튼으로.
+  assert.equal(globalDocentPresentationReducer(full, { type: "DOCK" }), "docked");
+  const minimized = globalDocentPresentationReducer(full, { type: "MINIMIZE" });
   assert.equal(minimized, "minimized");
-  assert.equal(globalDocentPresentationReducer(minimized, { type: "EXPAND" }), "expanded");
+  // 버튼으로 다시 열면 전체 화면이 아니라 사이드 패널로 돌아온다.
+  assert.equal(globalDocentPresentationReducer(minimized, { type: "DOCK" }), "docked");
   const source = read("src/features/docent/globalDocentState.ts");
   assert.doesNotMatch(source, /"closed"|"OPEN"|"RESTING"|"SUGGESTING"|"SPEAKING"/);
 });
 
-test("view state persistence is SSR-safe and invalid/missing storage defaults expanded", () => {
-  assert.equal(readGlobalDocentView(null), "expanded");
+test("view state persistence is SSR-safe, migrates legacy 'expanded', rejects junk", () => {
+  assert.equal(readGlobalDocentView(null), "docked");
   const values = new Map<string, string>();
   const storage = {
     getItem: (key: string) => values.get(key) ?? null,
     setItem: (key: string, value: string) => { values.set(key, value); },
   };
-  assert.equal(readGlobalDocentView(storage), "expanded");
-  persistGlobalDocentView("minimized", storage);
-  assert.equal(values.get(GLOBAL_DOCENT_VIEW_STORAGE_KEY), "minimized");
-  assert.equal(readGlobalDocentView(storage), "minimized");
+  assert.equal(readGlobalDocentView(storage), "docked");
+  for (const view of ["minimized", "fullscreen", "docked"] as const) {
+    persistGlobalDocentView(view, storage);
+    assert.equal(values.get(GLOBAL_DOCENT_VIEW_STORAGE_KEY), view);
+    assert.equal(readGlobalDocentView(storage), view);
+  }
+  values.set(GLOBAL_DOCENT_VIEW_STORAGE_KEY, "expanded");
+  assert.equal(readGlobalDocentView(storage), "docked");
   values.set(GLOBAL_DOCENT_VIEW_STORAGE_KEY, "closed");
-  assert.equal(readGlobalDocentView(storage), "expanded");
+  assert.equal(readGlobalDocentView(storage), "docked");
   assert.match(read("src/features/docent/GlobalDocent.tsx"), /readGlobalDocentView\(window\.localStorage/);
 });
 
-test("mobile first visit minimizes while a stored user choice takes precedence", () => {
+test("narrow first visit minimizes while a stored user choice takes precedence", () => {
   assert.equal(defaultGlobalDocentView(375), "minimized");
-  assert.equal(defaultGlobalDocentView(767), "minimized");
   assert.equal(defaultGlobalDocentView(768), "minimized");
+  assert.equal(defaultGlobalDocentView(1023), "minimized");
 
   const values = new Map<string, string>();
   const storage = {
@@ -54,34 +65,49 @@ test("mobile first visit minimizes while a stored user choice takes precedence",
     setItem: (key: string, value: string) => { values.set(key, value); },
   };
   assert.equal(readGlobalDocentView(storage, defaultGlobalDocentView(375)), "minimized");
-  persistGlobalDocentView("expanded", storage);
-  assert.equal(readGlobalDocentView(storage, defaultGlobalDocentView(375)), "expanded");
+  persistGlobalDocentView("docked", storage);
+  assert.equal(readGlobalDocentView(storage, defaultGlobalDocentView(375)), "docked");
 });
 
-test("first visits expand only when the canonical content gutter can hold the sidecar", () => {
+test("desktop docks on the right and pushes the content only as far as it must", () => {
   assert.equal(PORTFOLIO_CANONICAL_CONTENT_WIDTH, 1440);
-  assert.equal(DOCENT_DOCK_MIN_VIEWPORT_WIDTH, 2316);
-  for (const width of [375, 1280, 1440, 1920, 2315]) {
-    assert.equal(canDockGlobalDocent(width), false, `${width}px must fall back`);
-    assert.equal(defaultGlobalDocentView(width), "minimized");
+  assert.equal(DOCENT_DOCK_MIN_VIEWPORT_WIDTH, 1024);
+  assert.equal(DESKTOP_DOCENT_RESERVED_WIDTH, 480);
+  for (const width of [1024, 1280, 1440, 1920, 2560]) {
+    assert.equal(canDockGlobalDocent(width), true);
+    assert.equal(defaultGlobalDocentView(width), "docked");
   }
-  assert.equal(canDockGlobalDocent(2316), true);
-  assert.equal(defaultGlobalDocentView(2316), "expanded");
+  // 본문이 좁아지는 화면에서도 예약 폭 이상 밀지 않는다.
+  assert.equal(dockedContentInset(1280), 480);
+  assert.equal(dockedContentInset(1920), 480);
+  // 오른쪽 바깥 여백이 커질수록 덜 밀고, 충분하면 본문은 제자리.
+  assert.equal(dockedContentInset(2200), 200);
+  assert.equal(dockedContentInset(2400), 0);
+  assert.equal(dockedContentInset(2560), 0);
+  assert.equal(dockedContentInset(375), 0);
+  for (const width of [1920, 2200, 2400]) {
+    // 밀린 뒤 본문의 오른쪽 바깥 여백이 패널 예약 폭을 담는다.
+    const inset = dockedContentInset(width);
+    const rightGutter = (width - inset - PORTFOLIO_CANONICAL_CONTENT_WIDTH) / 2 + inset;
+    assert.ok(rightGutter >= DESKTOP_DOCENT_RESERVED_WIDTH, `${width}px`);
+  }
 });
 
-test("layout wrapper has no docent-driven horizontal padding in either view", () => {
+test("content is pushed (never scaled) only while docked on desktop", () => {
   const layout = read("src/app/layout.tsx");
   const styles = read("src/app/globals.css");
   const shell = read("src/features/docent/GlobalDocent.tsx");
   assert.match(layout, /data-global-docent-layout/);
   assert.match(shell, /dataset\.globalDocentView = state/);
+  assert.match(styles, /\.global-docent-layout\s*\{[^}]*padding-right:\s*0;/);
+  // CSS 식은 dockedContentInset 과 같아야 한다.
   assert.match(
     styles,
-    /\.global-docent-layout\s*\{[^}]*padding-right:\s*0;/,
+    /@media \(min-width: 1024px\)\s*\{\s*html\[data-global-docent-view="docked"\] \.global-docent-layout\s*\{\s*padding-right: clamp\(0px, calc\(2 \* 480px \+ 1440px - 100vw\), 480px\);/,
   );
-  assert.doesNotMatch(styles, /data-global-docent-view[^}]*\.global-docent-layout/);
+  assert.doesNotMatch(styles, /data-global-docent-view="fullscreen"/);
   assert.doesNotMatch(styles, /global-docent-layout[\s\S]{0,160}transition:\s*padding-right/);
-  assert.doesNotMatch(styles, /global-docent-layout \.scene-shell/);
+  assert.doesNotMatch(styles, /global-docent-layout[^{]*\{[^}]*(zoom|scale)/);
 });
 
 test("mobile launcher is labelled and starter chips use unclipped scroll content", () => {
@@ -90,7 +116,10 @@ test("mobile launcher is labelled and starter chips use unclipped scroll content
   assert.match(shell, /aria-label="AI Docent 열기"/);
   assert.match(shell, /h-\[52px\]/);
   assert.match(shell, />\s*AI DOCENT\s*</);
-  assert.match(chatPanel, /overflow-y-auto overscroll-contain/);
+  // 클래스 인접이 아니라 성질을 고정한다 — 세로만 스크롤하고 가로는 잠근다.
+  assert.match(chatPanel, /overflow-y-auto/);
+  assert.match(chatPanel, /overflow-x-hidden/);
+  assert.match(chatPanel, /overscroll-contain/);
   assert.match(chatPanel, /min-h-full/);
   assert.match(chatPanel, /data-docent-starters/);
 });
@@ -146,12 +175,14 @@ test("Playground makes Crime Scene primary and launches only the verified deploy
 test("avatar stage is enlarged and GLB camera framing derives from measured bounds", () => {
   const canvas = read("src/features/docent/AvatarCanvas.tsx");
   const head = read("src/features/docent/DocentHead.tsx");
-  assert.match(canvas, /h-\[136px\]/);
-  assert.match(canvas, /sm:h-\[204px\]/);
+  assert.match(canvas, /h-\[clamp\(148px,24dvh,210px\)\]/);
+  assert.match(canvas, /lg:aspect-square/);
+  assert.match(canvas, /lg:max-w-\[520px\]/);
   assert.match(canvas, /data-avatar-stage/);
   assert.match(head, /new Box3\(\)\.setFromObject/);
   assert.match(head, /bounds\.getSize/);
-  assert.match(head, /camera\.lookAt\(center\)/);
+  assert.match(head, /frameAvatarPortrait/);
+  assert.match(head, /camera\.lookAt\(target\)/);
 });
 
 test("navigation, hint, panel open, and text-only send still cannot warm voice", () => {

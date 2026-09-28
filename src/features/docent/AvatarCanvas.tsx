@@ -8,8 +8,13 @@ import type { SemanticMouthPose } from "@/lib/docent/semanticMouth";
 import type { DocentEmotion } from "@/types/docent";
 import { AvatarFallback } from "./AvatarFallback";
 import { DocentHead } from "./DocentHead";
+import type { HologramState } from "./hologram/hologramConfig";
+import { HologramChamber } from "./hologram/HologramChamber";
+import { SceneLighting } from "./hologram/SceneLighting";
 
 interface AvatarCanvasProps {
+  /** shell 챔버의 투사 상태. 없으면 안정된 대기 상태. */
+  hologramState?: HologramState;
   emotion: DocentEmotion;
   viseme: VisemeKey | null;
   /** LAM-A2E 가 만든 입 자세. 있으면 viseme 라벨보다 우선한다. */
@@ -18,6 +23,8 @@ interface AvatarCanvasProps {
   compact?: boolean;
   /** 전역 패널 안에서 채팅 영역을 침범하지 않는 얕은 캔버스. */
   shell?: boolean;
+  /** shell 이 오른쪽 사이드 패널 안에 있을 때. */
+  sidecar?: boolean;
 }
 
 // GLB 파싱 실패 등 Suspense 내부 throw를 흡수한다.
@@ -45,15 +52,26 @@ function webglAvailable(): boolean {
   }
 }
 
-export default function AvatarCanvas({ emotion, viseme, mouth = null, compact = false, shell = false }: AvatarCanvasProps) {
+export default function AvatarCanvas({
+  emotion,
+  viseme,
+  mouth = null,
+  compact = false,
+  shell = false,
+  sidecar = false,
+  hologramState = "ready",
+}: AvatarCanvasProps) {
   const [webglOk, setWebglOk] = useState<boolean | null>(null);
 
   useEffect(() => {
     setWebglOk(webglAvailable());
   }, []);
 
-  const stageClass = shell
-    ? "relative h-[136px] w-full shrink-0 overflow-hidden rounded-[22px] border border-blue-300/10 bg-[radial-gradient(ellipse_at_50%_42%,rgba(59,130,246,0.25),rgba(11,17,32,0.72)_62%,rgba(5,10,22,0.96))] sm:h-[204px]"
+  const stageClass = shell && sidecar
+    ? // 440px 사이드 패널: 정사각형이면 채팅 자리가 없다. 화면 높이에 따라 늘고 준다.
+      "relative w-full shrink-0 overflow-hidden rounded-[22px] border border-sky-200/[0.14] bg-[#050b17] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),inset_0_-36px_80px_rgba(2,8,23,0.78)] h-[clamp(170px,32dvh,320px)]"
+    : shell
+    ? "relative mx-auto h-[clamp(148px,24dvh,210px)] w-full shrink-0 overflow-hidden rounded-[24px] border border-sky-200/[0.14] bg-[#050b17] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),inset_0_-36px_80px_rgba(2,8,23,0.78)] lg:aspect-square lg:h-auto lg:max-w-[520px] lg:rounded-[30px]"
     : compact
       ? "relative h-[220px] w-full overflow-hidden rounded-[24px] bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.15),rgba(11,17,32,0.6))]"
       : "relative h-[42vh] min-h-[300px] w-full overflow-hidden rounded-[32px] bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.15),rgba(11,17,32,0.6))] lg:h-[560px]";
@@ -61,12 +79,9 @@ export default function AvatarCanvas({ emotion, viseme, mouth = null, compact = 
   return (
     <div className={stageClass} data-avatar-stage>
       {shell ? (
-        <>
-          <div aria-hidden="true" className="pointer-events-none absolute inset-x-[18%] top-[6%] z-0 aspect-square rounded-full border border-blue-300/20 shadow-[0_0_32px_rgba(59,130,246,0.12)] motion-safe:animate-[spin_20s_linear_infinite]" />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-x-[27%] top-[18%] z-0 aspect-square rounded-full border border-dashed border-cyan-200/15" />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-x-[18%] bottom-[6%] z-0 h-[14%] rounded-[50%] border border-blue-300/30 bg-blue-400/10 shadow-[0_0_28px_rgba(59,130,246,0.2)]" />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 opacity-[0.12] [background-image:linear-gradient(rgba(125,211,252,0.2)_1px,transparent_1px)] [background-size:100%_8px]" />
-        </>
+        /* 순수 2D 배경만 DOM 에 남는다. 후광·원통·받침·호·입자·목 처리는 전부 3D 장면
+           (hologram/HologramChamber) 안에 있다 — DOM 층을 얼굴 위에 겹치지 않는다. */
+        <div aria-hidden="true" data-chamber-layer="depth" className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_50%_36%,rgba(30,64,175,0.14)_0%,rgba(5,11,23,0)_62%),linear-gradient(180deg,#06111f_0%,#050b17_70%,#03070f_100%)]" />
       ) : null}
       {webglOk === false ? (
         <AvatarFallback emotion={emotion} shell={shell} />
@@ -80,6 +95,7 @@ export default function AvatarCanvas({ emotion, viseme, mouth = null, compact = 
             antialias: true,
             powerPreference: "high-performance",
             alpha: true,
+            preserveDrawingBuffer: true,
             toneMapping: ACESFilmicToneMapping,
             toneMappingExposure: 1.05,
           }}
@@ -89,20 +105,16 @@ export default function AvatarCanvas({ emotion, viseme, mouth = null, compact = 
             )
           }
         >
-          {/* 얼굴 정면 키라이트(따뜻)·필라이트(차가움)·림라이트로 입체감 */}
-          <ambientLight intensity={0.55} />
-          <directionalLight position={[1.5, 2.2, 4]} intensity={1.5} color="#fff2e6" />
-          <directionalLight position={[-3, 0.5, 2]} intensity={0.45} color="#9fb8e0" />
-          <directionalLight position={[0, 1.5, -3]} intensity={0.35} color="#ffffff" />
+          <SceneLighting hologram={shell} />
           <Suspense fallback={null}>
-            <DocentHead emotion={emotion} viseme={viseme} mouth={mouth} />
+            <DocentHead emotion={emotion} viseme={viseme} mouth={mouth} projection={shell} />
+            {shell ? (
+              <HologramChamber state={hologramState} speechLevel={mouth?.jawOpen ?? (viseme ? 0.3 : 0)} />
+            ) : null}
           </Suspense>
         </Canvas>
       </AvatarErrorBoundary>
       )}
-      {shell ? (
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[22%] bg-gradient-to-t from-[#07101f] via-[#0b1830]/70 to-transparent" />
-      ) : null}
     </div>
   );
 }
