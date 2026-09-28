@@ -1,5 +1,6 @@
 import type { ProjectDetail } from "@/types/portfolio";
 import { challenges } from "@/data/challenges";
+import { crimeSceneTroubles } from "@/data/crimeScenePlayground";
 import { fullVideoSources } from "@/data/videoSources";
 
 const gamificationChallenge = {
@@ -427,7 +428,8 @@ export const projectDetails: ProjectDetail[] = [
         },
       ],
     },
-    troubleshooting: [],
+    // Playground 와 같은 기록(Notion 출처, 스포일러 없음).
+    troubleshooting: crimeSceneTroubles,
     result: [
       "탐색·단서·대화·추리를 하나의 브라우저 게임 흐름으로 연결했습니다.",
       "정답과 비밀 단서를 서버 경계 안에 두고 플레이어별 공개 범위를 분리했습니다.",

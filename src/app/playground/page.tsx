@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Crosshair, Fingerprint, MessageSquareText, Search, ShieldCheck } from "lucide-react";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import { MotionBlock } from "@/components/ui/MotionBlock";
+import { CrimeSceneDevlog } from "@/features/playground/CrimeSceneDevlog";
 import { CrimeSceneLaunchButton } from "@/features/playground/CrimeSceneLaunchButton";
 import { navItems } from "@/data/navigation";
 
@@ -102,6 +103,8 @@ export default function PlaygroundPage() {
               );
             })}
           </div>
+
+          <CrimeSceneDevlog />
         </div>
       </section>
     </main>
