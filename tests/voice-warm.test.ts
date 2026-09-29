@@ -43,7 +43,8 @@ test("예열 라우트는 실패해도 오류를 내지 않고 항상 202 로 �
 });
 
 test("예열도 레이트리밋을 거친다 — GPU 를 쓰는 행위다", () => {
-  assert.match(warmRouteSrc, /checkRateLimit/);
+  // 채팅·음성과 다른 버킷이다 — 한 턴이 세 엔드포인트를 모두 부른다
+  assert.match(warmRouteSrc, /checkWarmRateLimit/);
   assert.match(warmRouteSrc, /status: 429/);
 });
 

@@ -81,8 +81,11 @@ test("G. 오류 문구는 제품 문구로 고정되고 원시 진단을 포함�
   const message = voiceStatusMessage(failed, 0);
   assert.equal(message, "음성 연결이 지연되고 있어요. 텍스트 답변은 계속 이용할 수 있습니다.");
   assert.doesNotMatch(message ?? "", /RunPod|GPU|worker|container|HTTP|stack|error/i);
+  // Supertonic 실패는 이 문구의 VOICE_ERROR 로 드러난다 — 다른 목소리로 메우지 않는다
+  const runtime = read("src/features/docent/DocentRuntime.tsx");
+  assert.match(runtime, /if \(voiceEnabled && supertonicError\) reportError\(\)/);
   const hook = read("src/features/docent/useVoice.ts");
-  assert.match(hook, /utterance\.onerror = \(\) => \{[\s\S]{0,200}type: "FAILED"/);
+  assert.match(hook, /const reportError = useCallback\(\(\) => \{\s*dispatchLifecycle\(\{ type: "FAILED", stage: "tts" \}\)/);
 });
 
 test("H. 동시·반복 예열은 진행 promise 와 최근 성공 결과를 재사용한다", async () => {

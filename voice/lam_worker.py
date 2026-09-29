@@ -32,9 +32,13 @@ independently of the decode. It proves which file this worker analysed, not
 that the decoder saw those same bytes. Closing that gap would mean handing LAM
 the buffer instead of a path.
 
-Only the four channels the frozen SEL cap1.6 calibration reads are emitted, raw.
-The calibration lives in TypeScript and is applied once, on the client, so there
-is a single implementation of the curves.
+Only the mouth channels the client reads are emitted, raw: the four the SEL
+cap1.6 calibration reads, plus (Phase 2, 2026-09-29) the lip-closure and funnel
+channels the semantic fusion in src/lib/docent/lamMouthFusion.ts combines —
+mouthClose, mouthPress L/R, mouthRoll Lower/Upper, mouthFunnel. The curves live
+in TypeScript and are applied once, on the client, so there is a single
+implementation. A client that predates these fields ignores them; a client that
+reads them treats their absence (an older worker) as zero.
 
 Bootstrap warm-up. With librosa gone, what remains of the first-call cost is the
 first CUDA forward (kernel/cuDNN initialisation: 1.7 s in the P3 container,
@@ -77,7 +81,8 @@ _engine.librosa = lam_audio.LibrosaShim()
 
 # measured in L2 over 6.12 s of digital silence — the model's own silent floor
 L2_SILENCE_JAWOPEN_MAX = 0.0007102741510607302
-CH = {"jaw": 24, "round": 37, "upperLift": 42, "stretchL": 45, "stretchR": 46}
+CH = {"jaw": 24, "round": 37, "upperLift": 42, "stretchL": 45, "stretchR": 46,
+      "close": 26, "funnel": 31, "pressL": 35, "pressR": 36, "rollL": 39, "rollU": 40}
 
 
 def sha256(path):
@@ -223,6 +228,10 @@ for line in sys.stdin:
             "round": round(float(arr[i, CH["round"]]), 6),
             "stretch": round(float((arr[i, CH["stretchL"]] + arr[i, CH["stretchR"]]) / 2.0), 6),
             "upperLift": round(float(arr[i, CH["upperLift"]]), 6),
+            "close": round(float(arr[i, CH["close"]]), 6),
+            "press": round(float((arr[i, CH["pressL"]] + arr[i, CH["pressR"]]) / 2.0), 6),
+            "roll": round(float((arr[i, CH["rollL"]] + arr[i, CH["rollU"]]) / 2.0), 6),
+            "funnel": round(float(arr[i, CH["funnel"]]), 6),
         } for i in range(arr.shape[0])]
 
         print(json.dumps({
@@ -250,7 +259,11 @@ for line in sys.stdin:
             "peak_vram_allocated": int(torch.cuda.max_memory_allocated()),
             "channels": {"jaw": "jawOpen[24]", "round": "mouthPucker[37]",
                          "stretch": "mean(mouthStretchLeft[45], mouthStretchRight[46])",
-                         "upperLift": "mouthShrugUpper[42]"},
+                         "upperLift": "mouthShrugUpper[42]",
+                         "close": "mouthClose[26]",
+                         "press": "mean(mouthPressLeft[35], mouthPressRight[36])",
+                         "roll": "mean(mouthRollLower[39], mouthRollUpper[40])",
+                         "funnel": "mouthFunnel[31]"},
             "frames": frames,
         }), flush=True)
     except Exception as exc:

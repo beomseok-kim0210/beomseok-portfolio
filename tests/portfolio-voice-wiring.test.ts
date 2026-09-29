@@ -38,31 +38,32 @@ test("LAM 자세가 viseme 라벨을 이긴다", () => {
   assert.match(head, /const pose = lamMouth \?\? semanticMouthPose\(viseme\)/);
 });
 
-test("폴백은 주 경로가 실패했을 때만 쓰인다", () => {
-  // 조용히 내려가면 안 된다 — 실패한 뒤에만, 그리고 어느 엔진인지 남기면서
+test("주 경로가 실패해도 다른 목소리로 내려가지 않는다", () => {
+  // 예전에는 여기서 브라우저 TTS 로 이어 말했다. 긴 답변은 늘 413 으로 그 길을 탔고,
+  // 도슨트의 목소리가 OS 음성(Windows: 여성 음성 Heami)으로 바뀌었다 (2026-09-29 감사).
   assert.match(runtime, /const outcome = await supertonic\.speak\(content\)/);
-  assert.match(runtime, /if \(outcome === "ok"\) \{\s*setLastEngine\("supertonic"\);\s*return;/);
-  assert.match(runtime, /setLastEngine\("browser_tts"\);\s*voice\.speak\(content\)/);
+  assert.match(runtime, /if \(outcome === "ok"\) setLastEngine\("supertonic"\)/);
+  assert.equal(/voice\.speak\(|browser_tts/.test(runtime), false);
+  // 실패는 오류 상태로 드러난다
+  assert.match(runtime, /if \(voiceEnabled && supertonicError\) reportError\(\)/);
 });
 
-test("교체된 발화는 폴백을 켜지 않는다", () => {
-  // A 가 B 로 교체됐을 때 A 의 호출부가 폴백을 켜면 두 목소리가 겹친다.
+test("교체된 발화는 오류 상태를 켜지 않는다", () => {
+  // A 가 B 로 교체됐을 때 A 가 실패를 보고하면 B 가 말하는 중에 오류 문구가 뜬다.
   // 실패와 교체가 같은 값으로 돌아오면 그 구분 자체가 불가능해진다.
-  assert.match(hook, /export type SpeakOutcome = "ok" \| "failed" \| "superseded"/);
-  assert.match(runtime, /if \(outcome === "superseded"\) return;/);
-  // 교체 판정은 세대 비교에서만 나와야 한다
-  const supersededReturns = (hook.match(/return "superseded"/g) ?? []).length;
-  assert.ok(supersededReturns >= 4, `expected every generation check to return superseded, got ${supersededReturns}`);
-  for (const m of hook.matchAll(/if \(gen !== genRef\.current\) return ([^;]+);/g)) {
-    assert.match(m[1], /"superseded"|$/, "generation mismatch must never report failure");
-    assert.equal(m[1].includes('"failed"'), false);
+  assert.match(hook, /export type SpeakOutcome = "ok" \| "failed" \| "superseded" \| "silent"/);
+  assert.match(hook, /if \(gen !== genRef\.current\) return "superseded";/);
+  assert.match(hook, /settleStart\("superseded"\)/);
+  // 세대가 어긋난 경로가 실패를 보고하면 안 된다
+  for (const m of hook.matchAll(/if \(gen !== genRef\.current\) return ([^;]*);/g)) {
+    assert.equal(m[1].includes('"failed"'), false, "generation mismatch must never report failure");
   }
 });
 
 test("음성 라우트에 레이트리밋이 걸려 있다", () => {
   // 이 엔드포인트 뒤에는 직렬화된 CPU 합성과 단일 GPU 추론이 있다
   const route = read("src", "app", "api", "docent", "voice", "route.ts");
-  assert.match(route, /checkRateLimit\(voiceClientKey\(request\.headers\)\)/);
+  assert.match(route, /checkVoiceRateLimit\(voiceClientKey\(request\.headers\)\)/);
   // 클라이언트가 마음대로 쓰는 x-forwarded-for 를 무조건 믿지 않는다
   assert.match(route, /x-vercel-forwarded-for/);
   assert.match(route, /status: 429/);
@@ -75,7 +76,8 @@ test("서버 오류 문자열이 브라우저로 새지 않는다", () => {
   assert.equal(/reason: message/.test(route), false);
   assert.equal(/reason: err\.message/.test(route), false);
   assert.match(route, /console\.error\("\[voice\]"/);
-  assert.match(route, /stage, fallback: "browser_tts"/);
+  assert.match(route, /\{ error: "voice preparation failed", stage \}/);
+  assert.equal(route.includes("browser_tts"), false);
   // 상세 문자열은 서버 로그에만, 응답 본문에는 stage 만
   assert.equal(/detail,?\s*\}\s*,\s*\{ status: 502/.test(route), false);
 });
@@ -202,11 +204,11 @@ test("개발 진단 전역은 effect 에서 걸고 언마운트에서 사라진�
   assert.match(runtime, /const DEV = process\.env\.NODE_ENV !== "production"/);
 });
 
-test("브라우저 speechSynthesis 는 주 엔진이 아니다", () => {
-  // 주 경로 훅은 speechSynthesis 를 아예 건드리지 않는다
-  assert.equal(hook.includes("speechSynthesis"), false);
-  // 폴백 쪽에는 그대로 남아 있어야 한다
-  assert.match(voice, /speechSynthesis/);
+test("브라우저 speechSynthesis 는 어느 경로에도 없다", () => {
+  // 주 경로 훅도, 음성 준비 훅도, 런타임도 브라우저 TTS 를 건드리지 않는다
+  for (const src of [hook, voice, runtime]) {
+    assert.equal(/speechSynthesis|SpeechSynthesisUtterance/.test(src), false);
+  }
 });
 
 test("얼굴 시계는 오디오 재생 시계다", () => {

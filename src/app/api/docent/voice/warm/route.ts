@@ -1,4 +1,4 @@
-import { checkRateLimit } from "@/lib/docent/rateLimit";
+import { checkWarmRateLimit } from "@/lib/docent/rateLimit";
 import { VoiceProviderUnavailable, getVoiceProvider } from "@/lib/docent/voiceProvider";
 
 export const runtime = "nodejs";
@@ -25,7 +25,8 @@ function clientKey(headers: Headers): string {
  * 실패하면 실제 요청이 평소대로 콜드를 겪을 뿐이다.
  */
 export async function POST(request: Request) {
-  const limit = checkRateLimit(clientKey(request.headers));
+  // 예열은 채팅·음성과 다른 버킷을 쓴다 — 한 턴이 세 엔드포인트를 모두 부른다.
+  const limit = checkWarmRateLimit(clientKey(request.headers));
   if (!limit.ok) {
     return Response.json(
       { outcome: "rate-limited", retryAfterSec: limit.retryAfterSec },
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
     const outcome = await getVoiceProvider().warm();
     return Response.json({ outcome }, { status: 202 });
   } catch (err) {
-    // 설정이 없는 것은 고장이 아니다 — 브라우저 TTS 로 갈 뿐이다.
+    // 설정이 없는 것은 예열의 고장이 아니다 — 음성은 오류 상태로 드러나고 텍스트는 남는다.
     const outcome = err instanceof VoiceProviderUnavailable ? "unconfigured" : "unavailable";
     return Response.json({ outcome }, { status: 202 });
   }

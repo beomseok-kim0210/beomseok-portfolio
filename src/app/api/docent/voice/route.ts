@@ -11,7 +11,8 @@ import {
   type VoiceProvider,
   type VoiceResult,
 } from "@/lib/docent/voiceProvider";
-import { checkRateLimit } from "@/lib/docent/rateLimit";
+import { checkVoiceRateLimit } from "@/lib/docent/rateLimit";
+import { MAX_SEGMENT_TEXT_LENGTH } from "@/lib/docent/ttsSegments";
 import { sanitizeForTts } from "@/lib/docent/ttsText";
 
 // 로컬 백엔드가 child_process 와 파일시스템을 쓰므로 Node 런타임이 필수다.
@@ -25,7 +26,12 @@ export const dynamic = "force-dynamic";
  */
 export const maxDuration = 150;
 
-const MAX_TEXT_LENGTH = 600;
+/**
+ * 이 라우트가 받는 것은 답변 전체가 아니라 세그먼트 하나다. 클라이언트가 답변을
+ * 140 자 안팎으로 나눠 차례로 보낸다(`ttsSegments`). 그래서 상한도 답변 길이가 아니라
+ * 세그먼트 길이(MAX_SEGMENT_TEXT_LENGTH)다 — 답변 전체의 상한은 클라이언트의
+ * MAX_SPOKEN_ANSWER_CHARS 가 따로 진다.
+ */
 
 /**
  * 응답 본문 상한.
@@ -75,7 +81,7 @@ function redact(detail: string): string {
 }
 
 /**
- * 하나의 발화를 준비한다.
+ * 하나의 발화 세그먼트를 준비한다.
  *
  *   text → Supertonic M1 → canonical WAV
  *                            ├→ 응답 본문 (브라우저가 재생할 바로 그 바이트)
@@ -97,25 +103,38 @@ function redact(detail: string): string {
 export async function POST(request: Request) {
   // 이 엔드포인트 뒤에는 직렬화된 합성과 단일 GPU 추론이 있다. 요청 하나가
   // 초 단위의 실제 연산을 잡아먹으므로, 채팅 라우트와 같은 완충 장치를 건다.
-  const limit = checkRateLimit(voiceClientKey(request.headers));
+  // 음성은 채팅과 다른 버킷이다. 한 답변이 세그먼트 여러 개로 나가므로, 채팅의 한도를
+  // 나눠 쓰면 평범한 대화가 429 에 걸린다. 근거는 docentConfig.voiceRateLimit.
+  const limit = checkVoiceRateLimit(voiceClientKey(request.headers));
   if (!limit.ok) {
     return Response.json(
-      { error: "rate limited", retryAfterSec: limit.retryAfterSec, fallback: "browser_tts" },
+      { error: "rate limited", retryAfterSec: limit.retryAfterSec },
       { status: 429, headers: { "Retry-After": String(limit.retryAfterSec ?? 60) } },
     );
   }
 
   let text: string;
+  let segment: { index: number; count: number } | null = null;
   try {
-    const body = (await request.json()) as { text?: unknown };
+    const body = (await request.json()) as { text?: unknown; segment?: unknown };
     if (typeof body.text !== "string") throw new Error("text must be a string");
     text = body.text.trim();
+    // 텔레메트리용 위치 표시. 값이 이상하면 버린다 — 동작은 이것에 기대지 않는다.
+    const s = body.segment as { index?: unknown; count?: unknown } | undefined;
+    if (s && Number.isInteger(s.index) && Number.isInteger(s.count)
+      && (s.index as number) >= 0 && (s.index as number) < (s.count as number)
+      && (s.count as number) <= 64) {
+      segment = { index: s.index as number, count: s.count as number };
+    }
   } catch {
     return Response.json({ error: "invalid request body" }, { status: 400 });
   }
   if (!text) return Response.json({ error: "text is empty" }, { status: 400 });
-  if (text.length > MAX_TEXT_LENGTH) {
-    return Response.json({ error: `text exceeds ${MAX_TEXT_LENGTH} characters` }, { status: 413 });
+  if (text.length > MAX_SEGMENT_TEXT_LENGTH) {
+    return Response.json(
+      { error: `segment exceeds ${MAX_SEGMENT_TEXT_LENGTH} characters`, stage: "validate" },
+      { status: 413 },
+    );
   }
 
   // 길이 검사 뒤에 정화한다 — 대체가 글자 수를 늘릴 수 있으므로 한도는 원문 기준이다.
@@ -128,11 +147,8 @@ export async function POST(request: Request) {
     provider = getVoiceProvider();
   } catch (err) {
     if (voiceErrorCode(err) === "VOICE_UNCONFIGURED") {
-      // 설정이 없으면 클라이언트가 브라우저 TTS 폴백으로 내려갈 수 있어야 한다.
-      return Response.json(
-        { error: "voice backend not configured", fallback: "browser_tts" },
-        { status: 503 },
-      );
+      // 설정이 없다. 클라이언트는 음성을 멈추고 오류 상태를 보인다 — 텍스트는 남는다.
+      return Response.json({ error: "voice backend not configured" }, { status: 503 });
     }
     throw err;
   }
@@ -159,7 +175,7 @@ export async function POST(request: Request) {
     // 웜업 기회. 로컬은 두 워커를 겹쳐 올리고 (웜이면 공짜), RunPod 은 아무것도
     // 하지 않는다 — scale-to-zero 엔드포인트를 미리 깨우는 것은 웜업이 아니라
     // 과금이다. 이 호출도 try 안에 있어야 한다: 설정이 없을 때 던지는 것이 바로
-    // 여기이고, 그 경우야말로 브라우저 TTS 폴백으로 내려가야 하는 경우다.
+    // 여기이고, 그 경우는 503 으로 경계 있게 답해야 한다.
     await Promise.race([provider.prepare(), overall]);
 
     const result: VoiceResult = await Promise.race([
@@ -171,20 +187,20 @@ export async function POST(request: Request) {
     if (encodedBytes + RESPONSE_HEADROOM_BYTES > MAX_RESPONSE_BYTES) {
       console.warn("[voice]", JSON.stringify({
         requestId, utteranceId, provider: provider.name, failureStage: "response_too_large",
-        audioBytes: result.audio.byteLength, encodedBytes,
+        segment, audioBytes: result.audio.byteLength, encodedBytes,
         audioDurationS: result.audioMeta.durationSeconds,
-        totalMs: Date.now() - startedAt, fallbackUsed: true,
+        totalMs: Date.now() - startedAt,
       }));
       return Response.json(
         { error: "generated audio exceeds the response size limit", stage: "response",
-          audioDurationSeconds: result.audioMeta.durationSeconds, fallback: "browser_tts" },
+          audioDurationSeconds: result.audioMeta.durationSeconds },
         { status: 413 },
       );
     }
 
     // 구조화 로그. 사용자 발화 내용도, 오디오 바이트도, 경로도 담지 않는다.
     console.info("[voice]", JSON.stringify({
-      requestId, utteranceId, engine: "supertonic+lam", provider: provider.name,
+      requestId, utteranceId, engine: "supertonic+lam", provider: provider.name, segment,
       ...(sanitized.replaced.length ? { ttsSanitized: sanitized.replaced } : {}),
       coldStart: result.diagnostics.coldStart,
       ttsMs: result.diagnostics.synthesisMs, lamMs: result.diagnostics.inferenceMs,
@@ -192,7 +208,7 @@ export async function POST(request: Request) {
       totalMs: Date.now() - startedAt,
       audioDurationS: result.audioMeta.durationSeconds, textLength: text.length,
       ttsRtf: result.diagnostics.ttsRtf, lamRtf: result.diagnostics.lamRtf,
-      fallbackUsed: false, failureStage: null,
+      failureStage: null,
     }));
 
     return Response.json({
@@ -220,19 +236,16 @@ export async function POST(request: Request) {
     // 대기열이 찬 것은 고장이 아니다. 잠시 뒤 다시 오라고 말해야 한다.
     if (voiceErrorCode(err) === "VOICE_CAPACITY") {
       console.warn("[voice]", JSON.stringify({
-        requestId, utteranceId, provider: provider.name, failureStage: "capacity",
-        totalMs: Date.now() - startedAt, fallbackUsed: true,
+        requestId, utteranceId, provider: provider.name, failureStage: "capacity", segment,
+        totalMs: Date.now() - startedAt,
       }));
       return Response.json(
-        { error: "voice backend is busy", stage: "voice", fallback: "browser_tts" },
+        { error: "voice backend is busy", stage: "voice" },
         { status: 503, headers: { "Retry-After": "5" } },
       );
     }
     if (voiceErrorCode(err) === "VOICE_UNCONFIGURED") {
-      return Response.json(
-        { error: "voice backend not configured", fallback: "browser_tts" },
-        { status: 503 },
-      );
+      return Response.json({ error: "voice backend not configured" }, { status: 503 });
     }
 
     // 단계는 공급자가 말해 준다. 문자열 접두사로 알아맞히지 않는다.
@@ -245,19 +258,19 @@ export async function POST(request: Request) {
     // 아래쪽 예외 문자열에는 모델 경로와 파이썬 트레이스가 섞여 있다. 진단은 서버
     // 로그에 남기고, 브라우저에는 어느 단계에서 멎었는지만 알려준다.
     console.error("[voice]", JSON.stringify({
-      requestId, utteranceId, provider: provider.name, failureStage: stage,
-      totalMs: Date.now() - startedAt, fallbackUsed: true, detail: redact(detail),
+      requestId, utteranceId, provider: provider.name, failureStage: stage, segment,
+      totalMs: Date.now() - startedAt, detail: redact(detail),
       ...(err instanceof VoiceProviderError && err.meta ? { meta: err.meta } : {}),
     }));
 
-    // 불변식이 깨진 것은 폴백으로 덮을 일이 아니라 서버의 고장이다.
+    // 불변식이 깨진 것은 재시도로 덮을 일이 아니라 서버의 고장이다.
     if (stage === "identity") {
       return Response.json(
         { error: "audio identity invariant violated", stage }, { status: 500 },
       );
     }
     return Response.json(
-      { error: "voice preparation failed", stage, fallback: "browser_tts" },
+      { error: "voice preparation failed", stage },
       { status: 502 },
     );
   } finally {

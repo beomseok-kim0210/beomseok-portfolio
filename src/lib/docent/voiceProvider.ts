@@ -34,6 +34,11 @@ export interface VoiceTimelineFrameDTO {
   round: number;
   stretch: number;
   upperLift: number;
+  /** Phase 2 워커부터. 구버전 워커(배포된 RunPod 이미지 등)에는 없다. */
+  close?: number;
+  press?: number;
+  roll?: number;
+  funnel?: number;
 }
 
 export interface VoiceDiagnostics {

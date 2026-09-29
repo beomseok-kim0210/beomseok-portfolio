@@ -38,6 +38,9 @@ const EMOTION_WEIGHTS: Record<DocentEmotion, Partial<Record<EmotionMorph, number
   sad: { sad: 0.9 },
 };
 
+/** 발화 중 감정 모프 강도. 입 모양과 싸우지 않을 만큼만 남긴다(Phase 2, 0.45 → 0.1). */
+export const EMOTION_SCALE_DURING_SPEECH = 0.1;
+
 // 진단 훅은 개발 런타임에만 존재한다. 계약 위반 시의 console.error 와 throw 는
 // 빌드와 무관하게 항상 살아 있다 — 그쪽이 이 컴포넌트의 안전장치다.
 const DEV = process.env.NODE_ENV !== "production";
@@ -155,6 +158,8 @@ interface DocentHeadProps {
    * 값이 있으면 이것이 이긴다 — 라벨 경로는 쳐다보지 않는다.
    */
   mouth?: SemanticMouthPose | null;
+  /** 발화 중(세그먼트 사이 공백 포함). mouth 가 잠깐 null 이어도 발화는 이어지고 있다. */
+  speaking?: boolean;
   /**
    * 홀로그램 챔버 안에서만 켠다. 턱 아래 목 구간이 투사광으로 녹아 사라진다.
    * 모프·UV·얼굴 색은 건드리지 않는다 — hologram/neckDissolve 참고.
@@ -174,7 +179,13 @@ function usePrefersReducedMotion(): boolean {
   return reduced;
 }
 
-export function DocentHead({ emotion, viseme, mouth: lamMouth = null, projection = false }: DocentHeadProps) {
+export function DocentHead({
+  emotion,
+  viseme,
+  mouth: lamMouth = null,
+  speaking = false,
+  projection = false,
+}: DocentHeadProps) {
   const group = useRef<Group>(null);
   const { scene } = useGLTF(MODEL_URL);
 
@@ -349,9 +360,13 @@ export function DocentHead({ emotion, viseme, mouth: lamMouth = null, projection
     }
 
     const targets = EMOTION_WEIGHTS[emotion] ?? {};
-    // 말하는 중에는 감정 모프와 입 액추에이터가 같은 입술 정점을 두고 겹쳐 이를
-    // 드러낸 기괴한 표정이 되므로, 발화 중에는 감정 강도를 낮춘다.
-    const emotionScale = lamMouth || viseme ? 0.45 : 1;
+    // 말하는 중에는 감정 모프가 입 액추에이터와 같은 입술 정점을 두고 싸운다(GLB 실측:
+    // smile×mouthRound cos −0.82, surprised×mouthStretch −0.71, thinking×jawOpen −0.54).
+    // 감정 모프는 입만 따로 떼어 낼 수 없다 — 네 모프 모두 변위의 64~88% 가 입 영역이고
+    // 눈·눈썹은 1~7% 뿐이라, 모프 전체를 발화 중 10% 로 줄이는 것이 가장 덜 해롭다.
+    // 눈 깜빡임·시선·머리 움직임은 별개라 그대로다.
+    const speechActive = speaking || lamMouth !== null || viseme !== null;
+    const emotionScale = speechActive ? EMOTION_SCALE_DURING_SPEECH : 1;
     const damp = reduced ? 40 : 6;
 
     for (const rig of rigs) {

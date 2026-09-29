@@ -25,12 +25,12 @@ export async function GET(request: Request) {
   if (!backend.configured) {
     return Response.json(
       { status: "unconfigured", provider: backend.backend,
-        supertonic: "unconfigured", lam: "unconfigured", fallback: "browser_tts" },
+        supertonic: "unconfigured", lam: "unconfigured" },
       { status: 503 },
     );
   }
   if (backend.backend === "runpod") {
-    const base = { provider: "runpod" as const, supertonic: "remote", lam: "remote", fallback: "browser_tts" };
+    const base = { provider: "runpod" as const, supertonic: "remote", lam: "remote" };
     if (!probe) return Response.json({ status: "configured", ...base });
 
     const p = await probeRunPod();

@@ -480,10 +480,10 @@ function voiceRequest(text = "안녕하세요") {
   });
 }
 
-test("설정이 없으면 라우트가 503 + browser_tts 폴백을 준다", async () => {
-  // 이것이 폴백이 반드시 동작해야 하는 바로 그 경우다. 준비 호출이 오류 경계
-  // *밖*에 있으면 여기서 처리되지 않은 예외가 나고, 클라이언트는 폴백 신호가 없는
-  // 일반 500 을 받는다 — 도슨트가 입만 벙긋하고 아무 말도 못 하게 된다.
+test("설정이 없으면 라우트가 경계 있는 503 을 준다 — 브라우저 TTS 로 보내지 않는다", async () => {
+  // 준비 호출이 오류 경계 *밖*에 있으면 여기서 처리되지 않은 예외가 나고 일반 500 이
+  // 된다. 클라이언트는 503 을 받아 음성을 멈추고 오류 상태를 보인다 — 다른 목소리로
+  // 이어 말하지 않는다(2026-09-29, 브라우저 TTS 폴백 제거).
   const { POST } = await import("../src/app/api/docent/voice/route");
 
   const saved: Record<string, string | undefined> = {};
@@ -495,8 +495,9 @@ test("설정이 없으면 라우트가 503 + browser_tts 폴백을 준다", asyn
   try {
     const res = await POST(voiceRequest());
     assert.equal(res.status, 503, "설정 부재가 500 이 되면 안 된다");
-    const body = (await res.json()) as { fallback?: string };
-    assert.equal(body.fallback, "browser_tts");
+    const body = (await res.json()) as { error?: string; fallback?: string };
+    assert.equal(body.error, "voice backend not configured");
+    assert.equal(body.fallback, undefined);
   } finally {
     for (const [k, v] of Object.entries(saved)) {
       if (v === undefined) delete process.env[k];

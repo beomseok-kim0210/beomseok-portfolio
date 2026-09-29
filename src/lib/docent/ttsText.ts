@@ -10,10 +10,13 @@
  * (2026-09-23, supertonic 1.3.1 / Supertonic 3). 그래서 `→` 는 통과인데 `⇒ ↑ ↔` 는
  * 거부처럼 직관에 어긋나는 조합이 들어 있다.
  *
- * 여기 없는 이색적인 기호가 새로 들어오면 여전히 합성이 실패하지만, 그때는 라우트가
- * 502 + `fallback: "browser_tts"` 로 답하고 클라이언트가 브라우저 음성으로 이어간다.
- * 완전한 표를 만드는 대신(902 자) 실제로 나올 법한 것만 막고 나머지는 폴백에 맡긴다.
+ * 표에 없는 거부 문자는 `supertonicUnsupported` 의 생성된 범위표가 막는다 (2026-09-29).
+ * 예전에는 표 밖의 기호를 브라우저 TTS 폴백에 맡겼지만, 그 폴백은 도슨트의 목소리를
+ * 다른 사람(OS 음성)으로 바꿔 버리므로 제거됐다. 이제 거부 문자 하나가 곧 그 세그먼트의
+ * 무음이다 — 그래서 뜻이 있는 것은 위 표로 읽을 수 있게 바꾸고, 괄호류는 `( )` 로,
+ * 나머지 장식·서식 문자는 공백으로 지운다. 모델이 받아들이는 문자(★ ● • 등)는 그대로 둔다.
  */
+import { isSupertonicUnsupported } from "./supertonicUnsupported";
 
 /** 거부되는 문자 → 읽을 수 있는 대체. 빈 문자열은 "읽지 않고 버린다". */
 const UNSUPPORTED: Record<string, string> = {
@@ -47,6 +50,18 @@ const UNSUPPORTED: Record<string, string> = {
 
 const PATTERN = new RegExp(`[${Object.keys(UNSUPPORTED).join("")}]`, "g");
 
+/** 거부되는 괄호·따옴표의 모양만 바꾼다 — 괄호 안의 말은 그대로 읽힌다. */
+const BRACKETS: Record<string, string> = {
+  "〔": "(", "〕": ")", "〖": "(", "〗": ")", "〘": "(", "〙": ")", "〚": "(", "〛": ")",
+  "⟨": "(", "⟩": ")", "⟦": "(", "⟧": ")", "⟪": "(", "⟫": ")", "⦅": "(", "⦆": ")",
+  "｟": "(", "｠": ")", "⌈": "(", "⌉": ")", "⌊": "(", "⌋": ")",
+  "‚": "'", "‛": "'", "„": "\"", "‟": "\"",
+};
+const BRACKET_PATTERN = new RegExp(`[${Object.keys(BRACKETS).join("")}]`, "g");
+
+/** 문자열의 모든 코드포인트 중 모델이 거부하는 것. 서로게이트 쌍을 한 글자로 본다. */
+const ANY_CHAR = /[\s\S]/gu;
+
 export interface TtsSanitizeResult {
   text: string;
   /** 바뀐 문자들(중복 제거). 로그용 — 무엇이 들어오는지 알아야 표를 넓힐 수 있다. */
@@ -59,6 +74,15 @@ export function sanitizeForTts(input: string): TtsSanitizeResult {
     .replace(PATTERN, (ch) => {
       replaced.add(ch);
       return UNSUPPORTED[ch];
+    })
+    .replace(BRACKET_PATTERN, (ch) => {
+      replaced.add(ch);
+      return BRACKETS[ch];
+    })
+    .replace(ANY_CHAR, (ch) => {
+      if (!isSupertonicUnsupported(ch.codePointAt(0)!)) return ch;
+      replaced.add(ch);
+      return " ";
     })
     // 대체가 만든 연속 공백을 정리한다. 원문의 줄바꿈은 건드리지 않는다.
     .replace(/[^\S\n]{2,}/g, " ")

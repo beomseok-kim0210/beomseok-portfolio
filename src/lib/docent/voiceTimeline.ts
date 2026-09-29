@@ -1,4 +1,4 @@
-import type { RawMouthChannels } from "./semanticMouth";
+import type { LamMouthChannels } from "./lamMouthFusion";
 
 /**
  * 오디오 재생 시계에서 LAM 타임라인을 읽는 순수 함수들.
@@ -7,9 +7,13 @@ import type { RawMouthChannels } from "./semanticMouth";
  * 검증할 수 있어야 한다.
  */
 
-export interface VoiceTimelineFrame extends RawMouthChannels {
+export interface VoiceTimelineFrame extends LamMouthChannels {
   t: number;
 }
+
+/** 워커 버전에 따라 없을 수 있는 채널. 두 프레임 모두에 있을 때만 보간한다. */
+const lerpOptional = (a: number | undefined, b: number | undefined, f: number) =>
+  typeof a === "number" && typeof b === "number" ? a + (b - a) * f : undefined;
 
 /** LAM 프레임 간격. 모델이 30 fps 로 뱉으므로 한 프레임은 33.33 ms 다. */
 export const LAM_FPS = 30;
@@ -25,7 +29,7 @@ export function sampleTimeline(
   frames: VoiceTimelineFrame[],
   fps: number,
   t: number,
-): RawMouthChannels | null {
+): LamMouthChannels | null {
   if (frames.length === 0) return null;
   const x = t * fps;
   if (x <= 0) return frames[0];
@@ -40,6 +44,10 @@ export function sampleTimeline(
     round: a.round + (b.round - a.round) * f,
     stretch: a.stretch + (b.stretch - a.stretch) * f,
     upperLift: a.upperLift + (b.upperLift - a.upperLift) * f,
+    close: lerpOptional(a.close, b.close, f),
+    press: lerpOptional(a.press, b.press, f),
+    roll: lerpOptional(a.roll, b.roll, f),
+    funnel: lerpOptional(a.funnel, b.funnel, f),
   };
 }
 

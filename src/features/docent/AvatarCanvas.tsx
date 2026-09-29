@@ -21,6 +21,8 @@ interface AvatarCanvasProps {
   viseme: VisemeKey | null;
   /** LAM-A2E 가 만든 입 자세. 있으면 viseme 라벨보다 우선한다. */
   mouth?: SemanticMouthPose | null;
+  /** 발화 중인가(세그먼트 사이 공백 포함). 발화 중에는 감정 모프의 입 기여를 줄인다. */
+  speaking?: boolean;
   /** 도크 안의 낮은 캔버스. */
   compact?: boolean;
   /** 전역 패널 안에서 채팅 영역을 침범하지 않는 얕은 캔버스. */
@@ -66,6 +68,7 @@ export default function AvatarCanvas({
   emotion,
   viseme,
   mouth = null,
+  speaking = false,
   compact = false,
   shell = false,
   sidecar = false,
@@ -147,7 +150,7 @@ export default function AvatarCanvas({
         >
           <SceneLighting hologram={shell} />
           <Suspense fallback={null}>
-            <DocentHead emotion={emotion} viseme={viseme} mouth={mouth} projection={shell} />
+            <DocentHead emotion={emotion} viseme={viseme} mouth={mouth} speaking={speaking} projection={shell} />
             {shell ? (
               <HologramChamber state={hologramState} speechLevel={mouth?.jawOpen ?? (viseme ? 0.3 : 0)} />
             ) : null}

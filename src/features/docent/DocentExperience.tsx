@@ -50,7 +50,7 @@ export function DocentExperience({ focusInputToken = 0, layout = "workspace" }: 
   const hologramState = resolveHologramState(
     runtime.chat.requestState.status,
     runtime.voice.lifecycle,
-    runtime.supertonic.speaking || runtime.voice.ttsSpeaking,
+    runtime.supertonic.speaking,
   );
 
   const currentProjectTitle = projectEntity(runtime.pageContext.projectSlug)?.title;
@@ -105,8 +105,10 @@ export function DocentExperience({ focusInputToken = 0, layout = "workspace" }: 
         <AvatarCanvas
           hologramState={hologramState}
           emotion={runtime.emotion}
-          viseme={runtime.voice.viseme}
+          // 라벨 립싱크는 브라우저 내장 TTS 폴백 전용이었다. 폴백이 없어져 입은 LAM 만 움직인다.
+          viseme={null}
           mouth={runtime.supertonic.mouth}
+          speaking={runtime.supertonic.speaking}
           shell
           sidecar={sidecar}
           questionPending={questionPending}
