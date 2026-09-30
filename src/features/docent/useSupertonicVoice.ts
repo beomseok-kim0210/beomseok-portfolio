@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { REST_POSE, type SemanticMouthPose } from "@/lib/docent/semanticMouth";
-import { fuseLamMouth } from "@/lib/docent/lamMouthFusion";
+import { MOUTH_TIMING, fuseWithGateCorrection } from "@/lib/docent/closureTiming";
 import { planSpokenSegments } from "@/lib/docent/ttsSegments";
-import { sampleTimeline, type VoiceTimelineFrame } from "@/lib/docent/voiceTimeline";
+import { mouthLeadSeconds, sampleTimeline, type VoiceTimelineFrame } from "@/lib/docent/voiceTimeline";
 import { runSegmentQueue } from "./voiceQueue";
 
 /**
@@ -14,7 +14,8 @@ import { runSegmentQueue } from "./voiceQueue";
  * 답변은 세그먼트로 나뉘어 차례로 합성·재생된다(`ttsSegments`, `voiceQueue`).
  * 세그먼트마다 정본 WAV 가 하나고, 그 세그먼트의 재생과 LAM 이 그 WAV 를 본다.
  *
- * 입 자세는 LAM 채널들을 `fuseLamMouth` 로 합친 것이다(입술 닫힘·깔때기 포함, Phase 2).
+ * 입 자세는 LAM 채널들을 `fuseLamMouth` 로 합친 것이다(`fuseWithGateCorrection` 경유; 입술 닫힘·깔때기, 같은 합성의
+ * 자모 정렬이 있으면 양순음 게이트·모음 조음까지). 정렬이 있는 세그먼트는 입이 소리보다 80 ms 먼저 간다(`mouthLeadSeconds`).
  *
  * 시계는 지금 재생 중인 세그먼트의 `audio.currentTime` 이다. 글자 수 추정도, setTimeout
  * 도, rAF 카운트도 아니다. rAF 는 매 프레임 그 시계를 읽으러 갈 뿐이라, 오디오가 늦거나
@@ -229,12 +230,13 @@ export function useSupertonicVoice(): SupertonicVoiceState {
         // 이 세그먼트의 프레임만 이 세그먼트의 시계로 읽는다
         const frames = payload.timeline.frames;
         const fps = payload.timeline.fps;
+        const lead = mouthLeadSeconds(frames);
         const tick = () => {
           if (gen !== genRef.current) return;
           const a = audioRef.current;
           if (!a || a !== audio) return;
-          const raw = sampleTimeline(frames, fps, a.currentTime);
-          setMouth(raw ? fuseLamMouth(raw) : REST_POSE);
+          const raw = sampleTimeline(frames, fps, a.currentTime + lead, MOUTH_TIMING.gateAdvanceSeconds);
+          setMouth(raw ? fuseWithGateCorrection(raw) : REST_POSE);
           frameRef.current = requestAnimationFrame(tick);
         };
 

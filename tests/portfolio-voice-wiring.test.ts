@@ -212,7 +212,8 @@ test("브라우저 speechSynthesis 는 어느 경로에도 없다", () => {
 });
 
 test("얼굴 시계는 오디오 재생 시계다", () => {
-  assert.match(hook, /sampleTimeline\(frames, fps, a\.currentTime\)/);
+  // 시계는 audio.currentTime. 정렬(모음 채널)이 있는 세그먼트만 사람이 고른 80 ms 선행을 더한다
+  assert.match(hook, /sampleTimeline\(frames, fps, a\.currentTime \+ lead, MOUTH_TIMING\.gateAdvanceSeconds\)/);
   // 글자 수 추정이 주 경로로 새어 들어오면 안 된다
   assert.equal(hook.includes("estimateCharsPerSecond"), false);
   assert.equal(hook.includes("charsPerSecond"), false);

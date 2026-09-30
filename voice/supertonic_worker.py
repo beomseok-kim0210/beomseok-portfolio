@@ -41,8 +41,23 @@ tts = TTS(model="supertonic-3", model_dir=MODEL_DIR, auto_download=False)
 style = tts.get_voice_style(voice_name=VOICE)
 load_ms = round((time.perf_counter() - t0) * 1000, 1)
 
+# Same-synthesis jamo alignment (Phase 2E → 4D production): bilabial gate + vowel jamo times,
+# read from the attention of the very inference that produces the waveform. Only when the
+# instrumented copy of vector_estimator is configured (the RunPod image sets it). Any failure
+# here leaves the worker exactly as before — audio never depends on it.
+ALIGN_ONNX = os.environ.get("DD_SUPERTONIC_ALIGN_ONNX")
+aligner, align_status = None, "off"
+if ALIGN_ONNX:
+    try:
+        import supertonic_align
+        aligner = supertonic_align.Aligner(tts, ALIGN_ONNX)
+        align_status = "on"
+    except Exception as exc:  # never block synthesis on the alignment
+        align_status = f"unavailable: {type(exc).__name__}: {exc}"[:300]
+
 print(json.dumps({"ready": True, "engine": "Supertonic 3", "voice_style": VOICE,
                   "sample_rate": int(tts.sample_rate), "model_load_ms": load_ms,
+                  "alignment": align_status,
                   "settings": {"lang": LANG, "total_steps": TOTAL_STEPS,
                                "speed": SPEED, "silence_duration": SILENCE}}),
       flush=True)
@@ -57,8 +72,14 @@ for line in sys.stdin:
         os.makedirs(os.path.dirname(out), exist_ok=True)
 
         t0 = time.perf_counter()
-        wav, _dur = tts.synthesize(text, voice_style=style, total_steps=TOTAL_STEPS,
-                                   speed=SPEED, silence_duration=SILENCE, lang=LANG)
+        kwargs = dict(voice_style=style, total_steps=TOTAL_STEPS,
+                      speed=SPEED, silence_duration=SILENCE, lang=LANG)
+        alignment, align_error = None, None
+        if aligner is not None:
+            # ONE synthesis: the waveform and the attention come from the same inference.
+            wav, _dur, alignment, align_error = aligner.synthesize(text, **kwargs)
+        else:
+            wav, _dur = tts.synthesize(text, **kwargs)
         synth_ms = round((time.perf_counter() - t0) * 1000, 1)
 
         tts.save_audio(wav, out)
@@ -77,6 +98,16 @@ for line in sys.stdin:
             "synthesis_ms": synth_ms,
             "synthesis_count": 1,
             "voice_style": VOICE,
+            **({} if alignment is None else {
+                # compact: 30 fps bilabial gate + vowel jamo times. No raw attention, no
+                # token list — only what the client turns into mouth channels.
+                "bilabial_gate": alignment["bilabial_gate"],
+                "gate_fps": alignment["gate_fps"],
+                "alignment": {k: alignment[k] for k in
+                              ("granularity", "frame_duration_ms", "offset_ms", "chunks",
+                               "token_count", "vowels")},
+            }),
+            **({"alignment_error": align_error[:300]} if align_error else {}),
         }), flush=True)
     except Exception as exc:  # one bad request must not kill the worker
         print(json.dumps({"id": json.loads(line).get("id") if line.startswith("{") else None,

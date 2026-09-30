@@ -16,6 +16,9 @@
 #   voice/                      the two worker scripts (unchanged from local)
 #   runpod/handler.py
 #   models/supertonic-3/        Supertonic ONNX + voice style M1
+#   models/supertonic-align/    vector_estimator_attn.onnx — made from the pinned
+#                               vector_estimator.onnx by runpod/instrument_vector_estimator.py
+#                               (attention softmax outputs added; weights unchanged)
 #   models/lam/                 lam_audio2exp_streaming.tar
 #   models/LAM_Audio2Expression/  the inference source tree
 
@@ -61,6 +64,8 @@ RUN pip3 install --no-cache-dir -r /tmp/requirements-handler.txt
 # ------------------------------------------------------------------- artefacts
 # Models go in their own layers so code edits do not invalidate 780 MB of cache.
 COPY models/supertonic-3 /models/supertonic-3
+# Same-synthesis jamo alignment (Phase 4D). Its own layer: 256 MB that code edits never touch.
+COPY models/supertonic-align /models/supertonic-align
 COPY models/lam /models/lam
 COPY models/LAM_Audio2Expression /opt/LAM_Audio2Expression
 
@@ -70,7 +75,7 @@ COPY runpod/handler.py /app/handler.py
 ENV DD_SUPERTONIC_PYTHON=/opt/supertonic-venv/bin/python \
     DD_LAM_PYTHON=/opt/lam-venv/bin/python \
     DD_WORKER_DIR=/app/voice \
-    DD_SUPERTONIC_MODEL_DIR=/models/supertonic-3 \
+    DD_SUPERTONIC_MODEL_DIR=/models/supertonic-3     DD_SUPERTONIC_ALIGN_ONNX=/models/supertonic-align/vector_estimator_attn.onnx \
     DD_LAM_SRC=/opt/LAM_Audio2Expression \
     DD_LAM_CKPT=/models/lam/lam_audio2exp_streaming.tar \
     DD_VOICE_WORK_DIR=/tmp/dd-voice

@@ -32,6 +32,18 @@ docker run --rm dd-voice:1 sh -c 'sha256sum /models/supertonic-3/onnx/*.onnx /mo
 내내 쓰였고 이 게이트에서도 Human 이 승인한 그 음색이다. 이 파일이 바뀌면 도슨트가
 다른 사람 목소리로 말한다.
 
+## Supertonic 3 정렬 사본 (Phase 4D)
+
+| 파일 | sha256 |
+|---|---|
+| `models/supertonic-align/vector_estimator_attn.onnx` | `d917ea871f086295f8738c39809c270b84e66a0b14377fc307678af112a11e75` |
+
+위 `onnx/vector_estimator.onnx`(`883ac868…`)에서 `runpod/instrument_vector_estimator.py` 로
+만든다: 노드·가중치(initializer 446 개)·입력은 원본과 같고, attention Softmax 8 개를 그래프
+출력으로 더했을 뿐이다. 같은 시드에서 원본과 정렬 경로의 음성이 바이트 단위로 같다는 것을
+`runpod/verify_alignment_identity.py` 가 이미지 안에서 확인한다(2026-09-30, `dd-voice:p4d`, PASS).
+재학습·새 가중치가 아니다.
+
 ## LAM Audio2Expression
 
 | 파일 | 바이트 | sha256 |

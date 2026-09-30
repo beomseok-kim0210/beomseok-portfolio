@@ -64,6 +64,7 @@
     "DD_LAM_PYTHON": "/opt/lam-venv/bin/python",
     "DD_WORKER_DIR": "/app/voice",
     "DD_SUPERTONIC_MODEL_DIR": "/models/supertonic-3",
+    "DD_SUPERTONIC_ALIGN_ONNX": "/models/supertonic-align/vector_estimator_attn.onnx",
     "DD_LAM_SRC": "/opt/LAM_Audio2Expression",
     "DD_LAM_CKPT": "/models/lam/lam_audio2exp_streaming.tar",
     "DD_VOICE_WORK_DIR": "/tmp/dd-voice",

@@ -14,6 +14,13 @@ import {
   type SemanticMouthMorph,
   type SemanticMouthPose,
 } from "@/lib/docent/semanticMouth";
+import { LOWER_LIP_MORPHS } from "@/lib/docent/lamMouthFusion";
+import {
+  createMouthDampState,
+  dampMouth,
+  MOUTH_TIMING,
+  type MouthTarget,
+} from "@/lib/docent/closureTiming";
 import type { DocentEmotion } from "@/types/docent";
 import { DOCENT_PORTRAIT_FRAME, frameAvatarPortrait } from "./avatarFraming";
 import { applyNeckDissolve } from "./hologram/neckDissolve";
@@ -46,6 +53,9 @@ export const EMOTION_SCALE_DURING_SPEECH = 0.1;
 const DEV = process.env.NODE_ENV !== "production";
 
 const BLINK_MORPH = "blink";
+/** 있으면 구동하고, 없어도 계약 위반이 아니다(운영 자산에는 없다). */
+const OPTIONAL_MORPHS: readonly string[] = LOWER_LIP_MORPHS;
+const MOUTH_ACTUATORS: readonly string[] = [...SEMANTIC_MOUTH_MORPHS, ...LOWER_LIP_MORPHS];
 const REQUIRED_MORPHS: readonly string[] = [
   ...SEMANTIC_MOUTH_MORPHS,
   ...EMOTION_MORPHS,
@@ -97,11 +107,11 @@ function buildRig(allMeshes: Mesh[], model: string): { rigs: MorphRig[]; audit: 
     const dictionary = mesh.morphTargetDictionary ?? {};
     const influences = mesh.morphTargetInfluences ?? [];
     const index: Record<string, number> = {};
-    for (const name of REQUIRED_MORPHS) {
+    for (const name of [...REQUIRED_MORPHS, ...OPTIONAL_MORPHS]) {
       const slot = dictionary[name];
       // 에셋 전체에는 있는데 이 서브메쉬에만 없는 경우는 정상이 아니다
       if (slot === undefined) {
-        if (union.has(name)) undefinedLookups += 1;
+        if (union.has(name) && REQUIRED_MORPHS.includes(name)) undefinedLookups += 1;
         continue;
       }
       // 사전과 influences 가 어긋나면 쓰기가 배열 밖으로 나가 아무 일도 일어나지 않는다
@@ -118,7 +128,7 @@ function buildRig(allMeshes: Mesh[], model: string): { rigs: MorphRig[]; audit: 
   // 폐기된 viseme 가 0이 아닌 채로 들어오면 입이 굳은 모양으로 눌려 보인다.
   // 인덱스가 범위 밖이면 0으로 누르지도 못하므로, 조용히 넘기지 않고 계약 위반으로
   // 올려보낸다 — 누르지 못한 모프가 바로 굳은 얼굴의 원인이 된다.
-  const undriven = [...union].filter((n) => !REQUIRED_MORPHS.includes(n)).sort();
+  const undriven = [...union].filter((n) => !REQUIRED_MORPHS.includes(n) && !OPTIONAL_MORPHS.includes(n)).sort();
   for (const mesh of morphed) {
     const dictionary = mesh.morphTargetDictionary ?? {};
     const influences = mesh.morphTargetInfluences ?? [];
@@ -197,6 +207,10 @@ export function DocentHead({
   const reduced = usePrefersReducedMotion();
   const blink = useRef({ nextAt: 2.5, closing: false });
   // 액추에이터는 라벨이 아니라 연속값이므로 목표가 아니라 현재 상태를 들고 간다
+  // 아랫입술 액추에이터의 현재 상태. 운영 자산에는 이 모프가 없어 쓰이지 않는다(있으면 구동).
+  const lowerLip = useRef<Record<(typeof LOWER_LIP_MORPHS)[number], number>>({ mouthLowerDownLeft: 0, mouthLowerDownRight: 0 });
+  const dampState = useRef(createMouthDampState());
+  const lastTarget = useRef<MouthTarget | null>(null);
   const mouth = useRef<Record<SemanticMouthMorph, number>>({
     jawOpen: 0,
     mouthRound: 0,
@@ -312,7 +326,10 @@ export function DocentHead({
     w.__ddHeadProbe = () => ({
       model: MODEL_URL,
       ...latest.current,
-      mouth: { ...mouth.current },
+      mouth: { ...mouth.current, ...lowerLip.current },
+      // 감쇠 전 목표(Phase 3A 계측). 개발 빌드의 프로브에만 있다.
+      target: lastTarget.current,
+      closureTiming: MOUTH_TIMING,
       influences: rigs.map((rig) => ({
         mesh: rig.mesh.material && "name" in rig.mesh.material
           ? (rig.mesh.material as { name: string }).name
@@ -355,9 +372,14 @@ export function DocentHead({
     // 주 경로가 값을 주면 그것이 목표다. 없을 때만 라벨 폴백으로 내려간다.
     const pose = lamMouth ?? semanticMouthPose(viseme);
     const m = mouth.current;
-    for (const name of SEMANTIC_MOUTH_MORPHS) {
-      m[name] = MathUtils.damp(m[name], pose[name], 18, delta);
-    }
+    // 입과 아랫입술 모두 λ=18. 게이트 보정분만 닫힘 36 / 풀림 18 로 따로 감쇠된다(MOUTH_TIMING).
+    // 게이트가 없는 경로에서는 보정분이 없으므로 λ=18 한 갈래와 같다. 라벨 경로에는 아랫입술
+    // 값이 없어 0 으로 돌아간다.
+    const rendered = dampMouth(dampState.current, MOUTH_ACTUATORS, pose as MouthTarget, delta, MOUTH_TIMING);
+    if (DEV) lastTarget.current = pose as MouthTarget;
+    for (const name of SEMANTIC_MOUTH_MORPHS) m[name] = rendered[name];
+    const ll = lowerLip.current;
+    for (const name of LOWER_LIP_MORPHS) ll[name] = rendered[name];
 
     const targets = EMOTION_WEIGHTS[emotion] ?? {};
     // 말하는 중에는 감정 모프가 입 액추에이터와 같은 입술 정점을 두고 싸운다(GLB 실측:
@@ -376,6 +398,10 @@ export function DocentHead({
       for (const name of SEMANTIC_MOUTH_MORPHS) {
         const slot = rig.index[name];
         if (slot !== undefined) influences[slot] = m[name];
+      }
+      for (const name of LOWER_LIP_MORPHS) {
+        const slot = rig.index[name];
+        if (slot !== undefined) influences[slot] = ll[name];
       }
 
       // 2) 감정 표정

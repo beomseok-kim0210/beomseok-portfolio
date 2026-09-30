@@ -13,6 +13,8 @@ import {
   type SupertonicResult,
 } from "./voiceWorkers";
 import { sameAudioSource } from "./voiceTimeline";
+import { attachBilabialGate } from "./bilabialGate";
+import { attachVowelChannels } from "./vowelShape";
 
 /**
  * 음성 추론이 어디서 도는지를 라우트로부터 감춘다.
@@ -39,6 +41,15 @@ export interface VoiceTimelineFrameDTO {
   press?: number;
   roll?: number;
   funnel?: number;
+  /** Phase 2C 워커부터 */
+  lowerDownLeft?: number;
+  lowerDownRight?: number;
+  /** 같은 합성의 자모 정렬에서 온 채널(0~1). 정렬이 없으면 없다. */
+  bilabialGate?: number;
+  vowelSpread?: number;
+  vowelRound?: number;
+  vowelUnround?: number;
+  vowelOpen?: number;
 }
 
 export interface VoiceDiagnostics {
@@ -146,6 +157,35 @@ export interface VoiceProvider {
 const rtf = (ms: number | null | undefined, seconds: number): number | null =>
   typeof ms === "number" && seconds > 0 ? +(ms / 1000 / seconds).toFixed(4) : null;
 
+/* ---------------------------------------------------------------- alignment */
+
+/**
+ * 같은 합성의 자모 정렬을 줄인 값. 로컬 워커와 RunPod 핸들러가 같은 의미로 준다:
+ * 30 fps 양순음 게이트와 모음 자모 시각(표기 NFKD 자모 토큰 — 음소가 아니다). 원시
+ * attention 은 여기 없다.
+ */
+export interface AlignedTimingDTO {
+  gateFps?: unknown;
+  bilabialGate?: unknown;
+  vowels?: unknown;
+}
+
+/**
+ * 정렬에서 입 채널(양순음 게이트, 모음 가로·원순·평순·열림)을 만들어 LAM 프레임에 싣는다.
+ * 정렬이 없거나 모양이 이상하면 그 부분은 싣지 않는다 — 그러면 LAM 전용 경로와 같다.
+ * 브라우저로 가는 것은 이 프레임뿐이다.
+ */
+export function attachAlignedChannels<F extends object>(
+  frames: F[],
+  lamFps: number,
+  alignment: AlignedTimingDTO | null | undefined,
+  durationSeconds: number,
+): F[] {
+  if (!alignment || typeof alignment !== "object") return frames;
+  const gated = attachBilabialGate(frames, alignment.bilabialGate, alignment.gateFps, lamFps).frames;
+  return attachVowelChannels(gated, alignment.vowels, durationSeconds, lamFps).frames;
+}
+
 /* -------------------------------------------------------------------- local */
 
 class LocalVoiceProvider implements VoiceProvider {
@@ -237,7 +277,12 @@ class LocalVoiceProvider implements VoiceProvider {
           frameCount: lam.frame_count,
           durationSeconds: lam.timeline_duration_s,
           channels: lam.channels,
-          frames: lam.frames,
+          frames: attachAlignedChannels(
+            lam.frames,
+            lam.fps,
+            { gateFps: tts.gate_fps, bilabialGate: tts.bilabial_gate, vowels: tts.alignment?.vowels },
+            tts.duration_s,
+          ),
         },
         identity: {
           canonicalSha256: tts.sha256,
@@ -293,6 +338,8 @@ interface RunPodOutput {
     sha256: string;
   };
   timeline?: VoiceResult["timeline"];
+  /** 같은 합성의 자모 정렬을 줄인 값(핸들러 `_alignment`). 정렬이 꺼져 있으면 null. */
+  alignment?: AlignedTimingDTO | null;
   identity?: Omit<VoiceResult["identity"], "sameSource"> & { sameSource: boolean };
   diagnostics?: Record<string, unknown>;
 }
@@ -467,7 +514,10 @@ class RunPodVoiceProvider implements VoiceProvider {
         durationSeconds: duration,
         sha256: responseSha,
       },
-      timeline: out.timeline,
+      timeline: {
+        ...out.timeline,
+        frames: attachAlignedChannels(out.timeline.frames, out.timeline.fps, out.alignment, duration),
+      },
       identity: { ...out.identity, responseSha256: responseSha, sameSource: true },
       diagnostics: {
         coldStart: typeof d.coldStart === "boolean" ? d.coldStart : null,

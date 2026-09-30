@@ -35,7 +35,8 @@ the buffer instead of a path.
 Only the mouth channels the client reads are emitted, raw: the four the SEL
 cap1.6 calibration reads, plus (Phase 2, 2026-09-29) the lip-closure and funnel
 channels the semantic fusion in src/lib/docent/lamMouthFusion.ts combines —
-mouthClose, mouthPress L/R, mouthRoll Lower/Upper, mouthFunnel. The curves live
+mouthClose, mouthPress L/R, mouthRoll Lower/Upper, mouthFunnel — and (Phase 2C)
+mouthLowerDown L/R for the experimental lower-lip actuator. The curves live
 in TypeScript and are applied once, on the client, so there is a single
 implementation. A client that predates these fields ignores them; a client that
 reads them treats their absence (an older worker) as zero.
@@ -82,7 +83,8 @@ _engine.librosa = lam_audio.LibrosaShim()
 # measured in L2 over 6.12 s of digital silence — the model's own silent floor
 L2_SILENCE_JAWOPEN_MAX = 0.0007102741510607302
 CH = {"jaw": 24, "round": 37, "upperLift": 42, "stretchL": 45, "stretchR": 46,
-      "close": 26, "funnel": 31, "pressL": 35, "pressR": 36, "rollL": 39, "rollU": 40}
+      "close": 26, "funnel": 31, "pressL": 35, "pressR": 36, "rollL": 39, "rollU": 40,
+      "lowerDownL": 33, "lowerDownR": 34}
 
 
 def sha256(path):
@@ -232,6 +234,8 @@ for line in sys.stdin:
             "press": round(float((arr[i, CH["pressL"]] + arr[i, CH["pressR"]]) / 2.0), 6),
             "roll": round(float((arr[i, CH["rollL"]] + arr[i, CH["rollU"]]) / 2.0), 6),
             "funnel": round(float(arr[i, CH["funnel"]]), 6),
+            "lowerDownLeft": round(float(arr[i, CH["lowerDownL"]]), 6),
+            "lowerDownRight": round(float(arr[i, CH["lowerDownR"]]), 6),
         } for i in range(arr.shape[0])]
 
         print(json.dumps({
@@ -263,7 +267,9 @@ for line in sys.stdin:
                          "close": "mouthClose[26]",
                          "press": "mean(mouthPressLeft[35], mouthPressRight[36])",
                          "roll": "mean(mouthRollLower[39], mouthRollUpper[40])",
-                         "funnel": "mouthFunnel[31]"},
+                         "funnel": "mouthFunnel[31]",
+                         "lowerDownLeft": "mouthLowerDownLeft[33]",
+                         "lowerDownRight": "mouthLowerDownRight[34]"},
             "frames": frames,
         }), flush=True)
     except Exception as exc:

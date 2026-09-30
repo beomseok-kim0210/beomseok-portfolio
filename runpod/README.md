@@ -8,6 +8,12 @@ Digital Docent 의 음성/표정 런타임을 scale-to-zero GPU 워커로 싸는
 2026-09-14: 과금 확정(USD 0.0223, 0.58/h) · LAM 워밍업을 bootstrap 으로 이동(로컬 검증 완료,
 RunPod A/B 는 승인 대기) — `P3B-BILLING-AND-WARMUP.md`.
 같은 날 P3-C: librosa 를 프로덕션 경로에서 제거(`voice/lam_audio.py`, 비트 동일 11/11), 후보 이미지 `p3d` — `P3C-SOUNDFILE-SOXR.md`.
+2026-09-30 P4D: 같은 합성의 자모 정렬(양순음 게이트 + 모음 자모 시각)을 운영 경로에 올렸다.
+이미지 `ghcr.io/beomseok-kim0210/dd-voice@sha256:09f01e7446a0ccd377f8328ca8fef62de38675a8c5de50f4036d5b12ba41b848`
+(`p4d`), `dd-voice-prod` 템플릿만 교체(엔드포인트·워커·GPU·타임아웃 정책 그대로). 정렬 사본 ONNX 는
+`instrument_vector_estimator.py` 로 만들고 `verify_alignment_identity.py` 로 음성 바이트 동일성을 이미지 안에서
+확인한다 — `MODEL-HASHES.md`. 빌드 컨텍스트의 `requirements-*.txt` 는 직전 이미지 안의 `/tmp/requirements-*.txt`
+와 바이트까지 같아야 venv 레이어가 재사용된다(줄바꿈만 달라도 다시 설치되어 전이 의존성이 바뀐다).
 
 ```
 handler.py                 오케스트레이터. 두 venv 워커를 띄우고 잡을 처리한다

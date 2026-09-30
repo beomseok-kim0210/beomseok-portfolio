@@ -361,6 +361,20 @@ def bootstrap():
     }), flush=True)
 
 
+def _alignment(tts):
+    """워커의 정렬 결과를 응답 계약으로 옮긴다. 필요한 것만: 게이트, fps, 모음 토큰."""
+    gate, fps, al = tts.get("bilabial_gate"), tts.get("gate_fps"), tts.get("alignment")
+    if not isinstance(gate, list) or not isinstance(al, dict) or not isinstance(al.get("vowels"), list):
+        return None
+    return {
+        "granularity": al.get("granularity"),
+        "offsetMs": al.get("offset_ms"),
+        "gateFps": fps,
+        "bilabialGate": gate,
+        "vowels": al["vowels"],
+    }
+
+
 def _fail(code, stage, detail=None):
     """경계 있는 오류를 내보낸다.
 
@@ -446,6 +460,8 @@ def handler(job):
             return _fail("RESPONSE_TOO_LARGE", "response",
                          f"{len(audio)} bytes exceeds {MAX_AUDIO_BYTES}")
 
+        alignment = _alignment(tts)
+
         total_ms = round((time.time() - t_start) * 1000, 1)
         print(json.dumps({
             "event": "request", "requestId": request_id, "utteranceId": utterance_id,
@@ -472,6 +488,10 @@ def handler(job):
                 "durationSeconds": tts["duration_s"],
                 "sha256": response_sha,
             },
+            # 같은 합성의 자모 정렬을 줄인 값(양순음 게이트 + 모음 자모 시각). 원시 attention 은
+            # 워커 프로세스 밖으로 나오지 않는다. 정렬이 꺼져 있거나 실패하면 null — 클라이언트는
+            # LAM 전용 경로로 동작한다(음성은 실패하지 않는다).
+            "alignment": alignment,
             "timeline": {
                 "fps": lam["fps"],
                 "frameCount": lam["frame_count"],
@@ -500,6 +520,8 @@ def handler(job):
                 "workerUptimeS": round(time.time() - WORKER_STARTED_AT, 1),
                 "supertonicModelLoadMs": SUPERTONIC.model_load_ms,
                 "lamModelLoadMs": LAM.model_load_ms,
+                "alignmentStatus": (SUPERTONIC.ready_info or {}).get("alignment"),
+                "alignmentError": tts.get("alignment_error"),
                 "lamDevice": (LAM.ready_info or {}).get("device"),
                 "lamWarmupMs": (LAM.ready_info or {}).get("warmup_ms"),
                 "lamWarmupDecodeMs": (LAM.ready_info or {}).get("warmup_decode_ms"),

@@ -45,6 +45,12 @@ export interface SupertonicResult {
   synthesis_ms: number;
   synthesis_count: number;
   voice_style: string;
+  /** Phase 2E 실험: 같은 합성의 양순음 게이트(30 fps). 정렬이 꺼져 있거나 실패하면 없다. */
+  bilabial_gate?: number[];
+  gate_fps?: number;
+  alignment_error?: string;
+  /** Phase 3C/4A 실험: 양순음 이웃, 모음 토큰(표기 자모 기준). */
+  alignment?: { bilabial?: unknown[]; vowels?: unknown[] };
 }
 
 export interface LamFrame {

@@ -156,15 +156,19 @@ test("LAM 워커가 닫힘·깔때기 채널을 원시값으로 내보낸다", (
 
 test("주 경로가 융합 매핑을 쓴다 — 레거시 라벨 경로의 곡선은 그대로 둔다", () => {
   const hook = read("src", "features", "docent", "useSupertonicVoice.ts");
-  assert.match(hook, /setMouth\(raw \? fuseLamMouth\(raw\) : REST_POSE\)/);
+  assert.match(hook, /setMouth\(raw \? (fuseLamMouth|fuseWithGateCorrection)\(raw\) : REST_POSE\)/);
   assert.equal(hook.includes("applySemanticMouthCalibration"), false);
 });
 
 test("타이밍 파이프라인은 그대로다 (Phase 3 몫)", () => {
   const head = read("src", "features", "docent", "DocentHead.tsx");
-  assert.match(head, /m\[name\] = MathUtils\.damp\(m\[name\], pose\[name\], 18, delta\)/);
+  assert.match(head, /dampMouth\(dampState\.current, MOUTH_ACTUATORS, pose as MouthTarget, delta, MOUTH_TIMING\)/);
+  // 입 감쇠의 기본 갈래는 λ=18 그대로다. 게이트 보정분만 닫힘 36 / 풀림 18(Phase 4D 운영값)
+  const timingSrc = read("src/lib/docent/closureTiming.ts");
+  assert.match(timingSrc, /export const BASE_MOUTH_LAMBDA = 18;/);
+  assert.match(timingSrc, /gateAdvanceSeconds: 0\.03,\s*closeLambda: 36,\s*releaseLambda: BASE_MOUTH_LAMBDA,/);
   const hook = read("src", "features", "docent", "useSupertonicVoice.ts");
-  assert.match(hook, /sampleTimeline\(frames, fps, a\.currentTime\)/);
+  assert.match(hook, /sampleTimeline\(frames, fps, a\.currentTime \+ lead, MOUTH_TIMING\.gateAdvanceSeconds\)/);
 });
 
 test("발화 중 감정 모프는 10% 로 줄고, 세그먼트 사이 공백에도 유지된다", () => {
