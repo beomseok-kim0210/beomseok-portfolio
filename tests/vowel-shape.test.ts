@@ -179,3 +179,30 @@ test("ㅙ = ㅗ 로 시작해 ㅐ 로: 앞부분은 원순·덜 열림, 뒷부�
   assert.equal(off.vowelRound[early], 0.6);
   assert.equal(off.vowelRound[late], 0.6);
 });
+
+// 2026-10-01 — 문장 사이 쉼에서 입이 벌어진 채로 남던 것
+import { VOWEL_MAX_REACH } from "@/lib/docent/vowelShape";
+
+test("쉼 너머의 자모는 이웃이 아니다 — 모음 지지는 중심에서 VOWEL_MAX_REACH 까지만", () => {
+  assert.equal(VOWEL_MAX_REACH, 0.15);
+  // 문장 끝 ㅏ(1.0 s) 다음 자모가 1.5 s 쉼 뒤(2.5 s)에 있다
+  const end = { t: 1.0, cls: "open", j: "ᅡ", prev: 0.94, next: 2.5 };
+  assert.deepEqual(vowelOpenSupport(end), [0.94, 1.15]);
+  assert.deepEqual(vowelSupport(end).map((x) => +x.toFixed(6)), [0.97, 1.15]);
+  // 다음 문장 첫 모음도 쉼 쪽으로 뻗지 않는다
+  const start = { t: 2.56, cls: "open", j: "ᅡ", prev: 1.0, next: 2.62 };
+  assert.deepEqual(vowelOpenSupport(start).map((x) => +x.toFixed(6)), [2.41, 2.62]);
+  const ch = buildVowelChannels([end, start], 3, 30, { openLead: 0 });
+  // 쉼 한가운데(1.75 s)는 모든 모음 채널이 0 — 턱은 LAM(무음이면 닫힘)을 따른다
+  const mid = Math.round(1.75 * 30);
+  for (const k of ["vowelOpen", "vowelSpread", "vowelRound", "vowelUnround"] as const) assert.equal(ch[k][mid], 0, k);
+  // 쉼 전후 모음 자체는 그대로 열린다
+  assert.equal(ch.vowelOpen[30], 1);
+  assert.equal(ch.vowelOpen[Math.round(2.56 * 30)], 1);
+});
+
+test("말하는 구간(이웃이 가까울 때)은 제한이 걸리지 않는다", () => {
+  const v = { t: 0.5, cls: "open", j: "ᅡ", prev: 0.43, next: 0.6 };
+  assert.deepEqual(vowelOpenSupport(v), [0.43, 0.6]);
+  assert.deepEqual(vowelSupport(v).map((x) => +x.toFixed(6)), [0.465, 0.55]);
+});

@@ -58,6 +58,15 @@ export function vowelOpenness(v: VowelToken): number {
 export const VOWEL_HALF_SPAN_FALLBACK = 0.06;
 export const VOWEL_RAMP = 0.04;
 
+/**
+ * 모음 지지가 중심에서 뻗을 수 있는 최대 거리(초). 앞뒤 자모가 이보다 멀면 그 사이는 쉼이다.
+ * 한 합성 안의 문장·쉼표 사이에는 0.3 s 이상의 무음이 들어가는데, 그 너머의 자모를 이웃으로
+ * 쓰면 입이 쉼 내내 벌어진 채로 남는다(2026-10-01 사람 검토: "문장 사이 공백 동안 입을 벌리고
+ * 있다"). 말하는 구간의 간격은 중앙값 0.06 s, p95 0.12 s 이고, 0.15 s 를 넘는 것은 거의
+ * 모두 쉼이었다(자모 691 개 중 15 개).
+ */
+export const VOWEL_MAX_REACH = 0.15;
+
 export interface VowelChannels {
   vowelSpread: number[];
   vowelRound: number[];
@@ -70,8 +79,8 @@ const smooth = (x: number) => x * x * (3 - 2 * x);
 const finite = (x: unknown): x is number => typeof x === "number" && Number.isFinite(x);
 
 export function vowelSupport(v: VowelToken): [number, number] {
-  const s = finite(v.prev) && v.prev < v.t ? (v.prev + v.t) / 2 : v.t - VOWEL_HALF_SPAN_FALLBACK;
-  const e = finite(v.next) && v.next > v.t ? (v.t + v.next) / 2 : v.t + VOWEL_HALF_SPAN_FALLBACK;
+  const s = finite(v.prev) && v.prev < v.t ? Math.max((v.prev + v.t) / 2, v.t - VOWEL_MAX_REACH) : v.t - VOWEL_HALF_SPAN_FALLBACK;
+  const e = finite(v.next) && v.next > v.t ? Math.min((v.t + v.next) / 2, v.t + VOWEL_MAX_REACH) : v.t + VOWEL_HALF_SPAN_FALLBACK;
   return [s, e];
 }
 
@@ -80,8 +89,8 @@ export function vowelSupport(v: VowelToken): [number, number] {
  * 벌어져 다음 자음까지 이어진다 — 중점 지지(~50 ms)는 턱 감쇠 시상수(~55 ms)보다 짧아 목표에 닿지 못했다.
  */
 export function vowelOpenSupport(v: VowelToken): [number, number] {
-  const s = finite(v.prev) && v.prev < v.t ? v.prev : v.t - VOWEL_HALF_SPAN_FALLBACK;
-  const e = finite(v.next) && v.next > v.t ? v.next : v.t + VOWEL_HALF_SPAN_FALLBACK;
+  const s = finite(v.prev) && v.prev < v.t ? Math.max(v.prev, v.t - VOWEL_MAX_REACH) : v.t - VOWEL_HALF_SPAN_FALLBACK;
+  const e = finite(v.next) && v.next > v.t ? Math.min(v.next, v.t + VOWEL_MAX_REACH) : v.t + VOWEL_HALF_SPAN_FALLBACK;
   return [s, e];
 }
 
