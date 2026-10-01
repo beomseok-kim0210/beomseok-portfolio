@@ -14,6 +14,9 @@
  *   메우지 않는다.
  * - 한 세그먼트라도 실패하면 거기서 멈춘다. 남은 세그먼트는 합성하지도 재생하지도 않는다.
  * - signal 이 끊기면 진행 중인 합성과 재생을 버리고 조용히 끝난다.
+ * - 세그먼트 수를 미리 모를 수 있다(답변이 아직 스트리밍 중). 그때는 `count` 대신
+ *   `waitForSegment(i)` 가 i 번째 세그먼트가 확정되면 true, 답변이 거기서 끝났으면 false 로
+ *   답한다. 위의 규칙(하나만 앞서 합성, 순서대로 재생)은 그대로다.
  */
 
 export const MAX_PREFETCH_AHEAD = 1;
@@ -24,7 +27,10 @@ export type SegmentQueueOutcome =
   | { status: "cancelled" };
 
 export interface SegmentQueueOptions<P> {
-  count: number;
+  /** 세그먼트 수. 모르면 생략하고 waitForSegment 를 준다. */
+  count?: number;
+  /** i 번째 세그먼트가 확정될 때까지 기다린다. 있으면 true, 답변이 거기서 끝났으면 false. */
+  waitForSegment?: (index: number, signal: AbortSignal) => Promise<boolean>;
   signal: AbortSignal;
   /** 세그먼트 하나를 합성한다. 실패는 throw 로 알린다. */
   fetchSegment: (index: number, signal: AbortSignal) => Promise<P>;
@@ -35,33 +41,45 @@ export interface SegmentQueueOptions<P> {
   playSegment: (payload: P, index: number, signal: AbortSignal, started: () => void) => Promise<void>;
 }
 
+const END = Symbol("end of segments");
+
 export async function runSegmentQueue<P>({
   count,
+  waitForSegment,
   signal,
   fetchSegment,
   playSegment,
 }: SegmentQueueOptions<P>): Promise<SegmentQueueOutcome> {
   if (signal.aborted) return { status: "cancelled" };
   if (count === 0) return { status: "completed", segments: 0 };
+  if (count === undefined && !waitForSegment) throw new TypeError("count or waitForSegment is required");
 
   const settle = (index: number, error: unknown): SegmentQueueOutcome =>
     signal.aborted ? { status: "cancelled" } : { status: "failed", index, error };
+  const exists = (index: number): Promise<boolean> =>
+    count !== undefined ? Promise.resolve(index < count) : waitForSegment!(index, signal);
+  // 세그먼트가 확정되면 그때 합성한다. 확정되지 않은 채 답변이 끝나면 END.
+  const nextOf = (index: number): Promise<P | typeof END> =>
+    count !== undefined
+      ? (index < count ? fetchSegment(index, signal) : Promise.resolve(END))
+      : exists(index).then((ok): Promise<P | typeof END> | typeof END => (ok ? fetchSegment(index, signal) : END));
 
-  let pending: Promise<P> | null = fetchSegment(0, signal);
-  for (let index = 0; index < count; index += 1) {
-    let payload: P;
+  let pending: Promise<P | typeof END> | null = nextOf(0);
+  for (let index = 0; ; index += 1) {
+    let payload: P | typeof END;
     try {
       payload = await pending!;
     } catch (error) {
       return settle(index, error);
     }
     if (signal.aborted) return { status: "cancelled" };
+    if (payload === END) return { status: "completed", segments: index };
 
     // 이 세그먼트가 소리를 내기 시작하면 다음 것 하나만 미리 합성한다.
-    let next: Promise<P> | null = null;
+    let next: Promise<P | typeof END> | null = null;
     const prefetch = () => {
-      if (next !== null || index + 1 >= count || signal.aborted) return;
-      next = fetchSegment(index + 1, signal);
+      if (next !== null || signal.aborted) return;
+      next = nextOf(index + 1);
       // 재생 중에 멈추면 이 약속은 아무도 기다리지 않는다. 처리되지 않은 거절로 남기지 않는다.
       next.catch(() => undefined);
     };
@@ -75,5 +93,4 @@ export async function runSegmentQueue<P>({
     prefetch(); // 시작 신호 없이 끝난 경우에도 다음 세그먼트는 합성한다
     pending = next;
   }
-  return { status: "completed", segments: count };
 }

@@ -441,7 +441,7 @@ test("새 답변은 말하는 중인 앞 답변을 기다리지 않고 교체한
   const runtime = read("src", "features", "docent", "DocentRuntime.tsx");
   assert.match(
     runtime,
-    /lifecycle === "VOICE_READY"\s*\|\| lifecycle === "VOICE_SPEAKING"\s*\|\| lifecycle === "VOICE_SYNTHESIZING"\s*\)\s*\{\s*void speakOnce\(last\.content\)/,
+    /lifecycle === "VOICE_READY"\s*\|\| lifecycle === "VOICE_SPEAKING"\s*\|\| lifecycle === "VOICE_SYNTHESIZING"\s*\)\s*\{\s*current = openStream\(index\)/,
   );
   // 교체 순간 READY 로 잘못 돌아가지 않는다
   assert.match(runtime, /if \(!supertonicPreparing\) finishSpeaking\(\)/);
@@ -451,8 +451,9 @@ test("새 답변은 말하는 중인 앞 답변을 기다리지 않고 교체한
 
 test("Supertonic 실패는 다른 목소리로 이어지지 않는다", () => {
   const runtime = read("src", "features", "docent", "DocentRuntime.tsx");
-  const speakOnce = runtime.slice(runtime.indexOf("const speakOnce"), runtime.indexOf("// Text is already visible"));
-  assert.match(speakOnce, /const outcome = await supertonic\.speak\(content\)/);
-  assert.equal(/voice\.speak|browser/.test(speakOnce), false);
+  const open = runtime.slice(runtime.indexOf("const openStream"), runtime.indexOf("// 답변이 자랄 때마다"));
+  assert.match(open, /const stream = startStream\(\);/);
+  assert.match(runtime, /const \{ startStream \} = supertonic;/);
+  assert.equal(/voice\.speak|browser/.test(open), false);
   assert.match(runtime, /lastEngine: "supertonic" \| "none"/);
 });

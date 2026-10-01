@@ -57,6 +57,11 @@ export interface VoiceState {
   disableVoice: () => void;
   /** 실제 헬스 신호를 확인하고, 필요할 때만 예열을 시작한다. 호출자는 기다리지 않는다. */
   ensureReady: () => void;
+  /**
+   * 음성 워커가 쉬다가 내려갔을 만큼 시간이 지났으면 다시 예열한다. 질문을 보낼 때 부른다 —
+   * 답변 텍스트가 생성되는 동안 워커가 깨어나도록. 텍스트는 이것을 기다리지 않는다.
+   */
+  rewarmIfIdle: () => void;
   beginSynthesis: () => void;
   beginSpeaking: () => void;
   finishSpeaking: () => void;
@@ -64,6 +69,12 @@ export interface VoiceState {
   startListening: (onTranscript: (text: string) => void) => void;
   stopListening: () => void;
 }
+
+/**
+ * 마지막 음성 활동 뒤 이만큼 지나면 워커가 내려갔다고 보고 다시 예열한다. RunPod 유휴 제한(120초)
+ * 보다 짧다 — 우리 쪽 마지막 활동 시각(재생 끝)은 워커의 마지막 작업(합성 끝)보다 늦기 때문이다.
+ */
+export const VOICE_REWARM_AFTER_MS = 90_000;
 
 export function useVoice(): VoiceState {
   const [sttSupported, setSttSupported] = useState(false);
@@ -84,6 +95,14 @@ export function useVoice(): VoiceState {
   const prepareIssuedRef = useRef(false);
   const warmAbortRef = useRef<AbortController | null>(null);
   const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // 마지막 음성 활동(준비·합성·재생 전이) 시각. RunPod 워커는 마지막 작업 뒤 유휴 120초가
+  // 지나면 내려간다(workersMin 0, scale-to-zero) — 사이트 첫 방문 한 번만의 일이 아니다.
+  const lastVoiceActivityRef = useRef(0);
+  useEffect(() => {
+    const s = lifecycleState.status;
+    if (s === "VOICE_READY" || s === "VOICE_SYNTHESIZING" || s === "VOICE_SPEAKING") lastVoiceActivityRef.current = Date.now();
+  }, [lifecycleState.status]);
+
   const cancelWarmCycle = useCallback(() => {
     warmAbortRef.current?.abort();
     warmAbortRef.current = null;
@@ -190,6 +209,17 @@ export function useVoice(): VoiceState {
     return () => clearTimeout(timer);
   }, [lifecycleState.status, lifecycleState.warmingSince, statusNow]);
 
+  const rewarmIfIdle = useCallback(() => {
+    if (!voiceEnabledRef.current || lifecycleRef.current.status !== "VOICE_READY") return;
+    if (Date.now() - lastVoiceActivityRef.current < VOICE_REWARM_AFTER_MS) return;
+    // 준비 완료로 보였지만 워커는 이미 내려갔을 가능성이 높다. 상태를 "준비 중" 으로 돌리고
+    // 예열을 다시 건다 — 콜드 스타트가 "음성 생성 중" 으로 15~20초 멈춰 보이지 않게.
+    prepareIssuedRef.current = false;
+    dispatchLifecycle({ type: "ENABLE", now: Date.now() });
+    lifecycleRef.current = { status: "VOICE_WARMING", warmingSince: Date.now(), failureStage: null };
+    queueMicrotask(ensureReady);
+  }, [ensureReady]);
+
   const startListening = useCallback(
     (onTranscript: (text: string) => void) => {
       const Recognition = getSpeechRecognition();
@@ -277,6 +307,7 @@ export function useVoice(): VoiceState {
     toggleVoice,
     disableVoice,
     ensureReady,
+    rewarmIfIdle,
     beginSynthesis,
     beginSpeaking,
     finishSpeaking,

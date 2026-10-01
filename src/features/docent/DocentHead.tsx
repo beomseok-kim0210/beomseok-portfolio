@@ -24,6 +24,7 @@ import {
 import type { DocentEmotion } from "@/types/docent";
 import { DOCENT_PORTRAIT_FRAME, frameAvatarPortrait } from "./avatarFraming";
 import { applyNeckDissolve } from "./hologram/neckDissolve";
+import { deriveUpperFaceMorphs, upperFaceName } from "./upperFaceMorphs";
 
 /**
  * 임시 head-only 런타임. 입은 M2.13 semantic 액추에이터가 구동하고, 눈깜빡임과
@@ -47,6 +48,12 @@ const EMOTION_WEIGHTS: Record<DocentEmotion, Partial<Record<EmotionMorph, number
 
 /** 발화 중 감정 모프 강도. 입 모양과 싸우지 않을 만큼만 남긴다(Phase 2, 0.45 → 0.1). */
 export const EMOTION_SCALE_DURING_SPEECH = 0.1;
+/**
+ * 발화 중 윗얼굴 전용 감정 사본(upperFaceMorphs)의 강도. 원래 모프 0.1 과 합쳐 눈·눈썹·볼은
+ * 감정 전체(1.0)를 보이고, 입 영역은 0.1 그대로라 립싱크가 한 정점도 더 흔들리지 않는다.
+ */
+export const UPPER_FACE_EMOTION_DURING_SPEECH = 1 - EMOTION_SCALE_DURING_SPEECH;
+const UPPER_EMOTION_MORPHS: readonly string[] = EMOTION_MORPHS.map(upperFaceName);
 
 // 진단 훅은 개발 런타임에만 존재한다. 계약 위반 시의 console.error 와 throw 는
 // 빌드와 무관하게 항상 살아 있다 — 그쪽이 이 컴포넌트의 안전장치다.
@@ -54,7 +61,7 @@ const DEV = process.env.NODE_ENV !== "production";
 
 const BLINK_MORPH = "blink";
 /** 있으면 구동하고, 없어도 계약 위반이 아니다(운영 자산에는 없다). */
-const OPTIONAL_MORPHS: readonly string[] = LOWER_LIP_MORPHS;
+const OPTIONAL_MORPHS: readonly string[] = [...LOWER_LIP_MORPHS, ...UPPER_EMOTION_MORPHS];
 const MOUTH_ACTUATORS: readonly string[] = [...SEMANTIC_MOUTH_MORPHS, ...LOWER_LIP_MORPHS];
 const REQUIRED_MORPHS: readonly string[] = [
   ...SEMANTIC_MOUTH_MORPHS,
@@ -226,6 +233,8 @@ export function DocentHead({
     scene.traverse((object) => {
       if (object instanceof Mesh) found.push(object);
     });
+    // 감정 모프의 윗얼굴 사본을 로드 시점에 만든다(GLB 는 그대로). 두 번 만들지 않는다.
+    for (const mesh of found) deriveUpperFaceMorphs(mesh, EMOTION_MORPHS);
     return buildRig(found, MODEL_URL);
   }, [scene]);
 
@@ -389,6 +398,7 @@ export function DocentHead({
     // 눈 깜빡임·시선·머리 움직임은 별개라 그대로다.
     const speechActive = speaking || lamMouth !== null || viseme !== null;
     const emotionScale = speechActive ? EMOTION_SCALE_DURING_SPEECH : 1;
+    const upperScale = speechActive ? UPPER_FACE_EMOTION_DURING_SPEECH : 0;
     const damp = reduced ? 40 : 6;
 
     for (const rig of rigs) {
@@ -410,6 +420,11 @@ export function DocentHead({
         if (slot === undefined) continue;
         const target = (targets[name] ?? 0) * emotionScale;
         influences[slot] = MathUtils.damp(influences[slot], target, damp, delta);
+        // 발화 중에는 입을 뺀 사본이 눈·눈썹·볼의 감정을 채운다(발화가 끝나면 원래 모프로 돌아간다).
+        const upperSlot = rig.index[upperFaceName(name)];
+        if (upperSlot !== undefined) {
+          influences[upperSlot] = MathUtils.damp(influences[upperSlot], (targets[name] ?? 0) * upperScale, damp, delta);
+        }
       }
 
       // 3) 눈 깜빡임

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { REST_POSE, type SemanticMouthPose } from "@/lib/docent/semanticMouth";
 import { MOUTH_TIMING, fuseWithGateCorrection } from "@/lib/docent/closureTiming";
+import { StreamingSegmenter } from "@/lib/docent/streamingSegments";
 import { planSpokenSegments } from "@/lib/docent/ttsSegments";
 import { mouthLeadSeconds, sampleTimeline, type VoiceTimelineFrame } from "@/lib/docent/voiceTimeline";
 import { runSegmentQueue } from "./voiceQueue";
@@ -13,6 +14,8 @@ import { runSegmentQueue } from "./voiceQueue";
  *
  * 답변은 세그먼트로 나뉘어 차례로 합성·재생된다(`ttsSegments`, `voiceQueue`).
  * 세그먼트마다 정본 WAV 가 하나고, 그 세그먼트의 재생과 LAM 이 그 WAV 를 본다.
+ * 답변이 아직 스트리밍 중이면 `startStream()` 으로 완결된 문장부터 합성을 시작한다
+ * (`streamingSegments`) — 답변 전체가 끝날 때까지 기다리지 않는다.
  *
  * 입 자세는 LAM 채널들을 `fuseLamMouth` 로 합친 것이다(`fuseWithGateCorrection` 경유; 입술 닫힘·깔때기, 같은 합성의
  * 자모 정렬이 있으면 양순음 게이트·모음 조음까지). 정렬이 있는 세그먼트는 입이 소리보다 80 ms 먼저 간다(`mouthLeadSeconds`).
@@ -78,9 +81,33 @@ export interface SupertonicVoiceState {
   meta: SupertonicMeta | null;
   error: string | null;
   speak: (text: string) => Promise<SpeakOutcome>;
+  /**
+   * 스트리밍 중인 답변을 읽기 시작한다. 앞 발화는 끊긴다. 답변이 자랄 때마다 `update`,
+   * 끝나면 `end` 를 부른다. 완결된 문장만 합성하고, 같은 글은 두 번 합성하지 않는다.
+   */
+  startStream: () => SpeechStream;
   stop: () => void;
   /** 진단용 — 현재 세그먼트의 오디오 재생 위치(초). 재생 중이 아니면 null. */
   currentTime: () => number | null;
+}
+
+export interface SpeechStream {
+  /** 지금까지 도착한 답변 전체. 완결된 문장이 생기면 세그먼트로 확정된다. */
+  update: (textSoFar: string) => void;
+  /** 답변이 끝났다. 남은 글을 확정한다. */
+  end: (finalText: string) => void;
+  /** 첫 세그먼트가 재생을 시작하면 ok. 읽을 글이 없으면 silent. */
+  outcome: Promise<SpeakOutcome>;
+}
+
+interface UtteranceSource {
+  segments: string[];
+  /** 세그먼트 수를 이미 안다(답변 전체가 있다). */
+  count?: number;
+  /** 모르면: i 번째가 확정되면 true, 답변이 거기서 끝났으면 false. */
+  waitForSegment?: (index: number, signal: AbortSignal) => Promise<boolean>;
+  /** 메타·텔레메트리용. 아직 모르면 null. */
+  knownCount: () => number | null;
 }
 
 interface SegmentPayload {
@@ -159,46 +186,24 @@ export function useSupertonicVoice(): SupertonicVoiceState {
     teardown();
   }, [teardown]);
 
-  const speak = useCallback(async (text: string): Promise<SpeakOutcome> => {
-    const gen = ++genRef.current;
-    teardown();
-    setError(null);
-    setMouth(null);
-    setSpeaking(false);
-    setPreparing(true);
-
-    const fail = (message: string): SpeakOutcome => {
-      if (gen !== genRef.current) return "superseded";
-      teardown();
-      setPreparing(false);
-      setSpeaking(false);
-      setEngine("failed");
-      setMouth(null);
-      setError(message);
-      return "failed";
-    };
-
-    const plan = planSpokenSegments(text);
-    if (!plan) return fail("answer is too long for voice");
-    const { segments } = plan;
-    if (segments.length === 0) {
-      setPreparing(false);
-      return "silent"; // 읽을 글자가 없다. 실패가 아니다.
-    }
-
-    const controller = new AbortController();
-    abortRef.current = controller;
-
-    let settleStart: (outcome: SpeakOutcome) => void = () => undefined;
-    const started = new Promise<SpeakOutcome>((resolve) => { settleStart = resolve; });
-
+  /**
+   * 한 발화의 합성·재생. 세그먼트 수를 알면 count, 모르면(스트리밍) waitForSegment 로 기다린다.
+   * 규칙은 같다 — 하나만 앞서 합성, 순서대로 재생, 실패하면 멈춤, 세그먼트마다 합성 한 번.
+   */
+  const runUtterance = useCallback((
+    gen: number,
+    src: UtteranceSource,
+    controller: AbortController,
+    settleStart: (outcome: SpeakOutcome) => void,
+    fail: (message: string) => SpeakOutcome,
+  ) => {
     const fetchSegment = async (index: number, signal: AbortSignal): Promise<SegmentPayload> => {
       const res = await fetch("/api/docent/voice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          text: segments[index],
-          segment: { index, count: segments.length },
+          text: src.segments[index],
+          segment: src.knownCount() === null ? { index } : { index, count: src.knownCount() },
         }),
         signal,
       });
@@ -293,7 +298,7 @@ export function useSupertonicVoice(): SupertonicVoiceState {
             preprocessing: payload.identity.preprocessing,
             provider: payload.provider ?? "unknown",
             segmentIndex: index,
-            segmentCount: segments.length,
+            segmentCount: src.knownCount() ?? index + 1,
             coldStart: payload.diagnostics.coldStart,
             synthesisMs: payload.diagnostics.synthesisMs,
             inferenceMs: payload.diagnostics.inferenceMs,
@@ -313,7 +318,8 @@ export function useSupertonicVoice(): SupertonicVoiceState {
       });
 
     void runSegmentQueue({
-      count: segments.length,
+      count: src.count,
+      waitForSegment: src.waitForSegment,
       signal: controller.signal,
       fetchSegment,
       playSegment,
@@ -324,7 +330,14 @@ export function useSupertonicVoice(): SupertonicVoiceState {
       }
       if (outcome.status === "failed") {
         const reason = outcome.error instanceof Error ? outcome.error.message : String(outcome.error);
-        settleStart(fail(`segment ${outcome.index + 1}/${segments.length}: ${reason}`));
+        settleStart(fail(`segment ${outcome.index + 1}/${src.knownCount() ?? "?"}: ${reason}`));
+        return;
+      }
+      if (outcome.segments === 0) {
+        // 스트림이 읽을 글 없이 끝났다 — 요청도 소리도 없었다. 실패가 아니다.
+        if (abortRef.current === controller) abortRef.current = null;
+        setPreparing(false);
+        settleStart("silent");
         return;
       }
       if (abortRef.current === controller) abortRef.current = null;
@@ -334,13 +347,99 @@ export function useSupertonicVoice(): SupertonicVoiceState {
       settleStart("ok");
     });
 
-    return started;
+  }, []);
+
+  /** 새 발화의 공통 시작: 앞 발화를 끊고, 실패 처리와 첫 재생 약속을 만든다. */
+  const beginUtterance = useCallback(() => {
+    const gen = ++genRef.current;
+    teardown();
+    setError(null);
+    setMouth(null);
+    setSpeaking(false);
+    setPreparing(true);
+
+    const fail = (message: string): SpeakOutcome => {
+      if (gen !== genRef.current) return "superseded";
+      teardown();
+      setPreparing(false);
+      setSpeaking(false);
+      setEngine("failed");
+      setMouth(null);
+      setError(message);
+      return "failed";
+    };
+    let settleStart: (outcome: SpeakOutcome) => void = () => undefined;
+    const started = new Promise<SpeakOutcome>((resolve) => { settleStart = resolve; });
+    return { gen, fail, started, settleStart: (outcome: SpeakOutcome) => settleStart(outcome) };
   }, [teardown]);
+
+  const speak = useCallback(async (text: string): Promise<SpeakOutcome> => {
+    const { gen, fail, started, settleStart } = beginUtterance();
+
+    const plan = planSpokenSegments(text);
+    if (!plan) return fail("answer is too long for voice");
+    const { segments } = plan;
+    if (segments.length === 0) {
+      setPreparing(false);
+      return "silent"; // 읽을 글자가 없다. 실패가 아니다.
+    }
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+    runUtterance(gen, { segments, count: segments.length, knownCount: () => segments.length }, controller, settleStart, fail);
+    return started;
+  }, [beginUtterance, runUtterance]);
+
+  const startStream = useCallback((): SpeechStream => {
+    const { gen, fail, started, settleStart } = beginUtterance();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    const segmenter = new StreamingSegmenter();
+    const segments: string[] = [];
+    let ended = false;
+    const waiters = new Set<() => void>();
+    const notify = () => { for (const check of [...waiters]) check(); };
+    const waitForSegment = (index: number, signal: AbortSignal) => new Promise<boolean>((resolve) => {
+      const check = () => {
+        if (index < segments.length) done(true);
+        else if (ended || signal.aborted) done(false);
+      };
+      const done = (value: boolean) => {
+        waiters.delete(check);
+        signal.removeEventListener("abort", check);
+        resolve(value);
+      };
+      waiters.add(check);
+      signal.addEventListener("abort", check);
+      check();
+    });
+
+    runUtterance(gen, { segments, waitForSegment, knownCount: () => (ended ? segments.length : null) }, controller, settleStart, fail);
+
+    return {
+      update: (textSoFar: string) => {
+        if (gen !== genRef.current || ended) return;
+        const next = segmenter.push(textSoFar);
+        if (next.length > 0) {
+          segments.push(...next);
+          notify();
+        }
+      },
+      end: (finalText: string) => {
+        if (gen !== genRef.current || ended) return;
+        segments.push(...segmenter.finish(finalText));
+        ended = true;
+        notify();
+      },
+      outcome: started,
+    };
+  }, [beginUtterance, runUtterance]);
 
   const currentTime = useCallback(
     () => (audioRef.current ? audioRef.current.currentTime : null),
     [],
   );
 
-  return { mouth, speaking, preparing, engine, meta, error, speak, stop, currentTime };
+  return { mouth, speaking, preparing, engine, meta, error, speak, startStream, stop, currentTime };
 }

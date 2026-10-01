@@ -8,6 +8,7 @@ import type { DocentChatState } from "./useDocentChat";
 import type { VoiceState } from "./useVoice";
 import type { DocentFailure } from "@/types/docent";
 import { ACTIVATION_PENDING_COPY, DOCENT_STATUS_COPY, resolveDocentSurfaceStatus } from "./docentStatus";
+import { stripEmphasisForDisplay } from "@/lib/docent/displayText";
 
 type ChatPanelProps = DocentChatState & {
   voice: VoiceState;
@@ -312,7 +313,7 @@ export function ChatPanel({
                       </span>
                     ) : (
                       <>
-                        {message.content || "…"}
+                        {(isUser ? message.content : stripEmphasisForDisplay(message.content)) || "…"}
                         {showCaret ? (
                           <span className="ml-0.5 inline-block h-4 w-[2px] animate-pulse bg-blue-300 align-middle motion-reduce:animate-none" />
                         ) : null}

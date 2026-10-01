@@ -56,5 +56,7 @@ test("예열은 음성이 켜져 있을 때만 걸린다", () => {
 test("예열이 합성을 대신하지 않는다 — 발화는 여전히 speak 경로로만 나간다", () => {
   const warmCalls = warmClientSrc.match(/\/api\/docent\/voice\/warm/g) ?? [];
   assert.equal(warmCalls.length, 1, "예열 POST 는 공유 가드 한 곳에서만 나가야 한다");
-  assert.match(runtimeSrc, /supertonic\.speak\(content\)/);
+  // 발화는 Supertonic 스트림(합성 라우트)으로만 나간다
+  assert.match(runtimeSrc, /const \{ startStream \} = supertonic;/);
+  assert.match(runtimeSrc, /const stream = startStream\(\);/);
 });

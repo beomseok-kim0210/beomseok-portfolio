@@ -183,7 +183,7 @@ test("발화 중 감정 모프는 10% 로 줄고, 세그먼트 사이 공백에�
 
 test("마이크를 켜면 재생 중인 음성과 대기 중인 세그먼트가 멈춘다", () => {
   const runtime = read("src", "features", "docent", "DocentRuntime.tsx");
-  const effect = /useEffect\(\(\) => \{\s*if \(!listening\) return;\s*pendingSpeechRef\.current = null;\s*stopSupertonic\(\);/.exec(runtime);
+  const effect = /useEffect\(\(\) => \{\s*if \(!listening\) return;\s*pendingIndexRef\.current = null;\s*streamRef\.current = null;[^\n]*\n\s*stopSupertonic\(\);/.exec(runtime);
   assert.ok(effect, "listening 이 켜지면 pending 을 버리고 Supertonic 을 멈춰야 한다");
   // stop 은 세대를 올리고 합성 요청과 재생을 모두 끊는다 — 멈춘 답변이 다시 이어지지 않는다
   const hook = read("src", "features", "docent", "useSupertonicVoice.ts");

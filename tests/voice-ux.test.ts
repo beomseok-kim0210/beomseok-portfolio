@@ -47,8 +47,9 @@ test("C. 콜드 준비는 질문 전송을 막지 않고 텍스트 스트림과 
 
 test("D. 텍스트 답변을 먼저 보존하고 READY 뒤에 합성을 시작한다", () => {
   const runtime = read("src/features/docent/DocentRuntime.tsx");
-  assert.match(runtime, /pendingSpeechRef\.current = last\.content/);
-  assert.match(runtime, /lifecycle !== "VOICE_READY"[\s\S]*pendingSpeechRef\.current[\s\S]*speakOnce\(pending\)/);
+  // 준비 전에는 답변 위치만 기억하고 예열을 건다 — 텍스트는 음성을 기다리지 않는다
+  assert.match(runtime, /pendingIndexRef\.current = index;\s*ensureReady\(\);/);
+  assert.match(runtime, /lifecycle !== "VOICE_READY"\) return;[\s\S]*pendingIndexRef\.current[\s\S]*openStream\(index\)/);
 });
 
 test("E. 답변 합성은 SYNTHESIZING → SPEAKING 으로 전이한다", () => {

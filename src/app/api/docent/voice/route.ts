@@ -114,17 +114,18 @@ export async function POST(request: Request) {
   }
 
   let text: string;
-  let segment: { index: number; count: number } | null = null;
+  let segment: { index: number; count: number | null } | null = null;
   try {
     const body = (await request.json()) as { text?: unknown; segment?: unknown };
     if (typeof body.text !== "string") throw new Error("text must be a string");
     text = body.text.trim();
     // 텔레메트리용 위치 표시. 값이 이상하면 버린다 — 동작은 이것에 기대지 않는다.
     const s = body.segment as { index?: unknown; count?: unknown } | undefined;
-    if (s && Number.isInteger(s.index) && Number.isInteger(s.count)
-      && (s.index as number) >= 0 && (s.index as number) < (s.count as number)
-      && (s.count as number) <= 64) {
-      segment = { index: s.index as number, count: s.count as number };
+    // 스트리밍 발화는 세그먼트 수를 아직 모른다 — count 없이 index 만 온다.
+    if (s && Number.isInteger(s.index) && (s.index as number) >= 0 && (s.index as number) < 64) {
+      const countOk = s.count === undefined
+        || (Number.isInteger(s.count) && (s.index as number) < (s.count as number) && (s.count as number) <= 64);
+      if (countOk) segment = { index: s.index as number, count: s.count === undefined ? null : s.count as number };
     }
   } catch {
     return Response.json({ error: "invalid request body" }, { status: 400 });

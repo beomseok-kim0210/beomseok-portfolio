@@ -168,6 +168,20 @@ function findAliasIndex(q: string, alias: string): number {
   return m ? m.index : -1;
 }
 
+/**
+ * 도슨트 자신을 가리키는 질문인가. 방문자는 도슨트에게 "너", "네", "당신" 으로 말을 걸고, 자기
+ * 목소리·입모양·표정·응답 지연을 묻는다("왜 너는 입모양이 나중에 나와?", "왜 첫 음성은 느려?").
+ * 이런 질문은 AI Docent 프로젝트에 대한 질문이다 — 그러지 않으면 음성 AI 인 ARMI 조각이 이긴다.
+ * 이름 별칭이 아니라 좁은 규칙이다: 2인칭 + 자기 화제, 또는 음성 지연 + 음성·입모양.
+ */
+export function refersToDocentItself(query: string): boolean {
+  const q = query.toLowerCase();
+  const topic = /음성|목소리|입모양|입 모양|입이|립싱크|표정|얼굴|아바타|말하는|말할|대답|답변/.test(q);
+  const secondPerson = /(^|\s)(너|네|니|당신)(는|가|의|이|랑|한테|\s|$)|네가|니가|너의|당신의/.test(q);
+  const latency = /(느려|느린|늦게|늦어|늦는|지연|오래 걸|딜레이|delay)/.test(q) && /음성|목소리|입모양|입 모양|소리/.test(q);
+  return (secondPerson && topic) || latency;
+}
+
 /** 질문 본문에서 명시된 프로젝트. 별칭 우선, 등장 순서대로. */
 export function detectProjects(query: string): ProjectId[] {
   const q = query.toLowerCase();
@@ -180,7 +194,8 @@ export function detectProjects(query: string): ProjectId[] {
     }
     if (best >= 0) found.push({ id: p.id, at: best });
   }
-  return found.sort((a, b) => a.at - b.at).map((f) => f.id);
+  const ids = found.sort((a, b) => a.at - b.at).map((f) => f.id);
+  return ids.length === 0 && refersToDocentItself(query) ? ["docent"] : ids;
 }
 
 /* ----------------------------------------------------------------- 검색 API */
@@ -219,8 +234,13 @@ export interface RetrievalResult {
   /** lexical: BM25 순위. overview: 내용어가 없어 활성 프로젝트의 개요 조각을 돌려준 경우. */
   mode: "lexical" | "overview";
   results: RetrievedChunk[];
-  /** 최고 점수가 근거로 삼을 만한지. 임계값은 평가 셋으로 정했다 (rag-eval). */
+  /** 최종 근거가 질문에 답할 만한지. 어휘 임계값은 평가 셋으로 정했다 (rag-eval). */
   supported: boolean;
+  /**
+   * 무엇으로 근거를 인정했는가. canonical: 질문이 가리킨 프로젝트의 의도 섹션 정본.
+   * lexical: 어휘 점수. overview: 포트폴리오 전체·프로필 개요. none: 근거 없음.
+   */
+  support: "lexical" | "canonical" | "overview" | "none";
   supportThreshold: number;
   tookMs: number;
 }
@@ -328,47 +348,84 @@ export function retrieve(
   let results = scored.slice(0, topK);
   let mode: RetrievalResult["mode"] = "lexical";
 
-  // "이 프로젝트 설명해줘", "그중 가장 어려웠던 건?" 처럼 내용어가 없는 질문: 어휘 점수는
-  // 우연이 된다. 가리키는 프로젝트(또는 프로필)의 조각을 의도 섹션 → 개요 순으로, 출처
-  // 우선순위대로 돌려준다. 페이지 prior 를 끈 평가 설정에서는 페이지만으로는 발동하지 않는다.
-  if (focusWords.length === 0 && oovWords.length === 0) {
-    const target: { projectId?: ProjectId; profile?: boolean } | null = activeProject && (usePage || wantedProjects.length > 0)
-      ? { projectId: activeProject }
-      : !activeProject && (profilePage || !page) && usePage ? { profile: true } : null;
-    if (target) {
-      const wantedSections: Section[] = intents.length > 0
-        ? [...new Set(intents.flatMap((i) => SECTION_FOR_INTENT[i]))]
-        : target.profile ? ["profile"] : ["overview"];
-      const pool = ix.docs.map((d) => d.chunk).filter((c) => target.projectId ? c.projectId === target.projectId : isProfileChunk(c));
-      const picked: RagChunk[] = [];
-      for (const sec of [...wantedSections, ...(target.profile ? ["profile" as Section] : ["overview" as Section])]) {
-        for (const c of pool.filter((x) => x.section === sec).sort((a, b) => b.priority - a.priority || a.id.localeCompare(b.id))) {
-          if (!picked.includes(c)) picked.push(c);
-        }
-        if (picked.length >= topK) break;
+  // 질문이 가리키는 프로젝트: 명시·이어받은 프로젝트는 확정이고, 페이지 프로젝트는 내용어가
+  // 없을 때만("이 프로젝트 설명해줘") 대상이 된다. 페이지 prior 를 끈 평가 설정에서는 페이지만으로는 발동하지 않는다.
+  const noContentWords = focusWords.length === 0 && oovWords.length === 0;
+  const broad = isBroadPortfolioOverviewQuery(query, intents, explicitProjects);
+  const targets: ProjectId[] = broad
+    ? []
+    : useEntity && wantedProjects.length > 0
+      ? wantedProjects
+      : noContentWords && activeProject && usePage ? [activeProject] : [];
+
+  if (targets.length > 0) {
+    // 프로젝트 단위 근거 묶음: 의도가 가리키는 섹션들을 그 프로젝트의 정본 조각으로 채운다.
+    // "설명해줘" 는 개요 한 줄이 아니라 문제·역할·구조·기술·결과까지 담아야 답이 된다 — 개요만
+    // 넘기면 모델이 "문제·기술·성과는 기록돼 있지 않다" 고 답한다(2026-10-01 ARMI 오답).
+    const contentWords = focusWords.filter((w) => !isQuestionWord(w));
+    results = assembleProjectEvidence(ix, scored, targets, intents, topK, contentWords);
+    if (noContentWords) mode = "overview";
+  } else if (noContentWords && !activeProject && (profilePage || !page) && usePage && !broad) {
+    // 내용어도 프로젝트도 없는 질문("자기소개 해줘"): 프로필 조각을 의도 섹션 → 프로필 순으로.
+    const pool = ix.docs.map((d) => d.chunk).filter(isProfileChunk);
+    const wanted: Section[] = intents.length > 0 ? [...new Set(intents.flatMap((i) => SECTION_FOR_INTENT[i]))] : [];
+    const picked: RagChunk[] = [];
+    for (const sec of [...wanted, "profile" as Section]) {
+      for (const c of pool.filter((x) => x.section === sec).sort((a, b) => b.priority - a.priority || a.id.localeCompare(b.id))) {
+        if (!picked.includes(c)) picked.push(c);
       }
-      if (picked.length > 0) {
-        results = picked.slice(0, topK).map((chunk) => ({ chunk, score: chunk.priority, lexical: SUPPORT_THRESHOLD, priors: { entity: 1, page: 1, section: 1, source: chunk.priority }, matched: [] }));
-        mode = "overview";
-      }
+      if (picked.length >= topK) break;
+    }
+    if (picked.length > 0) {
+      results = picked.slice(0, topK).map((chunk) => ({ chunk, score: chunk.priority, lexical: SUPPORT_THRESHOLD, priors: { entity: 1, page: 1, section: 1, source: chunk.priority }, matched: [] }));
+      mode = "overview";
     }
   }
-
-  const top = results[0];
-  const supported = mode === "overview"
-    ? true
-    : Boolean(top) && top.lexical >= SUPPORT_THRESHOLD && focusWords.length > 0
-      && focusWords.some((w) => wordMatched(w, top.matched));
 
   // Evidence selection is intentionally downstream of scoring. BM25 and every
   // existing prior above remain the source of relevance; this layer only keeps
   // one entity from monopolising a broad package and reserves section evidence
   // when the question clearly points at an active project.
-  if (isBroadPortfolioOverviewQuery(query, intents, explicitProjects)) {
+  if (broad) {
     results = diversifiedPortfolioOverview(ix, scored, topK);
-  } else if (activeProject && intents.length > 0) {
+  } else if (targets.length === 0 && activeProject && intents.length > 0) {
     results = guaranteeActiveProjectSections(ix, scored, results, activeProject, intents, topK);
+  } else if (targets.length === 0 && !activeProject && intents.includes("technology")) {
+    // 프로젝트를 정하지 않은 기술 질문("어떤 기술을 다루나요?")은 포트폴리오 전체 기술 질문이다.
+    // 프로젝트마다 있는 기술 조각이 프로필의 기술 스택 정리를 밀어내지 않게, 그것을 앞에 둔다.
+    const toolbox = scored.find((item) => item.chunk.id === "profile:skill:toolbox");
+    if (toolbox) results = [toolbox, ...results.filter((item) => item.chunk.id !== toolbox.chunk.id)].slice(0, topK);
   }
+
+  // 근거 판정은 최종 근거 조립 뒤에 한다. 다음 중 하나면 근거가 있다:
+  //  - lexical: 최고 어휘 점수가 임계값 이상이고, 질문의 내용어가 그 조각에서 실제로 맞았다.
+  //  - canonical: 질문이 특정 프로젝트를 가리키고, 그 의도의 정본 섹션이 근거에 실제로 들어 있으며,
+  //    코퍼스에 없는 내용어("혈액형", "월간", "투자")가 없고, 남은 내용어는 모두 질문어이거나
+  //    근거에서 맞았다. "프로젝트·섹션이 있다" 와 "그 사실이 있다" 를 가른다 — 없는 사실은 unsupported.
+  //  - overview: 포트폴리오 전체 개요, 또는 프로필 개요(내용어 없는 자기소개류).
+  //  - 대상 프로젝트 안의 어휘 근거: 질문이 프로젝트를 가리키지만 의도 섹션이 없는 경우(예: AI Docent
+  //    에는 decision 섹션이 없는데 "왜 첫 음성은 느려?")에는 그 프로젝트 조각의 어휘 점수로 판정한다.
+  //    이때도 코퍼스에 없는 사실어가 있으면 근거가 아니다.
+  const selfQuestion = targets.includes("docent") && refersToDocentItself(query);
+  const askWord = (w: string) => isQuestionWord(w) || (selfQuestion && isSelfQuestionWord(w));
+  const lexicalTop = scored[0];
+  const lexicalSupport = targets.length === 0 && mode === "lexical" && Boolean(lexicalTop)
+    && lexicalTop.lexical >= SUPPORT_THRESHOLD && focusWords.length > 0
+    && focusWords.some((w) => wordMatched(w, lexicalTop.matched));
+  const targetTop = scored.find((r) => r.chunk.projectId && targets.includes(r.chunk.projectId));
+  const targetLexicalSupport = targets.length > 0 && oovWords.every(askWord) && Boolean(targetTop)
+    && targetTop!.lexical >= SUPPORT_THRESHOLD && focusWords.length > 0
+    && focusWords.some((w) => wordMatched(w, targetTop!.matched))
+    && results.some((r) => r.chunk.id === targetTop!.chunk.id);
+  const canonicalSupport = targets.length > 0 && oovWords.every(askWord)
+    && hasTargetSectionEvidence(results, targets, intents)
+    && focusWords.every((w) => askWord(w) || results.some((r) => wordMatched(w, r.matched)));
+  const overviewSupport = results.length > 0 && (broad || (mode === "overview" && targets.length === 0));
+  const supported = lexicalSupport || targetLexicalSupport || canonicalSupport || overviewSupport;
+  // 근거가 없다고 판정한 프로젝트 질문("행가래 월간 활성 사용자 수는?")은 프로젝트 묶음 대신 원래
+  // 어휘 순위를 돌려준다 — 모델에는 약한 근거 두 개만 가고, 가장 가까운 기록이 그대로 드러난다.
+  if (targets.length > 0 && !supported) results = scored.slice(0, topK);
+  const support: RetrievalResult["support"] = canonicalSupport ? "canonical" : lexicalSupport || targetLexicalSupport ? "lexical" : overviewSupport ? "overview" : "none";
 
   return {
     query,
@@ -380,9 +437,133 @@ export function retrieve(
     mode,
     results,
     supported,
+    support,
     supportThreshold: SUPPORT_THRESHOLD,
     tookMs: Math.round((performance.now() - t0) * 100) / 100,
   };
+}
+
+/**
+ * 프로젝트를 가리키는 질문에 싣는 섹션 묶음(앞일수록 먼저). 첫 섹션이 의도의 정본 섹션이다.
+ * overview 는 L2 설명(문제·만든 것·핵심 기술·기여·결과)에 필요한 섹션을 모두 담는다.
+ */
+const PROJECT_PACKAGE: Record<Intent, Section[]> = {
+  overview: ["overview", "problem", "role", "architecture", "technology", "result"],
+  role: ["role", "overview"],
+  technology: ["technology", "architecture"],
+  architecture: ["architecture", "technology"],
+  troubleshooting: ["troubleshooting", "decision", "problem"],
+  decision: ["decision", "troubleshooting", "technology"],
+  result: ["result", "metric", "lesson"],
+  metric: ["metric", "result"],
+  problem: ["problem", "overview", "troubleshooting"],
+  award: ["award", "metric", "result"],
+};
+
+/** 의도의 정본 섹션에서 싣는 최대 개수. 보조 섹션은 하나씩. */
+const PRIMARY_PER_SECTION = 3;
+
+function packageSections(intents: Intent[]): { primary: Section[]; secondary: Section[] } {
+  const list = intents.length > 0 ? intents : (["overview"] as Intent[]);
+  const primary = [...new Set(list.map((i) => PROJECT_PACKAGE[i][0]))];
+  const secondary = [...new Set(list.flatMap((i) => PROJECT_PACKAGE[i].slice(1)))].filter((sec) => !primary.includes(sec));
+  return { primary, secondary };
+}
+
+/**
+ * 질문이 가리킨 프로젝트의 근거 묶음. 섹션마다 어휘 점수가 가장 높은 조각을, 동점이면 출처
+ * 우선순위(케이스 스터디 > 상세 > 카드)대로 고른다. 남는 자리는 그 프로젝트의 어휘 순위로 채운다.
+ * 다른 프로젝트 조각은 싣지 않는다 — "ARMI 역할" 근거에 다른 프로젝트의 역할이 섞이면 모델이
+ * 섞어 말한다. 여러 프로젝트를 명시한 비교 질문은 프로젝트마다 같은 몫을 준다.
+ */
+function assembleProjectEvidence(
+  ix: Index,
+  scored: RetrievedChunk[],
+  targets: ProjectId[],
+  intents: Intent[],
+  topK: number,
+  contentWords: string[] = [],
+): RetrievedChunk[] {
+  const scoredById = new Map(scored.map((item) => [item.chunk.id, item]));
+  const { primary, secondary } = packageSections(intents);
+  const overviewIntent = intents.length === 0 || intents.includes("overview");
+  const share = Math.max(2, Math.floor(topK / targets.length));
+  const out: RetrievedChunk[] = [];
+  for (const project of targets) {
+    const own = ix.docs.map((d) => d.chunk).filter((c) => c.projectId === project);
+    const rank = (a: RagChunk, b: RagChunk) =>
+      (scoredById.get(b.id)?.score ?? 0) - (scoredById.get(a.id)?.score ?? 0)
+      || b.priority - a.priority || a.id.localeCompare(b.id);
+    const picked: RetrievedChunk[] = [];
+    // 질문에 사실을 가리키는 내용어("에이전트 구성", "WebSocket")가 있으면 그 말이 실제로 맞은 이
+    // 프로젝트의 어휘 상위 조각이 섹션 묶음보다 앞선다 — "역할" 이라는 말 하나로 역할 조각이
+    // 질문의 핵심(에이전트 구성)을 밀어내면 안 된다.
+    for (const item of scored) {
+      if (picked.length >= 2 || contentWords.length === 0) break;
+      if (item.chunk.projectId !== project || item.lexical < SUPPORT_THRESHOLD) continue;
+      if (contentWords.some((w) => wordMatched(w, item.matched))) picked.push(item);
+    }
+    const take = (sec: Section, n: number) => {
+      for (const c of own.filter((x) => x.section === sec).sort(rank).slice(0, n)) {
+        if (picked.length >= share) return;
+        if (!picked.some((p) => p.chunk.id === c.id)) picked.push(scoredOrNeutral(c, scoredById));
+      }
+    };
+    // 개요 묶음은 섹션마다 하나(개요만 둘) — 폭을 먼저 보여 준다. 다른 의도는 정본 섹션을 여럿.
+    for (const sec of primary) take(sec, overviewIntent ? 2 : PRIMARY_PER_SECTION);
+    for (const sec of secondary) take(sec, 1);
+    // 남는 자리: 이 프로젝트의 어휘 순위. 개발 일지는 개요 묶음에 넣지 않는다.
+    for (const item of scored) {
+      if (picked.length >= share) break;
+      if (item.chunk.projectId !== project || picked.some((p) => p.chunk.id === item.chunk.id)) continue;
+      if (overviewIntent && item.chunk.section === "devlog") continue;
+      picked.push(item);
+    }
+    out.push(...picked);
+  }
+  return out.slice(0, topK);
+}
+
+/**
+ * 최종 근거에 대상 프로젝트의 의도 정본 섹션이 실제로 있는가(비교 질문이면 프로젝트마다).
+ * 성과 질문은 result 대신 metric 조각만 있어도 된다.
+ */
+function hasTargetSectionEvidence(results: RetrievedChunk[], targets: ProjectId[], intents: Intent[]): boolean {
+  const { primary } = packageSections(intents);
+  const accepted = new Set<Section>(primary);
+  if (intents.includes("result")) accepted.add("metric");
+  return targets.every((project) => results.some((r) => r.chunk.projectId === project && accepted.has(r.chunk.section)));
+}
+
+/**
+ * 질문을 이루는 말이지 사실을 가리키는 말이 아닌 어절의 앞부분 — "설명해줘", "역할은", "성과는".
+ * canonical 근거 판정에서만 쓴다: 이런 말이 근거 본문에 없다고 해서 질문이 근거 없는 사실을
+ * 묻는 것은 아니다. 사실을 가리키는 말("정확도", "혈액형")은 여기 넣지 않는다.
+ */
+const QUESTION_WORD_STEMS = [
+  "설명", "소개", "알려", "무엇", "뭐", "어떤", "프로젝트", "대해", "대한", "자세", "간단", "요약", "정리",
+  "역할", "맡은", "맡았", "담당", "기여", "포지션",
+  "기술", "스택", "도구", "라이브러리", "프레임워크", "언어", "썼", "사용",
+  "결과", "성과", "배운", "배웠", "교훈", "회고", "인사이트", "얻은", "느낀",
+  "문제", "어려웠", "어려운", "힘들", "해결", "트러블", "막혔", "이슈",
+  "선택", "이유", "결정", "고른", "택한", "채택", "판단",
+  "구조", "아키텍처", "설계", "흐름", "파이프라인", "구성", "동작",
+  "차이", "비교", "달라", "다른", "다르", "공통",
+];
+
+/** 앞부분 비교가 위험한 짧은 질문어는 어절 그대로만 인정한다("점이" 는 되고 "점수" 는 안 된다). */
+const QUESTION_WORDS_EXACT = new Set(["점", "점이", "점은", "내가", "제가", "네가", "니가", "너가", "당신이", "좀", "한번", "혹시"]);
+
+/** 도슨트에게 직접 묻는 질문에서만 질문어로 보는 말 — 2인칭과 "늦다/느리다" 류. */
+const SELF_QUESTION_STEMS = ["너", "네가", "니가", "당신", "나중", "느려", "느린", "늦", "지연", "딜레이", "거야", "건가", "먼저", "왜"];
+function isSelfQuestionWord(word: string): boolean {
+  const w = word.toLowerCase().replace(/[?!.,~]+$/g, "");
+  return SELF_QUESTION_STEMS.some((stem) => w.startsWith(stem));
+}
+
+function isQuestionWord(word: string): boolean {
+  const w = word.toLowerCase().replace(/[?!.,~]+$/g, "");
+  return QUESTION_WORDS_EXACT.has(w) || QUESTION_WORD_STEMS.some((stem) => w.startsWith(stem));
 }
 
 const OVERVIEW_EVIDENCE_SECTIONS: readonly Section[] = ["overview", "role", "result"];

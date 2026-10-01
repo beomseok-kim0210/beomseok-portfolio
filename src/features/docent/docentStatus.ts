@@ -64,6 +64,9 @@ export function resolveDocentSurfaceStatus(
  */
 export const ACTIVATION_PENDING_COPY = "잠시만 기다려 주세요. 곧 활성화될 예정입니다.";
 
+/** 아바타 위 한 줄 — 음성 엔진(쉬면 내려가는 GPU 워커)이 깨어나는 동안. 텍스트는 그대로 쓸 수 있다. */
+export const VOICE_ENGINE_WARMING_COPY = "음성 엔진 준비 중 · 텍스트 답변은 바로 볼 수 있어요";
+
 export const DOCENT_STATUS_COPY: Record<DocentSurfaceStatus, string> = {
   searching: "현재 페이지를 바탕으로 답변을 정리하는 중이에요…",
   answering: "답변을 작성하고 있어요…",

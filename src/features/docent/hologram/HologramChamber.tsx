@@ -17,6 +17,7 @@ import { NeckProjectionField } from "./NeckProjectionFade";
 import { ProjectionBase } from "./ProjectionBase";
 import { ProjectionBeam, ProjectionCylinder, RearHalo, TopAperture } from "./ProjectionVolume";
 import { DiagnosticFragment, TechnicalArcs } from "./TechnicalArcs";
+import { VoiceWarmingCore } from "./VoiceWarmingCore";
 
 function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(false);
@@ -37,6 +38,8 @@ interface HologramChamberProps {
   state: HologramState;
   /** 0–1. 실제 입 벌림에서 온 발화 세기 — 받침 맥동에 아주 조금만 섞는다. */
   speechLevel: number;
+  /** 음성 엔진(워커)이 깨어나는 중 — 요청 상태(검색·생성)와 따로 온다. */
+  voiceWarming?: boolean;
 }
 
 /**
@@ -45,7 +48,7 @@ interface HologramChamberProps {
  *   →  조각 · 목 경계 호(앞을 지남) · 목 안개  →  받침
  * 전부 가산 혼합이라 순서 자체는 정렬에 기대지 않고, 깊이 판정이 머리 뒤 층을 가린다.
  */
-export function HologramChamber({ state, speechLevel }: HologramChamberProps) {
+export function HologramChamber({ state, speechLevel, voiceWarming = false }: HologramChamberProps) {
   const uniforms = useMemo(createHologramUniforms, []);
   const { gl, scene, camera, size } = useThree();
   const chamber = useRef<Group>(null);
@@ -154,6 +157,7 @@ export function HologramChamber({ state, speechLevel }: HologramChamberProps) {
       {/* 목 전환은 모바일에서도 끄지 않는다. */}
       <NeckProjectionField uniforms={uniforms} />
       <ProjectionBase uniforms={uniforms} />
+      <VoiceWarmingCore uniforms={uniforms} active={voiceWarming} reduced={reduced} />
     </group>
   );
 }

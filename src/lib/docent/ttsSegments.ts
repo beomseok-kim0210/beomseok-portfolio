@@ -47,13 +47,13 @@ export const MAX_SEGMENT_TEXT_LENGTH = 180;
 export const MAX_SPOKEN_ANSWER_CHARS = 2_000;
 
 /** 문장 끝 구두점 뒤 공백, 또는 줄바꿈. 소수점(0.87)은 뒤가 공백이 아니라서 걸리지 않는다. */
-const SENTENCE_BOUNDARY = /[.?!…。？！]+["'”’」』)\]]*[^\S\n]+|\n+/g;
+export const SENTENCE_BOUNDARY = /[.?!…。？！]+["'”’」』)\]]*[^\S\n]+|\n+/g;
 /** 절 구두점 뒤 공백. 10:30 처럼 공백이 없으면 경계가 아니다. */
 const CLAUSE_BOUNDARY = /[,;:，、；：][^\S\n]+/g;
 const WHITESPACE_BOUNDARY = /\s+/g;
 
 /** 말할 수 있는 글자가 하나라도 있는가. 구두점만 남은 조각은 합성이 거부한다. */
-const SPEAKABLE = /[\p{L}\p{N}]/u;
+export const SPEAKABLE = /[\p{L}\p{N}]/u;
 
 /**
  * 마크다운 문법과 보이지 않는 문자를 걷어낸다. 뜻을 가진 글은 건드리지 않는다.
@@ -97,7 +97,7 @@ export function prepareSpokenText(input: string): string {
 }
 
 /** 경계 매치 바로 뒤에서 자른다. 조각을 이어 붙이면 원문 그대로다. */
-function cutAfter(text: string, boundary: RegExp): string[] {
+export function cutAfter(text: string, boundary: RegExp): string[] {
   const pieces: string[] = [];
   let start = 0;
   for (const match of text.matchAll(boundary)) {
@@ -121,10 +121,10 @@ function hardCut(text: string, max: number): string[] {
 
 const LEVELS = [SENTENCE_BOUNDARY, CLAUSE_BOUNDARY, WHITESPACE_BOUNDARY] as const;
 
-const visibleLength = (s: string) => Array.from(s.trim()).length;
+export const visibleLength = (s: string) => Array.from(s.trim()).length;
 
 /** 상한을 넘는 조각만 한 단계 더 잘게 자른다. 결과 조각은 모두 상한 이하다. */
-function explode(text: string, max: number, level: number): string[] {
+export function explode(text: string, max: number, level: number): string[] {
   if (visibleLength(text) <= max) return [text];
   if (level >= LEVELS.length) return hardCut(text, max);
   const pieces = cutAfter(text, LEVELS[level]);

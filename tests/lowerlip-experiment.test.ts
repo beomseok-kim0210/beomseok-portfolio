@@ -98,7 +98,7 @@ test("런타임: 자산은 운영 GLB 하나다 — 실험 자산 스위치가 �
   // 운영 자산에는 아랫입술 모프가 없다 — 없는 모프는 계약 위반이 아니다(던지지 않는다)
   const names = glbJson(PROD).meshes[0].extras.targetNames;
   for (const m of LOWER_LIP_MORPHS) assert.ok(!names.includes(m), m);
-  assert.match(head, /const OPTIONAL_MORPHS: readonly string\[\] = LOWER_LIP_MORPHS;/);
+  assert.match(head, /const OPTIONAL_MORPHS: readonly string\[\] = \[\.\.\.LOWER_LIP_MORPHS, \.\.\.UPPER_EMOTION_MORPHS\];/);
   assert.match(head, /for \(const name of LOWER_LIP_MORPHS\) ll\[name\] = rendered\[name\];/);
 });
 

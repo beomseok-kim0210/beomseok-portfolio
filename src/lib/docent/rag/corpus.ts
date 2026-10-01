@@ -14,6 +14,17 @@
  * ID 는 배열 위치가 아니라 구조 키(프로젝트 × 섹션 × 항목 키)에서 나온다. 항목에
  * 고유 키가 없으면(예: result 문장 배열) 순서 번호를 쓴다 — 그 배열은 원본 배열
  * 순서를 보존하므로 결정론적이다.
+ *
+ * 최신성(freshness): 실시간 수집이 아니다. GitHub·Notion 을 자동으로 읽지 않는다.
+ *  - src/data/*.ts 는 빌드 때 서버 번들에 들어간다. knowledge/*.md 는 next.config.ts 의
+ *    outputFileTracingIncludes 로 같은 번들에 실리고 런타임에 fs 로 읽는다(읽기 전용).
+ *  - getCorpus() 는 서버 인스턴스에서 처음 불릴 때 한 번 만들고, retrieval.ts 의 BM25 색인도
+ *    첫 검색 때 한 번 만든다. 둘 다 인스턴스 메모리 캐시라 인스턴스가 내려가면 사라지고, 다음
+ *    인스턴스가 같은 번들에서 다시 만든다. 같은 배포 안에서는 내용이 바뀌지 않는다.
+ *  - 그래서 원천 파일을 고친 내용은 다음 배포(master push → Vercel 빌드)부터 반영된다.
+ *  - 사이트에 프로젝트를 추가하고 코퍼스를 잊는 일을 막으려고 tests/rag-coverage.test.ts 가
+ *    사이트 프로젝트 데이터와 코퍼스를 대조한다. 코퍼스에 넣지 않을 프로젝트는
+ *    RAG_EXCLUDED_SITE_PROJECTS 에 이유와 함께 적어야 한다.
  */
 import { createHash } from "node:crypto";
 
@@ -180,8 +191,6 @@ function projectsCards(): Draft[] {
   const src = "src/data/projects.ts";
   const out: Draft[] = [];
   for (const p of projects) {
-    // AI Docent already has its dedicated, higher-fidelity docentChunks source.
-    if (p.key === "docent") continue;
     const id = p.key as ProjectId;
     const base = { sourceType: "structured_data" as const, sourcePath: src, sourceId: `projects:${id}`, entityType: "project" as const, entityId: id, projectId: id, priority: PRIORITY.projectCard };
     out.push({ ...base, id: `project:${id}:overview:card`, section: "overview", title: `${p.name} — ${p.label}`,
@@ -206,9 +215,9 @@ function projectDetailChunks(): Draft[] {
   const src = "src/data/projectDetails.ts";
   const out: Draft[] = [];
   for (const d of projectDetails) {
-    // AI Docent already has dedicated devlog chunks; Crime Scene intentionally
-    // has no portfolio RAG corpus yet. Keep the established retrieval set stable.
-    const entity = d.slug === "ai-docent" ? undefined : projectEntity(d.slug);
+    // 페이지 슬러그와 코퍼스 projectId 가 다른 것은 AI Docent 하나다(/projects/ai-docent ↔ docent).
+    // Crime Scene 은 아직 포트폴리오 RAG 코퍼스가 없다(PROJECT_ENTITIES 에 없음).
+    const entity = projectEntity(d.slug === "ai-docent" ? "docent" : d.slug);
     if (!entity) continue;
     const id = entity.id;
     const base = { sourceType: "structured_data" as const, sourcePath: src, sourceId: `projectDetails:${id}`, entityType: "project" as const, entityId: id, projectId: id, priority: PRIORITY.projectDetail };
@@ -404,8 +413,8 @@ export function corpusInventory(): CorpusSource[] {
     { sourceId: "caseStudy:hangarae", sourceType: "structured_data", sourcePath: "src/data/hangaraeCaseStudy.ts", entityType: "project", entityId: "hangarae", title: "행가래 case study", contentOwner: owner, canonical: true, priority: PRIORITY.caseStudy },
     { sourceId: "caseStudy:wedding", sourceType: "structured_data", sourcePath: "src/data/weddingResearch.ts", entityType: "project", entityId: "wedding", title: "Wedding AI research case study", contentOwner: owner, canonical: true, priority: PRIORITY.caseStudy },
     { sourceId: "caseStudy:claw-dev", sourceType: "structured_data", sourcePath: "src/data/clawdevCaseStudy.ts", entityType: "project", entityId: "claw-dev", title: "Claw Dev case study", contentOwner: owner, canonical: true, priority: PRIORITY.caseStudy, note: "에이전트 수 6 (about.ts 의 '5 Role-Based Agents' 와 충돌 — 케이스 스터디가 정본)" },
-    { sourceId: "projectDetails:*", sourceType: "structured_data", sourcePath: "src/data/projectDetails.ts", entityType: "project", entityId: "armi|hangarae|wedding|claw-dev", title: "Project detail pages (role/techStack/architecture/troubleshooting/result)", contentOwner: owner, canonical: false, priority: PRIORITY.projectDetail, note: "troubleshooting 은 challenges.ts 를 공유" },
-    { sourceId: "projects:*", sourceType: "structured_data", sourcePath: "src/data/projects.ts", entityType: "project", entityId: "armi|hangarae|wedding", title: "Home project cards", contentOwner: owner, canonical: false, priority: PRIORITY.projectCard, note: "요약본. 행가래 metrics 는 케이스 스터디와 동일 수치" },
+    { sourceId: "projectDetails:*", sourceType: "structured_data", sourcePath: "src/data/projectDetails.ts", entityType: "project", entityId: "armi|hangarae|wedding|claw-dev|docent", title: "Project detail pages (role/techStack/architecture/troubleshooting/result)", contentOwner: owner, canonical: false, priority: PRIORITY.projectDetail, note: "troubleshooting 은 challenges.ts 를 공유" },
+    { sourceId: "projects:*", sourceType: "structured_data", sourcePath: "src/data/projects.ts", entityType: "project", entityId: "armi|hangarae|wedding|docent", title: "Home project cards", contentOwner: owner, canonical: false, priority: PRIORITY.projectCard, note: "요약본. 행가래 metrics 는 케이스 스터디와 동일 수치" },
     { sourceId: "devlog:docent", sourceType: "structured_data", sourcePath: "src/data/docentDevlog.ts", entityType: "devlog", entityId: "docent", title: "AI Docent devlog", contentOwner: owner, canonical: true, priority: PRIORITY.devlog },
     { sourceId: "about", sourceType: "structured_data", sourcePath: "src/data/about.ts", entityType: "profile", entityId: "profile", title: "About (profile/journey/focus/toolbox/awards)", contentOwner: owner, canonical: true, priority: PRIORITY.about, note: "'4 Major Projects' 문구는 케이스 스터디 4건(ARMI/행가래/Wedding/Claw Dev)과 일치; '5 Role-Based Agents' 는 Claw Dev 케이스 스터디(6)와 불일치" },
     { sourceId: "timeline", sourceType: "structured_data", sourcePath: "src/data/timeline.ts", entityType: "experience", entityId: "profile", title: "Journey timeline", contentOwner: owner, canonical: false, priority: PRIORITY.about },
@@ -413,6 +422,14 @@ export function corpusInventory(): CorpusSource[] {
     { sourceId: "knowledge:*", sourceType: "markdown_note", sourcePath: "knowledge/<topic>.md", entityType: "knowledge", entityId: "knowledge:*", title: "Topic knowledge notes (8)", contentOwner: owner, canonical: true, priority: PRIORITY.knowledge, note: "ai-news-*/ai-tips-* 일일 노트는 제3자 요약이라 제외" },
   ];
 }
+
+/**
+ * 사이트에는 프로젝트 페이지가 있지만 포트폴리오 RAG 코퍼스에 아직 넣지 않은 프로젝트.
+ * 여기 없는 사이트 프로젝트에 개요 조각이 없으면 tests/rag-coverage.test.ts 가 실패한다.
+ */
+export const RAG_EXCLUDED_SITE_PROJECTS: Readonly<Record<string, string>> = {
+  "crime-scene": "플레이그라운드 게임 프로젝트. 프로젝트 엔티티(PROJECT_ENTITIES)와 페이지 문맥 검증에 아직 없어, 코퍼스에 넣으려면 엔티티 등록부터 해야 한다 — 별도 결정 사항.",
+};
 
 export const EXCLUDED_SOURCES = [
   { sourcePath: "src/data/clawdevCaseStudy.ts (clawdevDebateScript)", reason: "예시 토론 대화 스크립트 — clawdevPhases 의 'discussion/reaction' 조각이 같은 사실을 서술 형태로 이미 담는다. 삽화용 대화문 자체는 근거로 인용할 사실이 아니다." },

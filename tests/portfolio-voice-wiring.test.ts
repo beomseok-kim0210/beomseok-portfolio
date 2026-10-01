@@ -41,7 +41,8 @@ test("LAM 자세가 viseme 라벨을 이긴다", () => {
 test("주 경로가 실패해도 다른 목소리로 내려가지 않는다", () => {
   // 예전에는 여기서 브라우저 TTS 로 이어 말했다. 긴 답변은 늘 413 으로 그 길을 탔고,
   // 도슨트의 목소리가 OS 음성(Windows: 여성 음성 Heami)으로 바뀌었다 (2026-09-29 감사).
-  assert.match(runtime, /const outcome = await supertonic\.speak\(content\)/);
+  assert.match(runtime, /const stream = startStream\(\);/);
+  assert.match(runtime, /void stream\.outcome\.then\(\(outcome\) => \{/);
   assert.match(runtime, /if \(outcome === "ok"\) setLastEngine\("supertonic"\)/);
   assert.equal(/voice\.speak\(|browser_tts/.test(runtime), false);
   // 실패는 오류 상태로 드러난다

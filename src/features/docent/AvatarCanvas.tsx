@@ -8,7 +8,7 @@ import type { SemanticMouthPose } from "@/lib/docent/semanticMouth";
 import type { DocentEmotion } from "@/types/docent";
 import { AvatarFallback } from "./AvatarFallback";
 import { AVATAR_RECOVERY, avatarGlReducer, initialAvatarGlState } from "./avatarRecovery";
-import { ACTIVATION_PENDING_COPY } from "./docentStatus";
+import { ACTIVATION_PENDING_COPY, VOICE_ENGINE_WARMING_COPY } from "./docentStatus";
 import { DocentHead } from "./DocentHead";
 import type { HologramState } from "./hologram/hologramConfig";
 import { HologramChamber } from "./hologram/HologramChamber";
@@ -31,6 +31,11 @@ interface AvatarCanvasProps {
   sidecar?: boolean;
   /** 질문이 처리 중이다 — 얼굴이 돌아오는 중이면 "곧 활성화" 안내를 보인다. */
   questionPending?: boolean;
+  /**
+   * 음성 엔진(워커)이 깨어나는 중. 아바타 자체의 준비(WebGL·GLB)와는 다른 상태다 —
+   * 얼굴은 떠 있고 음성만 아직일 수 있다.
+   */
+  voiceWarming?: boolean;
   /** 3D 얼굴이 떠 있는지(false = 컨텍스트 복원 중이거나 쓸 수 없음). */
   onActiveChange?: (active: boolean) => void;
 }
@@ -74,6 +79,7 @@ export default function AvatarCanvas({
   sidecar = false,
   hologramState = "ready",
   questionPending = false,
+  voiceWarming = false,
   onActiveChange,
 }: AvatarCanvasProps) {
   const [gl, dispatch] = useReducer(avatarGlReducer, initialAvatarGlState);
@@ -152,12 +158,22 @@ export default function AvatarCanvas({
           <Suspense fallback={null}>
             <DocentHead emotion={emotion} viseme={viseme} mouth={mouth} speaking={speaking} projection={shell} />
             {shell ? (
-              <HologramChamber state={hologramState} speechLevel={mouth?.jawOpen ?? (viseme ? 0.3 : 0)} />
+              <HologramChamber state={hologramState} speechLevel={mouth?.jawOpen ?? (viseme ? 0.3 : 0)} voiceWarming={voiceWarming} />
             ) : null}
           </Suspense>
         </Canvas>
       </AvatarErrorBoundary>
       )}
+      {voiceWarming && gl.status !== "recovering" ? (
+        /* 얼굴은 떠 있고 음성 엔진만 깨어나는 중 — 멈춘 얼굴이 고장처럼 보이지 않게 한 줄로 알린다. */
+        <p
+          role="status"
+          data-voice-warming
+          className="pointer-events-none absolute inset-x-0 bottom-2 z-20 text-center text-[11px] tracking-wide text-sky-200/80"
+        >
+          {VOICE_ENGINE_WARMING_COPY}
+        </p>
+      ) : null}
       {gl.status === "recovering" ? (
         /* 얼굴이 새 컨텍스트로 돌아오는 짧은 동안. 이모지 대신 조용한 표시, 질문이 들어오면
            곧 활성화된다는 안내를 보인다. */

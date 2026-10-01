@@ -47,6 +47,10 @@ export function DocentExperience({ focusInputToken = 0, layout = "workspace" }: 
     || runtime.chat.requestState.status === "answering"
     || runtime.chat.requestState.status === "delayed";
 
+  // 음성 엔진 준비는 요청 상태(검색·생성)와 따로 보인다 — 텍스트가 흐르는 동안에도 워커는 깨어나는 중일 수 있다.
+  const voiceWarming = runtime.voice.voiceEnabled
+    && (runtime.voice.lifecycle === "VOICE_WARMING" || runtime.voice.lifecycle === "VOICE_DELAYED");
+
   const hologramState = resolveHologramState(
     runtime.chat.requestState.status,
     runtime.voice.lifecycle,
@@ -112,6 +116,7 @@ export function DocentExperience({ focusInputToken = 0, layout = "workspace" }: 
           shell
           sidecar={sidecar}
           questionPending={questionPending}
+          voiceWarming={voiceWarming}
           onActiveChange={setAvatarActive}
         />
 

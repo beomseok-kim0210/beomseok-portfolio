@@ -321,6 +321,7 @@ export const projectDetails: ProjectDetail[] = [
       "Web Speech API",
       "Supertonic TTS",
       "LAM Audio-to-Expression",
+      "RunPod Serverless",
     ],
     media: {
       caption: "AI Docent — 페이지 맥락, 근거 검색, 대화, 음성, 3D 표정이 이어지는 전역 인터페이스",
@@ -356,16 +357,32 @@ export const projectDetails: ProjectDetail[] = [
         {
           title: "4. LLM → TTS → Avatar Animation",
           description:
-            "음성을 명시적으로 켠 경우에만 Supertonic TTS를 준비하고, LAM mouth pose 또는 브라우저 viseme을 3D 얼굴에 반영합니다.",
-          tech: ["Supertonic", "LAM", "React Three Fiber"],
+            "음성을 명시적으로 켠 경우에만 RunPod의 Supertonic TTS가 답변을 한 번 합성하고, 같은 WAV로 LAM 입모양과 자모 정렬(양순음·모음)을 만들어 3D 얼굴에 반영합니다.",
+          tech: ["Supertonic", "LAM", "RunPod Serverless", "React Three Fiber"],
         },
       ],
     },
-    troubleshooting: [],
+    troubleshooting: [
+      {
+        title: "한국어 모음이 입모양으로 갈리지 않던 문제",
+        summary:
+          "같은 합성의 자모 정렬로 모음 모양과 양순음 닫힘을 LAM 입모양 위에 얹었습니다.",
+        problem:
+          "LAM만으로는 ㅣ·ㅡ에서 입이 옆으로 벌어지지 않고, ㅏ가 덜 벌어지며, ㅂ·ㅁ에서 입술이 제대로 닫히지 않았습니다.",
+        investigation:
+          "블라인드 검토에서 사람이 보는 기준은 모음 벌림·가로 벌림·자음 여닫힘이었고, LAM 신호 자체가 한국어 모음을 거의 가르지 못한다는 것을 실측으로 확인했습니다.",
+        solution:
+          "Supertonic 합성 과정의 attention에서 자모 시각을 읽어(두 번 합성하지 않음) 양순음 게이트와 모음 채널(가로·오므림·평순·턱 열림)로 줄이고, 이중모음 전환과 사람이 고른 80ms 입 선행을 더했습니다.",
+        result:
+          "운영 경로 22문장 1배속 검증에서 양순음 닫힘 106/106, 합성 1회·오디오 해시 일치를 확인했습니다. 음운 변동과 치아 표현은 남은 한계입니다.",
+        tech: ["Supertonic TTS", "LAM", "Same-synthesis alignment", "RunPod Serverless"],
+      },
+    ],
     result: [
       "도슨트를 루트 레이아웃의 단일 런타임으로 옮겨 모든 페이지에서 같은 대화를 이어갑니다.",
       "페이지 문맥과 검색 근거를 분리해 화면 텍스트를 보내지 않고도 관련 답변을 제공합니다.",
       "텍스트 응답과 음성 준비를 분리해 음성을 켜지 않은 방문에는 워커 비용이 발생하지 않습니다.",
+      "재생되는 소리와 입모양이 같은 합성 파일에서 나오도록 세그먼트마다 합성을 한 번으로 고정했습니다.",
     ],
   },
   {
