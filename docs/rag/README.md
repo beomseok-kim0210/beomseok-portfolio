@@ -44,12 +44,12 @@ visitor ── 대화 중 "왜?" ──▶ POST /api/docent/chat { messages(최�
    ▼  NDJSON: stage · sources · meta{emotion} · delta* · done{timings{…, retrieval{hybridMode, queryEmbeddingMs, bm25Ms, denseSearchMs, fusionMs, retrievalTotalMs}}}
 ```
 
-## 0. 큐레이션 코퍼스 v5.1 (2026-10-01, 현재 런타임 코퍼스)
+## 0. 큐레이션 코퍼스 v5.2 (2026-10-01, 현재 런타임 코퍼스)
 
-- 원본: `docs/rag/curated-corpus/` 의 큐레이션 패키지(corpusVersion `dd-curated-2026-10-01-v5.1-public-wording`, schemaVersion 1.4).
+- 원본: `docs/rag/curated-corpus/` 의 큐레이션 패키지(corpusVersion `dd-curated-2026-10-01-v5.2-hybrid-deployed`, schemaVersion 1.4).
   **gitignore** — 원 출처(Notion/GitHub) 위치와 공개 범위 밖 자료를 담을 수 있어 공개 저장소에 올리지 않는다. 디렉터리에 패키지가 여럿이면 가장 최근 파일을 쓴다.
 - 변환: `src/lib/docent/corpus/v4.ts` (v4·v5 같은 형식. 내용 불변 — title 은 "엔티티 · section" 이름표, section 은 label, 엔티티 lifecycle 보존).
-- 빌드: `npm run docent:corpus` → `src/generated/docent-corpus.json` — 공개 조각 186 + 파생 프로젝트 목록 조각 1 = 187 조각, 엔티티 9.
+- 빌드: `npm run docent:corpus` → `src/generated/docent-corpus.json` — 공개 조각 187 + 파생 프로젝트 목록 조각 1 = 188 조각, 엔티티 9.
 - **공개 스냅샷 출처 최소화**(스냅샷은 공개 저장소에 커밋되는 파일): 출처는 `{ sourceType, sourceKey }` + 절 이름·확인 날짜·원본 검증 표기만.
   `sourceKey` = `<종류>:` + sha256(종류|원 출처|페이지 ID) 앞 16자 — 불투명·안정, 원 출처를 되살릴 수 없다(원본을 가진 사람만 대조 가능).
   Notion URL·페이지 ID·collection://·페이지 제목·메모는 싣지 않고, GitHub 은 공개 저장소 이름·상대 경로·커밋만(URL 없음).

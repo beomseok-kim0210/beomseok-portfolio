@@ -165,7 +165,8 @@
    "page": "home",
    "project": "digital-docent",
    "acceptable": [
-    "dd-hybrid-rag-decision"
+    "dd-hybrid-rag-decision",
+    "dd-hybrid-rag-experimental-phase"
    ]
   },
   {
@@ -917,9 +918,9 @@
    "query": "너 지금 embedding 검색 쓰고 있어?",
    "page": "home",
    "project": "digital-docent",
-   "statusTarget": "experimental",
    "acceptable": [
-    "dd-hybrid-rag-decision"
+    "dd-hybrid-rag-decision",
+    "dd-hybrid-rag-experimental-phase"
    ]
   },
   {
@@ -928,9 +929,9 @@
    "query": "Digital Docent는 dense retrieval로 배포됐어?",
    "page": "home",
    "project": "digital-docent",
-   "statusTarget": "experimental",
    "acceptable": [
-    "dd-hybrid-rag-decision"
+    "dd-hybrid-rag-decision",
+    "dd-hybrid-rag-experimental-phase"
    ]
   },
   {
@@ -939,9 +940,9 @@
    "query": "Digital Docent는 하이브리드 RAG야?",
    "page": "home",
    "project": "digital-docent",
-   "statusTarget": "experimental",
    "acceptable": [
-    "dd-hybrid-rag-decision"
+    "dd-hybrid-rag-decision",
+    "dd-hybrid-rag-experimental-phase"
    ]
   },
   {
@@ -950,9 +951,9 @@
    "query": "도슨트는 BM25 대신 벡터 검색으로 바꿨어?",
    "page": "home",
    "project": "digital-docent",
-   "statusTarget": "experimental",
    "acceptable": [
-    "dd-hybrid-rag-decision"
+    "dd-hybrid-rag-decision",
+    "dd-hybrid-rag-experimental-phase"
    ]
   },
   {
@@ -961,9 +962,9 @@
    "query": "Hybrid RAG는 지금 적용된 상태야?",
    "page": "home",
    "project": "digital-docent",
-   "statusTarget": "experimental",
    "acceptable": [
-    "dd-hybrid-rag-decision"
+    "dd-hybrid-rag-decision",
+    "dd-hybrid-rag-experimental-phase"
    ]
   },
   {

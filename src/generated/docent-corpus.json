@@ -1,9 +1,9 @@
 {
  "schemaVersion": 1,
  "kind": "docent-corpus-snapshot",
- "packageId": "dd-curated-2026-10-01-v5.1-public-wording",
- "sourceHash": "04c85f1aeb1ce5884e7bd6f0f953c1dbb8fd3835c34d4017b983921860621c11",
- "builtAt": "2026-10-01T09:23:32.881Z",
+ "packageId": "dd-curated-2026-10-01-v5.2-hybrid-deployed",
+ "sourceHash": "fa90fe819efe2ecc2abbc7052d49f7d229eb57d3024085baf9e111d8278db8e3",
+ "builtAt": "2026-10-01T10:04:44.721Z",
  "entities": [
   {
    "id": "portfolio-site",
@@ -2587,10 +2587,40 @@
    "entityId": "digital-docent",
    "projectId": "digital-docent",
    "factType": "rationale",
-   "status": "experimental",
+   "status": "current",
    "public": true,
    "title": "Digital Docent · rag",
-   "content": "구어체와 의미 질문을 보완하기 위해 BM25를 버리지 않고 dense embedding retrieval을 추가해 BM25 + Dense Embedding → Hybrid Fusion → grounded GPT로 전환하기로 결정했다. BM25는 ARMI, STOMP, gRPC, LangGraph 같은 exact term에 강하므로 유지하고, dense search는 표현이 달라도 의미가 가까운 질문을 보완하는 역할로 둔다. 이 결정은 현재 corpus rebuild와 함께 검증 중이며 실제 embedding eval·commit·deploy 전에는 deployed current architecture로 말하지 않는다.",
+   "content": "구어체와 의미 질문을 보완하기 위해 BM25를 버리지 않고 dense embedding retrieval을 추가해 BM25 + Dense Embedding → Hybrid Fusion → grounded GPT 구조로 전환했고, 2026-10-01 production에 배포됐다. 현재 production의 기본 검색 구조는 BM25와 Dense Embedding(text-embedding-3-small)을 함께 쓰는 Hybrid RAG다. BM25는 ARMI, STOMP, gRPC, LangGraph 같은 exact term에 강하므로 유지하고, dense search는 표현이 달라도 의미가 가까운 질문을 보완한다. 질문 임베딩이 시간 안에 오지 않거나 임베딩 API 호출이 실패하면 그 질문은 BM25만으로 검색하는 fallback으로 답한다.",
+   "provenance": [
+    {
+     "sourceType": "notion",
+     "sourceKey": "notion:1514840d922135e9",
+     "notionSection": "Hybrid RAG decision",
+     "nativeVerification": "unverified"
+    },
+    {
+     "sourceType": "github",
+     "sourceKey": "github:31778215d231dbc0",
+     "repository": "beomseok-kim0210/beomseok-portfolio",
+     "path": "src/lib/docent/rag/hybrid.ts",
+     "sourceRevision": "master@4219058f26aae3c29c7a164d69f453e6559adc93"
+    }
+   ],
+   "claimStatus": "implemented_and_deployed",
+   "verificationLevel": "decision-record",
+   "priority": "high",
+   "notes": "2026-10-01 production 배포(master 4219058, Vercel) 확인. 배포 전 실험 단계 서술은 dd-hybrid-rag-experimental-phase(historical)로 보존.",
+   "label": "rag"
+  },
+  {
+   "id": "dd-hybrid-rag-experimental-phase",
+   "entityId": "digital-docent",
+   "projectId": "digital-docent",
+   "factType": "devlog",
+   "status": "historical",
+   "public": true,
+   "title": "Digital Docent · rag",
+   "content": "Hybrid RAG는 production 배포 전 로컬 작업 트리에서 실험 단계로 검증됐다. 당시에는 실제 embedding 평가·커밋·배포 전이라 deployed current architecture로 말하지 않았고, BM25 기반 lexical RAG가 배포 기준이었다. 이 실험 단계는 2026-10-01 production 배포로 끝났다.",
    "provenance": [
     {
      "sourceType": "notion",
@@ -2599,10 +2629,10 @@
      "nativeVerification": "unverified"
     }
    ],
-   "claimStatus": "in_development_not_deployed",
+   "claimStatus": "historical_in_development",
    "verificationLevel": "decision-record",
-   "priority": "high",
-   "notes": "Claude Code local working tree 단계. production promotion gate 미통과.",
+   "priority": "normal",
+   "notes": "과거 상태 기록. 현재 상태는 dd-hybrid-rag-decision(current).",
    "label": "rag"
   },
   {
@@ -3000,7 +3030,7 @@
    "claimStatus": "historical_deployed_baseline",
    "verificationLevel": "verified",
    "priority": "normal",
-   "notes": "2026-10-01 로컬 working tree에서 Hybrid RAG 전환 작업 중. 배포 검증 전까지 historical baseline으로 보존.",
+   "notes": "2026-10-01 Hybrid RAG(BM25 + Dense Embedding) production 배포 전의 배포 기준. 현재 BM25는 Hybrid의 한 축이자 임베딩 실패 시 fallback으로 남아 있다.",
    "label": "rag"
   },
   {
@@ -4766,7 +4796,7 @@
  },
  "sourceMeta": {
   "schemaVersion": "1.4",
-  "corpusVersion": "dd-curated-2026-10-01-v5.1-public-wording",
+  "corpusVersion": "dd-curated-2026-10-01-v5.2-hybrid-deployed",
   "generatedAt": "2026-10-01T17:07:51+09:00"
  }
 }

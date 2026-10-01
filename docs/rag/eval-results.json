@@ -1,8 +1,8 @@
 {
- "label": "v5.1",
- "generatedAt": "2026-10-01T09:36:01.123Z",
+ "label": "v5.2",
+ "generatedAt": "2026-10-01T10:07:38.737Z",
  "corpus": {
-  "chunks": 187
+  "chunks": 188
  },
  "dense": {
   "source": "real",
@@ -15,14 +15,14 @@
     "summary": {
      "n": 115,
      "answerable": 102,
-     "hit1": 0.5294117647058824,
+     "hit1": 0.5392156862745098,
      "hit3": 0.7745098039215687,
      "hit5": 0.8823529411764706,
-     "mrr": 0.6690904139433553,
+     "mrr": 0.6738834422657953,
      "wrongProject": 1,
      "unsupportedFalsePositive": [],
      "unsupportedFalseNegative": [],
-     "partialAnswerable": 84,
+     "partialAnswerable": 83,
      "publicLeakage": [],
      "statusEvidenceMissing": [
       "S3",
@@ -134,7 +134,7 @@
       "hit1": 0.5714285714285714,
       "hit3": 0.7142857142857143,
       "hit5": 0.7142857142857143,
-      "mrr": 0.6587301587301587,
+      "mrr": 0.6571428571428571,
       "wrongProject": 0,
       "unsupportedFalsePositive": [],
       "unsupportedFalseNegative": [],
@@ -187,14 +187,14 @@
      "STATUS": {
       "n": 15,
       "answerable": 15,
-      "hit1": 0.5333333333333333,
+      "hit1": 0.6,
       "hit3": 0.8,
       "hit5": 0.8666666666666667,
-      "mrr": 0.6772222222222221,
+      "mrr": 0.7105555555555554,
       "wrongProject": 0,
       "unsupportedFalsePositive": [],
       "unsupportedFalseNegative": [],
-      "partialAnswerable": 13,
+      "partialAnswerable": 12,
       "publicLeakage": [],
       "statusEvidenceMissing": [
        "S3",
@@ -362,7 +362,7 @@
      },
      {
       "id": "PF2",
-      "rank": 9,
+      "rank": 10,
       "top1": "dd-voice-architecture",
       "scope": "project"
      },
@@ -430,12 +430,6 @@
       "id": "S5",
       "rank": 2,
       "top1": "crime-v1-status",
-      "scope": "project"
-     },
-     {
-      "id": "S8",
-      "rank": 2,
-      "top1": "dd-rag-retrieval-improvement-evidence",
       "scope": "project"
      },
      {
@@ -568,9 +562,9 @@
        "armi-kws-stop-decision"
       ],
       "timings": {
-       "bm25Ms": 0.5,
+       "bm25Ms": 0.55,
        "denseSearchMs": 0,
-       "fusionMs": 0.91
+       "fusionMs": 0.9
       },
       "leakQuery": false,
       "leaked": [],
@@ -598,9 +592,9 @@
        "armi-kws-stop-decision"
       ],
       "timings": {
-       "bm25Ms": 0.26,
+       "bm25Ms": 0.23,
        "denseSearchMs": 0,
-       "fusionMs": 0.14
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -628,9 +622,9 @@
        "armi-kws-stop-decision"
       ],
       "timings": {
-       "bm25Ms": 0.21,
+       "bm25Ms": 0.19,
        "denseSearchMs": 0,
-       "fusionMs": 0.22
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -658,9 +652,9 @@
        "armi-kws-stop-decision"
       ],
       "timings": {
-       "bm25Ms": 0.23,
+       "bm25Ms": 0.2,
        "denseSearchMs": 0,
-       "fusionMs": 0.33
+       "fusionMs": 0.29
       },
       "leakQuery": false,
       "leaked": [],
@@ -688,9 +682,9 @@
        "armi-langgraph"
       ],
       "timings": {
-       "bm25Ms": 0.33,
+       "bm25Ms": 0.54,
        "denseSearchMs": 0,
-       "fusionMs": 0.37
+       "fusionMs": 0.64
       },
       "leakQuery": false,
       "leaked": [],
@@ -718,9 +712,9 @@
        "armi-langgraph"
       ],
       "timings": {
-       "bm25Ms": 0.21,
+       "bm25Ms": 0.26,
        "denseSearchMs": 0,
-       "fusionMs": 0.13
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -748,7 +742,7 @@
        "armi-realtime-state"
       ],
       "timings": {
-       "bm25Ms": 0.22,
+       "bm25Ms": 0.23,
        "denseSearchMs": 0,
        "fusionMs": 0.19
       },
@@ -808,7 +802,7 @@
        "dd-browser-tts-to-supertonic-lam"
       ],
       "timings": {
-       "bm25Ms": 0.07,
+       "bm25Ms": 0.06,
        "denseSearchMs": 0,
        "fusionMs": 0.13
       },
@@ -838,9 +832,9 @@
        "dd-browser-tts-to-supertonic-lam"
       ],
       "timings": {
-       "bm25Ms": 0.16,
+       "bm25Ms": 0.18,
        "denseSearchMs": 0,
-       "fusionMs": 0.16
+       "fusionMs": 0.15
       },
       "leakQuery": false,
       "leaked": [],
@@ -865,7 +859,7 @@
        "dd-rag-bm25-baseline",
        "dd-lexical-router-limit",
        "dd-overview",
-       "dd-lam-korean-limit"
+       "dd-hybrid-rag-experimental-phase"
       ],
       "timings": {
        "bm25Ms": 0.11,
@@ -876,7 +870,7 @@
       "leaked": [],
       "statusTarget": null,
       "statusRank": null,
-      "top1Status": "experimental"
+      "top1Status": "current"
      },
      {
       "id": "DD4",
@@ -893,14 +887,14 @@
       "top5": [
        "dd-rag-retrieval-improvement-evidence",
        "dd-rag-bm25-baseline",
-       "dd-hybrid-rag-decision",
+       "dd-hybrid-rag-experimental-phase",
        "dd-overview",
-       "dd-origin"
+       "dd-hybrid-rag-decision"
       ],
       "timings": {
-       "bm25Ms": 0.28,
+       "bm25Ms": 0.25,
        "denseSearchMs": 0,
-       "fusionMs": 0.18
+       "fusionMs": 0.17
       },
       "leakQuery": false,
       "leaked": [],
@@ -928,7 +922,7 @@
        "dd-single-synthesis-integrity"
       ],
       "timings": {
-       "bm25Ms": 0.22,
+       "bm25Ms": 0.2,
        "denseSearchMs": 0,
        "fusionMs": 0.14
       },
@@ -958,9 +952,9 @@
        "dd-voice-warmup-state"
       ],
       "timings": {
-       "bm25Ms": 0.11,
+       "bm25Ms": 0.09,
        "denseSearchMs": 0,
-       "fusionMs": 0.13
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -988,9 +982,9 @@
        "crime-baseline-before-ai"
       ],
       "timings": {
-       "bm25Ms": 0.07,
+       "bm25Ms": 0.06,
        "denseSearchMs": 0,
-       "fusionMs": 0.09
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
@@ -1018,9 +1012,9 @@
        "crime-ai-responsibility"
       ],
       "timings": {
-       "bm25Ms": 0.43,
+       "bm25Ms": 0.28,
        "denseSearchMs": 0,
-       "fusionMs": 0.26
+       "fusionMs": 0.75
       },
       "leakQuery": false,
       "leaked": [],
@@ -1048,9 +1042,9 @@
        "crime-llm-not-core-gate"
       ],
       "timings": {
-       "bm25Ms": 0.43,
+       "bm25Ms": 0.44,
        "denseSearchMs": 0,
-       "fusionMs": 0.12
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -1078,7 +1072,7 @@
        "crime-llm-not-core-gate"
       ],
       "timings": {
-       "bm25Ms": 0.05,
+       "bm25Ms": 0.06,
        "denseSearchMs": 0,
        "fusionMs": 0.09
       },
@@ -1108,9 +1102,9 @@
        "crime-case-log-test-growth"
       ],
       "timings": {
-       "bm25Ms": 0.37,
+       "bm25Ms": 0.48,
        "denseSearchMs": 0,
-       "fusionMs": 0.24
+       "fusionMs": 0.34
       },
       "leakQuery": false,
       "leaked": [],
@@ -1138,9 +1132,9 @@
        "crime-onboarding-iteration"
       ],
       "timings": {
-       "bm25Ms": 0.24,
+       "bm25Ms": 0.3,
        "denseSearchMs": 0,
-       "fusionMs": 0.18
+       "fusionMs": 0.24
       },
       "leakQuery": false,
       "leaked": [],
@@ -1168,9 +1162,9 @@
        "crime-case-log"
       ],
       "timings": {
-       "bm25Ms": 0.14,
+       "bm25Ms": 0.26,
        "denseSearchMs": 0,
-       "fusionMs": 0.12
+       "fusionMs": 0.23
       },
       "leakQuery": false,
       "leaked": [],
@@ -1198,9 +1192,9 @@
        "crime-case-log-test-growth"
       ],
       "timings": {
-       "bm25Ms": 0.4,
+       "bm25Ms": 0.44,
        "denseSearchMs": 0,
-       "fusionMs": 0.25
+       "fusionMs": 0.24
       },
       "leakQuery": false,
       "leaked": [],
@@ -1228,9 +1222,9 @@
        "bcos-current-status"
       ],
       "timings": {
-       "bm25Ms": 0.68,
+       "bm25Ms": 0.05,
        "denseSearchMs": 0,
-       "fusionMs": 0.15
+       "fusionMs": 0.22
       },
       "leakQuery": false,
       "leaked": [],
@@ -1258,9 +1252,9 @@
        "bcos-current-status"
       ],
       "timings": {
-       "bm25Ms": 0.18,
+       "bm25Ms": 0.19,
        "denseSearchMs": 0,
-       "fusionMs": 0.14
+       "fusionMs": 0.25
       },
       "leakQuery": false,
       "leaked": [],
@@ -1288,9 +1282,9 @@
        "bcos-current-status"
       ],
       "timings": {
-       "bm25Ms": 0.16,
+       "bm25Ms": 0.23,
        "denseSearchMs": 0,
-       "fusionMs": 0.11
+       "fusionMs": 0.95
       },
       "leakQuery": false,
       "leaked": [],
@@ -1318,9 +1312,9 @@
        "bcos-memory-principle"
       ],
       "timings": {
-       "bm25Ms": 0.26,
+       "bm25Ms": 0.28,
        "denseSearchMs": 0,
-       "fusionMs": 0.19
+       "fusionMs": 0.26
       },
       "leakQuery": false,
       "leaked": [],
@@ -1348,9 +1342,9 @@
        "bcos-event-driven-lifecycle"
       ],
       "timings": {
-       "bm25Ms": 0.22,
+       "bm25Ms": 0.21,
        "denseSearchMs": 0,
-       "fusionMs": 0.1
+       "fusionMs": 0.09
       },
       "leakQuery": false,
       "leaked": [],
@@ -1378,9 +1372,9 @@
        "bcos-task-centric-vs-agent-centric"
       ],
       "timings": {
-       "bm25Ms": 0.25,
+       "bm25Ms": 0.21,
        "denseSearchMs": 0,
-       "fusionMs": 0.15
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -1408,9 +1402,9 @@
        "bcos-subscription-cost-rationale"
       ],
       "timings": {
-       "bm25Ms": 0.22,
+       "bm25Ms": 0.17,
        "denseSearchMs": 0,
-       "fusionMs": 0.16
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -1438,9 +1432,9 @@
        "bcos-artifact-ownership"
       ],
       "timings": {
-       "bm25Ms": 0.16,
+       "bm25Ms": 0.13,
        "denseSearchMs": 0,
-       "fusionMs": 0.14
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -1468,7 +1462,7 @@
        "claw-real-tool-verification"
       ],
       "timings": {
-       "bm25Ms": 0.05,
+       "bm25Ms": 0.04,
        "denseSearchMs": 0,
        "fusionMs": 0.06
       },
@@ -1498,9 +1492,9 @@
        "claw-orchestration"
       ],
       "timings": {
-       "bm25Ms": 0.12,
+       "bm25Ms": 0.1,
        "denseSearchMs": 0,
-       "fusionMs": 0.11
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -1528,7 +1522,7 @@
        "claw-orchestration"
       ],
       "timings": {
-       "bm25Ms": 0.21,
+       "bm25Ms": 0.19,
        "denseSearchMs": 0,
        "fusionMs": 0.11
       },
@@ -1558,7 +1552,7 @@
        "claw-to-bcos-evolution"
       ],
       "timings": {
-       "bm25Ms": 0.21,
+       "bm25Ms": 0.2,
        "denseSearchMs": 0,
        "fusionMs": 0.15
       },
@@ -1588,9 +1582,9 @@
        "claw-real-tool-verification"
       ],
       "timings": {
-       "bm25Ms": 0.07,
+       "bm25Ms": 0.06,
        "denseSearchMs": 0,
-       "fusionMs": 0.08
+       "fusionMs": 0.07
       },
       "leakQuery": false,
       "leaked": [],
@@ -1618,9 +1612,9 @@
        "claw-real-tool-verification"
       ],
       "timings": {
-       "bm25Ms": 0.2,
+       "bm25Ms": 0.15,
        "denseSearchMs": 0,
-       "fusionMs": 0.16
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -1648,9 +1642,9 @@
        "claw-test-infra-added"
       ],
       "timings": {
-       "bm25Ms": 0.3,
+       "bm25Ms": 0.2,
        "denseSearchMs": 0,
-       "fusionMs": 0.13
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -1678,9 +1672,9 @@
        "claw-agent-roles"
       ],
       "timings": {
-       "bm25Ms": 0.22,
+       "bm25Ms": 0.29,
        "denseSearchMs": 0,
-       "fusionMs": 0.11
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -1708,9 +1702,9 @@
        "hangarae-coordinate-transform-layer"
       ],
       "timings": {
-       "bm25Ms": 0.04,
+       "bm25Ms": 0.05,
        "denseSearchMs": 0,
-       "fusionMs": 0.06
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
@@ -1738,9 +1732,9 @@
        "hangarae-role"
       ],
       "timings": {
-       "bm25Ms": 0.23,
+       "bm25Ms": 0.32,
        "denseSearchMs": 0,
-       "fusionMs": 0.11
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -1768,7 +1762,7 @@
        "hangarae-asset-pipeline"
       ],
       "timings": {
-       "bm25Ms": 0.13,
+       "bm25Ms": 0.15,
        "denseSearchMs": 0,
        "fusionMs": 0.07
       },
@@ -1798,9 +1792,9 @@
        "hangarae-model-improvement-metrics"
       ],
       "timings": {
-       "bm25Ms": 0.3,
+       "bm25Ms": 0.2,
        "denseSearchMs": 0,
-       "fusionMs": 0.1
+       "fusionMs": 0.07
       },
       "leakQuery": false,
       "leaked": [],
@@ -1828,9 +1822,9 @@
        "hangarae-foot-data-rebuild"
       ],
       "timings": {
-       "bm25Ms": 0.22,
+       "bm25Ms": 0.19,
        "denseSearchMs": 0,
-       "fusionMs": 0.13
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -1858,9 +1852,9 @@
        "hangarae-personalized-rehab-target"
       ],
       "timings": {
-       "bm25Ms": 0.2,
+       "bm25Ms": 0.17,
        "denseSearchMs": 0,
-       "fusionMs": 0.07
+       "fusionMs": 0.06
       },
       "leakQuery": false,
       "leaked": [],
@@ -1888,9 +1882,9 @@
        "hangarae-depth-jitter-filter"
       ],
       "timings": {
-       "bm25Ms": 0.2,
+       "bm25Ms": 0.23,
        "denseSearchMs": 0,
-       "fusionMs": 0.07
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
@@ -1918,7 +1912,7 @@
        "hangarae-role-ai-and-frontend"
       ],
       "timings": {
-       "bm25Ms": 0.2,
+       "bm25Ms": 0.19,
        "denseSearchMs": 0,
        "fusionMs": 0.07
       },
@@ -1948,9 +1942,9 @@
        "hangarae-feedback-trust-principle"
       ],
       "timings": {
-       "bm25Ms": 0.22,
+       "bm25Ms": 0.23,
        "denseSearchMs": 0,
-       "fusionMs": 0.1
+       "fusionMs": 0.09
       },
       "leakQuery": false,
       "leaked": [],
@@ -2008,7 +2002,7 @@
        "wedding-evaluation-framework"
       ],
       "timings": {
-       "bm25Ms": 0.18,
+       "bm25Ms": 0.17,
        "denseSearchMs": 0,
        "fusionMs": 0.08
       },
@@ -2038,7 +2032,7 @@
        "wedding-pifuhd-rejection"
       ],
       "timings": {
-       "bm25Ms": 0.14,
+       "bm25Ms": 0.13,
        "denseSearchMs": 0,
        "fusionMs": 0.09
       },
@@ -2068,9 +2062,9 @@
        "wedding-pifuhd-rejection"
       ],
       "timings": {
-       "bm25Ms": 0.07,
+       "bm25Ms": 0.05,
        "denseSearchMs": 0,
-       "fusionMs": 0.07
+       "fusionMs": 0.05
       },
       "leakQuery": false,
       "leaked": [],
@@ -2098,9 +2092,9 @@
        "wedding-icon-environment-failure"
       ],
       "timings": {
-       "bm25Ms": 0.12,
+       "bm25Ms": 0.1,
        "denseSearchMs": 0,
-       "fusionMs": 0.09
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
@@ -2128,9 +2122,9 @@
        "wedding-econ-partial-success"
       ],
       "timings": {
-       "bm25Ms": 0.1,
+       "bm25Ms": 0.08,
        "denseSearchMs": 0,
-       "fusionMs": 0.07
+       "fusionMs": 0.05
       },
       "leakQuery": false,
       "leaked": [],
@@ -2158,9 +2152,9 @@
        "wedding-evaluation-framework"
       ],
       "timings": {
-       "bm25Ms": 0.22,
+       "bm25Ms": 0.14,
        "denseSearchMs": 0,
-       "fusionMs": 0.11
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
@@ -2188,9 +2182,9 @@
        "dd-docker-dependency-drift"
       ],
       "timings": {
-       "bm25Ms": 0.09,
+       "bm25Ms": 0.21,
        "denseSearchMs": 0,
-       "fusionMs": 0.14
+       "fusionMs": 0.18
       },
       "leakQuery": false,
       "leaked": [],
@@ -2218,7 +2212,7 @@
        "wedding-evaluation-framework"
       ],
       "timings": {
-       "bm25Ms": 0.14,
+       "bm25Ms": 0.17,
        "denseSearchMs": 0,
        "fusionMs": 0.13
       },
@@ -2248,7 +2242,7 @@
        "wedding-icon-environment-failure"
       ],
       "timings": {
-       "bm25Ms": 0.14,
+       "bm25Ms": 0.15,
        "denseSearchMs": 0,
        "fusionMs": 0.09
       },
@@ -2278,9 +2272,9 @@
        "portfolio-large-video-two-layer-debug"
       ],
       "timings": {
-       "bm25Ms": 0.14,
+       "bm25Ms": 0.1,
        "denseSearchMs": 0,
-       "fusionMs": 0.15
+       "fusionMs": 0.17
       },
       "leakQuery": false,
       "leaked": [],
@@ -2291,7 +2285,7 @@
      {
       "id": "PF2",
       "group": "PORTFOLIO",
-      "rank": 9,
+      "rank": 10,
       "top1": "dd-voice-architecture",
       "top1Project": "digital-docent",
       "expectedProject": null,
@@ -2309,8 +2303,8 @@
       ],
       "timings": {
        "bm25Ms": 0.11,
-       "denseSearchMs": 0,
-       "fusionMs": 0.27
+       "denseSearchMs": 0.01,
+       "fusionMs": 0.25
       },
       "leakQuery": false,
       "leaked": [],
@@ -2338,7 +2332,7 @@
        "portfolio-site-navigation"
       ],
       "timings": {
-       "bm25Ms": 0.15,
+       "bm25Ms": 0.11,
        "denseSearchMs": 0,
        "fusionMs": 0.13
       },
@@ -2368,9 +2362,9 @@
        "portfolio-site-navigation"
       ],
       "timings": {
-       "bm25Ms": 0.16,
+       "bm25Ms": 0.15,
        "denseSearchMs": 0,
-       "fusionMs": 0.13
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -2398,9 +2392,9 @@
        "portfolio-global-docent-root"
       ],
       "timings": {
-       "bm25Ms": 0.09,
+       "bm25Ms": 0.08,
        "denseSearchMs": 0,
-       "fusionMs": 0.09
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
@@ -2428,9 +2422,9 @@
        "portfolio-readme-media-drift"
       ],
       "timings": {
-       "bm25Ms": 0.51,
+       "bm25Ms": 0.22,
        "denseSearchMs": 0,
-       "fusionMs": 0.25
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -2458,9 +2452,9 @@
        "dd-streaming-tts"
       ],
       "timings": {
-       "bm25Ms": 0.11,
+       "bm25Ms": 0.08,
        "denseSearchMs": 0,
-       "fusionMs": 0.07
+       "fusionMs": 0.05
       },
       "leakQuery": false,
       "leaked": [],
@@ -2488,9 +2482,9 @@
        "armi-kws-stop-decision"
       ],
       "timings": {
-       "bm25Ms": 0.11,
+       "bm25Ms": 0.08,
        "denseSearchMs": 0,
-       "fusionMs": 0.11
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
@@ -2518,7 +2512,7 @@
        "armi-kws-stop-decision"
       ],
       "timings": {
-       "bm25Ms": 0.08,
+       "bm25Ms": 0.06,
        "denseSearchMs": 0,
        "fusionMs": 0.07
       },
@@ -2548,9 +2542,9 @@
        "wedding-icon-environment-failure"
       ],
       "timings": {
-       "bm25Ms": 0.35,
+       "bm25Ms": 0.11,
        "denseSearchMs": 0,
-       "fusionMs": 0.09
+       "fusionMs": 0.06
       },
       "leakQuery": false,
       "leaked": [],
@@ -2578,9 +2572,9 @@
        "hangarae-role"
       ],
       "timings": {
-       "bm25Ms": 0.15,
+       "bm25Ms": 0.12,
        "denseSearchMs": 0,
-       "fusionMs": 0.09
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
@@ -2608,9 +2602,9 @@
        "bcos-current-status"
       ],
       "timings": {
-       "bm25Ms": 0.16,
+       "bm25Ms": 0.11,
        "denseSearchMs": 0,
-       "fusionMs": 0.13
+       "fusionMs": 0.21
       },
       "leakQuery": false,
       "leaked": [],
@@ -2638,9 +2632,9 @@
        "crime-baseline-before-ai"
       ],
       "timings": {
-       "bm25Ms": 0.09,
+       "bm25Ms": 0.2,
        "denseSearchMs": 0,
-       "fusionMs": 0.07
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -2668,9 +2662,9 @@
        "claw-real-tool-verification"
       ],
       "timings": {
-       "bm25Ms": 0.13,
+       "bm25Ms": 0.18,
        "denseSearchMs": 0,
-       "fusionMs": 0.18
+       "fusionMs": 0.2
       },
       "leakQuery": false,
       "leaked": [],
@@ -2698,7 +2692,7 @@
        "wedding-paper-metric-caveat"
       ],
       "timings": {
-       "bm25Ms": 0.27,
+       "bm25Ms": 0.22,
        "denseSearchMs": 0,
        "fusionMs": 0.14
       },
@@ -2728,9 +2722,9 @@
        "bcos-future-benchmark"
       ],
       "timings": {
-       "bm25Ms": 0.14,
+       "bm25Ms": 0.15,
        "denseSearchMs": 0,
-       "fusionMs": 0.1
+       "fusionMs": 0.09
       },
       "leakQuery": false,
       "leaked": [],
@@ -2758,9 +2752,9 @@
        "crime-onboarding-iteration"
       ],
       "timings": {
-       "bm25Ms": 0.26,
+       "bm25Ms": 0.16,
        "denseSearchMs": 0,
-       "fusionMs": 0.12
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -2788,7 +2782,7 @@
        "dd-streaming-tts"
       ],
       "timings": {
-       "bm25Ms": 0.09,
+       "bm25Ms": 0.08,
        "denseSearchMs": 0,
        "fusionMs": 0.05
       },
@@ -2818,7 +2812,7 @@
        "wedding-award"
       ],
       "timings": {
-       "bm25Ms": 0.07,
+       "bm25Ms": 0.08,
        "denseSearchMs": 0,
        "fusionMs": 0.09
       },
@@ -2843,9 +2837,9 @@
       "top5": [
        "dd-rag-bm25-baseline",
        "dd-rag-baseline-metrics",
-       "dd-rag-retrieval-improvement-evidence",
+       "dd-hybrid-rag-experimental-phase",
        "dd-overview",
-       "dd-lexical-router-limit"
+       "dd-rag-retrieval-improvement-evidence"
       ],
       "timings": {
        "bm25Ms": 0.06,
@@ -2878,7 +2872,7 @@
        "crime-model-knows-less-security"
       ],
       "timings": {
-       "bm25Ms": 0.24,
+       "bm25Ms": 0.22,
        "denseSearchMs": 0,
        "fusionMs": 0.13
       },
@@ -2908,9 +2902,9 @@
        "crime-v1-evidence"
       ],
       "timings": {
-       "bm25Ms": 0.3,
+       "bm25Ms": 0.16,
        "denseSearchMs": 0,
-       "fusionMs": 0.27
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -2938,9 +2932,9 @@
        "crime-case-log"
       ],
       "timings": {
-       "bm25Ms": 0.23,
+       "bm25Ms": 0.19,
        "denseSearchMs": 0,
-       "fusionMs": 0.11
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -2968,9 +2962,9 @@
        "crime-ai-natural-language-boundary"
       ],
       "timings": {
-       "bm25Ms": 0.17,
+       "bm25Ms": 0.14,
        "denseSearchMs": 0,
-       "fusionMs": 0.1
+       "fusionMs": 0.09
       },
       "leakQuery": false,
       "leaked": [],
@@ -2998,7 +2992,7 @@
        "crime-onboarding-iteration"
       ],
       "timings": {
-       "bm25Ms": 0.18,
+       "bm25Ms": 0.16,
        "denseSearchMs": 0,
        "fusionMs": 0.11
       },
@@ -3023,20 +3017,20 @@
       "top5": [
        "dd-hybrid-rag-decision",
        "dd-rag-retrieval-improvement-evidence",
+       "dd-hybrid-rag-experimental-phase",
        "dd-overview",
-       "dd-grounding-contract",
-       "dd-problem"
+       "dd-grounding-contract"
       ],
       "timings": {
-       "bm25Ms": 0.13,
+       "bm25Ms": 0.14,
        "denseSearchMs": 0,
-       "fusionMs": 0.12
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
-      "statusRank": 1,
-      "top1Status": "experimental"
+      "statusTarget": null,
+      "statusRank": null,
+      "top1Status": "current"
      },
      {
       "id": "S7",
@@ -3046,33 +3040,33 @@
       "top1Project": "digital-docent",
       "expectedProject": "digital-docent",
       "wrongProject": false,
-      "support": "partial",
+      "support": "full",
       "scope": "project",
       "activeProject": "digital-docent",
       "unsupported": false,
       "top5": [
        "dd-hybrid-rag-decision",
+       "dd-hybrid-rag-experimental-phase",
        "dd-rag-retrieval-improvement-evidence",
-       "dd-production-deployment-checkpoint",
        "dd-overview",
-       "dd-rag-bm25-baseline"
+       "dd-production-deployment-checkpoint"
       ],
       "timings": {
-       "bm25Ms": 0.17,
+       "bm25Ms": 0.16,
        "denseSearchMs": 0,
-       "fusionMs": 0.1
+       "fusionMs": 0.21
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
-      "statusRank": 1,
-      "top1Status": "experimental"
+      "statusTarget": null,
+      "statusRank": null,
+      "top1Status": "current"
      },
      {
       "id": "S8",
       "group": "STATUS",
-      "rank": 2,
-      "top1": "dd-rag-retrieval-improvement-evidence",
+      "rank": 1,
+      "top1": "dd-hybrid-rag-experimental-phase",
       "top1Project": "digital-docent",
       "expectedProject": "digital-docent",
       "wrongProject": false,
@@ -3081,21 +3075,21 @@
       "activeProject": "digital-docent",
       "unsupported": false,
       "top5": [
+       "dd-hybrid-rag-experimental-phase",
        "dd-rag-retrieval-improvement-evidence",
        "dd-hybrid-rag-decision",
-       "dd-rag-bm25-baseline",
        "dd-overview",
-       "dd-rag-baseline-metrics"
+       "dd-rag-bm25-baseline"
       ],
       "timings": {
-       "bm25Ms": 0.16,
+       "bm25Ms": 0.33,
        "denseSearchMs": 0,
-       "fusionMs": 0.09
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
-      "statusRank": 2,
+      "statusTarget": null,
+      "statusRank": null,
       "top1Status": "historical"
      },
      {
@@ -3115,18 +3109,18 @@
        "dd-rag-bm25-baseline",
        "dd-lexical-router-limit",
        "dd-overview",
-       "dd-lam-korean-limit"
+       "dd-hybrid-rag-experimental-phase"
       ],
       "timings": {
-       "bm25Ms": 0.18,
+       "bm25Ms": 0.25,
        "denseSearchMs": 0,
-       "fusionMs": 0.1
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
-      "statusRank": 1,
-      "top1Status": "experimental"
+      "statusTarget": null,
+      "statusRank": null,
+      "top1Status": "current"
      },
      {
       "id": "S10",
@@ -3143,19 +3137,19 @@
       "top5": [
        "dd-rag-retrieval-improvement-evidence",
        "dd-rag-bm25-baseline",
-       "dd-hybrid-rag-decision",
+       "dd-hybrid-rag-experimental-phase",
        "dd-overview",
-       "dd-origin"
+       "dd-hybrid-rag-decision"
       ],
       "timings": {
        "bm25Ms": 0.16,
        "denseSearchMs": 0,
-       "fusionMs": 0.12
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
-      "statusRank": 3,
+      "statusTarget": null,
+      "statusRank": null,
       "top1Status": "historical"
      },
      {
@@ -3180,7 +3174,7 @@
       "timings": {
        "bm25Ms": 0.13,
        "denseSearchMs": 0,
-       "fusionMs": 0.08
+       "fusionMs": 0.09
       },
       "leakQuery": false,
       "leaked": [],
@@ -3208,9 +3202,9 @@
        "bcos-policy-vs-capability"
       ],
       "timings": {
-       "bm25Ms": 0.15,
+       "bm25Ms": 0.16,
        "denseSearchMs": 0,
-       "fusionMs": 0.13
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -3238,7 +3232,7 @@
        "bcos-frozen-task-amendment"
       ],
       "timings": {
-       "bm25Ms": 0.15,
+       "bm25Ms": 0.16,
        "denseSearchMs": 0,
        "fusionMs": 0.09
       },
@@ -3268,9 +3262,9 @@
        "bcos-artifact-ownership"
       ],
       "timings": {
-       "bm25Ms": 0.2,
+       "bm25Ms": 0.19,
        "denseSearchMs": 0,
-       "fusionMs": 0.09
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -3300,7 +3294,7 @@
       "timings": {
        "bm25Ms": 0.13,
        "denseSearchMs": 0,
-       "fusionMs": 0.09
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -3360,7 +3354,7 @@
       "timings": {
        "bm25Ms": 0.12,
        "denseSearchMs": 0,
-       "fusionMs": 0.13
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -3388,9 +3382,9 @@
        "armi-kws-stop-decision"
       ],
       "timings": {
-       "bm25Ms": 0.16,
+       "bm25Ms": 0.14,
        "denseSearchMs": 0,
-       "fusionMs": 0.12
+       "fusionMs": 0.09
       },
       "leakQuery": false,
       "leaked": [],
@@ -3418,9 +3412,9 @@
        "wedding-pifuhd-rejection"
       ],
       "timings": {
-       "bm25Ms": 0.16,
+       "bm25Ms": 0.15,
        "denseSearchMs": 0,
-       "fusionMs": 0.06
+       "fusionMs": 0.05
       },
       "leakQuery": false,
       "leaked": [],
@@ -3448,9 +3442,9 @@
        "claw-real-tool-verification"
       ],
       "timings": {
-       "bm25Ms": 0.12,
+       "bm25Ms": 0.1,
        "denseSearchMs": 0,
-       "fusionMs": 0.12
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -3478,9 +3472,9 @@
        "claw-real-tool-verification"
       ],
       "timings": {
-       "bm25Ms": 0.18,
+       "bm25Ms": 0.16,
        "denseSearchMs": 0,
-       "fusionMs": 0.09
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
@@ -3508,9 +3502,9 @@
        "bcos-current-status"
       ],
       "timings": {
-       "bm25Ms": 0.18,
+       "bm25Ms": 0.34,
        "denseSearchMs": 0,
-       "fusionMs": 0.14
+       "fusionMs": 0.62
       },
       "leakQuery": false,
       "leaked": [],
@@ -3538,9 +3532,9 @@
        "hangarae-role"
       ],
       "timings": {
-       "bm25Ms": 0.14,
+       "bm25Ms": 0.16,
        "denseSearchMs": 0,
-       "fusionMs": 0.16
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -3568,9 +3562,9 @@
        "hangarae-model-improvement-metrics"
       ],
       "timings": {
-       "bm25Ms": 0.21,
+       "bm25Ms": 0.22,
        "denseSearchMs": 0,
-       "fusionMs": 0.1
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -3598,7 +3592,7 @@
        "hangarae-yolo-depth-role-split"
       ],
       "timings": {
-       "bm25Ms": 0.53,
+       "bm25Ms": 0.33,
        "denseSearchMs": 0,
        "fusionMs": 0.14
       },
@@ -3658,9 +3652,9 @@
        "wedding-human-vs-garment-reconstruction"
       ],
       "timings": {
-       "bm25Ms": 0.17,
+       "bm25Ms": 0.26,
        "denseSearchMs": 0,
-       "fusionMs": 0.08
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -3688,9 +3682,9 @@
        "wedding-evaluation-framework"
       ],
       "timings": {
-       "bm25Ms": 0.4,
+       "bm25Ms": 0.19,
        "denseSearchMs": 0,
-       "fusionMs": 0.16
+       "fusionMs": 0.07
       },
       "leakQuery": false,
       "leaked": [],
@@ -3718,9 +3712,9 @@
        "crime-ai-responsibility"
       ],
       "timings": {
-       "bm25Ms": 0.14,
+       "bm25Ms": 0.17,
        "denseSearchMs": 0,
-       "fusionMs": 0.16
+       "fusionMs": 0.18
       },
       "leakQuery": false,
       "leaked": [],
@@ -3778,9 +3772,9 @@
        "crime-luna-runtime-smoke"
       ],
       "timings": {
-       "bm25Ms": 0.19,
+       "bm25Ms": 0.79,
        "denseSearchMs": 0,
-       "fusionMs": 0.18
+       "fusionMs": 0.26
       },
       "leakQuery": false,
       "leaked": [],
@@ -3808,9 +3802,9 @@
        "crime-v2-plan"
       ],
       "timings": {
-       "bm25Ms": 0.18,
+       "bm25Ms": 0.26,
        "denseSearchMs": 0,
-       "fusionMs": 0.16
+       "fusionMs": 0.26
       },
       "leakQuery": false,
       "leaked": [],
@@ -3838,9 +3832,9 @@
        "crime-interrogation-scarcity-cost"
       ],
       "timings": {
-       "bm25Ms": 0.11,
+       "bm25Ms": 0.14,
        "denseSearchMs": 0,
-       "fusionMs": 0.13
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -3868,7 +3862,7 @@
        "profile:portfolio:projects"
       ],
       "timings": {
-       "bm25Ms": 0.09,
+       "bm25Ms": 0.1,
        "denseSearchMs": 0,
        "fusionMs": 0.13
       },
@@ -3900,7 +3894,7 @@
       "timings": {
        "bm25Ms": 0.12,
        "denseSearchMs": 0,
-       "fusionMs": 0.12
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -3954,11 +3948,11 @@
        "profile-public-summary",
        "profile-project-count-scope",
        "hangarae-foot-data-rebuild",
-       "armi-api-contract-normalization",
-       "hangarae-model-metrics"
+       "dd-hybrid-rag-decision",
+       "armi-api-contract-normalization"
       ],
       "timings": {
-       "bm25Ms": 0.25,
+       "bm25Ms": 0.24,
        "denseSearchMs": 0,
        "fusionMs": 0.06
       },
@@ -3982,7 +3976,7 @@
       "unsupported": false,
       "top5": [],
       "timings": {
-       "bm25Ms": 0.04,
+       "bm25Ms": 0.05,
        "denseSearchMs": 0,
        "fusionMs": 0.03
       },
@@ -3998,10 +3992,10 @@
     "summary": {
      "n": 115,
      "answerable": 102,
-     "hit1": 0.6176470588235294,
-     "hit3": 0.8725490196078431,
-     "hit5": 0.9607843137254902,
-     "mrr": 0.7522331154684097,
+     "hit1": 0.6470588235294118,
+     "hit3": 0.8823529411764706,
+     "hit5": 0.9705882352941176,
+     "mrr": 0.7729847494553379,
      "wrongProject": 0,
      "unsupportedFalsePositive": [],
      "unsupportedFalseNegative": [
@@ -4010,8 +4004,7 @@
      "partialAnswerable": 86,
      "publicLeakage": [],
      "statusEvidenceMissing": [
-      "S1",
-      "S8"
+      "S1"
      ]
     },
     "groups": {
@@ -4032,14 +4025,14 @@
      "DD": {
       "n": 6,
       "answerable": 6,
-      "hit1": 0.16666666666666666,
+      "hit1": 0.5,
       "hit3": 0.8333333333333334,
       "hit5": 1,
-      "mrr": 0.513888888888889,
+      "mrr": 0.7000000000000001,
       "wrongProject": 0,
       "unsupportedFalsePositive": [],
       "unsupportedFalseNegative": [],
-      "partialAnswerable": 4,
+      "partialAnswerable": 5,
       "publicLeakage": [],
       "statusEvidenceMissing": []
      },
@@ -4172,18 +4165,17 @@
      "STATUS": {
       "n": 15,
       "answerable": 15,
-      "hit1": 0.6,
-      "hit3": 0.8,
-      "hit5": 0.8666666666666667,
-      "mrr": 0.6799999999999999,
+      "hit1": 0.6666666666666666,
+      "hit3": 0.8666666666666667,
+      "hit5": 0.9333333333333333,
+      "mrr": 0.7466666666666666,
       "wrongProject": 0,
       "unsupportedFalsePositive": [],
       "unsupportedFalseNegative": [],
-      "partialAnswerable": 13,
+      "partialAnswerable": 12,
       "publicLeakage": [],
       "statusEvidenceMissing": [
-       "S1",
-       "S8"
+       "S1"
       ]
      },
      "CONVO": {
@@ -4205,7 +4197,7 @@
     },
     "timings": {
      "bm25Ms": 0.04,
-     "denseSearchMs": 0.71,
+     "denseSearchMs": 0.72,
      "fusionMs": 0.12
     },
     "misses": [
@@ -4240,20 +4232,8 @@
       "scope": "project"
      },
      {
-      "id": "DD3",
-      "rank": 2,
-      "top1": "dd-visual-lead-calibration",
-      "scope": "project"
-     },
-     {
-      "id": "DD4",
-      "rank": 3,
-      "top1": "dd-rag-retrieval-improvement-evidence",
-      "scope": "project"
-     },
-     {
       "id": "DD5",
-      "rank": 4,
+      "rank": 5,
       "top1": "dd-face-fitting-stop-decision",
       "scope": "project"
      },
@@ -4374,7 +4354,7 @@
      {
       "id": "L3",
       "rank": null,
-      "top1": "dd-rag-baseline-metrics",
+      "top1": "dd-hybrid-rag-experimental-phase",
       "scope": "project"
      },
      {
@@ -4403,14 +4383,8 @@
      },
      {
       "id": "S8",
-      "rank": null,
-      "top1": "dd-rag-bm25-baseline",
-      "scope": "project"
-     },
-     {
-      "id": "S10",
       "rank": 3,
-      "top1": "dd-rag-retrieval-improvement-evidence",
+      "top1": "dd-rag-bm25-baseline",
       "scope": "project"
      },
      {
@@ -4501,9 +4475,9 @@
        "armi-voice-state-machine"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 1.45,
-       "fusionMs": 0.27
+       "bm25Ms": 0.03,
+       "denseSearchMs": 1.84,
+       "fusionMs": 0.31
       },
       "leakQuery": false,
       "leaked": [],
@@ -4531,9 +4505,9 @@
        "armi-agent-routing"
       ],
       "timings": {
-       "bm25Ms": 0.03,
-       "denseSearchMs": 0.49,
-       "fusionMs": 0.13
+       "bm25Ms": 0.04,
+       "denseSearchMs": 0.52,
+       "fusionMs": 0.15
       },
       "leakQuery": false,
       "leaked": [],
@@ -4561,9 +4535,9 @@
        "armi-memory"
       ],
       "timings": {
-       "bm25Ms": 0.03,
-       "denseSearchMs": 0.46,
-       "fusionMs": 0.16
+       "bm25Ms": 0.04,
+       "denseSearchMs": 0.48,
+       "fusionMs": 0.15
       },
       "leakQuery": false,
       "leaked": [],
@@ -4591,8 +4565,8 @@
        "armi-agent-routing"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.73,
+       "bm25Ms": 0.03,
+       "denseSearchMs": 0.72,
        "fusionMs": 0.1
       },
       "leakQuery": false,
@@ -4622,8 +4596,8 @@
       ],
       "timings": {
        "bm25Ms": 0.07,
-       "denseSearchMs": 1.44,
-       "fusionMs": 0.19
+       "denseSearchMs": 1.47,
+       "fusionMs": 0.2
       },
       "leakQuery": false,
       "leaked": [],
@@ -4652,8 +4626,8 @@
       ],
       "timings": {
        "bm25Ms": 0.03,
-       "denseSearchMs": 1.65,
-       "fusionMs": 0.22
+       "denseSearchMs": 2.11,
+       "fusionMs": 0.21
       },
       "leakQuery": false,
       "leaked": [],
@@ -4683,7 +4657,7 @@
       "timings": {
        "bm25Ms": 0.04,
        "denseSearchMs": 0.74,
-       "fusionMs": 0.14
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -4713,7 +4687,7 @@
       "timings": {
        "bm25Ms": 0.03,
        "denseSearchMs": 0.72,
-       "fusionMs": 0.11
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -4742,7 +4716,7 @@
       ],
       "timings": {
        "bm25Ms": 0.04,
-       "denseSearchMs": 0.75,
+       "denseSearchMs": 0.74,
        "fusionMs": 0.11
       },
       "leakQuery": false,
@@ -4766,14 +4740,14 @@
       "top5": [
        "dd-problem",
        "dd-lexical-router-limit",
+       "dd-hybrid-rag-decision",
        "dd-overview",
-       "dd-face-fitting-stop-decision",
-       "dd-hybrid-rag-decision"
+       "dd-face-fitting-stop-decision"
       ],
       "timings": {
        "bm25Ms": 0.02,
-       "denseSearchMs": 0.74,
-       "fusionMs": 0.15
+       "denseSearchMs": 0.73,
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -4784,8 +4758,8 @@
      {
       "id": "DD3",
       "group": "DD",
-      "rank": 2,
-      "top1": "dd-visual-lead-calibration",
+      "rank": 1,
+      "top1": "dd-hybrid-rag-decision",
       "top1Project": "digital-docent",
       "expectedProject": "digital-docent",
       "wrongProject": false,
@@ -4794,15 +4768,15 @@
       "activeProject": "digital-docent",
       "unsupported": false,
       "top5": [
-       "dd-visual-lead-calibration",
        "dd-hybrid-rag-decision",
-       "dd-mouth-lead",
+       "dd-hybrid-rag-experimental-phase",
+       "dd-visual-lead-calibration",
        "dd-overview",
-       "dd-lipsync-production-metrics"
+       "dd-mouth-lead"
       ],
       "timings": {
-       "bm25Ms": 0.02,
-       "denseSearchMs": 0.71,
+       "bm25Ms": 0.01,
+       "denseSearchMs": 0.72,
        "fusionMs": 0.12
       },
       "leakQuery": false,
@@ -4814,8 +4788,8 @@
      {
       "id": "DD4",
       "group": "DD",
-      "rank": 3,
-      "top1": "dd-rag-retrieval-improvement-evidence",
+      "rank": 1,
+      "top1": "dd-hybrid-rag-experimental-phase",
       "top1Project": "digital-docent",
       "expectedProject": "digital-docent",
       "wrongProject": false,
@@ -4824,16 +4798,16 @@
       "activeProject": "digital-docent",
       "unsupported": false,
       "top5": [
+       "dd-hybrid-rag-experimental-phase",
        "dd-rag-retrieval-improvement-evidence",
        "dd-rag-bm25-baseline",
-       "dd-hybrid-rag-decision",
        "dd-overview",
-       "dd-rag-baseline-metrics"
+       "dd-hybrid-rag-decision"
       ],
       "timings": {
-       "bm25Ms": 0.02,
-       "denseSearchMs": 0.72,
-       "fusionMs": 0.12
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.74,
+       "fusionMs": 0.17
       },
       "leakQuery": false,
       "leaked": [],
@@ -4844,26 +4818,26 @@
      {
       "id": "DD5",
       "group": "DD",
-      "rank": 4,
+      "rank": 5,
       "top1": "dd-face-fitting-stop-decision",
       "top1Project": "digital-docent",
       "expectedProject": "digital-docent",
       "wrongProject": false,
-      "support": "full",
+      "support": "partial",
       "scope": "project",
       "activeProject": "digital-docent",
       "unsupported": false,
       "top5": [
        "dd-face-fitting-stop-decision",
+       "dd-hybrid-rag-experimental-phase",
        "dd-grounding-contract",
        "dd-overview",
-       "dd-lam-korean-limit",
-       "dd-current-llm-config"
+       "dd-lam-korean-limit"
       ],
       "timings": {
        "bm25Ms": 0.02,
-       "denseSearchMs": 0.72,
-       "fusionMs": 0.13
+       "denseSearchMs": 0.73,
+       "fusionMs": 0.15
       },
       "leakQuery": false,
       "leaked": [],
@@ -4892,8 +4866,8 @@
       ],
       "timings": {
        "bm25Ms": 0.02,
-       "denseSearchMs": 0.71,
-       "fusionMs": 0.11
+       "denseSearchMs": 0.72,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -5012,8 +4986,8 @@
       ],
       "timings": {
        "bm25Ms": 0.01,
-       "denseSearchMs": 0.71,
-       "fusionMs": 0.12
+       "denseSearchMs": 0.88,
+       "fusionMs": 0.44
       },
       "leakQuery": false,
       "leaked": [],
@@ -5041,9 +5015,9 @@
        "crime-deterministic-progression"
       ],
       "timings": {
-       "bm25Ms": 0.06,
-       "denseSearchMs": 0.85,
-       "fusionMs": 0.29
+       "bm25Ms": 0.09,
+       "denseSearchMs": 0.88,
+       "fusionMs": 0.15
       },
       "leakQuery": false,
       "leaked": [],
@@ -5071,8 +5045,8 @@
        "crime-product-complete-not-tech-complete"
       ],
       "timings": {
-       "bm25Ms": 0.06,
-       "denseSearchMs": 0.72,
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.73,
        "fusionMs": 0.12
       },
       "leakQuery": false,
@@ -5101,9 +5075,9 @@
        "crime-case-log-reasoning-bridge"
       ],
       "timings": {
-       "bm25Ms": 0.03,
+       "bm25Ms": 0.02,
        "denseSearchMs": 0.73,
-       "fusionMs": 0.12
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -5162,8 +5136,8 @@
       ],
       "timings": {
        "bm25Ms": 0.03,
-       "denseSearchMs": 0.7,
-       "fusionMs": 0.1
+       "denseSearchMs": 0.71,
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -5191,9 +5165,9 @@
        "bcos-project-remembers-agent"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.7,
-       "fusionMs": 0.1
+       "bm25Ms": 0.03,
+       "denseSearchMs": 0.8,
+       "fusionMs": 0.17
       },
       "leakQuery": false,
       "leaked": [],
@@ -5221,9 +5195,9 @@
        "bcos-no-self-approval"
       ],
       "timings": {
-       "bm25Ms": 0.05,
-       "denseSearchMs": 0.71,
-       "fusionMs": 0.12
+       "bm25Ms": 0.06,
+       "denseSearchMs": 0.77,
+       "fusionMs": 0.18
       },
       "leakQuery": false,
       "leaked": [],
@@ -5252,8 +5226,8 @@
       ],
       "timings": {
        "bm25Ms": 0.05,
-       "denseSearchMs": 0.72,
-       "fusionMs": 0.12
+       "denseSearchMs": 0.74,
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -5282,7 +5256,7 @@
       ],
       "timings": {
        "bm25Ms": 0.04,
-       "denseSearchMs": 0.71,
+       "denseSearchMs": 0.72,
        "fusionMs": 0.1
       },
       "leakQuery": false,
@@ -5311,7 +5285,7 @@
        "bcos-no-self-approval"
       ],
       "timings": {
-       "bm25Ms": 0.05,
+       "bm25Ms": 0.04,
        "denseSearchMs": 0.71,
        "fusionMs": 0.1
       },
@@ -5341,8 +5315,8 @@
        "bcos-subscription-cost-rationale"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.71,
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.72,
        "fusionMs": 0.1
       },
       "leakQuery": false,
@@ -5372,8 +5346,8 @@
       ],
       "timings": {
        "bm25Ms": 0.03,
-       "denseSearchMs": 0.71,
-       "fusionMs": 0.1
+       "denseSearchMs": 0.81,
+       "fusionMs": 0.22
       },
       "leakQuery": false,
       "leaked": [],
@@ -5401,9 +5375,9 @@
        "claw-single-llm-failure-motivation"
       ],
       "timings": {
-       "bm25Ms": 0.03,
-       "denseSearchMs": 0.72,
-       "fusionMs": 0.1
+       "bm25Ms": 0.07,
+       "denseSearchMs": 1.06,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -5432,8 +5406,8 @@
       ],
       "timings": {
        "bm25Ms": 0.04,
-       "denseSearchMs": 0.71,
-       "fusionMs": 0.49
+       "denseSearchMs": 0.74,
+       "fusionMs": 0.18
       },
       "leakQuery": false,
       "leaked": [],
@@ -5462,8 +5436,8 @@
       ],
       "timings": {
        "bm25Ms": 0.05,
-       "denseSearchMs": 0.76,
-       "fusionMs": 0.22
+       "denseSearchMs": 0.83,
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -5491,9 +5465,9 @@
        "claw-to-bcos-evolution"
       ],
       "timings": {
-       "bm25Ms": 0.08,
-       "denseSearchMs": 0.74,
-       "fusionMs": 0.11
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.72,
+       "fusionMs": 0.07
       },
       "leakQuery": false,
       "leaked": [],
@@ -5521,9 +5495,9 @@
        "claw-real-tool-verification"
       ],
       "timings": {
-       "bm25Ms": 0.02,
+       "bm25Ms": 0.33,
        "denseSearchMs": 0.72,
-       "fusionMs": 0.12
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -5552,8 +5526,8 @@
       ],
       "timings": {
        "bm25Ms": 0.05,
-       "denseSearchMs": 0.71,
-       "fusionMs": 0.1
+       "denseSearchMs": 0.92,
+       "fusionMs": 0.17
       },
       "leakQuery": false,
       "leaked": [],
@@ -5581,9 +5555,9 @@
        "claw-zod-regeneration"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.71,
-       "fusionMs": 0.1
+       "bm25Ms": 0.06,
+       "denseSearchMs": 0.73,
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -5612,8 +5586,8 @@
       ],
       "timings": {
        "bm25Ms": 0.04,
-       "denseSearchMs": 0.73,
-       "fusionMs": 0.11
+       "denseSearchMs": 0.72,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -5643,7 +5617,7 @@
       "timings": {
        "bm25Ms": 0.02,
        "denseSearchMs": 0.72,
-       "fusionMs": 0.12
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -5672,8 +5646,8 @@
       ],
       "timings": {
        "bm25Ms": 0.04,
-       "denseSearchMs": 0.72,
-       "fusionMs": 0.11
+       "denseSearchMs": 0.71,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -5761,9 +5735,9 @@
        "hangarae-feedback-hysteresis"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.71,
-       "fusionMs": 0.1
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.87,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -5791,9 +5765,9 @@
        "hangarae-jetson-throughput"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.71,
-       "fusionMs": 0.1
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.81,
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -5821,9 +5795,9 @@
        "hangarae-award"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.72,
-       "fusionMs": 0.12
+       "bm25Ms": 0.06,
+       "denseSearchMs": 0.75,
+       "fusionMs": 0.07
       },
       "leakQuery": false,
       "leaked": [],
@@ -5851,9 +5825,9 @@
        "hangarae-realtime-coordinates"
       ],
       "timings": {
-       "bm25Ms": 0.05,
-       "denseSearchMs": 0.73,
-       "fusionMs": 0.13
+       "bm25Ms": 0.04,
+       "denseSearchMs": 0.72,
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
@@ -5881,9 +5855,9 @@
        "hangarae-gamification-product-rationale"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.72,
-       "fusionMs": 0.11
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.71,
+       "fusionMs": 0.07
       },
       "leakQuery": false,
       "leaked": [],
@@ -5912,8 +5886,8 @@
       ],
       "timings": {
        "bm25Ms": 0.04,
-       "denseSearchMs": 0.78,
-       "fusionMs": 0.11
+       "denseSearchMs": 0.71,
+       "fusionMs": 0.07
       },
       "leakQuery": false,
       "leaked": [],
@@ -5941,9 +5915,9 @@
        "wedding-3d-stop-product-decision"
       ],
       "timings": {
-       "bm25Ms": 0.06,
-       "denseSearchMs": 0.72,
-       "fusionMs": 0.1
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.84,
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -5971,8 +5945,8 @@
        "wedding-comparison-output-rationale"
       ],
       "timings": {
-       "bm25Ms": 0.05,
-       "denseSearchMs": 0.71,
+       "bm25Ms": 0.07,
+       "denseSearchMs": 0.73,
        "fusionMs": 0.1
       },
       "leakQuery": false,
@@ -6002,8 +5976,8 @@
       ],
       "timings": {
        "bm25Ms": 0.02,
-       "denseSearchMs": 0.71,
-       "fusionMs": 0.12
+       "denseSearchMs": 0.72,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -6031,9 +6005,9 @@
        "wedding-comparison-output-rationale"
       ],
       "timings": {
-       "bm25Ms": 0.02,
-       "denseSearchMs": 0.72,
-       "fusionMs": 0.12
+       "bm25Ms": 0.01,
+       "denseSearchMs": 0.71,
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
@@ -6062,8 +6036,8 @@
       ],
       "timings": {
        "bm25Ms": 0.01,
-       "denseSearchMs": 0.72,
-       "fusionMs": 0.12
+       "denseSearchMs": 0.71,
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
@@ -6093,7 +6067,7 @@
       "timings": {
        "bm25Ms": 0.05,
        "denseSearchMs": 0.71,
-       "fusionMs": 0.1
+       "fusionMs": 0.07
       },
       "leakQuery": false,
       "leaked": [],
@@ -6121,9 +6095,9 @@
        "wedding-model-evaluation"
       ],
       "timings": {
-       "bm25Ms": 0.03,
-       "denseSearchMs": 0.75,
-       "fusionMs": 0.15
+       "bm25Ms": 0.02,
+       "denseSearchMs": 0.74,
+       "fusionMs": 0.4
       },
       "leakQuery": false,
       "leaked": [],
@@ -6151,9 +6125,9 @@
        "wedding-model-evaluation"
       ],
       "timings": {
-       "bm25Ms": 0.05,
-       "denseSearchMs": 0.71,
-       "fusionMs": 0.1
+       "bm25Ms": 0.06,
+       "denseSearchMs": 0.87,
+       "fusionMs": 0.15
       },
       "leakQuery": false,
       "leaked": [],
@@ -6182,8 +6156,8 @@
       ],
       "timings": {
        "bm25Ms": 0.03,
-       "denseSearchMs": 0.57,
-       "fusionMs": 0.12
+       "denseSearchMs": 0.47,
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -6212,8 +6186,8 @@
       ],
       "timings": {
        "bm25Ms": 0.02,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.15
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -6243,7 +6217,7 @@
       "timings": {
        "bm25Ms": 0.02,
        "denseSearchMs": 0.41,
-       "fusionMs": 0.17
+       "fusionMs": 0.19
       },
       "leakQuery": false,
       "leaked": [],
@@ -6272,8 +6246,8 @@
       ],
       "timings": {
        "bm25Ms": 0.02,
-       "denseSearchMs": 0.44,
-       "fusionMs": 0.13
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -6301,9 +6275,9 @@
        "portfolio-video-fallback-env"
       ],
       "timings": {
-       "bm25Ms": 0.03,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.15
+       "bm25Ms": 0.02,
+       "denseSearchMs": 0.53,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -6332,8 +6306,8 @@
       ],
       "timings": {
        "bm25Ms": 0.02,
-       "denseSearchMs": 0.44,
-       "fusionMs": 0.12
+       "denseSearchMs": 0.48,
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -6361,9 +6335,9 @@
        "portfolio-readme-media-drift"
       ],
       "timings": {
-       "bm25Ms": 0.03,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.11
+       "bm25Ms": 0.08,
+       "denseSearchMs": 0.54,
+       "fusionMs": 0.18
       },
       "leakQuery": false,
       "leaked": [],
@@ -6392,8 +6366,8 @@
       ],
       "timings": {
        "bm25Ms": 0.02,
-       "denseSearchMs": 0.4,
-       "fusionMs": 0.51
+       "denseSearchMs": 0.44,
+       "fusionMs": 0.47
       },
       "leakQuery": false,
       "leaked": [],
@@ -6422,8 +6396,8 @@
       ],
       "timings": {
        "bm25Ms": 0.03,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.12
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -6453,7 +6427,7 @@
       "timings": {
        "bm25Ms": 0.02,
        "denseSearchMs": 0.41,
-       "fusionMs": 0.11
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -6481,7 +6455,7 @@
        "wedding-3d-stop-product-decision"
       ],
       "timings": {
-       "bm25Ms": 0.05,
+       "bm25Ms": 0.04,
        "denseSearchMs": 0.41,
        "fusionMs": 0.1
       },
@@ -6513,7 +6487,7 @@
       "timings": {
        "bm25Ms": 0.03,
        "denseSearchMs": 0.41,
-       "fusionMs": 0.1
+       "fusionMs": 0.09
       },
       "leakQuery": false,
       "leaked": [],
@@ -6571,9 +6545,9 @@
        "crime-core-loop"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.15
+       "bm25Ms": 0.03,
+       "denseSearchMs": 0.4,
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -6602,8 +6576,8 @@
       ],
       "timings": {
        "bm25Ms": 0.04,
-       "denseSearchMs": 0.44,
-       "fusionMs": 0.1
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -6631,9 +6605,9 @@
        "wedding-human-vs-garment-reconstruction"
       ],
       "timings": {
-       "bm25Ms": 0.03,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.11
+       "bm25Ms": 0.11,
+       "denseSearchMs": 0.54,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -6661,9 +6635,9 @@
        "bcos-no-self-approval"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.4,
-       "fusionMs": 0.1
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.45,
+       "fusionMs": 0.19
       },
       "leakQuery": false,
       "leaked": [],
@@ -6691,9 +6665,9 @@
        "crime-spoiler-security-evidence"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.1
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -6722,8 +6696,8 @@
       ],
       "timings": {
        "bm25Ms": 0.02,
-       "denseSearchMs": 0.4,
-       "fusionMs": 0.22
+       "denseSearchMs": 0.42,
+       "fusionMs": 0.24
       },
       "leakQuery": true,
       "leaked": [],
@@ -6752,8 +6726,8 @@
       ],
       "timings": {
        "bm25Ms": 0.02,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.19
+       "denseSearchMs": 0.42,
+       "fusionMs": 0.18
       },
       "leakQuery": true,
       "leaked": [],
@@ -6765,7 +6739,7 @@
       "id": "L3",
       "group": "LEAK",
       "rank": null,
-      "top1": "dd-rag-baseline-metrics",
+      "top1": "dd-hybrid-rag-experimental-phase",
       "top1Project": "digital-docent",
       "expectedProject": null,
       "wrongProject": false,
@@ -6774,11 +6748,11 @@
       "activeProject": "digital-docent",
       "unsupported": false,
       "top5": [
+       "dd-hybrid-rag-experimental-phase",
        "dd-rag-baseline-metrics",
        "dd-rag-bm25-baseline",
-       "dd-rag-retrieval-improvement-evidence",
        "dd-overview",
-       "dd-lexical-router-limit"
+       "dd-rag-retrieval-improvement-evidence"
       ],
       "timings": {
        "bm25Ms": 0.02,
@@ -6811,9 +6785,9 @@
        "crime-case-log"
       ],
       "timings": {
-       "bm25Ms": 0.06,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.11
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -6841,9 +6815,9 @@
        "crime-ai-concession-whitelist"
       ],
       "timings": {
-       "bm25Ms": 0.05,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.11
+       "bm25Ms": 0.04,
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.18
       },
       "leakQuery": false,
       "leaked": [],
@@ -6871,9 +6845,9 @@
        "crime-core-loop"
       ],
       "timings": {
-       "bm25Ms": 0.05,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.1
+       "bm25Ms": 0.07,
+       "denseSearchMs": 1.47,
+       "fusionMs": 0.18
       },
       "leakQuery": false,
       "leaked": [],
@@ -6901,9 +6875,9 @@
        "crime-case-log"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.09
+       "bm25Ms": 0.07,
+       "denseSearchMs": 0.45,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -6931,9 +6905,9 @@
        "crime-spoiler-security-evidence"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.09
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -6958,18 +6932,18 @@
        "dd-problem",
        "dd-rag-retrieval-improvement-evidence",
        "dd-overview",
-       "dd-rag-baseline-metrics"
+       "dd-hybrid-rag-experimental-phase"
       ],
       "timings": {
        "bm25Ms": 0.02,
-       "denseSearchMs": 0.4,
-       "fusionMs": 0.14
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
-      "statusRank": 1,
-      "top1Status": "experimental"
+      "statusTarget": null,
+      "statusRank": null,
+      "top1Status": "current"
      },
      {
       "id": "S7",
@@ -6979,7 +6953,7 @@
       "top1Project": "digital-docent",
       "expectedProject": "digital-docent",
       "wrongProject": false,
-      "support": "partial",
+      "support": "full",
       "scope": "project",
       "activeProject": "digital-docent",
       "unsupported": false,
@@ -6992,19 +6966,19 @@
       ],
       "timings": {
        "bm25Ms": 0.05,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.1
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
-      "statusRank": 5,
+      "statusTarget": null,
+      "statusRank": null,
       "top1Status": "current"
      },
      {
       "id": "S8",
       "group": "STATUS",
-      "rank": null,
+      "rank": 3,
       "top1": "dd-rag-bm25-baseline",
       "top1Project": "digital-docent",
       "expectedProject": "digital-docent",
@@ -7016,18 +6990,18 @@
       "top5": [
        "dd-rag-bm25-baseline",
        "dd-global-runtime",
+       "dd-hybrid-rag-experimental-phase",
        "dd-overview",
-       "dd-rag-baseline-metrics",
-       "dd-rag-retrieval-improvement-evidence"
+       "dd-rag-baseline-metrics"
       ],
       "timings": {
        "bm25Ms": 0.04,
-       "denseSearchMs": 0.48,
-       "fusionMs": 0.13
+       "denseSearchMs": 0.42,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
+      "statusTarget": null,
       "statusRank": null,
       "top1Status": "historical"
      },
@@ -7051,21 +7025,21 @@
        "dd-problem"
       ],
       "timings": {
-       "bm25Ms": 0.15,
-       "denseSearchMs": 0.49,
-       "fusionMs": 0.22
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
-      "statusRank": 1,
-      "top1Status": "experimental"
+      "statusTarget": null,
+      "statusRank": null,
+      "top1Status": "current"
      },
      {
       "id": "S10",
       "group": "STATUS",
-      "rank": 3,
-      "top1": "dd-rag-retrieval-improvement-evidence",
+      "rank": 1,
+      "top1": "dd-hybrid-rag-experimental-phase",
       "top1Project": "digital-docent",
       "expectedProject": "digital-docent",
       "wrongProject": false,
@@ -7074,21 +7048,21 @@
       "activeProject": "digital-docent",
       "unsupported": false,
       "top5": [
+       "dd-hybrid-rag-experimental-phase",
        "dd-rag-retrieval-improvement-evidence",
        "dd-rag-bm25-baseline",
-       "dd-hybrid-rag-decision",
        "dd-overview",
-       "dd-rag-baseline-metrics"
+       "dd-hybrid-rag-decision"
       ],
       "timings": {
-       "bm25Ms": 0.05,
-       "denseSearchMs": 0.58,
-       "fusionMs": 0.25
+       "bm25Ms": 0.02,
+       "denseSearchMs": 1.17,
+       "fusionMs": 0.23
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
-      "statusRank": 3,
+      "statusTarget": null,
+      "statusRank": null,
       "top1Status": "historical"
      },
      {
@@ -7111,9 +7085,9 @@
        "bcos-final-completion-evidence"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.43,
-       "fusionMs": 0.1
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.52,
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -7141,9 +7115,9 @@
        "bcos-memory-types"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.08
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.44,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -7171,9 +7145,9 @@
        "bcos-current-status"
       ],
       "timings": {
-       "bm25Ms": 0.43,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.1
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.44,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -7201,9 +7175,9 @@
        "bcos-capability-policy-separation"
       ],
       "timings": {
-       "bm25Ms": 0.05,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.08
+       "bm25Ms": 0.06,
+       "denseSearchMs": 0.44,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -7232,8 +7206,8 @@
       ],
       "timings": {
        "bm25Ms": 0.04,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.09
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -7261,9 +7235,9 @@
        "armi-voice-state-machine"
       ],
       "timings": {
-       "bm25Ms": 0.02,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.08
+       "bm25Ms": 0.03,
+       "denseSearchMs": 0.87,
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -7292,8 +7266,8 @@
       ],
       "timings": {
        "bm25Ms": 0.03,
-       "denseSearchMs": 0.85,
-       "fusionMs": 0.28
+       "denseSearchMs": 2.31,
+       "fusionMs": 0.32
       },
       "leakQuery": false,
       "leaked": [],
@@ -7322,8 +7296,8 @@
       ],
       "timings": {
        "bm25Ms": 0.04,
-       "denseSearchMs": 0.92,
-       "fusionMs": 0.14
+       "denseSearchMs": 0.86,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -7353,7 +7327,7 @@
       "timings": {
        "bm25Ms": 0.02,
        "denseSearchMs": 0.84,
-       "fusionMs": 0.19
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -7382,8 +7356,8 @@
       ],
       "timings": {
        "bm25Ms": 0.06,
-       "denseSearchMs": 0.84,
-       "fusionMs": 0.17
+       "denseSearchMs": 0.91,
+       "fusionMs": 0.19
       },
       "leakQuery": false,
       "leaked": [],
@@ -7412,8 +7386,8 @@
       ],
       "timings": {
        "bm25Ms": 0.04,
-       "denseSearchMs": 0.83,
-       "fusionMs": 0.15
+       "denseSearchMs": 1.21,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -7441,9 +7415,9 @@
        "bcos-subscription-cost-rationale"
       ],
       "timings": {
-       "bm25Ms": 0.07,
-       "denseSearchMs": 1.35,
-       "fusionMs": 0.43
+       "bm25Ms": 0.04,
+       "denseSearchMs": 0.84,
+       "fusionMs": 0.2
       },
       "leakQuery": false,
       "leaked": [],
@@ -7471,9 +7445,9 @@
        "hangarae-model-improvement-metrics"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.87,
-       "fusionMs": 0.23
+       "bm25Ms": 0.03,
+       "denseSearchMs": 0.83,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -7501,9 +7475,9 @@
        "hangarae-model-metrics"
       ],
       "timings": {
-       "bm25Ms": 0.04,
-       "denseSearchMs": 0.87,
-       "fusionMs": 0.18
+       "bm25Ms": 0.03,
+       "denseSearchMs": 0.82,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -7531,9 +7505,9 @@
        "hangarae-gamification"
       ],
       "timings": {
-       "bm25Ms": 0.05,
-       "denseSearchMs": 0.86,
-       "fusionMs": 0.17
+       "bm25Ms": 0.04,
+       "denseSearchMs": 0.81,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -7561,9 +7535,9 @@
        "wedding-stable-diffusion-pivot"
       ],
       "timings": {
-       "bm25Ms": 0.05,
-       "denseSearchMs": 0.87,
-       "fusionMs": 0.19
+       "bm25Ms": 0.06,
+       "denseSearchMs": 1.06,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -7591,9 +7565,9 @@
        "wedding-evaluation-framework"
       ],
       "timings": {
-       "bm25Ms": 0.06,
-       "denseSearchMs": 0.86,
-       "fusionMs": 0.18
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.88,
+       "fusionMs": 0.19
       },
       "leakQuery": false,
       "leaked": [],
@@ -7623,7 +7597,7 @@
       "timings": {
        "bm25Ms": 0.06,
        "denseSearchMs": 0.84,
-       "fusionMs": 0.16
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -7653,7 +7627,7 @@
       "timings": {
        "bm25Ms": 0.04,
        "denseSearchMs": 0.83,
-       "fusionMs": 0.13
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -7682,8 +7656,8 @@
       ],
       "timings": {
        "bm25Ms": 0.04,
-       "denseSearchMs": 0.81,
-       "fusionMs": 0.13
+       "denseSearchMs": 0.84,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -7711,9 +7685,9 @@
        "crime-model-knows-less-security"
       ],
       "timings": {
-       "bm25Ms": 0.05,
-       "denseSearchMs": 0.81,
-       "fusionMs": 0.15
+       "bm25Ms": 0.07,
+       "denseSearchMs": 0.95,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -7741,9 +7715,9 @@
        "crime-core-loop"
       ],
       "timings": {
-       "bm25Ms": 0.15,
-       "denseSearchMs": 0.86,
-       "fusionMs": 0.18
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.83,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -7772,8 +7746,8 @@
       ],
       "timings": {
        "bm25Ms": 0.02,
-       "denseSearchMs": 0.81,
-       "fusionMs": 0.17
+       "denseSearchMs": 0.82,
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -7803,7 +7777,7 @@
       "timings": {
        "bm25Ms": 0.02,
        "denseSearchMs": 0.81,
-       "fusionMs": 0.16
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -7831,9 +7805,9 @@
        "claw-reaction-contract"
       ],
       "timings": {
-       "bm25Ms": 0.06,
+       "bm25Ms": 0.05,
        "denseSearchMs": 0.81,
-       "fusionMs": 0.14
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -7857,13 +7831,13 @@
        "profile:portfolio:projects",
        "wedding-overview",
        "armi-overview",
-       "claw-overview",
-       "crime-overview"
+       "dd-overview",
+       "claw-overview"
       ],
       "timings": {
        "bm25Ms": 0.02,
        "denseSearchMs": 0.41,
-       "fusionMs": 0.13
+       "fusionMs": 0.28
       },
       "leakQuery": true,
       "leaked": [],
@@ -7891,9 +7865,9 @@
        "bcos-overview"
       ],
       "timings": {
-       "bm25Ms": 0.03,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.14
+       "bm25Ms": 0.04,
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.15
       },
       "leakQuery": true,
       "leaked": [],
@@ -7922,8 +7896,8 @@
       ],
       "timings": {
        "bm25Ms": 0.01,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.1
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.09
       },
       "leakQuery": true,
       "leaked": [],
@@ -7937,14 +7911,14 @@
     "summary": {
      "n": 115,
      "answerable": 102,
-     "hit1": 0.6372549019607843,
-     "hit3": 0.9019607843137255,
+     "hit1": 0.6470588235294118,
+     "hit3": 0.9117647058823529,
      "hit5": 0.9803921568627451,
-     "mrr": 0.7744281045751634,
+     "mrr": 0.7855392156862745,
      "wrongProject": 0,
      "unsupportedFalsePositive": [],
      "unsupportedFalseNegative": [],
-     "partialAnswerable": 85,
+     "partialAnswerable": 84,
      "publicLeakage": [],
      "statusEvidenceMissing": [
       "S4"
@@ -7971,7 +7945,7 @@
       "hit1": 0.3333333333333333,
       "hit3": 1,
       "hit5": 1,
-      "mrr": 0.5833333333333334,
+      "mrr": 0.611111111111111,
       "wrongProject": 0,
       "unsupportedFalsePositive": [],
       "unsupportedFalseNegative": [],
@@ -8108,14 +8082,14 @@
      "STATUS": {
       "n": 15,
       "answerable": 15,
-      "hit1": 0.5333333333333333,
-      "hit3": 0.7333333333333333,
+      "hit1": 0.6,
+      "hit3": 0.8,
       "hit5": 0.9333333333333333,
-      "mrr": 0.6766666666666666,
+      "mrr": 0.7411111111111112,
       "wrongProject": 0,
       "unsupportedFalsePositive": [],
       "unsupportedFalseNegative": [],
-      "partialAnswerable": 13,
+      "partialAnswerable": 12,
       "publicLeakage": [],
       "statusEvidenceMissing": [
        "S4"
@@ -8137,9 +8111,9 @@
      }
     },
     "timings": {
-     "bm25Ms": 0.14,
-     "denseSearchMs": 0.42,
-     "fusionMs": 0.12
+     "bm25Ms": 0.16,
+     "denseSearchMs": 0.43,
+     "fusionMs": 0.13
     },
     "misses": [
      {
@@ -8156,7 +8130,7 @@
      },
      {
       "id": "DD4",
-      "rank": 3,
+      "rank": 2,
       "top1": "dd-rag-retrieval-improvement-evidence",
       "scope": "project"
      },
@@ -8301,7 +8275,7 @@
      {
       "id": "L3",
       "rank": null,
-      "top1": "dd-rag-baseline-metrics",
+      "top1": "dd-hybrid-rag-experimental-phase",
       "scope": "project"
      },
      {
@@ -8329,14 +8303,8 @@
       "scope": "project"
      },
      {
-      "id": "S8",
-      "rank": 5,
-      "top1": "dd-rag-bm25-baseline",
-      "scope": "project"
-     },
-     {
       "id": "S10",
-      "rank": 3,
+      "rank": 2,
       "top1": "dd-rag-retrieval-improvement-evidence",
       "scope": "project"
      },
@@ -8424,7 +8392,7 @@
       "timings": {
        "bm25Ms": 0.09,
        "denseSearchMs": 0.42,
-       "fusionMs": 0.13
+       "fusionMs": 0.2
       },
       "leakQuery": false,
       "leaked": [],
@@ -8452,9 +8420,9 @@
        "armi-kws-stop-decision"
       ],
       "timings": {
-       "bm25Ms": 0.06,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.12
+       "bm25Ms": 0.07,
+       "denseSearchMs": 0.44,
+       "fusionMs": 0.15
       },
       "leakQuery": false,
       "leaked": [],
@@ -8482,8 +8450,8 @@
        "armi-kws-stop-decision"
       ],
       "timings": {
-       "bm25Ms": 0.07,
-       "denseSearchMs": 0.4,
+       "bm25Ms": 0.09,
+       "denseSearchMs": 0.42,
        "fusionMs": 0.11
       },
       "leakQuery": false,
@@ -8512,7 +8480,7 @@
        "armi-multi-client-scope-control"
       ],
       "timings": {
-       "bm25Ms": 0.12,
+       "bm25Ms": 0.13,
        "denseSearchMs": 0.41,
        "fusionMs": 0.12
       },
@@ -8542,9 +8510,9 @@
        "armi-agent-routing"
       ],
       "timings": {
-       "bm25Ms": 0.17,
-       "denseSearchMs": 0.81,
-       "fusionMs": 0.17
+       "bm25Ms": 0.18,
+       "denseSearchMs": 0.9,
+       "fusionMs": 0.41
       },
       "leakQuery": false,
       "leaked": [],
@@ -8572,9 +8540,9 @@
        "armi-role-boundary"
       ],
       "timings": {
-       "bm25Ms": 0.15,
-       "denseSearchMs": 0.81,
-       "fusionMs": 0.16
+       "bm25Ms": 0.2,
+       "denseSearchMs": 0.89,
+       "fusionMs": 0.19
       },
       "leakQuery": false,
       "leaked": [],
@@ -8603,8 +8571,8 @@
       ],
       "timings": {
        "bm25Ms": 0.17,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.17
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -8632,9 +8600,9 @@
        "armi-agent-routing"
       ],
       "timings": {
-       "bm25Ms": 0.1,
+       "bm25Ms": 0.09,
        "denseSearchMs": 0.41,
-       "fusionMs": 0.1
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -8662,9 +8630,9 @@
        "dd-browser-tts-to-supertonic-lam"
       ],
       "timings": {
-       "bm25Ms": 0.06,
-       "denseSearchMs": 0.46,
-       "fusionMs": 0.15
+       "bm25Ms": 0.05,
+       "denseSearchMs": 0.42,
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -8688,12 +8656,12 @@
        "dd-overview",
        "dd-problem",
        "dd-lexical-router-limit",
-       "dd-face-fitting-stop-decision",
-       "dd-hybrid-rag-decision"
+       "dd-hybrid-rag-decision",
+       "dd-face-fitting-stop-decision"
       ],
       "timings": {
        "bm25Ms": 0.12,
-       "denseSearchMs": 0.43,
+       "denseSearchMs": 0.42,
        "fusionMs": 0.13
       },
       "leakQuery": false,
@@ -8716,26 +8684,26 @@
       "unsupported": false,
       "top5": [
        "dd-hybrid-rag-decision",
+       "dd-hybrid-rag-experimental-phase",
        "dd-lexical-router-limit",
-       "dd-rag-bm25-baseline",
        "dd-overview",
-       "dd-visual-lead-calibration"
+       "dd-rag-bm25-baseline"
       ],
       "timings": {
        "bm25Ms": 0.08,
-       "denseSearchMs": 0.42,
+       "denseSearchMs": 0.41,
        "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
       "statusTarget": null,
       "statusRank": null,
-      "top1Status": "experimental"
+      "top1Status": "current"
      },
      {
       "id": "DD4",
       "group": "DD",
-      "rank": 3,
+      "rank": 2,
       "top1": "dd-rag-retrieval-improvement-evidence",
       "top1Project": "digital-docent",
       "expectedProject": "digital-docent",
@@ -8746,15 +8714,15 @@
       "unsupported": false,
       "top5": [
        "dd-rag-retrieval-improvement-evidence",
+       "dd-hybrid-rag-experimental-phase",
        "dd-rag-bm25-baseline",
-       "dd-hybrid-rag-decision",
        "dd-overview",
-       "dd-rag-baseline-metrics"
+       "dd-hybrid-rag-decision"
       ],
       "timings": {
-       "bm25Ms": 0.18,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.16
+       "bm25Ms": 0.36,
+       "denseSearchMs": 0.48,
+       "fusionMs": 0.39
       },
       "leakQuery": false,
       "leaked": [],
@@ -8782,9 +8750,9 @@
        "dd-origin"
       ],
       "timings": {
-       "bm25Ms": 0.14,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.14
+       "bm25Ms": 0.18,
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.17
       },
       "leakQuery": false,
       "leaked": [],
@@ -8812,8 +8780,8 @@
        "dd-voice-warmup-state"
       ],
       "timings": {
-       "bm25Ms": 0.07,
-       "denseSearchMs": 0.41,
+       "bm25Ms": 0.06,
+       "denseSearchMs": 0.42,
        "fusionMs": 0.13
       },
       "leakQuery": false,
@@ -8843,7 +8811,7 @@
       ],
       "timings": {
        "bm25Ms": 0.05,
-       "denseSearchMs": 0.41,
+       "denseSearchMs": 0.42,
        "fusionMs": 0.13
       },
       "leakQuery": false,
@@ -8872,9 +8840,9 @@
        "crime-ai-natural-language-boundary"
       ],
       "timings": {
-       "bm25Ms": 0.23,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.51
+       "bm25Ms": 0.24,
+       "denseSearchMs": 0.49,
+       "fusionMs": 0.17
       },
       "leakQuery": false,
       "leaked": [],
@@ -8902,9 +8870,9 @@
        "crime-case-log"
       ],
       "timings": {
-       "bm25Ms": 0.24,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.11
+       "bm25Ms": 0.25,
+       "denseSearchMs": 0.42,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -8933,8 +8901,8 @@
       ],
       "timings": {
        "bm25Ms": 0.04,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.12
+       "denseSearchMs": 0.85,
+       "fusionMs": 0.28
       },
       "leakQuery": false,
       "leaked": [],
@@ -8962,9 +8930,9 @@
        "crime-interrogation-scarcity-cost"
       ],
       "timings": {
-       "bm25Ms": 0.27,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.16
+       "bm25Ms": 0.39,
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.2
       },
       "leakQuery": false,
       "leaked": [],
@@ -8992,8 +8960,8 @@
        "crime-onboarding-iteration"
       ],
       "timings": {
-       "bm25Ms": 0.17,
-       "denseSearchMs": 0.41,
+       "bm25Ms": 0.22,
+       "denseSearchMs": 0.42,
        "fusionMs": 0.15
       },
       "leakQuery": false,
@@ -9054,7 +9022,7 @@
       "timings": {
        "bm25Ms": 0.19,
        "denseSearchMs": 0.41,
-       "fusionMs": 0.17
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -9083,8 +9051,8 @@
       ],
       "timings": {
        "bm25Ms": 0.04,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.13
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -9112,7 +9080,7 @@
        "bcos-artifact-ownership"
       ],
       "timings": {
-       "bm25Ms": 0.14,
+       "bm25Ms": 0.1,
        "denseSearchMs": 0.41,
        "fusionMs": 0.12
       },
@@ -9142,8 +9110,8 @@
        "bcos-no-self-approval"
       ],
       "timings": {
-       "bm25Ms": 0.12,
-       "denseSearchMs": 0.41,
+       "bm25Ms": 0.1,
+       "denseSearchMs": 0.4,
        "fusionMs": 0.12
       },
       "leakQuery": false,
@@ -9172,9 +9140,9 @@
        "bcos-event-driven-lifecycle"
       ],
       "timings": {
-       "bm25Ms": 0.22,
-       "denseSearchMs": 0.45,
-       "fusionMs": 0.19
+       "bm25Ms": 0.21,
+       "denseSearchMs": 0.61,
+       "fusionMs": 0.22
       },
       "leakQuery": false,
       "leaked": [],
@@ -9202,9 +9170,9 @@
        "bcos-event-driven-lifecycle"
       ],
       "timings": {
-       "bm25Ms": 0.21,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.13
+       "bm25Ms": 0.22,
+       "denseSearchMs": 0.45,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -9232,7 +9200,7 @@
        "bcos-policy-vs-capability"
       ],
       "timings": {
-       "bm25Ms": 0.23,
+       "bm25Ms": 0.28,
        "denseSearchMs": 0.42,
        "fusionMs": 0.15
       },
@@ -9263,8 +9231,8 @@
       ],
       "timings": {
        "bm25Ms": 0.19,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.15
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -9292,9 +9260,9 @@
        "bcos-current-status"
       ],
       "timings": {
-       "bm25Ms": 0.21,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.14
+       "bm25Ms": 0.14,
+       "denseSearchMs": 0.44,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -9323,8 +9291,8 @@
       ],
       "timings": {
        "bm25Ms": 0.05,
-       "denseSearchMs": 0.43,
-       "fusionMs": 0.13
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -9352,9 +9320,9 @@
        "claw-test-infra-added"
       ],
       "timings": {
-       "bm25Ms": 0.16,
-       "denseSearchMs": 0.44,
-       "fusionMs": 0.11
+       "bm25Ms": 0.11,
+       "denseSearchMs": 0.47,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -9382,9 +9350,9 @@
        "claw-single-llm-failure-motivation"
       ],
       "timings": {
-       "bm25Ms": 0.17,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.1
+       "bm25Ms": 0.71,
+       "denseSearchMs": 0.44,
+       "fusionMs": 1.55
       },
       "leakQuery": false,
       "leaked": [],
@@ -9412,9 +9380,9 @@
        "claw-test-infra-added"
       ],
       "timings": {
-       "bm25Ms": 0.19,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.11
+       "bm25Ms": 0.35,
+       "denseSearchMs": 0.53,
+       "fusionMs": 0.22
       },
       "leakQuery": false,
       "leaked": [],
@@ -9442,9 +9410,9 @@
        "claw-real-tool-verification"
       ],
       "timings": {
-       "bm25Ms": 0.06,
-       "denseSearchMs": 0.4,
-       "fusionMs": 0.08
+       "bm25Ms": 0.08,
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -9472,9 +9440,9 @@
        "claw-real-tool-verification"
       ],
       "timings": {
-       "bm25Ms": 0.14,
-       "denseSearchMs": 0.4,
-       "fusionMs": 0.12
+       "bm25Ms": 0.19,
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.17
       },
       "leakQuery": false,
       "leaked": [],
@@ -9502,9 +9470,9 @@
        "claw-single-llm-failure-motivation"
       ],
       "timings": {
-       "bm25Ms": 0.19,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.1
+       "bm25Ms": 0.22,
+       "denseSearchMs": 0.42,
+       "fusionMs": 0.15
       },
       "leakQuery": false,
       "leaked": [],
@@ -9527,14 +9495,14 @@
       "top5": [
        "claw-repair-loop",
        "claw-autonomous-repair-limit",
-       "claw-model-fallback",
+       "claw-single-llm-failure-motivation",
        "claw-overview",
-       "claw-single-llm-failure-motivation"
+       "claw-model-fallback"
       ],
       "timings": {
-       "bm25Ms": 0.14,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.09
+       "bm25Ms": 0.18,
+       "denseSearchMs": 0.84,
+       "fusionMs": 0.44
       },
       "leakQuery": false,
       "leaked": [],
@@ -9562,9 +9530,9 @@
        "hangarae-coordinate-transform-layer"
       ],
       "timings": {
-       "bm25Ms": 0.03,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.09
+       "bm25Ms": 0.06,
+       "denseSearchMs": 0.51,
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -9592,9 +9560,9 @@
        "hangarae-latest-coordinate-policy"
       ],
       "timings": {
-       "bm25Ms": 0.21,
+       "bm25Ms": 0.22,
        "denseSearchMs": 0.42,
-       "fusionMs": 0.11
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -9622,9 +9590,9 @@
        "hangarae-realtime-coordinates"
       ],
       "timings": {
-       "bm25Ms": 0.11,
+       "bm25Ms": 0.12,
        "denseSearchMs": 0.41,
-       "fusionMs": 0.08
+       "fusionMs": 0.07
       },
       "leakQuery": false,
       "leaked": [],
@@ -9683,8 +9651,8 @@
       ],
       "timings": {
        "bm25Ms": 0.16,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.11
+       "denseSearchMs": 0.45,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -9712,9 +9680,9 @@
        "hangarae-personalized-rehab-target"
       ],
       "timings": {
-       "bm25Ms": 0.17,
-       "denseSearchMs": 0.4,
-       "fusionMs": 0.09
+       "bm25Ms": 0.16,
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
@@ -9742,9 +9710,9 @@
        "hangarae-realtime-coordinates"
       ],
       "timings": {
-       "bm25Ms": 0.21,
+       "bm25Ms": 0.17,
        "denseSearchMs": 0.41,
-       "fusionMs": 0.11
+       "fusionMs": 0.18
       },
       "leakQuery": false,
       "leaked": [],
@@ -9772,9 +9740,9 @@
        "hangarae-role-ai-and-frontend"
       ],
       "timings": {
-       "bm25Ms": 0.19,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.09
+       "bm25Ms": 0.28,
+       "denseSearchMs": 0.51,
+       "fusionMs": 0.2
       },
       "leakQuery": false,
       "leaked": [],
@@ -9802,9 +9770,9 @@
        "hangarae-role"
       ],
       "timings": {
-       "bm25Ms": 0.23,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.12
+       "bm25Ms": 0.51,
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.15
       },
       "leakQuery": false,
       "leaked": [],
@@ -9834,7 +9802,7 @@
       "timings": {
        "bm25Ms": 0.05,
        "denseSearchMs": 0.42,
-       "fusionMs": 0.1
+       "fusionMs": 0.09
       },
       "leakQuery": false,
       "leaked": [],
@@ -9862,9 +9830,9 @@
        "wedding-role"
       ],
       "timings": {
-       "bm25Ms": 0.19,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.15
+       "bm25Ms": 0.21,
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -9892,9 +9860,9 @@
        "wedding-structural-user-problem"
       ],
       "timings": {
-       "bm25Ms": 0.14,
-       "denseSearchMs": 0.58,
-       "fusionMs": 0.11
+       "bm25Ms": 0.15,
+       "denseSearchMs": 0.42,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -9923,8 +9891,8 @@
       ],
       "timings": {
        "bm25Ms": 0.05,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.41
+       "denseSearchMs": 0.45,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -9952,9 +9920,9 @@
        "wedding-paper-metric-caveat"
       ],
       "timings": {
-       "bm25Ms": 0.09,
-       "denseSearchMs": 0.44,
-       "fusionMs": 0.12
+       "bm25Ms": 0.1,
+       "denseSearchMs": 0.48,
+       "fusionMs": 0.67
       },
       "leakQuery": false,
       "leaked": [],
@@ -9982,9 +9950,9 @@
        "wedding-model-evaluation"
       ],
       "timings": {
-       "bm25Ms": 0.08,
-       "denseSearchMs": 0.43,
-       "fusionMs": 0.09
+       "bm25Ms": 0.53,
+       "denseSearchMs": 0.44,
+       "fusionMs": 0.15
       },
       "leakQuery": false,
       "leaked": [],
@@ -10012,9 +9980,9 @@
        "wedding-problem-redefinition"
       ],
       "timings": {
-       "bm25Ms": 0.14,
-       "denseSearchMs": 0.4,
-       "fusionMs": 0.09
+       "bm25Ms": 0.18,
+       "denseSearchMs": 0.44,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -10043,8 +10011,8 @@
       ],
       "timings": {
        "bm25Ms": 0.11,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.14
+       "denseSearchMs": 0.44,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -10072,9 +10040,9 @@
        "wedding-model-evaluation"
       ],
       "timings": {
-       "bm25Ms": 0.12,
-       "denseSearchMs": 0.43,
-       "fusionMs": 0.11
+       "bm25Ms": 0.18,
+       "denseSearchMs": 0.47,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -10102,9 +10070,9 @@
        "wedding-model-evaluation"
       ],
       "timings": {
-       "bm25Ms": 0.12,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.1
+       "bm25Ms": 0.13,
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -10133,7 +10101,7 @@
       ],
       "timings": {
        "bm25Ms": 0.09,
-       "denseSearchMs": 0.4,
+       "denseSearchMs": 0.42,
        "fusionMs": 0.14
       },
       "leakQuery": false,
@@ -10162,9 +10130,9 @@
        "dd-rag-bm25-baseline"
       ],
       "timings": {
-       "bm25Ms": 0.1,
-       "denseSearchMs": 0.43,
-       "fusionMs": 0.12
+       "bm25Ms": 0.27,
+       "denseSearchMs": 0.49,
+       "fusionMs": 0.28
       },
       "leakQuery": false,
       "leaked": [],
@@ -10192,9 +10160,9 @@
        "portfolio-site-navigation"
       ],
       "timings": {
-       "bm25Ms": 0.09,
-       "denseSearchMs": 0.4,
-       "fusionMs": 0.11
+       "bm25Ms": 0.17,
+       "denseSearchMs": 0.64,
+       "fusionMs": 0.18
       },
       "leakQuery": false,
       "leaked": [],
@@ -10222,9 +10190,9 @@
        "portfolio-video-fallback-env"
       ],
       "timings": {
-       "bm25Ms": 0.16,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.13
+       "bm25Ms": 0.19,
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -10253,7 +10221,7 @@
       ],
       "timings": {
        "bm25Ms": 0.08,
-       "denseSearchMs": 0.52,
+       "denseSearchMs": 0.42,
        "fusionMs": 0.13
       },
       "leakQuery": false,
@@ -10282,9 +10250,9 @@
        "portfolio-readme-media-drift"
       ],
       "timings": {
-       "bm25Ms": 0.31,
-       "denseSearchMs": 0.48,
-       "fusionMs": 0.16
+       "bm25Ms": 0.21,
+       "denseSearchMs": 0.42,
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -10312,9 +10280,9 @@
        "bcos-overview"
       ],
       "timings": {
-       "bm25Ms": 0.11,
-       "denseSearchMs": 0.45,
-       "fusionMs": 0.2
+       "bm25Ms": 0.09,
+       "denseSearchMs": 0.43,
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -10342,9 +10310,9 @@
        "armi-kws-stop-decision"
       ],
       "timings": {
-       "bm25Ms": 0.11,
+       "bm25Ms": 0.1,
        "denseSearchMs": 0.43,
-       "fusionMs": 0.12
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -10372,9 +10340,9 @@
        "armi-kws-stop-decision"
       ],
       "timings": {
-       "bm25Ms": 0.07,
-       "denseSearchMs": 0.48,
-       "fusionMs": 0.1
+       "bm25Ms": 0.18,
+       "denseSearchMs": 0.65,
+       "fusionMs": 0.23
       },
       "leakQuery": false,
       "leaked": [],
@@ -10402,9 +10370,9 @@
        "wedding-icon-environment-failure"
       ],
       "timings": {
-       "bm25Ms": 0.12,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.09
+       "bm25Ms": 0.15,
+       "denseSearchMs": 0.48,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -10432,9 +10400,9 @@
        "hangarae-model-metrics"
       ],
       "timings": {
-       "bm25Ms": 0.11,
-       "denseSearchMs": 0.4,
-       "fusionMs": 0.08
+       "bm25Ms": 0.15,
+       "denseSearchMs": 0.42,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -10462,9 +10430,9 @@
        "bcos-current-status"
       ],
       "timings": {
-       "bm25Ms": 0.11,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.15
+       "bm25Ms": 0.12,
+       "denseSearchMs": 0.44,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -10493,7 +10461,7 @@
       ],
       "timings": {
        "bm25Ms": 0.07,
-       "denseSearchMs": 0.44,
+       "denseSearchMs": 0.42,
        "fusionMs": 0.09
       },
       "leakQuery": false,
@@ -10522,9 +10490,9 @@
        "claw-real-tool-verification"
       ],
       "timings": {
-       "bm25Ms": 0.12,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.13
+       "bm25Ms": 0.11,
+       "denseSearchMs": 0.42,
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -10552,9 +10520,9 @@
        "wedding-paper-metric-caveat"
       ],
       "timings": {
-       "bm25Ms": 0.24,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.14
+       "bm25Ms": 0.22,
+       "denseSearchMs": 0.45,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -10582,9 +10550,9 @@
        "bcos-no-self-approval"
       ],
       "timings": {
-       "bm25Ms": 0.15,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.1
+       "bm25Ms": 0.3,
+       "denseSearchMs": 0.49,
+       "fusionMs": 0.15
       },
       "leakQuery": false,
       "leaked": [],
@@ -10609,12 +10577,12 @@
        "crime-v2-plan",
        "crime-product-complete-not-tech-complete",
        "crime-overview",
-       "crime-spoiler-security-evidence"
+       "crime-llm-not-core-gate"
       ],
       "timings": {
-       "bm25Ms": 0.18,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.1
+       "bm25Ms": 0.24,
+       "denseSearchMs": 0.47,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -10642,8 +10610,8 @@
        "bcos-overview"
       ],
       "timings": {
-       "bm25Ms": 0.08,
-       "denseSearchMs": 0.41,
+       "bm25Ms": 0.09,
+       "denseSearchMs": 0.42,
        "fusionMs": 0.13
       },
       "leakQuery": true,
@@ -10673,8 +10641,8 @@
       ],
       "timings": {
        "bm25Ms": 0.07,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.14
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.24
       },
       "leakQuery": true,
       "leaked": [],
@@ -10686,7 +10654,7 @@
       "id": "L3",
       "group": "LEAK",
       "rank": null,
-      "top1": "dd-rag-baseline-metrics",
+      "top1": "dd-hybrid-rag-experimental-phase",
       "top1Project": "digital-docent",
       "expectedProject": null,
       "wrongProject": false,
@@ -10695,16 +10663,16 @@
       "activeProject": "digital-docent",
       "unsupported": false,
       "top5": [
-       "dd-rag-baseline-metrics",
+       "dd-hybrid-rag-experimental-phase",
        "dd-rag-bm25-baseline",
-       "dd-rag-retrieval-improvement-evidence",
+       "dd-rag-baseline-metrics",
        "dd-overview",
-       "dd-lexical-router-limit"
+       "dd-rag-retrieval-improvement-evidence"
       ],
       "timings": {
-       "bm25Ms": 0.06,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.09
+       "bm25Ms": 0.11,
+       "denseSearchMs": 0.51,
+       "fusionMs": 0.19
       },
       "leakQuery": true,
       "leaked": [],
@@ -10732,9 +10700,9 @@
        "crime-v2-plan"
       ],
       "timings": {
-       "bm25Ms": 0.23,
-       "denseSearchMs": 0.4,
-       "fusionMs": 0.1
+       "bm25Ms": 0.34,
+       "denseSearchMs": 0.48,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -10762,9 +10730,9 @@
        "crime-core-loop"
       ],
       "timings": {
-       "bm25Ms": 0.14,
-       "denseSearchMs": 0.4,
-       "fusionMs": 0.09
+       "bm25Ms": 0.16,
+       "denseSearchMs": 0.5,
+       "fusionMs": 0.22
       },
       "leakQuery": false,
       "leaked": [],
@@ -10792,9 +10760,9 @@
        "crime-core-loop"
       ],
       "timings": {
-       "bm25Ms": 0.35,
-       "denseSearchMs": 0.57,
-       "fusionMs": 0.16
+       "bm25Ms": 0.26,
+       "denseSearchMs": 0.62,
+       "fusionMs": 0.18
       },
       "leakQuery": false,
       "leaked": [],
@@ -10822,9 +10790,9 @@
        "crime-product-complete-not-tech-complete"
       ],
       "timings": {
-       "bm25Ms": 0.21,
-       "denseSearchMs": 0.44,
-       "fusionMs": 0.13
+       "bm25Ms": 0.18,
+       "denseSearchMs": 0.42,
+       "fusionMs": 0.09
       },
       "leakQuery": false,
       "leaked": [],
@@ -10849,12 +10817,12 @@
        "crime-v2-plan",
        "crime-product-complete-not-tech-complete",
        "crime-overview",
-       "crime-spoiler-security-evidence"
+       "crime-llm-not-core-gate"
       ],
       "timings": {
-       "bm25Ms": 0.2,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.11
+       "bm25Ms": 0.18,
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.09
       },
       "leakQuery": false,
       "leaked": [],
@@ -10879,18 +10847,18 @@
        "dd-rag-retrieval-improvement-evidence",
        "dd-problem",
        "dd-overview",
-       "dd-grounding-contract"
+       "dd-hybrid-rag-experimental-phase"
       ],
       "timings": {
-       "bm25Ms": 0.09,
-       "denseSearchMs": 0.43,
-       "fusionMs": 0.13
+       "bm25Ms": 0.1,
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
-      "statusRank": 1,
-      "top1Status": "experimental"
+      "statusTarget": null,
+      "statusRank": null,
+      "top1Status": "current"
      },
      {
       "id": "S7",
@@ -10900,7 +10868,7 @@
       "top1Project": "digital-docent",
       "expectedProject": "digital-docent",
       "wrongProject": false,
-      "support": "partial",
+      "support": "full",
       "scope": "project",
       "activeProject": "digital-docent",
       "unsupported": false,
@@ -10909,24 +10877,24 @@
        "dd-rag-bm25-baseline",
        "dd-rag-retrieval-improvement-evidence",
        "dd-overview",
-       "dd-production-deployment-checkpoint"
+       "dd-hybrid-rag-experimental-phase"
       ],
       "timings": {
-       "bm25Ms": 0.18,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.1
+       "bm25Ms": 0.15,
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
-      "statusRank": 1,
-      "top1Status": "experimental"
+      "statusTarget": null,
+      "statusRank": null,
+      "top1Status": "current"
      },
      {
       "id": "S8",
       "group": "STATUS",
-      "rank": 5,
-      "top1": "dd-rag-bm25-baseline",
+      "rank": 1,
+      "top1": "dd-hybrid-rag-experimental-phase",
       "top1Project": "digital-docent",
       "expectedProject": "digital-docent",
       "wrongProject": false,
@@ -10935,21 +10903,21 @@
       "activeProject": "digital-docent",
       "unsupported": false,
       "top5": [
+       "dd-hybrid-rag-experimental-phase",
        "dd-rag-bm25-baseline",
        "dd-rag-retrieval-improvement-evidence",
-       "dd-rag-baseline-metrics",
        "dd-overview",
-       "dd-hybrid-rag-decision"
+       "dd-rag-baseline-metrics"
       ],
       "timings": {
-       "bm25Ms": 0.18,
-       "denseSearchMs": 0.43,
-       "fusionMs": 0.09
+       "bm25Ms": 0.16,
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
-      "statusRank": 5,
+      "statusTarget": null,
+      "statusRank": null,
       "top1Status": "historical"
      },
      {
@@ -10969,23 +10937,23 @@
        "dd-lexical-router-limit",
        "dd-rag-bm25-baseline",
        "dd-overview",
-       "dd-face-fitting-stop-decision"
+       "dd-hybrid-rag-experimental-phase"
       ],
       "timings": {
-       "bm25Ms": 0.2,
-       "denseSearchMs": 0.68,
-       "fusionMs": 0.16
+       "bm25Ms": 0.19,
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
-      "statusRank": 1,
-      "top1Status": "experimental"
+      "statusTarget": null,
+      "statusRank": null,
+      "top1Status": "current"
      },
      {
       "id": "S10",
       "group": "STATUS",
-      "rank": 3,
+      "rank": 2,
       "top1": "dd-rag-retrieval-improvement-evidence",
       "top1Project": "digital-docent",
       "expectedProject": "digital-docent",
@@ -10996,20 +10964,20 @@
       "unsupported": false,
       "top5": [
        "dd-rag-retrieval-improvement-evidence",
+       "dd-hybrid-rag-experimental-phase",
        "dd-rag-bm25-baseline",
-       "dd-hybrid-rag-decision",
        "dd-overview",
-       "dd-rag-baseline-metrics"
+       "dd-hybrid-rag-decision"
       ],
       "timings": {
-       "bm25Ms": 0.31,
-       "denseSearchMs": 0.45,
-       "fusionMs": 0.17
+       "bm25Ms": 0.25,
+       "denseSearchMs": 0.57,
+       "fusionMs": 0.44
       },
       "leakQuery": false,
       "leaked": [],
-      "statusTarget": "experimental",
-      "statusRank": 3,
+      "statusTarget": null,
+      "statusRank": null,
       "top1Status": "historical"
      },
      {
@@ -11032,9 +11000,9 @@
        "bcos-current-status"
       ],
       "timings": {
-       "bm25Ms": 0.2,
-       "denseSearchMs": 0.43,
-       "fusionMs": 0.11
+       "bm25Ms": 0.16,
+       "denseSearchMs": 0.42,
+       "fusionMs": 0.09
       },
       "leakQuery": false,
       "leaked": [],
@@ -11062,9 +11030,9 @@
        "bcos-capability-policy-separation"
       ],
       "timings": {
-       "bm25Ms": 0.2,
+       "bm25Ms": 0.18,
        "denseSearchMs": 0.42,
-       "fusionMs": 0.12
+       "fusionMs": 0.09
       },
       "leakQuery": false,
       "leaked": [],
@@ -11092,9 +11060,9 @@
        "bcos-final-completion-evidence"
       ],
       "timings": {
-       "bm25Ms": 0.18,
-       "denseSearchMs": 0.43,
-       "fusionMs": 0.1
+       "bm25Ms": 0.15,
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.08
       },
       "leakQuery": false,
       "leaked": [],
@@ -11122,9 +11090,9 @@
        "bcos-policy-vs-capability"
       ],
       "timings": {
-       "bm25Ms": 0.2,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.1
+       "bm25Ms": 0.18,
+       "denseSearchMs": 0.49,
+       "fusionMs": 0.09
       },
       "leakQuery": false,
       "leaked": [],
@@ -11153,7 +11121,7 @@
       ],
       "timings": {
        "bm25Ms": 0.14,
-       "denseSearchMs": 0.42,
+       "denseSearchMs": 0.45,
        "fusionMs": 0.09
       },
       "leakQuery": false,
@@ -11183,7 +11151,7 @@
       ],
       "timings": {
        "bm25Ms": 0.06,
-       "denseSearchMs": 0.4,
+       "denseSearchMs": 0.41,
        "fusionMs": 0.09
       },
       "leakQuery": false,
@@ -11212,9 +11180,9 @@
        "armi-role-boundary"
       ],
       "timings": {
-       "bm25Ms": 0.12,
-       "denseSearchMs": 0.81,
-       "fusionMs": 0.12
+       "bm25Ms": 0.34,
+       "denseSearchMs": 0.9,
+       "fusionMs": 0.18
       },
       "leakQuery": false,
       "leaked": [],
@@ -11242,9 +11210,9 @@
        "armi-agent-routing"
       ],
       "timings": {
-       "bm25Ms": 0.14,
-       "denseSearchMs": 0.93,
-       "fusionMs": 0.14
+       "bm25Ms": 0.16,
+       "denseSearchMs": 0.84,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -11272,9 +11240,9 @@
        "hangarae-latest-coordinate-policy"
       ],
       "timings": {
-       "bm25Ms": 0.18,
-       "denseSearchMs": 0.83,
-       "fusionMs": 0.11
+       "bm25Ms": 0.16,
+       "denseSearchMs": 0.82,
+       "fusionMs": 0.1
       },
       "leakQuery": false,
       "leaked": [],
@@ -11302,7 +11270,7 @@
        "claw-single-llm-failure-motivation"
       ],
       "timings": {
-       "bm25Ms": 0.11,
+       "bm25Ms": 0.1,
        "denseSearchMs": 0.81,
        "fusionMs": 0.11
       },
@@ -11362,9 +11330,9 @@
        "bcos-subscription-cost-rationale"
       ],
       "timings": {
-       "bm25Ms": 0.17,
-       "denseSearchMs": 0.81,
-       "fusionMs": 0.17
+       "bm25Ms": 0.27,
+       "denseSearchMs": 0.91,
+       "fusionMs": 0.29
       },
       "leakQuery": false,
       "leaked": [],
@@ -11392,9 +11360,9 @@
        "hangarae-gamification"
       ],
       "timings": {
-       "bm25Ms": 0.12,
+       "bm25Ms": 0.14,
        "denseSearchMs": 0.83,
-       "fusionMs": 0.14
+       "fusionMs": 0.13
       },
       "leakQuery": false,
       "leaked": [],
@@ -11423,8 +11391,8 @@
       ],
       "timings": {
        "bm25Ms": 0.2,
-       "denseSearchMs": 0.81,
-       "fusionMs": 0.12
+       "denseSearchMs": 0.82,
+       "fusionMs": 0.11
       },
       "leakQuery": false,
       "leaked": [],
@@ -11482,9 +11450,9 @@
        "wedding-3d-stop-product-decision"
       ],
       "timings": {
-       "bm25Ms": 0.13,
-       "denseSearchMs": 0.81,
-       "fusionMs": 0.11
+       "bm25Ms": 0.14,
+       "denseSearchMs": 1.25,
+       "fusionMs": 0.21
       },
       "leakQuery": false,
       "leaked": [],
@@ -11512,9 +11480,9 @@
        "wedding-econ-partial-success"
       ],
       "timings": {
-       "bm25Ms": 0.16,
-       "denseSearchMs": 0.82,
-       "fusionMs": 0.1
+       "bm25Ms": 0.26,
+       "denseSearchMs": 0.95,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -11542,8 +11510,8 @@
        "wedding-icon-environment-failure"
       ],
       "timings": {
-       "bm25Ms": 0.17,
-       "denseSearchMs": 0.84,
+       "bm25Ms": 0.18,
+       "denseSearchMs": 0.83,
        "fusionMs": 0.12
       },
       "leakQuery": false,
@@ -11572,9 +11540,9 @@
        "crime-llm-not-core-gate"
       ],
       "timings": {
-       "bm25Ms": 0.13,
-       "denseSearchMs": 0.96,
-       "fusionMs": 0.16
+       "bm25Ms": 0.12,
+       "denseSearchMs": 0.82,
+       "fusionMs": 0.12
       },
       "leakQuery": false,
       "leaked": [],
@@ -11602,9 +11570,9 @@
        "crime-baseline-before-ai"
       ],
       "timings": {
-       "bm25Ms": 0.22,
-       "denseSearchMs": 0.86,
-       "fusionMs": 0.17
+       "bm25Ms": 0.13,
+       "denseSearchMs": 1.08,
+       "fusionMs": 0.46
       },
       "leakQuery": false,
       "leaked": [],
@@ -11632,9 +11600,9 @@
        "crime-spoiler-defense"
       ],
       "timings": {
-       "bm25Ms": 0.19,
-       "denseSearchMs": 0.84,
-       "fusionMs": 0.17
+       "bm25Ms": 0.21,
+       "denseSearchMs": 0.87,
+       "fusionMs": 0.18
       },
       "leakQuery": false,
       "leaked": [],
@@ -11663,8 +11631,8 @@
       ],
       "timings": {
        "bm25Ms": 0.18,
-       "denseSearchMs": 0.85,
-       "fusionMs": 0.18
+       "denseSearchMs": 0.82,
+       "fusionMs": 0.14
       },
       "leakQuery": false,
       "leaked": [],
@@ -11692,9 +11660,9 @@
        "crime-overview"
       ],
       "timings": {
-       "bm25Ms": 0.12,
-       "denseSearchMs": 0.85,
-       "fusionMs": 0.18
+       "bm25Ms": 0.11,
+       "denseSearchMs": 0.81,
+       "fusionMs": 0.16
       },
       "leakQuery": false,
       "leaked": [],
@@ -11723,7 +11691,7 @@
       ],
       "timings": {
        "bm25Ms": 0.09,
-       "denseSearchMs": 0.82,
+       "denseSearchMs": 0.81,
        "fusionMs": 0.16
       },
       "leakQuery": false,
@@ -11752,9 +11720,9 @@
        "claw-clarification-boundary"
       ],
       "timings": {
-       "bm25Ms": 0.11,
-       "denseSearchMs": 0.81,
-       "fusionMs": 0.12
+       "bm25Ms": 0.47,
+       "denseSearchMs": 1.13,
+       "fusionMs": 0.19
       },
       "leakQuery": false,
       "leaked": [],
@@ -11777,14 +11745,14 @@
       "top5": [
        "profile:portfolio:projects",
        "dd-overview",
-       "armi-overview",
        "wedding-overview",
-       "hangarae-overview"
+       "hangarae-overview",
+       "claw-overview"
       ],
       "timings": {
-       "bm25Ms": 0.07,
-       "denseSearchMs": 0.41,
-       "fusionMs": 0.12
+       "bm25Ms": 0.09,
+       "denseSearchMs": 0.44,
+       "fusionMs": 0.14
       },
       "leakQuery": true,
       "leaked": [],
@@ -11812,8 +11780,8 @@
        "wedding-overview"
       ],
       "timings": {
-       "bm25Ms": 0.47,
-       "denseSearchMs": 0.41,
+       "bm25Ms": 0.27,
+       "denseSearchMs": 0.42,
        "fusionMs": 0.13
       },
       "leakQuery": true,
@@ -11843,8 +11811,8 @@
       ],
       "timings": {
        "bm25Ms": 0.03,
-       "denseSearchMs": 0.42,
-       "fusionMs": 0.06
+       "denseSearchMs": 0.41,
+       "fusionMs": 0.3
       },
       "leakQuery": true,
       "leaked": [],
