@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "node --import ./tests/alias-hook.mjs --test"
+    "test": "node --import ./tests/alias-hook.mjs --test",
+    "docent:corpus": "node --import ./tests/alias-hook.mjs scripts/docent/build-corpus.ts",
+    "docent:embed": "node --env-file-if-exists=.env.local --import ./tests/alias-hook.mjs scripts/docent/build-embeddings.ts",
+    "docent:eval": "node --env-file-if-exists=.env.local --import ./tests/alias-hook.mjs scripts/rag-eval.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.111.0",

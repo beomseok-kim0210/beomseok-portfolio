@@ -6,9 +6,12 @@
  * "수치" 질문에 지표 조각이 올라오고, 답의 출처가 사람이 읽을 수 있는 단위로 남는다.
  */
 
-/** 포트폴리오에서 실제로 존재하는 프로젝트 식별자. URL 슬러그와 같다. */
+/**
+ * 레거시 코퍼스(src/data 빌더)의 프로젝트 식별자. URL 슬러그와 같다. 큐레이션 스냅샷이 들어오면 프로젝트 목록은
+ * 엔티티 등록부(src/lib/docent/corpus/registry.ts)가 정한다 — 그래서 ProjectId 는 문자열이다.
+ */
 export const PROJECT_IDS = ["armi", "hangarae", "wedding", "claw-dev", "docent"] as const;
-export type ProjectId = (typeof PROJECT_IDS)[number];
+export type ProjectId = string;
 
 export const ENTITY_TYPES = [
   "profile",
@@ -34,6 +37,7 @@ export const SECTIONS = [
   "decision",
   "troubleshooting",
   "metric",
+  "evaluation",
   "result",
   "lesson",
   "award",
@@ -50,6 +54,7 @@ export type Section = (typeof SECTIONS)[number];
 export const SOURCE_TYPES = [
   "structured_data",
   "markdown_note",
+  "curated_corpus",
 ] as const;
 export type SourceType = (typeof SOURCE_TYPES)[number];
 
@@ -78,6 +83,15 @@ export interface RagChunk {
   /** 본문 sha256 앞 12자. ID 는 자리, 이 값은 내용을 가리킨다. */
   contentHash: string;
   updatedAt?: string;
+  /** 큐레이션 스냅샷의 사실 시점. 없으면 current(레거시 코퍼스). current 가 아니면 근거에 상태 라벨이 붙는다. */
+  status?: "current" | "historical" | "experimental" | "planned";
+  /** 큐레이션 스냅샷의 정보 종류(evidence 와 evaluation 구분 등). 레거시 코퍼스는 없다. */
+  factType?: string;
+  /** 주장의 성격(implemented / measured / analyzed / planned …). 근거 라벨로 모델에 간다. */
+  claimStatus?: string;
+  verificationLevel?: string;
+  /** 큐레이터 주의 사항. 근거와 함께 모델에 간다. */
+  notes?: string;
 }
 
 export interface CorpusSource {

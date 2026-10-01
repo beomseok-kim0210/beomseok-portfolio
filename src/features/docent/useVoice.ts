@@ -76,11 +76,48 @@ export interface VoiceState {
  */
 export const VOICE_REWARM_AFTER_MS = 90_000;
 
+/**
+ * 음성은 기본으로 켜져 있다(2026-10-01, Human 결정). 사이트에 들어오면 스피커 UI 가 켜진 상태로
+ * 시작하고 RunPod 워커 예열만 바로 건다 — 소리는 내지 않는다. 브라우저 자동재생 정책을 우회하는
+ * 무음 재생 같은 꼼수는 쓰지 않는다. 첫 답변 음성은 방문자가 질문을 보낸(사용자 활성화가 있는) 뒤에만 난다.
+ *
+ * 방문자가 끄면 그 선택을 이 브라우저에 기억해 다음 방문에도 꺼진 채로 시작한다(예열도 하지 않는다).
+ * 저장소를 못 쓰면(사생활 보호 모드 등) 기본값(켜짐)으로 동작한다.
+ *
+ * 비용: 방문만으로 예열 요청이 나간다. RunPod workersMin 0 은 그대로라 유휴 120 초 뒤 내려가지만,
+ * 질문 없이 떠나는 방문도 워커 기동(콜드 스타트) 시간만큼 GPU 를 쓴다.
+ */
+export const VOICE_PREFERENCE_KEY = "dd-voice-enabled";
+
+export function readVoicePreference(storage: Pick<Storage, "getItem"> | null): boolean {
+  try {
+    return storage?.getItem(VOICE_PREFERENCE_KEY) !== "0";
+  } catch {
+    return true;
+  }
+}
+
+export function persistVoicePreference(storage: Pick<Storage, "setItem"> | null, enabled: boolean): void {
+  try {
+    storage?.setItem(VOICE_PREFERENCE_KEY, enabled ? "1" : "0");
+  } catch {
+    // 저장하지 못해도 이번 방문의 선택은 유지된다
+  }
+}
+
+function browserStorage(): Storage | null {
+  try {
+    return typeof window === "undefined" ? null : window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
 export function useVoice(): VoiceState {
   const [sttSupported, setSttSupported] = useState(false);
   const [ttsSupported, setTtsSupported] = useState(false);
   const [listening, setListening] = useState(false);
-  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [lifecycleState, dispatchLifecycle] = useReducer(
     voiceLifecycleReducer,
     initialVoiceLifecycleState,
@@ -88,7 +125,7 @@ export function useVoice(): VoiceState {
   const [statusNow, setStatusNow] = useState(0);
 
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
-  const voiceEnabledRef = useRef(false);
+  const voiceEnabledRef = useRef(true);
   const lifecycleRef = useRef(lifecycleState);
   lifecycleRef.current = lifecycleState;
   const warmCycleRef = useRef<Promise<void> | null>(null);
@@ -187,12 +224,21 @@ export function useVoice(): VoiceState {
   useEffect(() => {
     setSttSupported(Boolean(getSpeechRecognition()));
     setTtsSupported(typeof window !== "undefined" && typeof window.Audio === "function");
+    // 첫 진입: 기본 켜짐이면 예열만 시작한다(재생 없음). 방문자가 예전에 껐으면 꺼진 채로 둔다.
+    if (readVoicePreference(browserStorage())) {
+      prepareIssuedRef.current = false;
+      dispatchLifecycle({ type: "ENABLE", now: Date.now() });
+      queueMicrotask(ensureReady);
+    } else {
+      voiceEnabledRef.current = false;
+      setVoiceEnabled(false);
+    }
     return () => {
       recognitionRef.current?.abort();
       warmAbortRef.current?.abort();
       if (pollTimerRef.current !== null) clearTimeout(pollTimerRef.current);
     };
-  }, []);
+  }, [ensureReady]);
 
   // 5초와 20초 경계에서만 다시 렌더한다. 폴링 횟수는 aria-live 문구에 영향을 주지 않는다.
   useEffect(() => {
@@ -257,6 +303,7 @@ export function useVoice(): VoiceState {
     const next = !voiceEnabledRef.current;
     voiceEnabledRef.current = next;
     setVoiceEnabled(next);
+    persistVoicePreference(browserStorage(), next);
     if (next) {
       prepareIssuedRef.current = false;
       dispatchLifecycle({ type: "ENABLE", now: Date.now() });
@@ -273,6 +320,7 @@ export function useVoice(): VoiceState {
     if (!voiceEnabledRef.current) return;
     voiceEnabledRef.current = false;
     setVoiceEnabled(false);
+    // 음성 실패 뒤 "텍스트로만 계속" 은 이번 방문의 복구다 — 다음 방문의 기본값으로 저장하지 않는다.
     prepareIssuedRef.current = false;
     cancelWarmCycle();
     dispatchLifecycle({ type: "DISABLE" });

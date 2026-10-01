@@ -1,0 +1,308 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://beomseok-portfolio/docs/rag/curated-corpus.schema.json",
+  "title": "Digital Docent curated corpus package (schemaVersion 1)",
+  "description": "도슨트 큐레이션 코퍼스 패키지. 단일 파일이면 이 객체 전체, 디렉터리면 manifest.json(entities 등) + chunks/*.json(CanonicalChunk 배열)로 나눈다. 런타임 검증은 src/lib/docent/corpus/validate.ts — 이 스키마와 함께 바꾼다. v4 큐레이션 형식(schemaVersion 1.3, corpusVersion)은 src/lib/docent/corpus/v4.ts 가 이 형식으로 변환한다.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "entities"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "packageId": {
+      "type": "string",
+      "description": "패키지 식별자(예: curated-2026-10-02)"
+    },
+    "generatedBy": {
+      "type": "string"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entity"
+      }
+    },
+    "chunks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/chunk"
+      },
+      "description": "디렉터리 입력이면 chunks/*.json 로 나눠도 된다"
+    },
+    "secretAllowlist": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/allow"
+      }
+    },
+    "sourceMeta": {
+      "type": "object",
+      "description": "원본 패키지의 버전·출처 스냅샷·충돌·승격 대기·수정 필요 목록(감사용, 검색 근거 아님)"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9:._-]{0,159}$"
+    },
+    "status": {
+      "enum": [
+        "current",
+        "historical",
+        "deprecated",
+        "experimental",
+        "planned"
+      ]
+    },
+    "entity": {
+      "type": "object",
+      "required": [
+        "id",
+        "canonicalName",
+        "aliases",
+        "type",
+        "status",
+        "public"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "canonicalName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "엔티티 해소용 표기(질문 속 이름). 의도 라우팅용 아님. 다른 엔티티와 겹치면 오류"
+        },
+        "type": {
+          "enum": [
+            "project",
+            "system",
+            "profile",
+            "person",
+            "organization",
+            "site",
+            "topic"
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "public": {
+          "type": "boolean"
+        },
+        "pathname": {
+          "type": "string",
+          "pattern": "^/"
+        },
+        "lifecycle": {
+          "type": "string",
+          "description": "원본의 생애 상태(예: done)"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "sourceType",
+        "sourceRef"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "sourceType": {
+          "enum": [
+            "notion",
+            "github",
+            "portfolio_site",
+            "document",
+            "manual_review",
+            "derived"
+          ]
+        },
+        "sourceRef": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Notion 페이지 URL(notion.so · app.notion.com · collection://), owner/repo:path, 문서 이름. 로컬 절대 경로 금지"
+        },
+        "sourceRevision": {
+          "type": "string",
+          "description": "커밋 SHA, Notion 수정 시각 등"
+        },
+        "notionPageId": {
+          "type": "string"
+        },
+        "notionSection": {
+          "type": "string",
+          "description": "예: Evidence, Evaluation"
+        },
+        "path": {
+          "type": "string",
+          "description": "GitHub 저장소 상대 경로"
+        },
+        "lastVerifiedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "sourceTitle": {
+          "type": "string"
+        },
+        "nativeVerification": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "chunk": {
+      "type": "object",
+      "required": [
+        "id",
+        "entityId",
+        "factType",
+        "status",
+        "public",
+        "title",
+        "content",
+        "provenance"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "entityId": {
+          "$ref": "#/$defs/id"
+        },
+        "projectId": {
+          "$ref": "#/$defs/id",
+          "description": "프로젝트 사실이면 type=project 엔티티 id"
+        },
+        "factType": {
+          "enum": [
+            "overview",
+            "problem",
+            "role",
+            "architecture",
+            "technology",
+            "rationale",
+            "troubleshooting",
+            "result",
+            "evidence",
+            "evaluation",
+            "lesson",
+            "award",
+            "profile",
+            "skill",
+            "journey",
+            "devlog",
+            "decision"
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "public": {
+          "type": "boolean"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "provenance": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/provenance"
+          }
+        },
+        "supersedes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "claimStatus": {
+          "type": "string",
+          "minLength": 1,
+          "description": "주장의 성격(implemented / measured / analyzed / evaluated / rejected / planned / cross-referenced …). 근거 라벨로 모델에 간다"
+        },
+        "verificationLevel": {
+          "type": "string"
+        },
+        "priority": {
+          "enum": [
+            "high",
+            "normal",
+            "low"
+          ]
+        },
+        "notes": {
+          "type": "string",
+          "description": "큐레이터 주의 사항 — 근거와 함께 모델에 간다"
+        },
+        "label": {
+          "type": "string",
+          "description": "원본의 세부 섹션 라벨"
+        }
+      }
+    },
+    "allow": {
+      "type": "object",
+      "required": [
+        "chunkId",
+        "match",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "chunkId": {
+          "$ref": "#/$defs/id"
+        },
+        "match": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

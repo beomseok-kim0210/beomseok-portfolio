@@ -1,0 +1,17 @@
+[
+  {
+    "id": "<entity-id>:overview:<key>",
+    "entityId": "<entity-id>",
+    "projectId": "<entity-id>",
+    "factType": "overview",
+    "status": "current",
+    "public": true,
+    "title": "<짧은 제목>",
+    "content": "<Notion 정본·GitHub 로 교차 검증한 사실 본문>",
+    "tags": ["<태그>"],
+    "provenance": [
+      { "sourceType": "notion", "sourceRef": "<Notion 페이지 제목 또는 URL>", "notionPageId": "<page id>", "notionSection": "<절 이름>", "lastVerifiedAt": "<YYYY-MM-DD>" },
+      { "sourceType": "github", "sourceRef": "<owner/repo>", "path": "<저장소 상대 경로>", "sourceRevision": "<commit sha>" }
+    ]
+  }
+]

@@ -186,7 +186,7 @@ export function DocentRuntimeProvider({ children }: { children: ReactNode }) {
     if (lifecycleRef.current === "VOICE_SYNTHESIZING") finishSpeaking();
   }, [finishSpeaking, listening, stopSupertonic]);
 
-  // A text send can only prepare voice after the visitor explicitly enabled voice.
+  // 음성은 기본으로 켜져 있고(첫 진입 때 useVoice 가 예열만 건다), 방문자가 끄면 여기서도 예열하지 않는다.
   // 워커가 쉬다 내려갔을 만큼 지났으면 질문을 보내는 순간 다시 깨운다 — 답변 텍스트가
   // 생성되는 동안 콜드 스타트가 겹쳐 진행된다. 텍스트는 이것을 기다리지 않는다.
   const { rewarmIfIdle } = voice;

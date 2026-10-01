@@ -21,7 +21,12 @@ export const docentCopy = {
 export const docentConfig = {
   maxInputLength: 500,
   maxHistoryMessages: 8,
-  maxTokens: 2048,
+  /**
+   * 출력 상한(토큰). 답변 길이의 1차 제어는 프롬프트의 대화 방식(기본은 짧게, 더 물으면 깊게)이고,
+   * 이 값은 안전 상한이다. gpt-5.6 계열은 reasoning 토큰도 이 상한에 들어가므로 너무 낮추면 "자세히
+   * 설명해줘" 같은 긴 답이 잘린다. 2048 → 1000 (2026-10-01).
+   */
+  maxTokens: 1000,
   rateLimit: { windowMs: 60_000, maxRequests: 10 },
   /**
    * 음성 세그먼트 합성, IP 당 분당 20 회.

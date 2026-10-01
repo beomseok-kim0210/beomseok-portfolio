@@ -3,6 +3,7 @@
 // 확인하는 것: NDJSON 프로토콜(meta/sources/delta/done), 페이지 문맥이 순위를 바꾸는 것,
 // 어시스턴트 발화가 검색에 섞이지 않는 것, 깨진 문맥·가짜 프로젝트가 500 이 되지 않는 것,
 // 응답 어디에도 경로·환경변수 이름이 없는 것.
+import "./helpers/legacyCorpus";
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
@@ -92,7 +93,8 @@ test("깨진 페이지 문맥과 가짜 프로젝트 ID 는 무시되고 200 으
 test("근거 없는 질문은 지어내지 않고 근거 부족을 말한다", async () => {
   const r = await call({ messages: [{ role: "user", content: "ARMI 팀원은 몇 명이었어요?" }], pageContext: { pathname: "/projects/armi", pageType: "project", projectSlug: "armi" } });
   assert.equal(sources(r.events)?.grounded, false);
-  assert.ok(text(r.events).includes("근거"));
+  // 질문 일부가 근거에 없다는 단서를 붙이고(또는 근거 없음 안내), 기록된 내용만 읽는다 — 인원수를 지어내지 않는다
+  assert.match(text(r.events), /기록되지 않은 부분은 답할 수 없어요|근거가 기록돼 있지 않아요/);
   assert.ok(!/\d+ ?명/.test(text(r.events)));
 });
 

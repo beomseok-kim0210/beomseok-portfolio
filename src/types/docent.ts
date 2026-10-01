@@ -72,6 +72,15 @@ export interface DocentTimings {
   chatTotalMs: number;
   stages: Record<DocentStage, number | null>;
   failureStage: DocentStage | null;
+  /** 검색 세부(서버 계측). 하이브리드가 아니면 queryEmbeddingMs·denseSearchMs 는 null/0. */
+  retrieval?: {
+    hybridMode: "dense+bm25" | "bm25_fallback";
+    queryEmbeddingMs: number | null;
+    bm25Ms: number;
+    denseSearchMs: number;
+    fusionMs: number;
+    retrievalTotalMs: number;
+  };
 }
 
 // NDJSON 와이어 프로토콜 — 한 줄에 JSON 하나. 모르는 type 은 클라이언트가 무시한다.

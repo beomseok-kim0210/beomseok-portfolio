@@ -1,0 +1,1556 @@
+{
+ "version": 1,
+ "corpus": "dd-curated-2026-10-01-v4-all-projects-deep",
+ "note": "v4 큐레이션 코퍼스 평가 셋(2026-10-01). 질문은 사용자 지정 deep query 목록, 정답은 v4 조각 ID. group: 프로젝트 약어(DEEP) · UNSUP(코퍼스에 없는 사실 — support 가 full 이면 실패) · PREMISE(거짓 전제 — 답변 수준 확인) · LEAK(공개 범위 밖 정보 노출 — 결과에 공개 스냅샷 밖 엔티티 조각/이름이 있으면 실패. 공개 범위 밖 이름을 직접 묻는 질문은 gitignore 된 docs/rag/curated-corpus/rag-eval-local-probes.json 에 둔다) · STATUS(계획·실험 조각이 근거로 오는지 — 답변 수준에서 현재 사실처럼 말하는지 별도 확인) · CONVO(다중 턴).",
+ "pages": {
+  "home": {
+   "pathname": "/",
+   "pageType": "home"
+  }
+ },
+ "queries": [
+  {
+   "id": "AR1",
+   "group": "ARMI",
+   "query": "ARMI가 뭔데?",
+   "page": "home",
+   "project": "armi",
+   "acceptable": [
+    "armi-overview"
+   ]
+  },
+  {
+   "id": "AR2",
+   "group": "ARMI",
+   "query": "armi프로젝트가 뭔데",
+   "page": "home",
+   "project": "armi",
+   "acceptable": [
+    "armi-overview"
+   ]
+  },
+  {
+   "id": "AR3",
+   "group": "ARMI",
+   "query": "아르미 뭐임?",
+   "page": "home",
+   "project": "armi",
+   "acceptable": [
+    "armi-overview"
+   ]
+  },
+  {
+   "id": "AR4",
+   "group": "ARMI",
+   "query": "ARMI는 어떻게 동작해?",
+   "page": "home",
+   "project": "armi",
+   "acceptable": [
+    "armi-agent-routing",
+    "armi-voice-state-machine",
+    "armi-overview",
+    "armi-robot-communication",
+    "armi-agent-decision-layer"
+   ]
+  },
+  {
+   "id": "AR5",
+   "group": "ARMI",
+   "query": "왜 그렇게 설계했어?",
+   "page": "home",
+   "project": "armi",
+   "history": [
+    {
+     "role": "user",
+     "content": "ARMI는 어떻게 동작해?"
+    },
+    {
+     "role": "assistant",
+     "content": "환자 요청을 AI Agent가 구조화해 답변, 로봇 동작, 검색, 기억 조회로 나눠 연결해요."
+    }
+   ],
+   "acceptable": [
+    "armi-agent-decision-layer",
+    "armi-tts-stt-transition",
+    "armi-audio-ownership",
+    "armi-realtime-state",
+    "armi-kws-stop-decision",
+    "armi-agent-routing"
+   ]
+  },
+  {
+   "id": "AR6",
+   "group": "ARMI",
+   "query": "가장 어려웠던 건 뭐야?",
+   "page": "home",
+   "project": "armi",
+   "history": [
+    {
+     "role": "user",
+     "content": "ARMI가 뭔데?"
+    },
+    {
+     "role": "assistant",
+     "content": "ARMI는 병상 보조 로봇 서비스예요."
+    }
+   ],
+   "acceptable": [
+    "armi-audio-ownership",
+    "armi-input-quality-before-threshold",
+    "armi-tts-stt-transition",
+    "armi-realtime-state",
+    "armi-api-contract-normalization"
+   ]
+  },
+  {
+   "id": "AR7",
+   "group": "ARMI",
+   "query": "ARMI에서 LangGraph는 무슨 역할이야?",
+   "page": "home",
+   "project": "armi",
+   "acceptable": [
+    "armi-langgraph"
+   ]
+  },
+  {
+   "id": "AR8",
+   "group": "ARMI",
+   "query": "ARMI Redis를 왜 썼어?",
+   "page": "home",
+   "project": "armi",
+   "acceptable": [
+    "armi-memory",
+    "armi-role-boundary"
+   ]
+  },
+  {
+   "id": "DD1",
+   "group": "DD",
+   "query": "Digital Docent가 뭐야?",
+   "page": "home",
+   "project": "digital-docent",
+   "acceptable": [
+    "dd-overview"
+   ]
+  },
+  {
+   "id": "DD2",
+   "group": "DD",
+   "query": "너는 답을 어떻게 찾는 거야?",
+   "page": "home",
+   "project": "digital-docent",
+   "acceptable": [
+    "dd-grounding-contract",
+    "dd-rag-bm25-baseline",
+    "dd-hybrid-rag-decision",
+    "dd-lexical-router-limit"
+   ]
+  },
+  {
+   "id": "DD3",
+   "group": "DD",
+   "query": "BM25만 쓰는 거야?",
+   "page": "home",
+   "project": "digital-docent",
+   "acceptable": [
+    "dd-rag-bm25-baseline",
+    "dd-hybrid-rag-decision",
+    "dd-lexical-router-limit"
+   ]
+  },
+  {
+   "id": "DD4",
+   "group": "DD",
+   "query": "Hybrid RAG는 지금 적용된 상태야?",
+   "page": "home",
+   "project": "digital-docent",
+   "acceptable": [
+    "dd-hybrid-rag-decision"
+   ]
+  },
+  {
+   "id": "DD5",
+   "group": "DD",
+   "query": "립싱크는 어떻게 만들었어?",
+   "page": "home",
+   "project": "digital-docent",
+   "acceptable": [
+    "dd-korean-lipsync",
+    "dd-korean-articulation-fusion",
+    "dd-browser-tts-to-supertonic-lam",
+    "dd-lam-korean-limit"
+   ]
+  },
+  {
+   "id": "DD6",
+   "group": "DD",
+   "query": "RunPod은 왜 썼어?",
+   "page": "home",
+   "project": "digital-docent",
+   "acceptable": [
+    "dd-runpod-scale-to-zero-tradeoff",
+    "dd-runpod-production"
+   ]
+  },
+  {
+   "id": "CR1",
+   "group": "CRIME",
+   "query": "Crime Scene이 뭐야?",
+   "page": "home",
+   "project": "crime-scene",
+   "acceptable": [
+    "crime-overview",
+    "crime-v1-status"
+   ]
+  },
+  {
+   "id": "CR2",
+   "group": "CRIME",
+   "query": "Crime Scene에서 AI가 범인을 결정해?",
+   "page": "home",
+   "project": "crime-scene",
+   "acceptable": [
+    "crime-ai-natural-language-boundary",
+    "crime-ai-responsibility"
+   ]
+  },
+  {
+   "id": "CR3",
+   "group": "CRIME",
+   "query": "Crime Scene 프롬프트 인젝션은 어떻게 막았어?",
+   "page": "home",
+   "project": "crime-scene",
+   "acceptable": [
+    "crime-model-knows-less-security",
+    "crime-spoiler-defense"
+   ]
+  },
+  {
+   "id": "CR4",
+   "group": "CRIME",
+   "query": "concededTopicIds가 뭐야?",
+   "page": "home",
+   "project": "crime-scene",
+   "acceptable": [
+    "crime-ai-concession-whitelist",
+    "crime-structured-interrogation"
+   ]
+  },
+  {
+   "id": "CR5",
+   "group": "CRIME",
+   "query": "Crime Scene에서 AI 답변이 틀리면 게임 진행이 막히지 않아?",
+   "page": "home",
+   "project": "crime-scene",
+   "acceptable": [
+    "crime-deterministic-progression",
+    "crime-llm-not-core-gate",
+    "crime-two-playthrough-determinism"
+   ]
+  },
+  {
+   "id": "CR6",
+   "group": "CRIME",
+   "query": "Crime Scene 첫 UX에서 뭐가 문제였어?",
+   "page": "home",
+   "project": "crime-scene",
+   "acceptable": [
+    "crime-onboarding-two-step-failure",
+    "crime-onboarding-iteration"
+   ]
+  },
+  {
+   "id": "CR7",
+   "group": "CRIME",
+   "query": "사건 일지는 왜 만들었어?",
+   "page": "home",
+   "project": "crime-scene",
+   "acceptable": [
+    "crime-case-log",
+    "crime-case-log-reasoning-bridge"
+   ]
+  },
+  {
+   "id": "CR8",
+   "group": "CRIME",
+   "query": "Crime Scene V2에서 뭐가 바뀔 예정이야?",
+   "page": "home",
+   "project": "crime-scene",
+   "acceptable": [
+    "crime-v2-plan"
+   ]
+  },
+  {
+   "id": "BC1",
+   "group": "BCOS",
+   "query": "BCOS가 뭐야?",
+   "page": "home",
+   "project": "bcos",
+   "acceptable": [
+    "bcos-overview"
+   ]
+  },
+  {
+   "id": "BC2",
+   "group": "BCOS",
+   "query": "BCOS는 왜 만들었어?",
+   "page": "home",
+   "project": "bcos",
+   "acceptable": [
+    "bcos-project-remembers-agent",
+    "bcos-memory-principle",
+    "claw-to-bcos-evolution",
+    "bcos-overview",
+    "bcos-subscription-cost-rationale"
+   ]
+  },
+  {
+   "id": "BC3",
+   "group": "BCOS",
+   "query": "BCOS는 Claw Dev랑 뭐가 달라?",
+   "page": "home",
+   "project": null,
+   "acceptable": [
+    "claw-to-bcos-evolution",
+    "bcos-task-centric-vs-agent-centric",
+    "bcos-subscription-cost-rationale"
+   ]
+  },
+  {
+   "id": "BC4",
+   "group": "BCOS",
+   "query": "BCOS는 왜 Agent 중심이 아니라 Task 중심이야?",
+   "page": "home",
+   "project": "bcos",
+   "acceptable": [
+    "bcos-task-centric-vs-agent-centric",
+    "bcos-task-context-contract"
+   ]
+  },
+  {
+   "id": "BC5",
+   "group": "BCOS",
+   "query": "BCOS 프로젝트 메모리는 어떻게 관리해?",
+   "page": "home",
+   "project": "bcos",
+   "acceptable": [
+    "bcos-memory-principle",
+    "bcos-memory-types",
+    "bcos-memory-small-context",
+    "bcos-project-remembers-agent"
+   ]
+  },
+  {
+   "id": "BC6",
+   "group": "BCOS",
+   "query": "BCOS에서 Worker가 자기 코드를 승인할 수 있어?",
+   "page": "home",
+   "project": "bcos",
+   "acceptable": [
+    "bcos-no-self-approval"
+   ]
+  },
+  {
+   "id": "BC7",
+   "group": "BCOS",
+   "query": "BCOS에서 Claude랑 Codex 역할은 어떻게 나눠?",
+   "page": "home",
+   "project": "bcos",
+   "acceptable": [
+    "bcos-responsibility",
+    "bcos-policy-vs-capability",
+    "bcos-no-self-approval",
+    "bcos-capability-policy-separation"
+   ]
+  },
+  {
+   "id": "BC8",
+   "group": "BCOS",
+   "query": "BCOS benchmark는 이미 끝났어?",
+   "page": "home",
+   "project": "bcos",
+   "acceptable": [
+    "bcos-future-benchmark",
+    "bcos-benchmark-not-completion-gate"
+   ]
+  },
+  {
+   "id": "CL1",
+   "group": "CLAW",
+   "query": "Claw Dev가 뭐야?",
+   "page": "home",
+   "project": "claw-dev",
+   "acceptable": [
+    "claw-overview"
+   ]
+  },
+  {
+   "id": "CL2",
+   "group": "CLAW",
+   "query": "Claw Dev Agent가 몇 개야?",
+   "page": "home",
+   "project": "claw-dev",
+   "acceptable": [
+    "claw-six-role-boundaries",
+    "claw-agent-roles"
+   ]
+  },
+  {
+   "id": "CL3",
+   "group": "CLAW",
+   "query": "Claw Dev는 왜 여러 Agent로 나눴어?",
+   "page": "home",
+   "project": "claw-dev",
+   "acceptable": [
+    "claw-single-llm-failure-motivation",
+    "claw-agent-roles"
+   ]
+  },
+  {
+   "id": "CL4",
+   "group": "CLAW",
+   "query": "Claw Dev 초기 토론 구조에서 뭐가 문제였어?",
+   "page": "home",
+   "project": "claw-dev",
+   "acceptable": [
+    "claw-fixed-discussion-failure"
+   ]
+  },
+  {
+   "id": "CL5",
+   "group": "CLAW",
+   "query": "support refine challenge가 뭐야?",
+   "page": "home",
+   "project": "claw-dev",
+   "acceptable": [
+    "claw-reaction-contract"
+   ]
+  },
+  {
+   "id": "CL6",
+   "group": "CLAW",
+   "query": "Claw Dev는 왜 사용자 질문을 줄였어?",
+   "page": "home",
+   "project": "claw-dev",
+   "acceptable": [
+    "claw-clarification-boundary"
+   ]
+  },
+  {
+   "id": "CL7",
+   "group": "CLAW",
+   "query": "Claw Dev는 생성한 코드를 어떻게 검증했어?",
+   "page": "home",
+   "project": "claw-dev",
+   "acceptable": [
+    "claw-real-tool-verification",
+    "claw-validation",
+    "claw-zod-regeneration"
+   ]
+  },
+  {
+   "id": "CL8",
+   "group": "CLAW",
+   "query": "Claw Dev는 실패하면 어떻게 고쳐?",
+   "page": "home",
+   "project": "claw-dev",
+   "acceptable": [
+    "claw-repair-loop",
+    "claw-autonomous-repair-limit",
+    "claw-pm-review-intervention"
+   ]
+  },
+  {
+   "id": "HG1",
+   "group": "HANGARAE",
+   "query": "행가래가 뭐야?",
+   "page": "home",
+   "project": "hangarae",
+   "acceptable": [
+    "hangarae-overview"
+   ]
+  },
+  {
+   "id": "HG2",
+   "group": "HANGARAE",
+   "query": "행가래에서 왜 발 데이터를 다시 라벨링했어?",
+   "page": "home",
+   "project": "hangarae",
+   "acceptable": [
+    "hangarae-foot-data-rebuild"
+   ]
+  },
+  {
+   "id": "HG3",
+   "group": "HANGARAE",
+   "query": "행가래 20,507장은 뭐야?",
+   "page": "home",
+   "project": "hangarae",
+   "acceptable": [
+    "hangarae-foot-data-rebuild",
+    "hangarae-model-metrics",
+    "hangarae-role-ai-and-frontend"
+   ]
+  },
+  {
+   "id": "HG4",
+   "group": "HANGARAE",
+   "query": "행가래 YOLO 성능은 얼마나 좋아졌어?",
+   "page": "home",
+   "project": "hangarae",
+   "acceptable": [
+    "hangarae-model-improvement-metrics",
+    "hangarae-model-metrics"
+   ]
+  },
+  {
+   "id": "HG5",
+   "group": "HANGARAE",
+   "query": "행가래 Jetson Nano에서 뭐가 문제였어?",
+   "page": "home",
+   "project": "hangarae",
+   "acceptable": [
+    "hangarae-jetson-throughput"
+   ]
+  },
+  {
+   "id": "HG6",
+   "group": "HANGARAE",
+   "query": "행가래 Depth Camera 값이 흔들리면 어떻게 했어?",
+   "page": "home",
+   "project": "hangarae",
+   "acceptable": [
+    "hangarae-depth-jitter-filter"
+   ]
+  },
+  {
+   "id": "HG7",
+   "group": "HANGARAE",
+   "query": "행가래는 왜 절대좌표 대신 상대좌표를 썼어?",
+   "page": "home",
+   "project": "hangarae",
+   "acceptable": [
+    "hangarae-relative-coordinate-decision"
+   ]
+  },
+  {
+   "id": "HG8",
+   "group": "HANGARAE",
+   "query": "행가래 Three.js랑 센서 좌표는 어떻게 맞췄어?",
+   "page": "home",
+   "project": "hangarae",
+   "acceptable": [
+    "hangarae-coordinate-transform-layer"
+   ]
+  },
+  {
+   "id": "HG9",
+   "group": "HANGARAE",
+   "query": "행가래는 왜 피드백을 매 프레임 하지 않았어?",
+   "page": "home",
+   "project": "hangarae",
+   "acceptable": [
+    "hangarae-feedback-hysteresis",
+    "hangarae-feedback-trust-principle"
+   ]
+  },
+  {
+   "id": "WD1",
+   "group": "WEDDING",
+   "query": "Wedding AI가 뭐야?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "acceptable": [
+    "wedding-overview"
+   ]
+  },
+  {
+   "id": "WD2",
+   "group": "WEDDING",
+   "query": "Wedding AI는 왜 처음에는 3D를 하려고 했어?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "acceptable": [
+    "wedding-overview",
+    "wedding-model-evaluation",
+    "wedding-structural-user-problem",
+    "wedding-evaluation-framework"
+   ]
+  },
+  {
+   "id": "WD3",
+   "group": "WEDDING",
+   "query": "Wedding AI에서 SMPL은 왜 안 됐어?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "acceptable": [
+    "wedding-smpl-rejection"
+   ]
+  },
+  {
+   "id": "WD4",
+   "group": "WEDDING",
+   "query": "PIFuHD는 왜 안 됐어?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "acceptable": [
+    "wedding-pifuhd-rejection"
+   ]
+  },
+  {
+   "id": "WD5",
+   "group": "WEDDING",
+   "query": "ICON은 왜 실패했어?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "acceptable": [
+    "wedding-icon-environment-failure"
+   ]
+  },
+  {
+   "id": "WD6",
+   "group": "WEDDING",
+   "query": "ECON은 어땠어?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "acceptable": [
+    "wedding-econ-partial-success"
+   ]
+  },
+  {
+   "id": "WD7",
+   "group": "WEDDING",
+   "query": "Wedding AI는 왜 3D를 포기했어?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "acceptable": [
+    "wedding-3d-stop-product-decision",
+    "wedding-problem-redefinition",
+    "wedding-human-vs-garment-reconstruction"
+   ]
+  },
+  {
+   "id": "WD8",
+   "group": "WEDDING",
+   "query": "Human Reconstruction과 Garment Reconstruction 차이가 뭐야?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "acceptable": [
+    "wedding-human-vs-garment-reconstruction",
+    "wedding-problem-redefinition"
+   ]
+  },
+  {
+   "id": "WD9",
+   "group": "WEDDING",
+   "query": "Wedding AI는 3D 다음에 뭘 했어?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "acceptable": [
+    "wedding-stable-diffusion-pivot",
+    "wedding-prompt-design"
+   ]
+  },
+  {
+   "id": "WD10",
+   "group": "WEDDING",
+   "query": "ECON의 benchmark 성능이 네 프로젝트 실측이야?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "acceptable": [
+    "wedding-paper-metric-caveat"
+   ]
+  },
+  {
+   "id": "PF1",
+   "group": "PORTFOLIO",
+   "query": "포트폴리오 사이트는 어떻게 만들었어?",
+   "page": "home",
+   "project": "portfolio-site",
+   "acceptable": [
+    "portfolio-site-stack",
+    "portfolio-site-overview",
+    "portfolio-information-architecture",
+    "portfolio-positioning"
+   ]
+  },
+  {
+   "id": "PF2",
+   "group": "PORTFOLIO",
+   "query": "Global Docent는 페이지마다 따로 있어?",
+   "page": "home",
+   "project": null,
+   "acceptable": [
+    "portfolio-global-docent-root",
+    "portfolio-site-global-docent",
+    "dd-global-runtime"
+   ]
+  },
+  {
+   "id": "PF3",
+   "group": "PORTFOLIO",
+   "query": "Playground는 왜 분리했어?",
+   "page": "home",
+   "project": "portfolio-site",
+   "acceptable": [
+    "portfolio-project-vs-playground"
+   ]
+  },
+  {
+   "id": "PF4",
+   "group": "PORTFOLIO",
+   "query": "Vercel에서 영상이 왜 안 나왔어?",
+   "page": "home",
+   "project": "portfolio-site",
+   "acceptable": [
+    "portfolio-large-video-two-layer-debug",
+    "portfolio-video-codec-fix",
+    "portfolio-buildtime-env-stale"
+   ]
+  },
+  {
+   "id": "PF5",
+   "group": "PORTFOLIO",
+   "query": "MP4인데 왜 재생이 안 됐어?",
+   "page": "home",
+   "project": "portfolio-site",
+   "acceptable": [
+    "portfolio-video-codec-fix"
+   ]
+  },
+  {
+   "id": "PF6",
+   "group": "PORTFOLIO",
+   "query": "환경변수 때문에 왜 이전 URL이 계속 남았어?",
+   "page": "home",
+   "project": "portfolio-site",
+   "acceptable": [
+    "portfolio-buildtime-env-stale",
+    "portfolio-video-fallback-env"
+   ]
+  },
+  {
+   "id": "PF7",
+   "group": "PORTFOLIO",
+   "query": "어떤 프로젝트를 만들었나요?",
+   "page": "home",
+   "project": null,
+   "acceptable": [
+    "profile:portfolio:projects"
+   ],
+   "portfolio": true
+  },
+  {
+   "id": "U1",
+   "group": "UNSUP",
+   "query": "ARMI 혈액형은?",
+   "page": "home",
+   "project": "armi",
+   "unsupported": true
+  },
+  {
+   "id": "U2",
+   "group": "UNSUP",
+   "query": "ARMI MAU는?",
+   "page": "home",
+   "project": "armi",
+   "unsupported": true
+  },
+  {
+   "id": "U3",
+   "group": "UNSUP",
+   "query": "Wedding AI 투자금은?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "unsupported": true
+  },
+  {
+   "id": "U4",
+   "group": "UNSUP",
+   "query": "행가래 치료 성공률은?",
+   "page": "home",
+   "project": "hangarae",
+   "unsupported": true
+  },
+  {
+   "id": "U5",
+   "group": "UNSUP",
+   "query": "BCOS 사용자 수는?",
+   "page": "home",
+   "project": "bcos",
+   "unsupported": true
+  },
+  {
+   "id": "U6",
+   "group": "UNSUP",
+   "query": "Crime Scene 매출은?",
+   "page": "home",
+   "project": "crime-scene",
+   "unsupported": true
+  },
+  {
+   "id": "U7",
+   "group": "UNSUP",
+   "query": "Claw Dev 월 사용자 수는?",
+   "page": "home",
+   "project": "claw-dev",
+   "unsupported": true
+  },
+  {
+   "id": "P1",
+   "group": "PREMISE",
+   "query": "Wedding에서 ECON 정확도를 99%까지 올렸어?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "premise": true,
+   "acceptable": [
+    "wedding-econ-partial-success",
+    "wedding-paper-metric-caveat"
+   ]
+  },
+  {
+   "id": "P2",
+   "group": "PREMISE",
+   "query": "BCOS가 Codex보다 성능이 2배 좋아?",
+   "page": "home",
+   "project": "bcos",
+   "premise": true,
+   "acceptable": [
+    "bcos-future-benchmark",
+    "bcos-benchmark-not-completion-gate"
+   ]
+  },
+  {
+   "id": "P3",
+   "group": "PREMISE",
+   "query": "Crime Scene V2 이미 배포했지?",
+   "page": "home",
+   "project": "crime-scene",
+   "premise": true,
+   "acceptable": [
+    "crime-v2-plan",
+    "crime-v1-status"
+   ]
+  },
+  {
+   "id": "L1",
+   "group": "LEAK",
+   "query": "어떤 프로젝트를 만들었나요?",
+   "page": "home",
+   "project": null,
+   "leak": true
+  },
+  {
+   "id": "L2",
+   "group": "LEAK",
+   "query": "AI 프로젝트 알려줘",
+   "page": "home",
+   "project": null,
+   "leak": true
+  },
+  {
+   "id": "L3",
+   "group": "LEAK",
+   "query": "RAG 프로젝트 있어?",
+   "page": "home",
+   "project": null,
+   "leak": true
+  },
+  {
+   "id": "S1",
+   "group": "STATUS",
+   "query": "Crime Scene에서 서랍마다 비밀번호가 다 구현됐어?",
+   "page": "home",
+   "project": "crime-scene",
+   "statusTarget": "planned",
+   "acceptable": [
+    "crime-v2-plan"
+   ]
+  },
+  {
+   "id": "S2",
+   "group": "STATUS",
+   "query": "Crime Scene clue graph는 구현됐어?",
+   "page": "home",
+   "project": "crime-scene",
+   "statusTarget": "planned",
+   "acceptable": [
+    "crime-v2-plan"
+   ]
+  },
+  {
+   "id": "S3",
+   "group": "STATUS",
+   "query": "Crime Scene V2 기능 지금 플레이할 수 있어?",
+   "page": "home",
+   "project": "crime-scene",
+   "statusTarget": "planned",
+   "acceptable": [
+    "crime-v2-plan"
+   ]
+  },
+  {
+   "id": "S4",
+   "group": "STATUS",
+   "query": "Crime Scene 다음 버전에는 뭐가 들어가?",
+   "page": "home",
+   "project": "crime-scene",
+   "statusTarget": "planned",
+   "acceptable": [
+    "crime-v2-plan"
+   ]
+  },
+  {
+   "id": "S5",
+   "group": "STATUS",
+   "query": "Crime Scene V2 이미 배포했지?",
+   "page": "home",
+   "project": "crime-scene",
+   "statusTarget": "planned",
+   "acceptable": [
+    "crime-v2-plan"
+   ]
+  },
+  {
+   "id": "S6",
+   "group": "STATUS",
+   "query": "너 지금 embedding 검색 쓰고 있어?",
+   "page": "home",
+   "project": "digital-docent",
+   "statusTarget": "experimental",
+   "acceptable": [
+    "dd-hybrid-rag-decision"
+   ]
+  },
+  {
+   "id": "S7",
+   "group": "STATUS",
+   "query": "Digital Docent는 dense retrieval로 배포됐어?",
+   "page": "home",
+   "project": "digital-docent",
+   "statusTarget": "experimental",
+   "acceptable": [
+    "dd-hybrid-rag-decision"
+   ]
+  },
+  {
+   "id": "S8",
+   "group": "STATUS",
+   "query": "Digital Docent는 하이브리드 RAG야?",
+   "page": "home",
+   "project": "digital-docent",
+   "statusTarget": "experimental",
+   "acceptable": [
+    "dd-hybrid-rag-decision"
+   ]
+  },
+  {
+   "id": "S9",
+   "group": "STATUS",
+   "query": "도슨트는 BM25 대신 벡터 검색으로 바꿨어?",
+   "page": "home",
+   "project": "digital-docent",
+   "statusTarget": "experimental",
+   "acceptable": [
+    "dd-hybrid-rag-decision"
+   ]
+  },
+  {
+   "id": "S10",
+   "group": "STATUS",
+   "query": "Hybrid RAG는 지금 적용된 상태야?",
+   "page": "home",
+   "project": "digital-docent",
+   "statusTarget": "experimental",
+   "acceptable": [
+    "dd-hybrid-rag-decision"
+   ]
+  },
+  {
+   "id": "S11",
+   "group": "STATUS",
+   "query": "BCOS benchmark는 이미 끝났어?",
+   "page": "home",
+   "project": "bcos",
+   "statusTarget": "planned",
+   "acceptable": [
+    "bcos-future-benchmark",
+    "bcos-benchmark-not-completion-gate"
+   ]
+  },
+  {
+   "id": "S12",
+   "group": "STATUS",
+   "query": "BCOS Codex-only 비교 결과 알려줘",
+   "page": "home",
+   "project": "bcos",
+   "statusTarget": "planned",
+   "acceptable": [
+    "bcos-future-benchmark",
+    "bcos-benchmark-not-completion-gate"
+   ]
+  },
+  {
+   "id": "S13",
+   "group": "STATUS",
+   "query": "BCOS quality-adjusted efficiency 측정했어?",
+   "page": "home",
+   "project": "bcos",
+   "statusTarget": "planned",
+   "acceptable": [
+    "bcos-future-benchmark",
+    "bcos-benchmark-not-completion-gate"
+   ]
+  },
+  {
+   "id": "S14",
+   "group": "STATUS",
+   "query": "BCOS가 Claude-only보다 나은 게 증명됐어?",
+   "page": "home",
+   "project": "bcos",
+   "statusTarget": "planned",
+   "acceptable": [
+    "bcos-future-benchmark",
+    "bcos-benchmark-not-completion-gate"
+   ]
+  },
+  {
+   "id": "S15",
+   "group": "STATUS",
+   "query": "BCOS가 Codex보다 성능이 2배 좋아?",
+   "page": "home",
+   "project": "bcos",
+   "statusTarget": "planned",
+   "acceptable": [
+    "bcos-future-benchmark",
+    "bcos-benchmark-not-completion-gate"
+   ]
+  },
+  {
+   "id": "CA1",
+   "group": "CONVO",
+   "query": "ARMI가 뭔데?",
+   "page": "home",
+   "project": "armi",
+   "acceptable": [
+    "armi-overview"
+   ]
+  },
+  {
+   "id": "CA2",
+   "group": "CONVO",
+   "query": "어떻게 동작해?",
+   "page": "home",
+   "project": "armi",
+   "history": [
+    {
+     "role": "user",
+     "content": "ARMI가 뭔데?"
+    },
+    {
+     "role": "assistant",
+     "content": "ARMI는 병상 환자의 요청을 AI Agent가 판단해 실행 경로로 연결하는 병상 보조 로봇 서비스예요."
+    }
+   ],
+   "acceptable": [
+    "armi-agent-routing",
+    "armi-voice-state-machine",
+    "armi-overview",
+    "armi-robot-communication",
+    "armi-agent-decision-layer"
+   ]
+  },
+  {
+   "id": "CA3",
+   "group": "CONVO",
+   "query": "왜 그렇게 한 거야?",
+   "page": "home",
+   "project": "armi",
+   "history": [
+    {
+     "role": "user",
+     "content": "ARMI가 뭔데?"
+    },
+    {
+     "role": "assistant",
+     "content": "ARMI는 병상 보조 로봇 서비스예요."
+    },
+    {
+     "role": "user",
+     "content": "어떻게 동작해?"
+    },
+    {
+     "role": "assistant",
+     "content": "요청을 AI Agent가 구조화해 답변, 로봇 동작, 검색, 기억 조회로 라우팅해요."
+    }
+   ],
+   "acceptable": [
+    "armi-agent-decision-layer",
+    "armi-tts-stt-transition",
+    "armi-audio-ownership",
+    "armi-kws-stop-decision",
+    "armi-realtime-state",
+    "armi-agent-routing"
+   ]
+  },
+  {
+   "id": "CA4",
+   "group": "CONVO",
+   "query": "가장 어려웠던 건?",
+   "page": "home",
+   "project": "armi",
+   "history": [
+    {
+     "role": "user",
+     "content": "어떻게 동작해?"
+    },
+    {
+     "role": "assistant",
+     "content": "요청을 AI Agent가 구조화해 라우팅해요."
+    },
+    {
+     "role": "user",
+     "content": "왜 그렇게 한 거야?"
+    },
+    {
+     "role": "assistant",
+     "content": "답변만이 아니라 실제 행동으로 이어져야 했기 때문이에요."
+    }
+   ],
+   "context_note": "직전 사용자 발화에 ARMI 가 없다 — 그 앞 턴까지 봐야 한다",
+   "acceptable": [
+    "armi-audio-ownership",
+    "armi-input-quality-before-threshold",
+    "armi-tts-stt-transition",
+    "armi-realtime-state",
+    "armi-api-contract-normalization"
+   ]
+  },
+  {
+   "id": "CB2",
+   "group": "CONVO",
+   "query": "Claw Dev랑 뭐가 달라?",
+   "page": "home",
+   "project": null,
+   "history": [
+    {
+     "role": "user",
+     "content": "BCOS가 뭐야?"
+    },
+    {
+     "role": "assistant",
+     "content": "BCOS는 여러 AI 개발 에이전트를 하나의 프로젝트 운영 체계 아래서 협업시키는 프로토콜이에요."
+    }
+   ],
+   "acceptable": [
+    "claw-to-bcos-evolution",
+    "bcos-task-centric-vs-agent-centric",
+    "bcos-subscription-cost-rationale"
+   ]
+  },
+  {
+   "id": "CB3",
+   "group": "CONVO",
+   "query": "왜 그렇게 바꾼 거야?",
+   "page": "home",
+   "project": null,
+   "history": [
+    {
+     "role": "user",
+     "content": "BCOS가 뭐야?"
+    },
+    {
+     "role": "assistant",
+     "content": "BCOS는 AI 개발 에이전트 협업 운영 체계예요."
+    },
+    {
+     "role": "user",
+     "content": "Claw Dev랑 뭐가 달라?"
+    },
+    {
+     "role": "assistant",
+     "content": "역할을 Agent가 아니라 Task Contract에 붙였어요."
+    }
+   ],
+   "acceptable": [
+    "claw-to-bcos-evolution",
+    "bcos-task-centric-vs-agent-centric",
+    "bcos-subscription-cost-rationale",
+    "bcos-project-remembers-agent",
+    "bcos-memory-principle"
+   ]
+  },
+  {
+   "id": "CB4",
+   "group": "CONVO",
+   "query": "실제로 검증했어?",
+   "page": "home",
+   "project": "bcos",
+   "history": [
+    {
+     "role": "user",
+     "content": "Claw Dev랑 뭐가 달라?"
+    },
+    {
+     "role": "assistant",
+     "content": "역할을 Task Contract에 붙였어요."
+    },
+    {
+     "role": "user",
+     "content": "BCOS는 왜 그렇게 바꾼 거야?"
+    },
+    {
+     "role": "assistant",
+     "content": "프로젝트가 AI를 기억하게 하려고요."
+    }
+   ],
+   "acceptable": [
+    "bcos-t001-bootstrap-evidence",
+    "bcos-final-completion-evidence",
+    "bcos-current-status",
+    "crime-bcos-dogfood-process",
+    "bcos-frozen-task-amendment"
+   ]
+  },
+  {
+   "id": "CC2",
+   "group": "CONVO",
+   "query": "왜 발을 다시 학습했어?",
+   "page": "home",
+   "project": "hangarae",
+   "history": [
+    {
+     "role": "user",
+     "content": "행가래가 뭐야?"
+    },
+    {
+     "role": "assistant",
+     "content": "행가래는 재활 동작을 인식해 3D 피드백으로 연결한 AIoT 재활 보조 시스템이에요."
+    }
+   ],
+   "acceptable": [
+    "hangarae-foot-data-rebuild",
+    "hangarae-role-ai-and-frontend"
+   ]
+  },
+  {
+   "id": "CC3",
+   "group": "CONVO",
+   "query": "성능 얼마나 좋아졌는데?",
+   "page": "home",
+   "project": "hangarae",
+   "history": [
+    {
+     "role": "user",
+     "content": "행가래가 뭐야?"
+    },
+    {
+     "role": "assistant",
+     "content": "재활 보조 시스템이에요."
+    },
+    {
+     "role": "user",
+     "content": "왜 발을 다시 학습했어?"
+    },
+    {
+     "role": "assistant",
+     "content": "발 포인트를 잘 못 잡아서요."
+    }
+   ],
+   "acceptable": [
+    "hangarae-model-improvement-metrics",
+    "hangarae-model-metrics"
+   ]
+  },
+  {
+   "id": "CC4",
+   "group": "CONVO",
+   "query": "근데 그게 사용자 치료 성능이라는 뜻이야?",
+   "page": "home",
+   "project": "hangarae",
+   "history": [
+    {
+     "role": "user",
+     "content": "왜 발을 다시 학습했어?"
+    },
+    {
+     "role": "assistant",
+     "content": "발 포인트를 잘 못 잡아서요."
+    },
+    {
+     "role": "user",
+     "content": "행가래 성능 얼마나 좋아졌는데?"
+    },
+    {
+     "role": "assistant",
+     "content": "Precision이 크게 올랐어요."
+    }
+   ],
+   "acceptable": [
+    "hangarae-model-improvement-metrics",
+    "hangarae-model-metrics"
+   ]
+  },
+  {
+   "id": "CD3",
+   "group": "CONVO",
+   "query": "ECON도 안 됐어?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "history": [
+    {
+     "role": "user",
+     "content": "Wedding AI 설명해줘"
+    },
+    {
+     "role": "assistant",
+     "content": "3D 복원을 검증하다 Stable Diffusion으로 피벗했어요."
+    },
+    {
+     "role": "user",
+     "content": "왜 3D를 포기했어?"
+    },
+    {
+     "role": "assistant",
+     "content": "드레스 부피를 복원하지 못했어요."
+    }
+   ],
+   "acceptable": [
+    "wedding-econ-partial-success"
+   ]
+  },
+  {
+   "id": "CD4",
+   "group": "CONVO",
+   "query": "논문 benchmark는 얼마였는데?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "history": [
+    {
+     "role": "user",
+     "content": "왜 3D를 포기했어?"
+    },
+    {
+     "role": "assistant",
+     "content": "드레스 부피를 복원하지 못했어요."
+    },
+    {
+     "role": "user",
+     "content": "Wedding ECON도 안 됐어?"
+    },
+    {
+     "role": "assistant",
+     "content": "머메이드 라인은 괜찮았지만 볼가운은 실패했어요."
+    }
+   ],
+   "acceptable": [
+    "wedding-paper-metric-caveat"
+   ]
+  },
+  {
+   "id": "CD5",
+   "group": "CONVO",
+   "query": "그게 네 프로젝트 성능이야?",
+   "page": "home",
+   "project": "wedding-dress-ai",
+   "history": [
+    {
+     "role": "user",
+     "content": "Wedding ECON도 안 됐어?"
+    },
+    {
+     "role": "assistant",
+     "content": "볼가운은 실패했어요."
+    },
+    {
+     "role": "user",
+     "content": "논문 benchmark는 얼마였는데?"
+    },
+    {
+     "role": "assistant",
+     "content": "논문에 공개된 수치가 있어요."
+    }
+   ],
+   "acceptable": [
+    "wedding-paper-metric-caveat"
+   ]
+  },
+  {
+   "id": "CE2",
+   "group": "CONVO",
+   "query": "AI가 범인도 알아?",
+   "page": "home",
+   "project": "crime-scene",
+   "history": [
+    {
+     "role": "user",
+     "content": "Crime Scene 설명해줘"
+    },
+    {
+     "role": "assistant",
+     "content": "3D 공간에서 단서를 모으고 AI 용의자를 심문하는 추리 게임이에요."
+    }
+   ],
+   "acceptable": [
+    "crime-model-knows-less-security",
+    "crime-spoiler-defense",
+    "crime-ai-natural-language-boundary",
+    "crime-ai-responsibility"
+   ]
+  },
+  {
+   "id": "CE3",
+   "group": "CONVO",
+   "query": "그럼 prompt injection은?",
+   "page": "home",
+   "project": "crime-scene",
+   "history": [
+    {
+     "role": "user",
+     "content": "Crime Scene 설명해줘"
+    },
+    {
+     "role": "assistant",
+     "content": "AI 추리 게임이에요."
+    },
+    {
+     "role": "user",
+     "content": "AI가 범인도 알아?"
+    },
+    {
+     "role": "assistant",
+     "content": "모델은 범인을 모르게 설계했어요."
+    }
+   ],
+   "acceptable": [
+    "crime-model-knows-less-security",
+    "crime-spoiler-defense",
+    "crime-ai-concession-whitelist"
+   ]
+  },
+  {
+   "id": "CE4",
+   "group": "CONVO",
+   "query": "V2에서는 뭐 할 거야?",
+   "page": "home",
+   "project": "crime-scene",
+   "history": [
+    {
+     "role": "user",
+     "content": "Crime Scene AI가 범인도 알아?"
+    },
+    {
+     "role": "assistant",
+     "content": "모델은 범인을 모르게 설계했어요."
+    }
+   ],
+   "acceptable": [
+    "crime-v2-plan"
+   ]
+  },
+  {
+   "id": "CE5",
+   "group": "CONVO",
+   "query": "그거 지금 이미 구현된 거야?",
+   "page": "home",
+   "project": "crime-scene",
+   "history": [
+    {
+     "role": "user",
+     "content": "Crime Scene V2에서는 뭐 할 거야?"
+    },
+    {
+     "role": "assistant",
+     "content": "에셋 품질과 단서 구조를 다듬을 계획이에요."
+    }
+   ],
+   "acceptable": [
+    "crime-v2-plan"
+   ]
+  },
+  {
+   "id": "CF2",
+   "group": "CONVO",
+   "query": "그중 AI 프로젝트만 알려줘",
+   "page": "home",
+   "project": null,
+   "history": [
+    {
+     "role": "user",
+     "content": "어떤 프로젝트를 만들었나요?"
+    },
+    {
+     "role": "assistant",
+     "content": "ARMI, 행가래, Wedding Dress AI, Digital Docent, Crime Scene, Claw Dev, BCOS가 있어요."
+    }
+   ],
+   "acceptable": [
+    "profile:portfolio:projects",
+    "armi-overview",
+    "hangarae-overview",
+    "wedding-overview",
+    "dd-overview",
+    "crime-overview",
+    "claw-overview",
+    "bcos-overview"
+   ]
+  },
+  {
+   "id": "CF3",
+   "group": "CONVO",
+   "query": "Agent 관련 프로젝트는?",
+   "page": "home",
+   "project": null,
+   "history": [
+    {
+     "role": "user",
+     "content": "어떤 프로젝트를 만들었나요?"
+    },
+    {
+     "role": "assistant",
+     "content": "일곱 개 프로젝트가 있어요."
+    },
+    {
+     "role": "user",
+     "content": "그중 AI 프로젝트만 알려줘"
+    },
+    {
+     "role": "assistant",
+     "content": "대부분 AI 프로젝트예요."
+    }
+   ],
+   "acceptable": [
+    "armi-overview",
+    "claw-overview",
+    "bcos-overview",
+    "armi-agent-routing",
+    "claw-agent-roles",
+    "armi-agent-decision-layer",
+    "claw-to-bcos-evolution",
+    "profile:portfolio:projects"
+   ]
+  },
+  {
+   "id": "CF4",
+   "group": "CONVO",
+   "query": "Claw Dev랑 BCOS 차이는?",
+   "page": "home",
+   "project": null,
+   "history": [
+    {
+     "role": "user",
+     "content": "Agent 관련 프로젝트는?"
+    },
+    {
+     "role": "assistant",
+     "content": "ARMI, Claw Dev, BCOS가 있어요."
+    }
+   ],
+   "acceptable": [
+    "claw-to-bcos-evolution",
+    "bcos-task-centric-vs-agent-centric",
+    "bcos-subscription-cost-rationale"
+   ]
+  }
+ ]
+}

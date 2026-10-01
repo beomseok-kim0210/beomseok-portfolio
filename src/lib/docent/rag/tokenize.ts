@@ -67,6 +67,8 @@ const ALIASES: Record<string, string[]> = {
   "에이전트": ["agent"],
   "프롬프트": ["prompt"],
   "임베딩": ["embedding"],
+  "하이브리드": ["hybrid"],
+  "벡터": ["vector"],
   "라마": ["llama"],
   "제미나이": ["gemini"],
   "올라마": ["ollama"],

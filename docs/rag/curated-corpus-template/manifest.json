@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "packageId": "<curated-YYYY-MM-DD>",
+  "generatedBy": "<큐레이션 세션 이름>",
+  "generatedAt": "<ISO 8601>",
+  "entities": [
+    {
+      "id": "<entity-id>",
+      "canonicalName": "<표시 이름>",
+      "aliases": ["<질문 속 표기 1>", "<표기 2>"],
+      "type": "project",
+      "status": "current",
+      "public": true,
+      "pathname": "/projects/<slug>"
+    }
+  ],
+  "secretAllowlist": []
+}

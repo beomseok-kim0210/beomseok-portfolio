@@ -1,3 +1,4 @@
+import { stripProtocolMarkers } from "./protocolStream";
 import { sanitizeForTts } from "./ttsText";
 
 /**
@@ -88,7 +89,8 @@ export function stripMarkdownForSpeech(input: string): string {
  * 공백은 줄 안에서 한 칸, 빈 줄은 줄바꿈 하나로 모은다.
  */
 export function prepareSpokenText(input: string): string {
-  const sanitized = sanitizeForTts(stripMarkdownForSpeech(input)).text;
+  // 감정 태그·근거 번호는 프로토콜 표지다 — 소리 내 읽지 않는다(서버가 이미 걷어내지만 방어선).
+  const sanitized = sanitizeForTts(stripMarkdownForSpeech(stripProtocolMarkers(input))).text;
   return sanitized
     .split("\n")
     .map((line) => line.replace(/[^\S\n]+/g, " ").trim())

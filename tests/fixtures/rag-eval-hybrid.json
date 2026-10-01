@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "note": "하이브리드 검색 평가 셋 (2026-10-01). accept 규칙: project(조각의 프로젝트) · sections(섹션 중 하나) · contains(본문·제목·태그에 그 말 중 하나, 대소문자 무시)를 모두 만족하는 조각이 정답이다. 규칙으로 정의해 코퍼스 문장이 바뀌어도 정답 집합이 따라간다. EXACT = 고유명사·기술명(BM25 강점), SEMANTIC = 의미·구어체(dense 강점), UNSUPPORTED = 코퍼스에 없는 사실(근거 판정이 full 이면 실패), CONVO = 다중 턴(직전 대화가 가리키는 프로젝트).",
+  "pages": {
+    "home": { "pathname": "/", "pageType": "home" },
+    "armi": { "pathname": "/projects/armi", "pageType": "project", "projectSlug": "armi", "projectTitle": "ARMI" }
+  },
+  "queries": [
+    { "id": "X1", "group": "EXACT", "query": "ARMI STOMP", "page": "home", "project": "armi", "accept": { "project": "armi", "contains": ["STOMP"] } },
+    { "id": "X2", "group": "EXACT", "query": "YOLOv11", "page": "home", "project": "hangarae", "accept": { "project": "hangarae", "contains": ["YOLOv11"] } },
+    { "id": "X3", "group": "EXACT", "query": "gRPC", "page": "home", "project": "armi", "accept": { "project": "armi", "contains": ["gRPC"] } },
+    { "id": "X4", "group": "EXACT", "query": "Redis", "page": "home", "project": null, "accept": { "contains": ["Redis"] } },
+    { "id": "X5", "group": "EXACT", "query": "CAMPPlus", "page": "home", "project": "armi", "accept": { "project": "armi", "contains": ["CAMPPlus"] } },
+    { "id": "X6", "group": "EXACT", "query": "Zod 검증", "page": "home", "project": "claw-dev", "accept": { "project": "claw-dev", "contains": ["Zod"] } },
+    { "id": "X7", "group": "EXACT", "query": "Galaxy Watch 알림", "page": "home", "project": "armi", "accept": { "project": "armi", "contains": ["Galaxy Watch", "WearOS", "워치"] } },
+
+    { "id": "S1", "group": "SEMANTIC", "query": "ARMI가 뭔데?", "page": "home", "project": "armi", "accept": { "project": "armi", "sections": ["overview"] } },
+    { "id": "S2", "group": "SEMANTIC", "query": "아르미 뭐임?", "page": "home", "project": "armi", "accept": { "project": "armi", "sections": ["overview"] } },
+    { "id": "S3", "group": "SEMANTIC", "query": "armi프로젝트가 뭔데", "page": "home", "project": "armi", "accept": { "project": "armi", "sections": ["overview"] } },
+    { "id": "S4", "group": "SEMANTIC", "query": "이 프로젝트 뭐 하는 거야?", "page": "armi", "project": "armi", "accept": { "project": "armi", "sections": ["overview"] } },
+    { "id": "S5", "group": "SEMANTIC", "query": "환자 요청을 실제 행동으로 어떻게 연결했어?", "page": "home", "project": "armi", "accept": { "project": "armi", "sections": ["overview", "architecture", "decision", "role"] } },
+    { "id": "S6", "group": "SEMANTIC", "query": "그걸 왜 그렇게 설계했어?", "page": "home", "project": "armi", "history": [
+      { "role": "user", "content": "ARMI가 뭔데?" },
+      { "role": "assistant", "content": "ARMI는 병상 환자의 음성 요청을 AI Agent가 판단해 답변, 로봇 동작, 웹 검색으로 연결하는 병상 보조 로봇이에요." }
+    ], "accept": { "project": "armi", "sections": ["decision", "troubleshooting", "architecture", "lesson"] } },
+    { "id": "S7", "group": "SEMANTIC", "query": "재활 운동을 게임처럼 만든 프로젝트가 뭐야?", "page": "home", "project": "hangarae", "accept": { "project": "hangarae", "sections": ["overview", "problem", "architecture"] } },
+    { "id": "S8", "group": "SEMANTIC", "query": "옷을 가상으로 입혀 보는 프로젝트 있어?", "page": "home", "project": "wedding", "accept": { "project": "wedding", "sections": ["overview", "problem", "architecture"] } },
+    { "id": "S9", "group": "SEMANTIC", "query": "AI 여러 개가 같이 개발하는 거 만든 적 있어?", "page": "home", "project": "claw-dev", "accept": { "project": "claw-dev", "sections": ["overview", "architecture", "role"] } },
+
+    { "id": "U1", "group": "UNSUPPORTED", "query": "ARMI 팀원 혈액형은?", "page": "home", "project": "armi", "unsupported": true },
+    { "id": "U2", "group": "UNSUPPORTED", "query": "ARMI MAU는?", "page": "home", "project": "armi", "unsupported": true },
+    { "id": "U3", "group": "UNSUPPORTED", "query": "Wedding AI 투자금은?", "page": "home", "project": "wedding", "unsupported": true },
+    { "id": "U4", "group": "UNSUPPORTED", "query": "행가래 매출은?", "page": "home", "project": "hangarae", "unsupported": true },
+    { "id": "U5", "group": "UNSUPPORTED", "query": "Claw Dev 월 사용자 수는?", "page": "home", "project": "claw-dev", "unsupported": true },
+    { "id": "U6", "group": "UNSUPPORTED", "query": "ARMI에서 Redis를 왜 썼어?", "page": "home", "project": "armi", "unsupported": true, "note": "거짓 전제 — 코퍼스에서 Redis 는 행가래에만 있다" },
+
+    { "id": "C1", "group": "CONVO", "query": "어떻게 동작해?", "page": "home", "project": "armi", "history": [
+      { "role": "user", "content": "ARMI가 뭔데?" },
+      { "role": "assistant", "content": "ARMI는 병상 환자의 음성 요청을 AI Agent가 판단해 답변, 로봇 동작, 웹 검색으로 연결하는 병상 보조 로봇이에요." }
+    ], "accept": { "project": "armi" } },
+    { "id": "C2", "group": "CONVO", "query": "왜?", "page": "home", "project": "armi", "history": [
+      { "role": "user", "content": "ARMI가 뭔데?" },
+      { "role": "assistant", "content": "ARMI는 병상 환자의 음성 요청을 AI Agent가 판단해 답변, 로봇 동작, 웹 검색으로 연결하는 병상 보조 로봇이에요." }
+    ], "accept": { "project": "armi" } },
+    { "id": "C3", "group": "CONVO", "query": "그럼 가장 어려웠던 건?", "page": "home", "project": "armi", "history": [
+      { "role": "user", "content": "ARMI가 뭔데?" },
+      { "role": "assistant", "content": "ARMI는 병상 환자의 음성 요청을 AI Agent가 판단해 로봇 동작으로 연결하는 서비스예요." },
+      { "role": "user", "content": "어떻게 동작해?" },
+      { "role": "assistant", "content": "음성을 STT로 바꾼 뒤 AI Agent가 요청을 분류하고, 실시간 이벤트는 WebSocket으로 전달해요." }
+    ], "accept": { "project": "armi", "sections": ["troubleshooting", "decision", "lesson"] } },
+    { "id": "C4", "group": "CONVO", "query": "행가래랑 뭐가 달라?", "page": "home", "project": "hangarae", "history": [
+      { "role": "user", "content": "ARMI 설명해줘" },
+      { "role": "assistant", "content": "ARMI는 병상 환자의 음성 요청을 로봇 동작으로 잇는 서비스예요." }
+    ], "accept": { "project": "hangarae" }, "alsoProject": "armi" },
+    { "id": "C5", "group": "CONVO", "query": "어떤 프로젝트를 만들었나요?", "page": "home", "project": null, "accept": { "sections": ["overview"] }, "portfolio": true }
+  ]
+}

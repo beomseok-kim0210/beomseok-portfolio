@@ -1,14 +1,23 @@
+import "./helpers/legacyCorpus";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-import {
-  answerFromEvidence,
-  buildGroundedSystemPrompt,
-  resolveAnswerShape,
-} from "@/lib/docent/rag/grounding";
+import { answerFromEvidence, buildGroundedSystemPrompt } from "@/lib/docent/rag/grounding";
 import { retrieve } from "@/lib/docent/rag/retrieval";
 import type { PageContext } from "@/lib/docent/rag/types";
+
+import { oracleQuery } from "./helpers/oracleDense";
+
+// 포트폴리오 전체 질문의 dense 순위: 전체 목록 조각과 프로젝트 개요들이 위에 온다(실제 임베딩에서 기대하는 모양).
+const PORTFOLIO_DENSE = oracleQuery([
+  "profile:portfolio:projects",
+  "project:armi:overview:recap",
+  "project:hangarae:overview:recap",
+  "project:wedding:overview:recap",
+  "project:claw-dev:overview:recap",
+  "project:docent:overview:detail",
+]);
 
 const read = (path: string) => readFileSync(path, "utf8").replace(/\r\n/g, "\n");
 const shell = read("src/features/docent/GlobalDocent.tsx");
@@ -48,42 +57,42 @@ test("minimize restores the untouched portfolio layout without reflow", () => {
 
 test("broad overview evidence spans every recorded project and excludes devlogs", () => {
   for (const page of [null, armiPage]) {
-    const result = retrieve("어떤 프로젝트를 만들었나요?", page, { topK: 8 });
+    const result = retrieve("어떤 프로젝트를 만들었나요?", page, { topK: 8, dense: PORTFOLIO_DENSE });
+    assert.equal(result.scope, "portfolio");
     const entities = new Set(result.results.map((item) => item.chunk.entityId));
     assert.ok(entities.size >= 4);
-    assert.deepEqual([...entities].sort(), ["armi", "claw-dev", "docent", "hangarae", "wedding"]);
+    assert.deepEqual([...entities].filter((e) => e !== "portfolio").sort(), ["armi", "claw-dev", "docent", "hangarae", "wedding"]);
+    assert.equal(result.results[0].chunk.id, "profile:portfolio:projects");
     assert.ok(result.results.every((item) => item.chunk.section !== "devlog"));
   }
 });
 
-test("broad portfolio routing overrides page bias while ambiguous decision routing keeps ARMI", () => {
-  const broad = retrieve("어떤 프로젝트를 만들었나요?", armiPage, { topK: 8 });
-  assert.equal(resolveAnswerShape(armiPage, broad), "PROJECT_PORTFOLIO_OVERVIEW");
-  assert.ok(new Set(broad.results.map((item) => item.chunk.entityId)).size >= 4);
+test("portfolio scope comes from the result shape, not a question regex — and overrides page bias", () => {
+  // dense 가 전체 목록·개요들을 올리면 프로젝트 페이지에서도 포트폴리오 전체 범위다.
+  const broad = retrieve("어떤 프로젝트를 만들었나요?", armiPage, { topK: 8, dense: PORTFOLIO_DENSE });
+  assert.equal(broad.scope, "portfolio");
+  assert.equal(broad.activeProject, null);
+  assert.ok(new Set(broad.results.map((item) => item.chunk.projectId).filter(Boolean)).size >= 5);
 
+  // 지시어 질문은 지금 보는 프로젝트에 머문다(정규식 의도 없이도). 결정 근거가 묶음에 실린다.
   const decision = retrieve("이건 왜 이렇게 만들었어요?", armiPage, { topK: 8 });
   assert.equal(decision.activeProject, "armi");
+  assert.ok(decision.results.every((item) => !item.chunk.projectId || item.chunk.projectId === "armi"));
   assert.ok(decision.results.some((item) => item.chunk.projectId === "armi" && item.chunk.section === "decision"));
-  assert.equal(decision.results[0].chunk.projectId, "armi");
-  assert.equal(decision.results[0].chunk.section, "decision");
 });
 
-test("prompt shaping is intent-aware and removes the fixed 300-character ceiling", () => {
-  const broad = retrieve("어떤 프로젝트를 만들었나요?", null, { topK: 8 });
+test("prompt has one conversational policy for every question — no per-intent shaping, no character ceiling", () => {
+  const broad = retrieve("어떤 프로젝트를 만들었나요?", null, { topK: 8, dense: PORTFOLIO_DENSE });
   const prompt = buildGroundedSystemPrompt(null, broad);
-  assert.doesNotMatch(prompt, /300자/);
-  assert.match(prompt, /질문의 범위와 아래 답변 깊이로 정합니다/);
-  assert.match(prompt, /대표 프로젝트를 이름과 정체성이 드러나는 짧은 문장 하나씩/);
-  assert.match(prompt, /프로젝트 이름을 감탄사처럼 되풀이하며 시작하지 않습니다/);
-  assert.match(prompt, /"그래서 우리는", "그렇게 만들었습니다"/);
-
-  const technology = retrieve("어떤 기술을 다룰 수 있어요?", null, { topK: 8 });
-  assert.equal(resolveAnswerShape(null, technology), "TECHNOLOGY_OVERVIEW");
-  assert.match(buildGroundedSystemPrompt(null, technology), /원시 스택 목록으로 나열하지 않습니다/);
+  assert.doesNotMatch(prompt, /300자|답변 깊이|답변 구성 지침/);
+  assert.match(prompt, /포트폴리오 전체 범위/);
+  assert.match(prompt, /프로젝트 이름을 감탄사처럼 되풀이하는 시작을 피합니다/);
+  const technology = buildGroundedSystemPrompt(null, retrieve("어떤 기술을 다룰 수 있어요?", null, { topK: 8 }));
+  assert.match(technology, /묻지 않은 아키텍처·수치·기술 스택을 나열하지 않습니다/);
 });
 
 test("deterministic broad fallback names multiple projects without an ARMI echo opening", () => {
-  const result = retrieve("어떤 프로젝트를 만들었나요?", null, { topK: 8 });
+  const result = retrieve("어떤 프로젝트를 만들었나요?", null, { topK: 8, dense: PORTFOLIO_DENSE });
   const answer = answerFromEvidence("어떤 프로젝트를 만들었나요?", null, result).answer;
   for (const title of ["ARMI", "행가래", "Wedding AI", "Claw Dev", "AI Docent"]) {
     assert.match(answer, new RegExp(title));

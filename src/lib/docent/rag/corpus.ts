@@ -106,6 +106,10 @@ import type {
   SourceType,
 } from "./types";
 
+import { activeCorpusSource } from "@/lib/docent/corpus/active";
+import { snapshotToRagChunks } from "@/lib/docent/corpus/build";
+import { PORTFOLIO_INVENTORY_CHUNK_ID } from "@/lib/docent/corpus/schema";
+
 import { PROJECT_ENTITIES, projectEntity, type ProjectEntity } from "./entities";
 export { PROJECT_ENTITIES, projectEntity, type ProjectEntity };
 
@@ -209,6 +213,34 @@ function projectsCards(): Draft[] {
 
 function slug(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9가-힣]+/g, "-").replace(/^-|-$/g, "");
+}
+
+/**
+ * 포트폴리오 전체의 프로젝트 목록 한 조각 — 상세 페이지의 정본 설명을 그대로 모은 것이다(새로 쓴 문장
+ * 없음). "어떤 프로젝트를 만들었나요?" 처럼 프로젝트들 자체를 묻는 질문은 이 조각이 검색 상위에 오고,
+ * 검색은 그것을 "포트폴리오 전체 범위" 의 신호로 쓴다(retrieval.ts). 질문 문장을 정규식으로 판정하지 않는다.
+ */
+export { PORTFOLIO_INVENTORY_CHUNK_ID };
+
+function portfolioInventoryChunks(): Draft[] {
+  const items = projectDetails
+    .map((d) => ({ d, entity: projectEntity(d.slug === "ai-docent" ? "docent" : d.slug) }))
+    .filter((x): x is { d: (typeof projectDetails)[number]; entity: ProjectEntity } => Boolean(x.entity));
+  if (items.length === 0) return [];
+  return [{
+    id: PORTFOLIO_INVENTORY_CHUNK_ID,
+    sourceType: "structured_data",
+    sourcePath: "src/data/projectDetails.ts",
+    sourceId: "projectDetails",
+    entityType: "profile",
+    entityId: "portfolio",
+    section: "overview",
+    title: "포트폴리오 프로젝트 전체 목록",
+    text: `이 포트폴리오에 기록된 프로젝트는 ${items.length}개입니다: ${items.map((x) => x.entity.title).join(", ")}. ${items.map((x) => `${x.entity.title} — ${x.d.label}: ${x.d.description}`).join(" ")}`,
+    tags: items.map((x) => x.entity.title),
+    provenance: "projectDetails.ts → 전체 [slug] title/label/description (PROJECT_ENTITIES 에 있는 것만)",
+    priority: PRIORITY.projectDetail,
+  }];
 }
 
 function projectDetailChunks(): Draft[] {
@@ -389,6 +421,7 @@ export function buildCorpus(): RagChunk[] {
     ...clawdevChunks(),
     ...docentChunks(),
     ...profileChunks(),
+    ...portfolioInventoryChunks(),
     ...skillChunks(),
     ...knowledgeChunks(),
   ];
@@ -400,8 +433,16 @@ export function buildCorpus(): RagChunk[] {
   return drafts.map(finish).filter((c) => c.text.length > 0);
 }
 
+/**
+ * 런타임 코퍼스. 큐레이션 스냅샷(src/generated/docent-corpus.json, npm run docent:corpus)이 활성이면 그것을,
+ * 아니면 이 파일의 레거시 빌더 결과를 쓴다(src/lib/docent/corpus/active.ts). 어느 쪽이든 BM25 색인과 문서 임베딩
+ * 지문은 이 결과로 계산된다 — 출처가 바뀌면 임베딩 아티팩트는 stale 로 잡힌다.
+ */
 export function getCorpus(): RagChunk[] {
-  if (!cached) cached = buildCorpus();
+  if (!cached) {
+    const source = activeCorpusSource();
+    cached = source.kind === "snapshot" ? snapshotToRagChunks(source.snapshot) : buildCorpus();
+  }
   return cached;
 }
 

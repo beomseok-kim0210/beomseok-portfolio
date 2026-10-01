@@ -6,8 +6,13 @@
  * 건드리지 않는 것: 코드 스팬(`a*b`)·코드 블록 안, 짝이 없는 단일 `*`(곱셈, "5*", 각주 표시).
  * 스트리밍 중에는 여는 `**` 만 먼저 도착할 수 있다 — 닫는 표시가 올 때까지 여는 표시만 숨긴다.
  *
+ * 감정 태그·근거 번호 같은 프로토콜 표지는 서버(ProtocolStreamParser)가 이미 걷어내지만, 화면에서도
+ * 한 번 더 걷어낸다(방어선). 스트리밍 중 끝에 걸린 미완성 표지("<emo")는 숨긴다.
+ *
  * TTS 는 따로 stripMarkdownForSpeech(ttsSegments.ts)가 정리한다.
  */
+
+import { stripProtocolMarkers } from "./protocolStream";
 
 const PAIRED_STRONG = /\*\*(?=\S)([^*\n]*?\S)\*\*/g;
 const PAIRED_UNDERSCORE = /(^|[^\w])__(?=\S)([^_\n]*?\S)__(?![\w])/g;
@@ -21,7 +26,8 @@ function stripOutsideCode(text: string): string {
     .replace(DANGLING_STRONG, "");
 }
 
-export function stripEmphasisForDisplay(text: string): string {
+export function stripEmphasisForDisplay(raw: string): string {
+  const text = stripProtocolMarkers(raw, { holdPartial: true });
   if (!text.includes("**") && !text.includes("__")) return text;
   // 코드 블록(```)과 코드 스팬(`)은 그대로 두고, 그 밖의 조각만 정리한다.
   const parts = text.split(/(```[\s\S]*?(?:```|$)|`[^`\n]*`)/);
