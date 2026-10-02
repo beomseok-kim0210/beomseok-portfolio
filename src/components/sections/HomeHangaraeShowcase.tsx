@@ -1,41 +1,54 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { ProjectVideoFrame } from "@/components/ui/ProjectVideoFrame";
 import { SplitHeadline } from "@/components/ui/SplitHeadline";
 import { ShowcaseMotion } from "@/components/sections/HomeShowcase/ShowcaseMotion";
+import { HangaraeSpatialVisual } from "@/components/sections/HomeShowcase/SystemVisuals";
+
+const flow = ["CAMERA", "POSE", "DEPTH", "3D COORDINATE", "FEEDBACK"];
 
 export function HomeHangaraeShowcase() {
   return (
-    <section className="scene-shell flex min-h-screen flex-col items-center justify-center bg-[#F6FFFB] px-5 py-12 text-[#111827] md:py-16">
+    <section
+      id="hangarae"
+      className="scene-shell relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#f4f3ee] px-5 py-16 text-[#15171b] md:py-24"
+    >
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[120px] bg-gradient-to-b from-[#02060d] via-[#f4f3ee]/20 to-transparent opacity-20" />
+
       <ShowcaseMotion className="w-full text-center">
-        <p className="cinematic-label text-[var(--hangarae-accent)]">
-          Rehabilitation AI
-        </p>
-        <h2 className="mt-5 text-[clamp(44px,4.5vw,68px)] font-[780] leading-[0.9] tracking-[-0.05em]">
+        <p className="cinematic-label text-indigo-600">Rehabilitation AI / 02</p>
+        <h2 className="mt-5 font-display text-[clamp(52px,5.4vw,82px)] font-[700] leading-[0.86] tracking-[-0.055em]">
           행가래
         </h2>
         <SplitHeadline
-          lines={["환자들의 집으로 가는 걸음을", "더욱 가볍고 안전하게"]}
-          className="mx-auto mt-4 max-w-[860px] text-[clamp(20px,2vw,30px)] font-medium leading-[1.4] tracking-normal opacity-60"
+          lines={["Camera sees pixels.", "The system measures movement."]}
+          className="mx-auto mt-5 max-w-[920px] text-[clamp(22px,2.2vw,34px)] font-medium leading-[1.25] tracking-[-0.025em] text-slate-700"
         />
+        <p className="mx-auto mt-5 max-w-[680px] text-[14px] leading-7 text-slate-500 md:text-[15px]">
+          포즈 키포인트와 깊이 정보를 결합해 화면 속 관절을 3D 좌표로 바꾸고, 온디바이스 환경에서 실시간 운동 피드백으로 연결했습니다.
+        </p>
       </ShowcaseMotion>
 
-      <ShowcaseMotion preset="media" className="mt-6 w-full max-w-[1060px]">
-        <ProjectVideoFrame
-          theme="hangarae"
-          title="행가래"
-          eyebrow="Live Product Demo"
-          duration="03:42"
-          videoSrc="/videos/행가래_intro.mp4"
-        />
+      <ShowcaseMotion preset="media" className="mt-9 w-full max-w-[1120px]">
+        <HangaraeSpatialVisual />
       </ShowcaseMotion>
 
-      <ShowcaseMotion delay={0.25} className="mt-6 text-center">
+      <ShowcaseMotion delay={0.18} className="mt-7 w-full max-w-[1120px]">
+        <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 font-mono text-[9px] tracking-[0.12em] text-slate-400 sm:text-[10px]">
+          {flow.map((item, index) => (
+            <span key={item} className="inline-flex items-center gap-2">
+              <span className={index === 3 ? "text-indigo-600" : "text-slate-500"}>{item}</span>
+              {index < flow.length - 1 && <span className="text-indigo-300">→</span>}
+            </span>
+          ))}
+        </div>
+      </ShowcaseMotion>
+
+      <ShowcaseMotion delay={0.25} className="mt-7 text-center">
         <Link
           href="/projects/hangarae"
-          className="inline-flex h-[48px] items-center gap-2 rounded-full bg-[#111827] px-6 text-[14px] font-semibold text-white transition-transform hover:-translate-y-0.5"
+          className="inline-flex h-[48px] items-center gap-2 rounded-full bg-[#15171b] px-6 text-[14px] font-semibold text-white transition-transform hover:-translate-y-0.5"
         >
-          View Case Study <ArrowRight className="h-4 w-4" />
+          Explore Spatial Pipeline <ArrowRight className="h-4 w-4" />
         </Link>
       </ShowcaseMotion>
     </section>
