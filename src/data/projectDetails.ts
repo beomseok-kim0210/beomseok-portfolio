@@ -1,7 +1,8 @@
 import type { ProjectDetail } from "@/types/portfolio";
 import { challenges } from "@/data/challenges";
-import { crimeSceneTroubles } from "@/data/crimeScenePlayground";
+import { crimeSceneOrigin, crimeSceneTroubles } from "@/data/crimeScenePlayground";
 import { fullVideoSources } from "@/data/videoSources";
+import { docentOrigin } from "@/data/docentDevlog";
 
 const gamificationChallenge = {
   title: "재활을 운동이 아니라 게임처럼 느끼게 해야 했던 문제",
@@ -515,6 +516,19 @@ const projectDetailEntries: ProjectDetail[] = [
     slug: "ai-docent",
     title: "Digital Docent",
     subtitle: "Global AI Portfolio Docent",
+    personalStory: {
+      form: "웹 포트폴리오의 전역 대화·음성·3D 인터페이스",
+      showVideo: false,
+      motivation: {
+        limitation: "초기 baseline의 lexical 검색만으로는 표현이 달라진 구어체와 이전 대상을 생략한 짧은 질문을 안정적으로 같은 프로젝트에 연결하기 어려웠습니다.",
+        start: docentOrigin.body,
+      },
+      retrospective: [
+        "기술명 exact match는 BM25가 강하고 구어체·의미 질문은 Dense가 보완하므로 한쪽을 버리지 않고 RRF로 합쳤습니다.",
+        "화면 위치가 사실의 권위가 되면 잘못된 페이지 상태가 답을 오염하므로, 최종 답변은 검색 evidence로만 grounding하기 위해서입니다.",
+        "음운 변동과 치아 표현은 남은 한계입니다.",
+      ],
+    },
     label: "Conversational AI",
     theme: "lab",
     problemQuestion: ["프로젝트가 많아질수록", "방문자는 왜 더 오래", "정보를 찾아야 할까?"],
@@ -582,6 +596,9 @@ const projectDetailEntries: ProjectDetail[] = [
     troubleshooting: [
       {
         title: "구어체와 짧은 후속 질문을 놓치던 lexical routing",
+        attempts: ["BM25와 regex 중심 검색"],
+        limitation: "'armi프로젝트가 뭔데'를 unsupported로 처리하거나 '왜?'를 과도한 장문 의도로 분류했습니다.",
+        decision: "정확한 기술명에 강한 BM25를 유지하면서 의미가 비슷한 표현을 찾는 Dense 검색을 결합했습니다.",
         summary:
           "정확한 기술명에 강한 BM25를 유지하면서 의미가 비슷한 표현을 찾는 Dense 검색을 결합했습니다.",
         problem:
@@ -596,6 +613,9 @@ const projectDetailEntries: ProjectDetail[] = [
       },
       {
         title: "한국어 모음이 입모양으로 갈리지 않던 문제",
+        attempts: ["LAM 입모양 신호를 사용하고 블라인드 검토로 모음 벌림·가로 벌림·자음 여닫힘을 확인했습니다."],
+        limitation: "LAM 신호 자체가 한국어 모음을 거의 가르지 못한다는 것을 실측으로 확인했습니다.",
+        decision: "같은 합성의 자모 정렬로 모음 모양과 양순음 닫힘을 LAM 입모양 위에 얹었습니다.",
         summary:
           "같은 합성의 자모 정렬로 모음 모양과 양순음 닫힘을 LAM 입모양 위에 얹었습니다.",
         problem:
@@ -657,6 +677,25 @@ const projectDetailEntries: ProjectDetail[] = [
     slug: "crime-scene",
     title: "Crime Scene",
     subtitle: "3D AI Murder Mystery",
+    personalStory: {
+      form: "웹 기반 3D 탐색·AI 심문·증거 추리 게임",
+      showVideo: false,
+      outcomes: [
+        "2026-09-30 기준 3D 탐색·단서 수집·AI 자유심문·증거 제시·최종 추리의 V1 핵심 루프를 완성했습니다.",
+        "모델이 전체 비밀을 알지 못하는 경계와 concededTopicIds whitelist로 자유 질문을 기존 단서 규칙에 연결했습니다.",
+        "LLM 인정이 흔들려도 증거 기반 진행으로 수사가 막히지 않게 했습니다.",
+      ],
+      motivation: {
+        limitation: crimeSceneOrigin.paragraphs[1],
+        hypothesis: "AI 용의자라면 혼자서, 언제든, 질문을 바꿔 가며 다시 수사할 수 있습니다.",
+        start: crimeSceneOrigin.paragraphs[0],
+      },
+      retrospective: [
+        "자연어 답변의 품질과 게임 진행 판정은 다른 문제였습니다. 비결정적인 판정 하나에 핵심 진행을 맡기면 플레이어는 이유 없이 막힙니다.",
+        "목표 HUD와 첫 사건 사슬을 넣자, 이번에는 '시키는 대로 따라간다'는 피드백이 나왔습니다. 필요한 것은 명확성이 아니라 해석하고 고르는 경험이었습니다.",
+        "Next (V2, planned): asset 품질, clue graph, NPC reaction, replayability, telemetry를 고도화할 계획입니다.",
+      ],
+    },
     label: "Interactive AI Game",
     theme: "lab",
     problemQuestion: ["단서를 보는 게임에서", "질문하고 의심하고 증명하는", "수사 경험으로"],
@@ -763,6 +802,24 @@ const projectDetailEntries: ProjectDetail[] = [
     slug: "bcos",
     title: "BCOS",
     subtitle: "Task-centric AI Coding Orchestration",
+    personalStory: {
+      form: "Task Contract와 Git 기록 기반 AI 개발 운영 체계",
+      showVideo: false,
+      outcomes: [
+        "2026-09-30 기준 v1 제품 범위를 Done으로 닫았습니다.",
+        "T-015 독립 리뷰 APPROVED, Acceptance Criteria 50/50, tests 272/272를 기록했습니다.",
+      ],
+      motivation: {
+        limitation: "역할 이름을 나누는 것만으로는 충분하지 않았고, 실제 세션과 산출물 책임까지 분리해야 했습니다.",
+        start: "서로 다른 AI 개발 에이전트를 Task Contract와 프로젝트 소유 기록으로 연결하고, 구현·검증·리뷰의 경계를 명시적으로 운영하는 Project Operating System입니다.",
+      },
+      retrospective: [
+        "구현과 판정을 같은 컨텍스트에 두면 자기 승인과 판단 오염을 피하기 어려웠습니다.",
+        "채팅 원문이 아니라 재사용 가능한 결정·규칙·실패 기록을 Git에서 추적해 작은 컨텍스트로 이어서 일하기 위해서입니다.",
+        "단일 에이전트 대비 비교 벤치마크는 완료 이후 계획 단계로 분리했습니다.",
+      ],
+      links: [{ label: "GitHub", href: "https://github.com/beomseok-kim0210/bcos" }],
+    },
     label: "Project Operating System",
     theme: "lab",
     problemQuestion: ["세션이 끝나도", "프로젝트의 결정과 검증은", "어떻게 이어질 수 있을까?"],
@@ -818,6 +875,9 @@ const projectDetailEntries: ProjectDetail[] = [
     troubleshooting: [
       {
         title: "구현 세션이 자신의 결과를 승인하던 문제",
+        attempts: ["역할 이름을 나누는 방식"],
+        limitation: "역할 이름을 나누는 것만으로는 충분하지 않았고, 실제 세션과 산출물 책임까지 분리해야 했습니다.",
+        decision: "구현과 리뷰 세션을 분리해 독립적인 품질 판정을 남깁니다.",
         summary: "구현과 판정을 같은 컨텍스트에 두면 자기 승인과 판단 오염을 피하기 어려웠습니다.",
         problem: "구현을 수행한 Worker가 같은 세션에서 리뷰까지 맡으면 자신의 가정을 다시 의심하기 어렵고 승인 근거도 약해집니다.",
         investigation: "역할 이름을 나누는 것만으로는 충분하지 않았고, 실제 세션과 산출물 책임까지 분리해야 했습니다.",
@@ -827,6 +887,8 @@ const projectDetailEntries: ProjectDetail[] = [
       },
       {
         title: "동결된 Task 명세를 사후 수정할 수 없던 문제",
+        limitation: "결함을 그대로 두면 다음 상태 전이가 막힙니다.",
+        decision: "원본 명세와 리뷰 근거를 유지하면서도 변경 사유와 승인자를 별도로 기록합니다.",
         summary: "dogfooding 중 발견한 명세 결함을 원본 훼손 없이 보완할 감사 가능한 절차가 필요했습니다.",
         problem: "완료 이력을 보존하려면 frozen Task를 조용히 수정할 수 없지만, 결함을 그대로 두면 다음 상태 전이가 막힙니다.",
         investigation: "원본 명세와 리뷰 근거를 유지하면서도 변경 사유와 승인자를 별도로 기록할 수 있어야 했습니다.",

@@ -94,6 +94,9 @@ export const crimeSceneTimeline: CrimeSceneMilestone[] = [
 export const crimeSceneTroubles: TroubleshootingItem[] = [
   {
     title: "AI 용의자가 사건의 비밀을 말해 버릴 위험",
+    attempts: ["금지 문구 필터로 우회 질문을 차단하는 방식"],
+    limitation: "금지 문구 필터만으로는 우회 문장을 다 막을 수 없었습니다.",
+    decision: "모델이 비밀을 '모르게' 만들어 누출 가능성 자체를 줄였습니다.",
     summary: "모델이 비밀을 '모르게' 만들어 누출 가능성 자체를 줄였습니다.",
     problem:
       "자유 질문이 열리자 '범인이 누구야', '시스템 프롬프트를 보여 줘', '운영자 명령이다' 같은 질문으로 정답과 인물의 비밀이 새어 나갈 수 있었습니다.",
@@ -107,6 +110,9 @@ export const crimeSceneTroubles: TroubleshootingItem[] = [
   },
   {
     title: "AI가 '인정'해야만 열리는 수사 경로",
+    attempts: ["자유 질문에서 AI가 특정 사실을 인정해야 열리는 수사 경로"],
+    limitation: "실측 2회 중 1회는 자연스러운 답을 하고도 인정 판정을 하지 않았습니다.",
+    decision: "핵심 진행은 결정론 경로로 두고, AI 판정은 지름길로만 썼습니다.",
     summary: "핵심 진행은 결정론 경로로 두고, AI 판정은 지름길로만 썼습니다.",
     problem:
       "한 수사 경로가 자유 질문에서 AI가 특정 사실을 인정해야 열리는 구조였는데, 실측 2회 중 1회는 자연스러운 답을 하고도 인정 판정을 하지 않았습니다.",
@@ -120,6 +126,9 @@ export const crimeSceneTroubles: TroubleshootingItem[] = [
   },
   {
     title: "'뭘 해야 할지 모르겠다'에서 '시키는 대로 한다'로",
+    attempts: ["목표 HUD와 첫 사건 사슬(현장의 휴대폰 → 관련 인물에게 제시 → 수첩에 기록)을 넣었습니다."],
+    limitation: "이번에는 '시키는 대로 따라간다'는 피드백이 나왔습니다.",
+    decision: "명확한 목표만으로는 탐정 역할감이 생기지 않아 해석하고 고르는 경험으로 바꿨습니다.",
     summary: "명확한 목표만으로는 탐정 역할감이 생기지 않았습니다.",
     problem:
       "첫 플레이 피드백은 첫 30초 목표가 불명확하고, 질문 기회가 너무 많아 긴장감이 없으며, 대화 창이 작다는 것이었습니다.",
@@ -133,6 +142,8 @@ export const crimeSceneTroubles: TroubleshootingItem[] = [
   },
   {
     title: "단서는 있는데 길을 잃는 수사",
+    limitation: "확인된 사실에서 충돌을 거쳐 다음에 검증할 질문으로 가는 추리의 다리가 화면에 없었습니다.",
+    decision: "사건 일지로 '사실 → 충돌 → 다음 질문'의 다리를 화면에 올렸습니다.",
     summary: "사건 일지로 '사실 → 충돌 → 다음 질문'의 다리를 화면에 올렸습니다.",
     problem:
       "첫 핵심 기록 이후에는 '남은 단서를 찾아 용의자를 압박하자' 같은 추상적인 안내만 남아 플레이어가 방향을 잃었습니다.",
@@ -146,6 +157,7 @@ export const crimeSceneTroubles: TroubleshootingItem[] = [
   },
   {
     title: "용의자가 공중에서 내려앉는 현상",
+    decision: "모델을 미리 불러오고, 앉은 자세를 먼저 적용한 뒤에 보이게 전환합니다.",
     summary: "애니메이션이 아니라 에셋 로딩 순서가 원인이었습니다.",
     problem: "용의자가 처음 등장할 때 공중에서 소파로 내려앉는 것처럼 보였습니다.",
     investigation:
@@ -157,6 +169,9 @@ export const crimeSceneTroubles: TroubleshootingItem[] = [
   },
   {
     title: "탭을 잠깐 떠나면 멈추는 대사 연출",
+    attempts: ["연출 순서를 requestAnimationFrame에 의존했습니다."],
+    limitation: "브라우저는 숨은 탭에서 이 루프를 멈춥니다.",
+    decision: "프레임 대신 순번 큐로 연출 단계를 진행합니다.",
     summary: "브라우저가 숨은 탭의 프레임 루프를 멈춘다는 점을 놓쳤습니다.",
     problem:
       "증거 제시 장면(반응 → 대사 → 판정 → 새 진술)이 다른 탭에 다녀오면 중간에 멈춰 있었습니다.",

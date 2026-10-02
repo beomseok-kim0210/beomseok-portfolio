@@ -2,9 +2,10 @@ import type { ProjectDetail } from "@/types/portfolio";
 
 type ProjectArchitectureProps = {
   project: ProjectDetail;
+  showTech?: boolean;
 };
 
-export function ProjectArchitecture({ project }: ProjectArchitectureProps) {
+export function ProjectArchitecture({ project, showTech = true }: ProjectArchitectureProps) {
   return (
     <section data-docent-section="architecture" className="py-20">
       <div className="max-w-[860px]">
@@ -16,18 +17,18 @@ export function ProjectArchitecture({ project }: ProjectArchitectureProps) {
         {project.architecture.items.map((item) => (
           <div
             key={item.title}
-            className="rounded-[28px] border border-slate-200 bg-white p-7"
+            className="min-w-0 rounded-[28px] border border-slate-200 bg-white p-7"
           >
             <h3 className="text-2xl font-semibold">{item.title}</h3>
             <p className="project-caption mt-5">
               {item.description}
             </p>
-            {item.tech ? (
+            {showTech && item.tech ? (
               <div className="mt-6 flex flex-wrap gap-2">
                 {item.tech.map((tech) => (
                   <span
                     key={tech}
-                    className="rounded-full bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-600"
+                    className="max-w-full break-words rounded-full bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-600"
                   >
                     {tech}
                   </span>

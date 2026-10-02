@@ -25,7 +25,7 @@ export function SiteHeader({ items }: SiteHeaderProps) {
         <Link href="/#hero" className="nav-label text-[#111827]">
           Kim Beom Seok
         </Link>
-        <nav className="hidden items-center gap-10 md:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-4 md:flex lg:gap-10" aria-label="Primary">
           {items.map((item) => {
             const id = item.href.split("#")[1] ?? "";
             const isActive = activeSection === id;

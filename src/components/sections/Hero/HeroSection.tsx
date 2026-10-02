@@ -159,7 +159,7 @@ export function HeroSection() {
           ))}
         </div>
         <div className="mt-12 flex flex-wrap justify-center gap-3">
-          <Button href="#projects">View Projects</Button>
+          <Button href="#armi">View Projects</Button>
           <Button href="/knowledge" variant="secondary">
             AI Knowledge
           </Button>

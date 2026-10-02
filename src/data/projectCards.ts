@@ -72,3 +72,12 @@ export const projectCards: ProjectCard[] = [
     scope: "team",
   },
 ];
+
+// 전시 분류는 원본 데이터와 분리한다. 숨긴 프로젝트의 데이터/라우트는 유지한다.
+export const personalProjectSlugs = ["ai-docent", "bcos", "crime-scene"] as const;
+
+export const personalProjectCards: ProjectCard[] = personalProjectSlugs.map((slug) => {
+  const project = projectCards.find((item) => item.slug === slug);
+  if (!project) throw new Error(`Missing personal project card: ${slug}`);
+  return project;
+});

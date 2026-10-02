@@ -121,6 +121,9 @@ export type TroubleshootingItem = {
   summary: string;
   problem: string;
   investigation: string;
+  attempts?: string[];
+  limitation?: string;
+  decision?: string;
   solution: string;
   result: string;
   tech: string[];
@@ -157,6 +160,19 @@ export type ProjectDetail = {
   };
   troubleshooting: TroubleshootingItem[];
   result: string[];
+  personalStory?: {
+    form: string;
+    period?: string;
+    motivation: {
+      limitation: string;
+      hypothesis?: string;
+      start?: string;
+    };
+    retrospective: string[];
+    outcomes?: string[];
+    links?: { label: string; href: string }[];
+    showVideo: boolean;
+  };
   brief?: {
     problem: string;
     role: {
