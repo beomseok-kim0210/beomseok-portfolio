@@ -469,6 +469,7 @@ export function corpusInventory(): CorpusSource[] {
  * 여기 없는 사이트 프로젝트에 개요 조각이 없으면 tests/rag-coverage.test.ts 가 실패한다.
  */
 export const RAG_EXCLUDED_SITE_PROJECTS: Readonly<Record<string, string>> = {
+  "bcos": "레거시 사이트 코퍼스에는 BCOS 엔티티가 없다. 운영 DD는 큐레이션 스냅샷(bcos 엔티티 포함)을 쓴다 — 레거시 엔티티 등록은 별도 결정 사항.",
   "crime-scene": "플레이그라운드 게임 프로젝트. 프로젝트 엔티티(PROJECT_ENTITIES)와 페이지 문맥 검증에 아직 없어, 코퍼스에 넣으려면 엔티티 등록부터 해야 한다 — 별도 결정 사항.",
 };
 

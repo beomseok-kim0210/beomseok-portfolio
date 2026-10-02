@@ -4,12 +4,12 @@ import { ProjectDetailLayout } from "@/components/project/ProjectDetailLayout";
 import { getProjectDetail } from "@/data/projectDetails";
 
 export const metadata: Metadata = {
-  title: "ARMI Case Study",
-  description: "LangGraph Agent·Tool Calling·Redis/Chroma 기억을 로봇 동작과 연결한 병상 보조 서비스입니다.",
+  title: "BCOS Case Study",
+  description: "Task Contract, 호스트 검증, 독립 리뷰와 프로젝트 메모리를 연결한 AI coding orchestration.",
 };
 
-export default function ARMIProjectPage() {
-  const project = getProjectDetail("armi");
+export default function BcosProjectPage() {
+  const project = getProjectDetail("bcos");
   if (!project) notFound();
   return <ProjectDetailLayout project={project} />;
 }

@@ -35,7 +35,7 @@
 
     { "id": "B1", "category": "B", "query": "ARMI에서 본인이 한 역할이 뭐예요?", "page": "home", "project": "armi", "acceptable": ["project:armi:role:*"] },
     { "id": "B2", "category": "B", "query": "행가래에서 맡은 역할은?", "page": "home", "project": "hangarae", "acceptable": ["project:hangarae:role:*"] },
-    { "id": "B3", "category": "B", "query": "Wedding AI에서 담당한 부분이 뭐였어요?", "page": "home", "project": "wedding", "acceptable": ["project:wedding:role:*"] },
+    { "id": "B3", "category": "B", "query": "Wedding AI에서 담당한 부분이 뭐였어요?", "page": "home", "project": "wedding", "acceptable": ["project:wedding:role:*", "project:wedding:overview:recap", "project:wedding:lesson:reflection:1"] },
     { "id": "B4", "category": "B", "query": "Claw Dev는 혼자 만들었어요? 역할이 뭐예요?", "page": "home", "project": "claw-dev", "acceptable": ["project:claw-dev:role:*", "project:claw-dev:overview:recap"] },
 
     { "id": "C1", "category": "C", "query": "행가래에서 왜 YOLOv11-M을 재학습했어요?", "page": "home", "project": "hangarae", "acceptable": ["project:hangarae:decision:trouble-01", "project:hangarae:troubleshooting:trouble-01", "project:hangarae:troubleshooting:detail:재활-동작에서-발끝과-뒤꿈치를-추적하지-못하던-문제"] },
@@ -60,8 +60,8 @@
     { "id": "E6", "category": "E", "query": "Claw Dev 검증 도구는 몇 개고 뭐예요?", "page": "home", "project": "claw-dev", "acceptable": ["project:claw-dev:metric:hero-stats", "project:claw-dev:architecture:verify-loop"] },
 
     { "id": "F1", "category": "F", "query": "ARMI와 행가래 둘 다 SSAFY에서 한 프로젝트야?", "page": "home", "project": null, "acceptable": ["profile:journey:step-03", "profile:journey:timeline:armi-행가래", "profile:journey:timeline:ssafy"] },
-    { "id": "F2", "category": "F", "query": "이 사람의 AI 경험 중 RAG와 가장 관련 있는 경험은?", "page": "home", "project": null, "acceptable": ["project:claw-dev:architecture:memory", "project:claw-dev:metric:highlight:search", "project:claw-dev:role:detail", "project:claw-dev:architecture:detail", "profile:focus:generative-ai", "profile:journey:step-01", "profile:skill:toolbox", "project:claw-dev:technology:detail"] },
-    { "id": "F3", "category": "F", "query": "포트폴리오에 있는 프로젝트 중 백엔드 경험을 보여줘", "page": "home", "project": null, "acceptable": ["skill:backend:*", "project:armi:architecture:card:robot-state", "profile:skill:toolbox", "project:armi:technology:*", "project:armi:architecture:realtime-flow", "project:armi:architecture:detail"] },
+    { "id": "F2", "category": "F", "query": "이 사람의 AI 경험 중 RAG와 가장 관련 있는 경험은?", "page": "home", "project": null, "acceptable": ["profile:focus:rag-evaluation", "project:docent:architecture:detail", "project:docent:role:detail", "project:docent:technology:detail", "profile:journey:step-01", "profile:skill:toolbox"] },
+    { "id": "F3", "category": "F", "query": "포트폴리오에 있는 프로젝트 중 백엔드 경험을 보여줘", "page": "home", "project": null, "acceptable": ["skill:backend-realtime:django", "skill:backend-realtime:spring-boot", "project:armi:architecture:card:robot-state", "profile:skill:toolbox", "project:armi:technology:*", "project:armi:architecture:realtime-flow", "project:armi:architecture:detail"] },
     { "id": "F4", "category": "F", "query": "웨딩 프로젝트 경험이 행가래에 어떻게 이어졌어?", "page": "home", "project": "wedding", "acceptable": ["project:wedding:lesson:learned"] },
     { "id": "F5", "category": "F", "query": "MCP와 Blender를 쓴 프로젝트가 뭐야?", "page": "home", "project": null, "acceptable": ["project:hangarae:*", "project:wedding:*"] },
 

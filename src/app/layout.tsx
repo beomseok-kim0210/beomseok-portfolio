@@ -19,33 +19,34 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://beomseok-portfolio.vercel.app"),
   title: {
-    default: "Kim Beom Seok | Frontend & AI Developer",
+    default: "Kim Beom Seok | AI Product Engineer",
     template: "%s | Kim Beom Seok",
   },
   description:
-    "AI 기술을 사용자가 체감할 수 있는 제품 경험으로 연결하는 Frontend & AI Developer 포트폴리오.",
+    "데이터에서 AI 판단, 시스템 행동까지 연결하는 AI Product Engineer 포트폴리오 — Hybrid RAG, AI Agent, AI coding orchestration, Computer Vision.",
   keywords: [
     "Kim Beom Seok",
-    "Frontend Developer",
-    "AI Developer",
+    "AI Product Engineer",
+    "AI Engineer",
     "Portfolio",
-    "Voice AI",
-    "Realtime UX",
+    "RAG",
+    "AI Agent",
+    "Computer Vision",
   ],
   authors: [{ name: "Kim Beom Seok" }],
   openGraph: {
-    title: "Kim Beom Seok | Frontend & AI Developer",
+    title: "Kim Beom Seok | AI Product Engineer",
     description:
-      "AI 기술을 사용자가 체감할 수 있는 제품 경험으로 연결합니다.",
+      "데이터에서 AI 판단, 시스템 행동까지 연결하는 구조를 설계하고 배포합니다.",
     type: "website",
     locale: "ko_KR",
     siteName: "Kim Beom Seok Portfolio",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kim Beom Seok | Frontend & AI Developer",
+    title: "Kim Beom Seok | AI Product Engineer",
     description:
-      "AI 기술을 사용자가 체감할 수 있는 제품 경험으로 연결합니다.",
+      "데이터에서 AI 판단, 시스템 행동까지 연결하는 구조를 설계하고 배포합니다.",
   },
 };
 

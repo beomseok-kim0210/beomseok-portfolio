@@ -9,17 +9,17 @@ export type ClawdevStat = {
 };
 
 export const clawdevHero = {
-  eyebrow: "Personal AI Lab",
+  eyebrow: "Role-based Multi-Agent Dev Automation",
   title: ["AI Agent는 혼자 답하는 도구가 아니라", "함께 일하는 팀이 될 수 있을까?"],
   premise:
     "Claw Dev는 6개 역할 에이전트가 하나의 채팅방에서 토론하고, 합의하고, 실제 코드를 생성한 뒤 서로의 코드를 리뷰하고, node·tsc·test로 직접 검증하고, 실패하면 스스로 수리하는 멀티에이전트 개발 워크스페이스입니다.",
   subPremise:
-    "프롬프트 한 번으로 답을 받는 구조가 아니라, 소프트웨어 팀의 협업 과정 자체를 오케스트레이션으로 재현하는 것이 목표였습니다.",
+    "초기의 고정 순서 발언은 발표문처럼 흘렀습니다. 그래서 요청별 동적 순서와 support·refine·challenge 반응을 도입해 협업 과정 자체를 오케스트레이션했습니다.",
   stats: [
     { value: "6", label: "Role Agents", detail: "PM + Backend·Frontend·AI·Infra·Test" },
     { value: "8", label: "Orchestration Phases", detail: "토론부터 자가 수리까지" },
-    { value: "3", label: "Real Verify Tools", detail: "node --check · tsc · node --test" },
-    { value: "100%", label: "Schema-Validated", detail: "모든 LLM 출력 Zod 검증" },
+    { value: "3", label: "검증 도구", detail: "node --check · tsc --noEmit · node --test" },
+    { value: "Zod", label: "Schema Validation", detail: "모든 LLM 출력의 구조 검증" },
   ] satisfies ClawdevStat[],
 };
 
@@ -113,15 +113,15 @@ export const clawdevPhases: ClawdevPhase[] = [
   {
     key: "discussion",
     label: "Free Discussion",
-    actor: "5 Roles",
-    summary: "해시 로테이션 순서 토론 · msg 상호 참조",
-    detail: "5개 역할이 요청 문자열 해시(% 5) 순서로 발언하고, 이전 메시지를 msg-### ID로 참조하며 구조화된 주장을 만듭니다.",
-    emits: "[discussion] 5 roles · cross-referenced via msg-id",
+    actor: "Specialists (6 roles total)",
+    summary: "PM 제외 전문 역할의 동적 토론 · msg 상호 참조",
+    detail: "전체 6개 역할 중 PM을 제외한 5개 전문 역할이 요청 문자열 해시(% 5)에 따른 동적 순서로 발언하고, 이전 메시지를 msg-### ID로 참조합니다.",
+    emits: "[discussion] specialists · cross-referenced via msg-id",
   },
   {
     key: "reaction",
     label: "Reaction Cycle",
-    actor: "5 Roles",
+    actor: "Specialists (6 roles total)",
     summary: "support · refine · challenge",
     detail: "각 에이전트는 자신이 아닌 이전 발언에 support/refine/challenge로 반응하고 position과 adjustment를 제시합니다.",
     emits: "[reaction] support · refine · challenge resolved",
@@ -145,7 +145,7 @@ export const clawdevPhases: ClawdevPhase[] = [
   {
     key: "spec",
     label: "Spec (Parallel)",
-    actor: "5 Roles",
+    actor: "Specialists (6 roles total)",
     summary: "5개 스펙 문서 동시 생성",
     detail: "backend·frontend·ai·infra·test 스펙 문서가 Promise.all로 병렬 생성됩니다. 각 스펙은 타입드 예제 코드를 포함합니다.",
     emits: "[spec] 5 docs generated in parallel",
@@ -163,7 +163,7 @@ export const clawdevPhases: ClawdevPhase[] = [
     label: "Coding + Verify Loop",
     actor: "Owners + Reviewers",
     summary: "생성 → 리뷰 → 검증 → 수리",
-    detail: "담당별 코드 생성 후 비-owner 역할이 리뷰하고, 실제 도구로 검증하고, 실패하면 PM 개입·재작성·자율 수리 루프로 이어집니다.",
+    detail: "담당별 코드 생성 후 다른 역할이 리뷰하고, 실제 도구로 검증하고, 실패하면 PM 개입·재작성·자율 수리 루프로 이어집니다.",
     emits: "[coding] draft → review → verify → repair → ✓",
   },
 ];
@@ -262,7 +262,7 @@ export const clawdevReviewRounds: ClawdevReviewRound[] = [
       { name: "Types", command: "tsc --noEmit", status: "passed", summary: "타입 통과 (외부 타입은 warning)" },
       { name: "Tests", command: "node --test", status: "failed", summary: "smoke 테스트 1건 실패" },
     ],
-    outcome: "검증 실패 → PM 개입 → owner(backend) 재작성",
+    outcome: "검증 실패 → PM 개입 → 담당 Backend 재작성",
   },
   {
     round: "Round 2",
@@ -454,5 +454,6 @@ export const clawdevRecap = {
     "처음엔 좋은 모델에 한 번에 코드를 맡기면 될 거라 생각했습니다. 그런데 단일 LLM에 통째로 맡기면 요구사항 누락·파일 경로 불일치·타입 오류·테스트 실패가 반복됐습니다.",
     "그래서 역할을 6개로 나눠 합의한 뒤 코드를 만들게 하고, 출력은 Zod로 검증하고, 생성한 코드는 실제로 node·tsc·test로 돌려본 뒤 실패하면 스스로 고치게 했습니다.",
     "이 프로젝트로 AI 자동화의 핵심은 '생성' 자체가 아니라 '검증 가능한 구조'라는 걸 배웠습니다. AI가 만든 결과를 그대로 믿지 않고 검증과 수리 루프까지 묶어야 실제 개발 자동화에 가까워집니다.",
+    "역할 기반 협업형 multi-agent인 Claw Dev에서 드러난 한계는 BCOS로 이어졌습니다.",
   ],
 } as const;

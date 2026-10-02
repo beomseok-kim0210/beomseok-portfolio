@@ -5,7 +5,7 @@ import { getProjectDetail } from "@/data/projectDetails";
 
 export const metadata: Metadata = {
   title: "Crime Scene Case Study",
-  description: "3D 탐색, 단서 수집, 자유형 AI 심문과 최종 추리를 연결한 웹 기반 크라임씬.",
+  description: "진실을 데이터로 고정하고 증거 기반 진행과 자유형 AI 심문을 연결한 3D 추리 게임 V1을 구현했습니다.",
 };
 
 export default function CrimeSceneProjectPage() {

@@ -10,6 +10,7 @@ import { ProjectArchitecture } from "./ProjectArchitecture";
 import { ArmiCaseStudy } from "./ArmiCaseStudy";
 import { ClawDevCaseStudy } from "./ClawDevCaseStudy";
 import { HangaraeCaseStudy } from "./HangaraeCaseStudy";
+import { ProjectBrief } from "./ProjectBrief";
 import { ProjectHero } from "./ProjectHero";
 import { ProjectMediaSection } from "./ProjectMediaSection";
 import { ProjectOverview } from "./ProjectOverview";
@@ -32,6 +33,7 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
   const isClawDevCaseStudy = project.slug === "claw-dev";
   const isDocentCaseStudy = project.slug === "ai-docent";
   const isCrimeSceneCaseStudy = project.slug === "crime-scene";
+  const isDarkCaseStudy = isClawDevCaseStudy || isDocentCaseStudy || isCrimeSceneCaseStudy;
 
   const mainBg = isClawDevCaseStudy
     ? "bg-[#0B1120]"
@@ -57,20 +59,31 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
           </Link>
         </div>
         {isClawDevCaseStudy ? (
-          <ClawDevCaseStudy />
+          <div className="flex flex-col [&>div:first-child]:contents [&>div:first-child>*]:order-3 [&>div:first-child>*:first-child]:order-1">
+            <ClawDevCaseStudy />
+            <ProjectBrief brief={project.brief} dark={isDarkCaseStudy} className="order-2" />
+          </div>
         ) : isWeddingCaseStudy ? (
-          <WeddingCaseStudy project={project} />
+          <div className="flex flex-col [&>*]:order-3 [&>*:first-child]:order-1">
+            <WeddingCaseStudy project={project} />
+            <ProjectBrief brief={project.brief} className="!order-2" />
+          </div>
         ) : isHangaraeCaseStudy ? (
-          <HangaraeCaseStudy />
+          <div className="flex flex-col [&>*]:order-3 [&>*:first-child]:order-1">
+            <HangaraeCaseStudy />
+            <ProjectBrief brief={project.brief} className="!order-2" />
+          </div>
         ) : isArmiCaseStudy ? (
           <>
             <ProjectHero project={project} />
+            <ProjectBrief brief={project.brief} />
             <ProjectMediaSection project={project} />
             <ArmiCaseStudy />
           </>
         ) : (
           <>
             <ProjectHero project={project} />
+            <ProjectBrief brief={project.brief} dark={isDarkCaseStudy} />
             {isDocentCaseStudy ? (
               <section className="rounded-[32px] bg-[#0B1120] px-6 py-10 text-white md:px-10" data-docent-section="overview">
                 <p className="cinematic-label text-blue-300">Try the global experience</p>

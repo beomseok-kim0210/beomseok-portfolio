@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import {
+  aboutCapabilities,
   aboutAwards,
   aboutExploration,
   aboutFocusAreas,
@@ -9,7 +10,6 @@ import {
   aboutJourney,
   aboutProfile,
   aboutSnapshot,
-  aboutToolbox,
 } from "@/data/about";
 import { navItems } from "@/data/navigation";
 import { SiteHeader } from "@/components/ui/SiteHeader";
@@ -18,7 +18,7 @@ import { ProfileImage } from "@/components/ui/ProfileImage";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Kim Beomseok, AI Product Engineer focused on AI agents, computer vision, multi-agent systems, and product engineering.",
+    "데이터와 AI 판단을 시스템 행동으로 연결하는 AI Product Engineer 김범석의 소개와 역량입니다.",
 };
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -35,7 +35,7 @@ function ChipList({ items }: { items: readonly string[] }) {
       {items.map((item) => (
         <span
           key={item}
-          className="rounded-[8px] border border-slate-200 bg-white px-3.5 py-2 text-[17px] font-semibold text-slate-700"
+          className="max-w-full break-words rounded-[8px] border border-slate-200 bg-white px-3.5 py-2 text-[17px] font-semibold text-slate-700"
         >
           {item}
         </span>
@@ -52,16 +52,16 @@ export default function AboutPage() {
       <section className="mx-auto grid max-w-[1280px] items-start gap-12 px-6 pb-24 pt-36 md:grid-cols-[1.05fr_0.95fr] md:gap-16 md:px-10 lg:px-12">
         <div className="md:pt-4">
           <SectionLabel>About</SectionLabel>
-          <h1 className="mt-8 font-display text-[72px] font-bold leading-[0.98] tracking-[-0.02em] text-[#111827] md:text-[96px]">
+          <h1 className="mt-8 font-display text-[clamp(40px,11.5vw,72px)] font-bold leading-[0.98] tracking-[-0.02em] text-[#111827] md:text-[96px]">
             Kim Beomseok
           </h1>
           <p className="mt-6 font-display text-[36px] font-semibold leading-[1.15] tracking-[-0.01em] text-slate-700 md:text-[48px]">
             AI Product Engineer
           </p>
           <p className="mt-10 max-w-[640px] text-[24px] leading-[1.55] text-slate-600 md:text-[30px]">
-            Building AI products that connect
-            <br />
-            models to real user problems.
+            데이터에서 판단을 거쳐
+            <br className="hidden sm:block" />
+            시스템 행동까지 연결합니다.
           </p>
 
           {/* 연락 링크 — 왼쪽으로 옮겨 좌우 균형을 맞춤 */}
@@ -145,7 +145,7 @@ export default function AboutPage() {
                     {item.value.map((value) => (
                       <span
                         key={value}
-                        className="rounded-[8px] bg-slate-50 px-3 py-1.5 text-[17px] font-semibold text-slate-900"
+                        className="max-w-full break-words rounded-[8px] bg-slate-50 px-3 py-1.5 text-[17px] font-semibold text-slate-900"
                       >
                         {value}
                       </span>
@@ -277,18 +277,33 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto max-w-[1280px] px-6 py-[160px] md:px-10 lg:px-12">
-        <SectionLabel>Technical Toolbox</SectionLabel>
+        <SectionLabel>Capabilities</SectionLabel>
         <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {aboutToolbox.map((group) => (
+          {aboutCapabilities.map((group) => (
             <article
               key={group.title}
-              className="min-h-[220px] rounded-[8px] border border-slate-200 bg-white p-7"
+              className="min-w-0 rounded-[8px] border border-slate-200 bg-white p-7"
             >
-              <h2 className="text-[30px] font-bold text-slate-950">
+              <h2 className="break-words text-[30px] font-bold leading-[1.1] text-slate-950">
                 {group.title}
               </h2>
-              <div className="mt-7">
-                <ChipList items={group.items} />
+              <p className="mt-4 text-[17px] leading-[1.6] text-slate-600">
+                {group.summary}
+              </p>
+              <div className="mt-7 space-y-3">
+                {group.items.map((item) => (
+                  <div
+                    key={item.name}
+                    className="min-w-0 rounded-[8px] border border-slate-200 bg-slate-50 px-4 py-3"
+                  >
+                    <p className="break-words text-[16px] font-semibold leading-[1.4] text-slate-800">
+                      {item.name}
+                    </p>
+                    <p className="mt-1 break-words text-[13px] leading-[1.45] text-slate-400">
+                      Used in · {item.usedIn.join(" · ")}
+                    </p>
+                  </div>
+                ))}
               </div>
             </article>
           ))}
@@ -319,11 +334,11 @@ export default function AboutPage() {
 
       <section className="mx-auto max-w-[1280px] px-6 py-[160px] md:px-10 lg:px-12">
         <SectionLabel>Currently Exploring</SectionLabel>
-        <div className="mt-12 flex gap-5 overflow-x-auto pb-4">
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {aboutExploration.map((item) => (
             <article
               key={item.title}
-              className="h-[180px] w-[320px] shrink-0 rounded-[8px] border border-slate-200 bg-white p-6"
+              className="min-h-[180px] min-w-0 rounded-[8px] border border-slate-200 bg-white p-6"
             >
               <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-blue-600">
                 {item.status}

@@ -136,13 +136,28 @@ export function HeroSection() {
         </motion.h1>
 
         <p className="cinematic-label mt-10 text-blue-600" style={{ fontSize: "15.6px" }}>
-          Frontend & AI Product Builder
+          AI Product Engineer
         </p>
         <p className="mx-auto mt-6 max-w-[600px] text-[20px] leading-[1.75] tracking-[-0.015em] text-slate-600 md:text-[22px]">
-          음성 인터페이스, 실시간 UX, 생성형 AI를
-          <br className="hidden sm:block" />
-          사용자가 체감하는 제품 경험으로 연결합니다.
+          데이터에서 AI 판단을 거쳐 시스템 행동까지 이어지는 구조를 설계하고
+          배포합니다. Agent, RAG, Computer Vision, 실시간 백엔드를 실제 서비스로
+          연결합니다.
         </p>
+        <div className="mx-auto mt-7 flex max-w-[760px] flex-wrap justify-center gap-2">
+          {[
+            "Hybrid RAG · Production",
+            "AI Coding Orchestration",
+            "LangGraph Agent",
+            "YOLO Pose · mAP50 0.988",
+          ].map((proof) => (
+            <span
+              key={proof}
+              className="max-w-full rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-[12px] font-semibold tracking-[-0.01em] text-blue-700 sm:text-[13px]"
+            >
+              {proof}
+            </span>
+          ))}
+        </div>
         <div className="mt-12 flex flex-wrap justify-center gap-3">
           <Button href="#projects">View Projects</Button>
           <Button href="/knowledge" variant="secondary">

@@ -4,8 +4,8 @@ import { ProjectDetailLayout } from "@/components/project/ProjectDetailLayout";
 import { getProjectDetail } from "@/data/projectDetails";
 
 export const metadata: Metadata = {
-  title: "Claw Dev Lab",
-  description: "멀티에이전트, AI 검색, RAG, 검증 루프를 실험하는 개인 AI Lab.",
+  title: "Claw Dev Case Study",
+  description: "6역할 협업형 multi-agent의 동적 토론, 실제 도구 검증과 자율 repair loop를 구현했습니다.",
 };
 
 export default function ClawDevProjectPage() {

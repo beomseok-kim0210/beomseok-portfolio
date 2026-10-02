@@ -7,19 +7,20 @@ export const projects: Project[] = [
     label: "Healthcare AI",
     headline: "그래서 우리는\nARMI를 만들었습니다.",
     description:
-      "환자의 음성 요청을 AI Agent가 해석하고, 로봇 미션과 간호사 호출, 의료진 알림까지 하나의 흐름으로 연결했습니다.",
+      "팀은 음성·텍스트 요청을 Spring Boot와 Qwen 30B LangGraph Agent를 거쳐 로봇·태블릿·Watch에 연결했습니다. 저는 Agent 라우팅·구조화 출력·기억 흐름과 환자 앱·의료진 웹·Watch UI, 음성 상태 흐름을 맡았습니다.",
     background: "#07111F",
     foreground: "text-white",
     muted: "text-slate-300",
     core: "병실에서\nAI는 어디까지\n사람을 도울 수 있을까?",
     sections: ["Voice AI", "Robot State", "Realtime UX", "Care Workflow"],
     points: ["Voice AI", "Robot State", "Realtime UX", "Care Workflow"],
+    role: "개인: Qwen 30B Agent 라우팅·Tool Calling·Tavily·Redis/Chroma 기억 흐름·클라이언트 UI·음성 상태 / 팀: 서버·로봇·태블릿·Watch 연동",
     technologies: [
       "Flutter",
       "Android Native",
       "SpeechRecognizer",
       "AudioRecord",
-      "Sherpa-ONNX",
+      "Sherpa-ONNX (KWS 전환 검토·중단)",
       "CAMPPlus",
       "MethodChannel",
       "STOMP WebSocket",
@@ -28,6 +29,12 @@ export const projects: Project[] = [
       "WearOS",
       "Kotlin",
       "AI Agent",
+      "LangGraph",
+      "Tool Calling",
+      "Qwen 30B",
+      "Redis",
+      "Chroma",
+      "Tavily",
     ],
     productCards: [
       {
@@ -37,7 +44,7 @@ export const projects: Project[] = [
         keywords: [
           "Android SpeechRecognizer",
           "AudioRecord",
-          "Sherpa-ONNX",
+          "Sherpa-ONNX (KWS 전환 검토·중단)",
           "CAMPPlus",
           "MethodChannel",
         ],
@@ -60,6 +67,12 @@ export const projects: Project[] = [
           "환자 태블릿, 의료진 웹, Galaxy Watch를 연결해 긴급 호출이 필요한 강도로 필요한 사람에게 전달되도록 설계했습니다.",
         keywords: ["WearOS", "Kotlin", "Notification", "Polling", "FCM Review", "Urgency UX"],
       },
+      {
+        title: "Agent Decision & Memory",
+        description:
+          "Qwen 30B LangGraph StateGraph의 구조화 출력을 Text Answer / Robot Action / Tavily Search / Memory Retrieval로 분기했습니다. Redis는 빠른 원문·실시간 상태 조회, Chroma는 중요 내용의 장기 기억 의미 검색을 맡습니다. 기억 질문은 Chroma 검색 뒤 Redis 원문을 재조회해 답변합니다.",
+        keywords: ["Qwen 30B", "LangGraph", "Tool Calling", "Tavily", "Redis", "Chroma"],
+      },
     ],
     impact:
       "명령 인식, 상태 전달, 알림 우선순위를 하나의 돌봄 경험으로 연결했습니다.",
@@ -71,17 +84,17 @@ export const projects: Project[] = [
     label: "Rehabilitation AI",
     headline: "재활 동작을 게임처럼 바꾸고,\n움직임이 즉시 피드백으로 돌아오게 했습니다.",
     description:
-      "기술은 사용자의 움직임 하나를 바꾸기 위해 존재합니다.",
+      "팀은 YOLO Pose + Depth·Jetson Nano·Redis로 자세 좌표를 게임 피드백에 연결했습니다. 저는 발 데이터 선별·라벨링과 모델 fine-tuning·성능 분석에 참여하고 React·Three.js UI·게이미피케이션을 구현했습니다.",
     background: "#F7FFFB",
     foreground: "text-[#111827]",
     muted: "text-slate-600",
     core: "운동은 했지만,\n정말 올바르게\n움직인 걸까?",
     sections: ["Gamification", "AI × 3D", "Elderly UX", "On-device AI"],
-    points: ["Frontend Lead", "AI × 3D × UX", "노년층", "재활 환자"],
-    identity: "AIoT 재활 보조 시스템 — 게이미피케이션 프론트엔드",
-    role: "Frontend Lead / AI × 3D × UX Integration",
+    points: ["데이터 선별·수동 라벨링", "YOLOv11-M Fine-tuning", "React·Three.js 피드백", "온디바이스 성능 분석"],
+    identity: "AIoT 재활 보조 시스템 — 발 포인트 모델·실시간 3D 피드백",
+    role: "개인: 20,507장 데이터 선별·수동 라벨링·YOLOv11-M fine-tuning·온디바이스 모델 선택·성능 분석·React/Three.js UI·게임화 / 팀: YOLO Pose + Depth·Jetson·Redis 자세 분석 연동",
     award: "SSAFY 프로젝트 대회 1위 수상",
-    technologies: ["Claude", "Blender MCP", "YOLOv11-M", "MMPOSE", "Jetson Nano", "LLM Report"],
+    technologies: ["Claude", "Blender MCP", "YOLOv11-M", "MMPOSE", "Jetson Nano", "LLM Report", "React", "Three.js", "YOLO Pose", "Depth Camera", "Redis", "Manual Labeling", "Fine-tuning"],
     productCards: [
       {
         title: "Gamification Frontend",
@@ -101,17 +114,23 @@ export const projects: Project[] = [
       {
         title: "On-device AI",
         description:
-          "Jetson Nano 환경에서 실시간 추론이 가능하도록 정확도와 경량화 사이의 균형을 고려했습니다.",
+          "20,507장 발 데이터를 선별·수동 라벨링하고 YOLOv11-M을 fine-tuning했습니다. Jetson Nano 온디바이스 모델 선택·성능 분석에도 참여했습니다.",
+      },
+      {
+        title: "Latest-state Coordinates",
+        description:
+          "YOLO Pose + Depth의 18 keypoints·프레임당 54개 x/y/z 좌표를 처리했습니다. depth jitter를 완충하고 Redis 전송·웹 렌더에서 과거 프레임 큐 누적을 제거해 timestamp 기준 최신 좌표를 우선했습니다.",
       },
     ],
     metrics: [
-      { label: "Precision", before: "0.447", after: "0.982" },
-      { label: "mAP50", before: "0.872", after: "0.988" },
-      { label: "mAP50-95", before: "0.747", after: "0.925" },
-      { label: "Labeled Foot Data", after: "20,507", caption: "images" },
+      { label: "모델 평가 지표 · Precision", before: "0.447", after: "0.982", caption: "발 포인트 인식 정확도 · 재학습 전후" },
+      { label: "모델 평가 지표 · mAP50", before: "0.872", after: "0.988", caption: "YOLOv11-M 재학습 전후" },
+      { label: "모델 평가 지표 · mAP50-95", before: "0.747", after: "0.925", caption: "YOLOv11-M 재학습 전후" },
+      { label: "Labeled Foot Data", after: "20,507", caption: "직접 선별·수동 라벨링한 이미지" },
+      { label: "Realtime Pipeline", after: "약 30 FPS", caption: "Jetson Nano 추론·Depth·Redis·웹 피드백 파이프라인" },
     ],
     impact:
-      "정확도 개선과 동시에 실시간 추론이 가능한 수준의 성능을 확보했고, 온디바이스 환경에서도 안정적인 동작이 가능하도록 구현했습니다.",
+      "발 포인트 인식 정확도(모델 평가 지표)를 개선하고 최신 자세를 게임 피드백에 연결했습니다. 팀 프로젝트는 SSAFY 프로젝트 대회 1위를 수상했습니다.",
     theme: "mint",
   },
   {
@@ -120,7 +139,7 @@ export const projects: Project[] = [
     label: "Choice Intelligence",
     headline: "AI를 현실 재현 기술이 아니라\n의사결정을 돕는 비교 도구로 설계했습니다.",
     description:
-      "웨딩드레스 선택 문제는 취향 부족이 아니라 비용과 비교 기회의 구조적 제약이었습니다.",
+      "SMPL·PIFuHD·ICON·ECON·PaMIR의 인체 복원 가정과 큰 드레스 부피 표현 한계를 분석하고, Stable Diffusion 생성·전문가 역할 프롬프트·옵션 비교로 전환한 팀 프로젝트입니다.",
     background: "#FFF9F8",
     foreground: "text-[#111827]",
     muted: "text-slate-600",
@@ -128,7 +147,7 @@ export const projects: Project[] = [
     sections: ["Problem Definition", "AI Design", "Product Judgment", "Award"],
     points: ["5~8만 원", "Prompt Engineering", "Expert AI", "최우수상"],
     identity: "생성형 AI 기반 웨딩드레스 가상 피팅 서비스",
-    role: "문제 정의 / AI 설계 / 기술 적용 범위 판단",
+    role: "개인: 3D 후보 검토·환경 검증·실패 원인 분석·문제 재정의·SD 전환·프롬프트 구조 설계 / 팀: 얼굴 사진·스타일 텍스트 기반 이미지 생성·비교 결과 구현",
     award: "생성형 AI 활용 산업융합 프로젝트 최우수상",
     technologies: [
       "Prompt Engineering",
@@ -141,7 +160,9 @@ export const projects: Project[] = [
       "PIFuHD",
       "ICON",
       "ECON",
-      "Blender + MCP",
+      "PaMIR (비교 검토)",
+      "Stable Diffusion",
+      "Blender + MCP (종료 후 개인 재검증)",
     ],
     productCards: [
       {
@@ -152,12 +173,12 @@ export const projects: Project[] = [
       {
         title: "Product Hypothesis",
         description:
-          "완벽한 실착 재현보다 선택 이전 단계에서 다양한 스타일을 빠르게 비교하는 것이 더 큰 가치라고 판단했습니다.",
+          "인체 복원은 큰 드레스 부피·레이어를 충분히 표현하지 못했습니다. ICON 환경 재현 실패와 ECON 머메이드 라인 부분 성공·볼가운 부피 붕괴를 근거로 3D 복원을 중단했습니다.",
       },
       {
         title: "Prompt Structure",
         description:
-          "사용자 얼굴 사진, 원하는 스타일, 조건, 제약, 출력 기준을 분리한 구조로 설계했습니다.",
+          "사용자 얼굴 사진과 원하는 스타일을 Stable Diffusion 생성에 연결하고, Body·Color·Design·Accessory·Style 전문가 역할로 프롬프트 조건·제약·출력 기준을 분리했습니다.",
       },
       {
         title: "Output Structure",
@@ -166,12 +187,12 @@ export const projects: Project[] = [
       },
     ],
     impact:
-      "기술적으로 가능해도 제품에 맞지 않으면 멈추는 판단을 통해 최우수상 수상으로 이어졌습니다.",
+      "복원 실패를 분석해 생성과 비교 경험으로 방향을 전환했습니다. 팀 프로젝트는 생성형 AI 활용 산업융합 프로젝트 최우수상을 수상했습니다.",
     theme: "warm",
   },
   {
     key: "docent",
-    name: "AI Docent",
+    name: "Digital Docent",
     label: "Conversational Portfolio",
     headline: "프로젝트를 찾는 시간을 줄이고,\n질문에서 바로 맥락으로 연결합니다.",
     description:
@@ -180,19 +201,22 @@ export const projects: Project[] = [
     foreground: "text-white",
     muted: "text-slate-300",
     core: "많은 프로젝트 속에서\n방문자는 어떻게\n자신의 질문으로 탐색할까?",
-    sections: ["Page Context", "RAG", "Conversational UI", "3D UX"],
-    points: ["Page Context", "RAG", "Conversational UI", "3D UX"],
-    identity: "페이지 맥락과 검색 근거를 연결한 대화형 포트폴리오 가이드",
-    role: "Frontend / RAG / Voice UX / 3D Avatar Integration",
+    sections: ["Page Context", "Hybrid Retrieval", "Conversational UI", "4D Voice UX"],
+    points: ["Page Context", "BM25 + Dense", "RRF", "Supertonic + LAM"],
+    identity: "페이지 맥락과 Hybrid RAG 근거를 연결한 전역 AI 포트폴리오 도슨트",
+    role: "Frontend / Hybrid RAG / Voice UX / 3D Avatar Integration",
     technologies: [
-      "React",
       "Next.js",
-      "RAG",
-      "Prompt Engineering",
+      "TypeScript",
+      "BM25 + Dense Hybrid RAG",
+      "OpenAI text-embedding-3-small",
+      "RRF",
+      "LLM Streaming",
+      "Supertonic TTS",
+      "LAM Audio-to-Expression",
       "React Three Fiber",
-      "3D UX",
-      "Web Speech",
-      "Generative AI",
+      "Vercel",
+      "RunPod Serverless",
     ],
     productCards: [
       {
@@ -204,20 +228,20 @@ export const projects: Project[] = [
       {
         title: "Retrieval",
         description:
-          "프로젝트 데이터와 기록에서 질문에 맞는 근거를 찾고, 답변이 포트폴리오의 실제 내용에 머물도록 합니다.",
-        keywords: ["RAG", "AI Search"],
+          "BM25의 정확한 용어 검색과 Dense 의미 검색을 RRF로 합치고, query embedding 실패 시 lexical 결과로 답을 이어갑니다.",
+        keywords: ["BM25", "Dense Embedding", "RRF", "Fallback"],
       },
       {
         title: "Conversational UI",
         description:
           "스트리밍 텍스트, 선택형 음성, 페이지 간 대화 지속을 하나의 전역 인터페이스로 구성했습니다.",
-        keywords: ["Generative AI", "Voice AI", "Realtime UX"],
+        keywords: ["LLM Streaming", "Voice AI", "Global Runtime"],
       },
       {
         title: "Avatar Feedback",
         description:
-          "답변 감정과 음성 타이밍을 3D 얼굴의 표정과 입모양으로 연결했습니다.",
-        keywords: ["React Three Fiber", "3D UX", "Web Speech"],
+          "Supertonic 음성과 LAM 분석, 같은 합성의 자모 정렬을 3D 얼굴의 표정과 한국어 입모양으로 연결했습니다.",
+        keywords: ["React Three Fiber", "Supertonic", "LAM", "4D Lip-sync"],
       },
     ],
     impact:

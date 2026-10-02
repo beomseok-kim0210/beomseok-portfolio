@@ -4,8 +4,8 @@ import { ProjectDetailLayout } from "@/components/project/ProjectDetailLayout";
 import { getProjectDetail } from "@/data/projectDetails";
 
 export const metadata: Metadata = {
-  title: "AI Docent Case Study",
-  description: "페이지 문맥, 검색 근거, 대화, 음성과 3D 아바타를 연결한 포트폴리오 AI 도슨트.",
+  title: "Digital Docent Case Study",
+  description: "Hybrid RAG(BM25+Dense, RRF), PageContext, Supertonic/LAM 음성을 연결한 AI 도슨트를 production에 배포했습니다.",
 };
 
 export default function AiDocentProjectPage() {

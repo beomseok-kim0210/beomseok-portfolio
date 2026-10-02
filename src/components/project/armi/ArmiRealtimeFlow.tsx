@@ -78,19 +78,19 @@ export function ArmiRealtimeFlow() {
             </div>
 
             <div className="mt-8 grid gap-4 xl:grid-cols-2">
-              <div className="rounded-[24px] border border-slate-200 bg-[#0F172A] p-6 text-white">
+              <div className="min-w-0 rounded-[24px] border border-slate-200 bg-[#0F172A] p-6 text-white">
                 <p className="step-label text-blue-200">
                   Tablet
                 </p>
-                <code className="mt-4 block rounded-[16px] bg-white/10 px-4 py-3 text-[18px] leading-[1.6]">
+                <code className="mt-4 block break-all rounded-[16px] bg-white/10 px-4 py-3 text-[15px] leading-[1.6] md:text-[18px]">
                   /topic/tablets/{"{tabletId}"}
                 </code>
               </div>
-              <div className="rounded-[24px] border border-slate-200 bg-[#0F172A] p-6 text-white">
+              <div className="min-w-0 rounded-[24px] border border-slate-200 bg-[#0F172A] p-6 text-white">
                 <p className="step-label text-blue-200">
                   Session
                 </p>
-                <code className="mt-4 block rounded-[16px] bg-white/10 px-4 py-3 text-[18px] leading-[1.6]">
+                <code className="mt-4 block break-all rounded-[16px] bg-white/10 px-4 py-3 text-[15px] leading-[1.6] md:text-[18px]">
                   /topic/tablets/{"{tabletId}"}/sessions/{"{sessionId}"}
                 </code>
               </div>

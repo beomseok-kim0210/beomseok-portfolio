@@ -102,7 +102,19 @@ export type ProjectSlug =
   | "wedding"
   | "claw-dev"
   | "ai-docent"
-  | "crime-scene";
+  | "crime-scene"
+  | "bcos";
+
+export type ProjectCard = {
+  slug: ProjectSlug;
+  href: string;
+  name: string;
+  oneLiner: string;
+  problem: string;
+  highlights: string[];
+  status?: string;
+  scope: "solo" | "team";
+};
 
 export type TroubleshootingItem = {
   title: string;
@@ -145,4 +157,23 @@ export type ProjectDetail = {
   };
   troubleshooting: TroubleshootingItem[];
   result: string[];
+  brief?: {
+    problem: string;
+    role: {
+      personal: string[];
+      team?: string[];
+    };
+    decisions: {
+      title: string;
+      reason: string;
+    }[];
+    validation: {
+      label: string;
+      value: string;
+      note?: string;
+    }[];
+    result: string;
+    status?: string;
+    scope?: "solo" | "team";
+  };
 };

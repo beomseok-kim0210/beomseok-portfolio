@@ -1,12 +1,10 @@
 import type { TroubleshootingItem } from "@/types/portfolio";
 
 /**
- * Playground · Crime Scene 의 개발 기록. 출처는 Notion 의 두 기록
- * ("Crime Scene — AI 자유심문 추리 게임", Experience Database
- * "Crime Scene — 6주 중단 후 복구와 AI 자유심문 전환")이다.
+ * Playground · Crime Scene의 개발 과정과 플레이 경험.
  *
  * 이 페이지에서 게임을 바로 시작하므로 스포일러를 쓰지 않는다 — 범인, 단서 코드,
- * 사건의 결정적 사실은 싣지 않는다. 수치는 기록에 남은 값 그대로다.
+ * 사건의 결정적 사실은 싣지 않는다.
  */
 
 export const crimeSceneOrigin = {
@@ -73,8 +71,8 @@ export const crimeSceneTimeline: CrimeSceneMilestone[] = [
   },
   {
     date: "09.19",
-    title: "미스터리 재설계",
-    body: "전체 플레이에서 '소거법으로 범인이 보인다'는 문제를 발견하고, 인물 비밀과 단서를 함께 다시 설계.",
+    title: "Next (planned) — 미스터리 재설계안",
+    body: "전체 플레이에서 '소거법으로 범인이 보인다'는 문제를 기록하고, 인물 비밀과 단서를 함께 다룰 다음 버전의 설계 방향을 정리.",
   },
   {
     date: "09.20",
@@ -84,7 +82,7 @@ export const crimeSceneTimeline: CrimeSceneMilestone[] = [
   {
     date: "10.07 · 10.17",
     title: "TOP 20 발표 · 데모데이",
-    body: "대회 일정. 결과와 이후 변경도 같은 기록에 이어서 남깁니다.",
+    body: "TOP 20 발표와 데모데이가 예정되어 있습니다.",
     upcoming: true,
   },
 ];
@@ -104,7 +102,7 @@ export const crimeSceneTroubles: TroubleshootingItem[] = [
     solution:
       "모델에는 진실·비밀·알리바이를 뺀 최소 인물 설정만 전달했습니다. 응답은 { answer, concededTopicIds } 구조로 받고, 인정한 주제는 서버 허용 목록과 겹치는 것만 반영합니다. 메타 공격은 모델을 부르기 전에 차단하고, 정답 데이터는 서버 전용 파일에만 둔 채 빌드마다 번들을 검사합니다.",
     result:
-      "운영자 사칭과 잠긴 주제 직접 질문에도 비밀 없이 캐릭터로 응답했습니다. 기록 주입 4종·우회 문장 10종 차단 테스트와 번들 비밀 문자열 335개 검사를 통과했습니다.",
+      "운영자 사칭과 잠긴 주제 직접 질문에도 비밀 없이 캐릭터로 응답했습니다. 구조화 자유심문 추가 후 자동 테스트 85개, production build, bundle verification과 비밀 문자열 335개 검사를 통과했습니다.",
     tech: ["OpenAI API", "Structured output", "Server-only data", "Bundle audit"],
   },
   {
@@ -130,7 +128,7 @@ export const crimeSceneTroubles: TroubleshootingItem[] = [
     solution:
       "명령형 문구를 줄이고 첫 5분을 '관찰 → 해석 → 선택 → 결과'로 재구성했습니다. 첫 단서 뒤 세 갈래 추론을 두되 어느 쪽도 막다른 길이 되지 않게 했습니다. 자유 질문은 라운드당 3회로 제한하고, 관련 없는 증거를 내밀면 신뢰가 떨어지게 했습니다. 심문은 전체 화면 분할 뷰로 바꿨습니다.",
     result:
-      "질문의 희소성과 잘못된 선택의 대가가 긴장감을 만들었습니다. 튜토리얼은 첫 심문에서 한 번만 6단계로 보여 주고 이후에는 도움말로 옮겼습니다.",
+      "질문의 희소성과 잘못된 선택의 대가가 긴장감을 만들었습니다. 첫 심문 뒤 반복 안내는 도움말로 분리했습니다.",
     tech: ["Game design", "Onboarding", "Interview UI"],
   },
   {
@@ -169,23 +167,10 @@ export const crimeSceneTroubles: TroubleshootingItem[] = [
     tech: ["Browser lifecycle", "Sequencing"],
   },
   {
-    title: "소거법만으로 범인이 보이는 미스터리",
-    summary: "스토리를 먼저 쓰고 단서를 붙이는 방식을 버렸습니다.",
-    problem:
-      "전체 플레이에서 무고한 용의자들이 너무 빨리 강한 알리바이를 확보해, 추리가 아니라 소거법으로 범인이 드러났습니다. 인물 간 구분도 약했습니다.",
-    investigation:
-      "그전까지 해결한 것은 '끝까지 따라갈 수 있는가'였고, 이번 문제는 '끝까지 가도 충분히 어려운가'였습니다. 이야기를 먼저 쓰고 단서를 나중에 붙인 구조가 원인이었습니다.",
-    solution:
-      "인물이 숨기는 사실, 그 때문에 하는 거짓말, 방에 남는 흔적, 다른 인물과 겹치는 증거, 처음의 해석과 나중의 재해석을 한 행으로 묶어 설계했습니다(Mystery Design Matrix). 모든 용의자에게 살인과 별개인 비밀을 줘서 '거짓말하면 범인'이라는 규칙을 깼습니다.",
-    result:
-      "비밀 7개, 단서 60개, 재해석 7개, 출처가 두 곳 이상인 결정적 결론 9개로 다시 설계했습니다. 독립 논리 리뷰를 5라운드 거쳤고, 지금 게임에 반영하는 중입니다.",
-    tech: ["Mystery design", "Clue graph", "Independent review"],
-  },
-  {
     title: "어떤 모델을 쓸 것인가",
     summary: "비싼 모델을 기본값으로 두지 않고, 측정으로 고르기로 했습니다.",
     problem:
-      "런타임 모델 후보 두 개(GPT-5.6 Luna / Terra)의 가격 차이가 같은 토큰 기준 약 10배였습니다.",
+      "런타임 모델 후보는 품질과 비용 특성이 달라, 고성능 모델을 자동으로 기본값에 두기 어려웠습니다.",
     investigation:
       "개발에 쓰는 도구와 게임이 부르는 모델은 별개의 결정입니다. 기준은 '품질이 충분한 가장 저렴한 모델'로 잡았습니다.",
     solution:
@@ -218,32 +203,32 @@ export interface CrimeSceneNextItem {
 export const crimeSceneNext: CrimeSceneNextItem[] = [
   {
     status: "진행 중",
-    title: "방을 '수색할 수 있는 공간'으로",
-    body: "정답 오브젝트 몇 개만 누르는 구조에서, 여러 서랍과 수납을 직접 열어 중요한 것과 아닌 것을 가려내는 탐색으로 바꾸고 있습니다. 다단 서랍은 동작하고, 방마다 뒤질 곳이 부족한 문제를 채우는 중입니다.",
+    title: "Next (planned) — 방을 '수색할 수 있는 공간'으로",
+    body: "다음 버전의 범위와 asset 배치 기준을 구체화 중입니다. 여러 서랍과 수납을 직접 열어 중요한 것과 아닌 것을 가려내는 탐색은 계획 단계입니다.",
   },
   {
     status: "설계 완료",
-    title: "재설계한 미스터리를 게임에 반영",
-    body: "모든 용의자가 저마다 숨길 이유를 갖고, 처음의 해석이 나중에 뒤집히는 단서 구조를 실제 플레이에 옮깁니다.",
+    title: "Next (planned) — 미스터리 구조 고도화",
+    body: "모든 용의자가 숨길 이유를 갖고 처음의 해석이 뒤집히는 clue graph 설계안만 정리됐으며, 게임 반영은 다음 버전의 계획입니다.",
   },
   {
     status: "예정",
-    title: "AI가 기억하는 수사",
+    title: "Next (planned) — NPC reaction과 replayability",
     body: "용의자별로 무엇을 알고, 믿고, 숨기는지와 신뢰·압박을 상태로 쌓습니다. 사건의 진실은 그대로 두고, 질문하는 방식에 따라 정보가 드러나는 순서와 관계, 결말 상태가 달라지게 합니다.",
   },
   {
     status: "예정",
-    title: "자유 서술 최종 추리",
+    title: "Next (planned) — 자유 서술 최종 추리",
     body: "마지막 추리를 문장으로 받아 구조화하고, 서버의 진실과 비교해 판정합니다.",
   },
   {
     status: "예정",
-    title: "비주얼 패스",
+    title: "Next (planned) — 비주얼 패스",
     body: "방의 용도와 단서가 확정된 뒤, 방별 배치 목록을 먼저 승인하고 그대로 에셋을 배치합니다. 먼저 교체하면 다시 뜯게 되기 때문입니다.",
   },
   {
     status: "예정",
-    title: "모델 벤치마크 · 비용 계측",
+    title: "Next (planned) — 모델 벤치마크 · telemetry",
     body: "같은 심문 세트로 두 모델을 비교하고, 요청당 토큰과 비용을 기록해 운영 모델을 확정합니다.",
   },
 ];

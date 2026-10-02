@@ -47,11 +47,13 @@ export const armiStateGroups = [
 ] as const;
 
 export const armiRealtimeSteps = [
-  "REST 요청 생성",
+  "음성·텍스트 → Spring Boot 요청",
+  "Qwen 30B · LangGraph StateGraph",
+  "Tool Calling: Text Answer / Robot Action / Tavily Search / Memory Retrieval",
   "WebSocket 연결 확인",
   "Tablet Topic 구독",
   "Session Topic 구독",
-  "Mission / AI / NurseCall 이벤트 수신",
+  "gRPC 제어 PC 상태 → STOMP 태블릿 이벤트 · Watch 호출 알림",
 ] as const;
 
 export const armiInteractionDecisions = [
@@ -76,8 +78,8 @@ export const armiInteractionDecisions = [
   {
     title: "긴급 호출 알림 정책",
     problem: "초기 호출 목록까지 새 알림처럼 진동할 수 있었습니다.",
-    decision: "initial load와 new pending request를 분리했습니다.",
-    result: "필요한 순간에만 알림 강도를 적용했습니다.",
+    decision: "initial load와 신규 PENDING을 나누고 requestId 기반 중복 제거 정책을 검토했습니다.",
+    result: "urgency별 진동·UI 강조·정렬 우선순위 기준을 정리했습니다.",
   },
 ] as const;
 
@@ -192,7 +194,7 @@ export const armiTroubleshooting = [
 export const armiResults = [
   {
     title: "State First",
-    description: "기능보다 상태 전환을 먼저 설계했습니다.",
+    description: "Qwen 30B의 구조화 출력을 Tool Calling으로 분기하고, 음성·미션 상태 전환을 연결했습니다.",
   },
   {
     title: "Ownership First",
@@ -212,13 +214,17 @@ export const armiResults = [
 
 export const armiTechGroups = [
   {
+    title: "Agent & Memory",
+    items: ["Qwen 30B", "LangGraph StateGraph", "Tool Calling", "Tavily", "Redis", "Chroma"],
+  },
+  {
     title: "Voice",
     items: [
       "Android SpeechRecognizer",
       "AudioRecord",
       "TextToSpeech",
       "CAMPPlus",
-      "Sherpa-ONNX",
+      "Sherpa-ONNX (KWS 전환 검토·중단)",
     ],
   },
   {
@@ -246,14 +252,18 @@ export const armiTechGroups = [
   },
   {
     title: "Watch",
-    items: ["WearOS", "Kotlin", "Notification", "FCM"],
+    items: ["WearOS", "Kotlin", "Notification", "FCM (검토 단계)"],
   },
 ] as const;
 
 export const armiRecap = {
   definition:
-    "ARMI는 환자의 음성 요청을 AI Agent가 판단해 답변·로봇 동작·웹 검색·기억 조회로 연결하는 병상 보조 로봇입니다. 저는 AI Agent 라우팅과 음성 입력 흐름, 역할별 화면 설계를 맡았습니다.",
+    "ARMI는 환자의 음성·텍스트 요청을 Spring Boot → Qwen 30B LangGraph StateGraph → Tool Calling으로 연결한 팀 병상 보조 로봇입니다. 저는 Agent 라우팅·구조화 출력·Tavily 검색 분기·Redis/Chroma 기억 흐름과 환자 앱·의료진 웹·Watch UI, 음성 상태 흐름을 맡았습니다.",
   takeaways: [
+    {
+      label: "Agent & Memory",
+      note: "Redis는 원문·실시간 상태, Chroma는 장기 기억 의미 검색을 맡고, 기억 질문은 Chroma 검색 뒤 Redis 원문을 재조회했습니다.",
+    },
     { label: "Audio Ownership", note: "마이크를 누가 언제 쓰는지부터 정리했습니다." },
     { label: "Conversation Loop", note: "말하기와 듣기 사이를 상태로 끊고 이었습니다." },
     {
@@ -263,7 +273,7 @@ export const armiRecap = {
   ],
   reflection: [
     "처음에는 좋은 모델만 붙이면 음성 서비스가 동작할 거라고 생각했습니다. 그런데 실제로 부딪힌 문제들은 모델 성능이 아니라, 마이크라는 하나의 자원을 여러 기능이 어떻게 나눠 쓰는지, 말하기와 듣기를 언제 끊고 이을지, 끊긴 연결을 어떻게 같은 상태로 되돌릴지 같은 '상태와 자원 관리'였습니다.",
-    "그래서 STT·TTS·발화자 검증·WebSocket을 따로 보지 않고 하나의 상태 머신처럼 바라보게 됐습니다. AI Agent도 답변을 만드는 기능이 아니라, 사용자의 요청을 실행 가능한 작업으로 분류해 알맞은 시스템에 연결하는 판단 레이어로 설계했습니다.",
+    "그래서 STT·TTS·발화자 검증·WebSocket을 하나의 상태 흐름으로 바라봤습니다. Agent의 구조화 출력을 Text Answer·Robot Action·Tavily Search·Memory Retrieval로 분기해 판단을 행동에 연결했습니다. 실시간 문맥과 정확한 원문 조회는 Redis, 중요한 내용의 chunking·embedding과 의미 검색은 Chroma로 분리했습니다.",
     "이 프로젝트 이후로는 기능 하나하나보다 전체 시스템 구조와 상태 흐름을 먼저 보는 습관이 생겼습니다.",
   ],
 } as const;

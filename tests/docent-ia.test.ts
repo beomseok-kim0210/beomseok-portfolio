@@ -133,7 +133,7 @@ test("mobile launcher is labelled and starter chips use unclipped scroll content
   assert.match(chatPanel, /data-docent-starters/);
 });
 
-test("AI Docent exists in Projects data and its detail follows the shared schema", () => {
+test("Digital Docent exists in Projects data and its detail follows the shared schema", () => {
   const project = projects.find((item) => item.key === "docent");
   assert.ok(project);
   for (const key of [
@@ -142,7 +142,8 @@ test("AI Docent exists in Projects data and its detail follows the shared schema
   ]) {
     assert.ok(key in project, `missing Project schema field: ${key}`);
   }
-  assert.equal(project.name, "AI Docent");
+  // 사이트 콘텐츠 리메이크(2026-10-02): 표시 이름은 Digital Docent, 기존 프로젝트 키와 slug는 유지합니다.
+  assert.equal(project.name, "Digital Docent");
   const detail = projectDetails.find((item) => item.slug === "ai-docent");
   assert.ok(detail);
   assert.match(detail.architecture.description, /PageContext/);

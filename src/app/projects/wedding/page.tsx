@@ -4,9 +4,9 @@ import { ProjectDetailLayout } from "@/components/project/ProjectDetailLayout";
 import { getProjectDetail } from "@/data/projectDetails";
 
 export const metadata: Metadata = {
-  title: "Wedding AI Case Study",
+  title: "Wedding Dress AI Case Study",
   description:
-    "2D to 3D wedding dress reconstruction research, model evaluation, and product decision case study.",
+    "웨딩드레스 3D 복원 모델 비교와 실패 원인 분석을 거쳐 Stable Diffusion 기반 생성으로 방향을 전환했습니다.",
 };
 
 export default function WeddingProjectPage() {

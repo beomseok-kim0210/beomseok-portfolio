@@ -4,11 +4,11 @@ export const hangaraeHero = {
   eyebrow: "Realtime Motion Feedback Case Study",
   title: ["움직임을 데이터로,", "데이터를 피드백으로 바꾸기까지."],
   subtitle:
-    "행가래는 재활 동작을 게임처럼 보이게 만드는 프로젝트가 아니라, MCP 기반 자산 제작, 3D 구현, 실시간 좌표 파이프라인, 자세 피드백을 하나의 프론트엔드 흐름으로 연결한 사례입니다.",
+    "행가래는 발 데이터 선별·수동 라벨링과 YOLOv11-M 재학습부터, Jetson Nano·Depth·Redis 좌표 파이프라인과 React·Three.js 자세 피드백을 연결한 팀 프로젝트입니다.",
   metrics: [
     "18 Keypoints",
     "200+ Tests",
-    "Realtime Coordinates",
+    "약 30 FPS · 실시간 파이프라인",
     "3D Pinpoint",
     "Redis Pipeline",
   ],
@@ -117,13 +117,13 @@ export const hangaraeTroubles: HangaraeTrouble[] = [
     rationale:
       "threshold 조정으로는 애초에 발을 못 잡는 문제가 풀리지 않았습니다. 문제 도메인(재활 보행)에 맞는 데이터를 직접 만들어 재학습하는 것이 정확도를 가장 크게 끌어올린다고 판단했습니다.",
     result:
-      "재학습 후 발 인식 성능이 큰 폭으로 올라, 보행 판단의 토대가 안정됐습니다.",
+      "발 포인트 인식 정확도를 YOLOv11-M 재학습 전후 모델 평가 지표로 비교했습니다. Precision·mAP50·mAP50-95가 개선됐습니다.",
     insight:
       "모델을 바꾸기 전에, 문제에 맞는 데이터를 직접 만드는 것이 정확도를 가장 크게 끌어올렸습니다.",
     metrics: [
-      { label: "Precision", before: "0.447", after: "0.982" },
-      { label: "mAP50", before: "0.872", after: "0.988" },
-      { label: "mAP50-95", before: "0.747", after: "0.925" },
+      { label: "모델 평가 지표 · Precision", before: "0.447", after: "0.982" },
+      { label: "모델 평가 지표 · mAP50", before: "0.872", after: "0.988" },
+      { label: "모델 평가 지표 · mAP50-95", before: "0.747", after: "0.925" },
     ],
     tech: ["YOLOv11-M", "Data Labeling", "Re-training", "Pose Detection"],
     visualType: "yolo-metrics",
@@ -146,7 +146,7 @@ export const hangaraeTroubles: HangaraeTrouble[] = [
     rationale:
       "'손목이 화면 어디에 있나'보다 '손목이 어깨보다 위에 있나, 팔 각도가 범위 안인가'가 개인차에 훨씬 강건했기 때문입니다.",
     result:
-      "체형 차이에 따른 판정 편차가 줄고, 같은 동작을 누가 해도 일관되게 판단할 수 있었습니다.",
+      "키·거리 차이에 덜 의존하도록 판정 기준을 상대 위치·관절 각도로 바꿨습니다.",
     insight:
       "자세 판정은 '화면 어디에 있나'가 아니라 '관절끼리 어떤 관계인가'로 봐야 합니다.",
     tech: ["Relative Coordinates", "Joint Angle", "Body-centered Frame", "Pose Logic"],
@@ -162,13 +162,13 @@ export const hangaraeTroubles: HangaraeTrouble[] = [
     problem:
       "팔을 올리는 중인데 아직 목표에 도달하지 않았다고 '더 올리세요'가 반복 출력되면, 사용자는 시스템이 자신을 이해하지 못한다고 느꼈습니다.",
     cause:
-      "판정 단위가 프레임이라, 동작 중간 과정과 좌표 노이즈가 곧바로 피드백 깜빡임으로 이어졌습니다.",
+      "Depth 좌표가 조명·거리·가림에 따라 흔들렸고, 단일 프레임 판정은 동작 중간 과정과 센서 노이즈를 피드백 깜빡임으로 드러냈습니다.",
     approaches: [
       "매 프레임 판정 결과를 즉시 피드백한다",
       "일정 시간 이상 같은 상태가 유지될 때만 피드백하고 완충 구간을 둔다",
     ],
     decision:
-      "단일 프레임으로 바로 피드백하지 않고, 같은 오류가 일정 프레임 이상 유지될 때만 출력했습니다. 동작 중간 단계와 최종 자세를 구분하고 메시지 반복도 제한했습니다.",
+      "급격한 좌표 변화는 이상치 처리하고 최근 N프레임 평균·일시 누락 시 이전 정상값 유지로 depth jitter를 완충했습니다. 같은 오류가 일정 프레임 유지될 때만 출력하고 동작 중간과 최종 자세를 구분해 메시지 반복을 제한했습니다.",
     rationale:
       "재활 피드백은 매 프레임 바뀌는 값이 아니라 동작이 일정 시간 유지됐을 때 의미가 있었습니다. 실시간성보다 '납득 가능성'이 신뢰를 만든다고 봤습니다.",
     result:
@@ -197,7 +197,7 @@ export const hangaraeTroubles: HangaraeTrouble[] = [
     rationale:
       "센서 좌표를 그대로 쓰면 자연스러운 애니메이션이 나오지 않았습니다. 변환 계층을 둬야 실제 움직임과 화면 반응의 괴리를 줄일 수 있었습니다.",
     result:
-      "사용자의 실제 움직임과 화면 속 캐릭터 반응의 괴리가 줄고, 재활 동작 정확도 90% 이상을 달성했습니다.",
+      "축 보정·정규화·스케일 변환으로 센서 좌표와 화면 속 캐릭터 움직임의 괴리를 줄였습니다.",
     insight:
       "센서 데이터 시각화는 정확도뿐 아니라, 사용자가 직관적으로 이해할 표현 방식까지 설계해야 합니다.",
     tech: ["Three.js", "Coordinate Transform", "Normalization", "Interpolation"],
@@ -220,11 +220,11 @@ export const hangaraeTroubles: HangaraeTrouble[] = [
       "수신과 렌더를 분리하고, timestamp 기준 최신 좌표만 반영한다",
     ],
     decision:
-      "Redis에서 받은 좌표는 최신 상태값으로만 저장하고, Three.js 렌더 루프는 가장 최신 좌표만 참조하게 했습니다. timestamp로 오래된 데이터는 버리고 큰 변화는 보간했습니다.",
+      "YOLO 추론 → Depth 처리 → Redis 전송 → 웹 반영에서 과거 프레임 큐가 누적되지 않도록 최신 상태를 우선했습니다. Redis 수신 좌표는 최신 값만 저장하고 Three.js 렌더 루프는 그 값을 참조했습니다. timestamp로 오래된 데이터는 버리고 큰 변화는 보간했습니다.",
     rationale:
       "모든 메시지를 처리하는 것보다 현재 상태를 정확히 보여주는 게 실시간 재활 피드백에선 더 중요했습니다.",
     result:
-      "수신 주기와 렌더 주기를 강제로 맞추지 않으면서도, 실시간 좌표를 화면에 안정적으로 반영했습니다.",
+      "수신과 렌더를 분리해 최신 자세를 반영했습니다. 실시간 파이프라인은 약 30 FPS로 동작했습니다.",
     insight:
       "실시간 시스템에서 중요한 건 '모든 메시지 처리'가 아니라 '현재 상태를 정확히 반영하는 구조'입니다.",
     tech: ["Redis", "Latest-state", "Timestamp", "requestAnimationFrame"],
@@ -268,7 +268,7 @@ export const hangaraeResultMetrics = [
   {
     value: "18",
     label: "Tracked Keypoints",
-    description: "발끝과 뒤꿈치를 포함한 확장 keypoint 구조로 보행 판단을 구성했습니다.",
+    description: "YOLO Pose + Depth로 발끝·뒤꿈치를 포함한 18 keypoints를 처리했습니다.",
   },
   {
     value: "54",
@@ -286,9 +286,9 @@ export const hangaraeResultMetrics = [
     description: "Blender, Unity, GLB export를 프론트엔드 렌더링 파이프라인에 맞췄습니다.",
   },
   {
-    value: "Realtime",
+    value: "약 30 FPS",
     label: "Redis Coordinate Stream",
-    description: "좌표 수집과 화면 상태를 분리해 실시간 피드백 안정성을 확보했습니다.",
+    description: "Jetson Nano 추론·Depth·Redis·웹 피드백 파이프라인입니다. 최신 좌표를 Redis로 전송하며 과거 프레임 큐 누적을 제거했습니다.",
   },
 ] as const;
 
@@ -302,7 +302,7 @@ export const hangaraeTechGroups = [
   },
   {
     label: "Pose Feedback",
-    items: ["Joint Angle", "Threshold Logic", "Success Feedback", "Correction UX"],
+    items: ["Joint Angle", "Threshold Logic", "Depth Jitter Smoothing", "Success Feedback", "Correction UX"],
   },
   {
     label: "Realtime Coordinates",
@@ -310,17 +310,21 @@ export const hangaraeTechGroups = [
   },
   {
     label: "Visual Layer",
-    items: ["3D Pinpoint", "Skeleton Line", "Animation", "Sound Effect", "Feedback UI"],
+    items: ["React", "Three.js", "3D Pinpoint", "Skeleton Line", "Animation", "Sound Effect", "Feedback UI"],
+  },
+  {
+    label: "Model & Data",
+    items: ["20,507장 수동 라벨링", "YOLOv11-M Fine-tuning", "On-device Model Selection", "Performance Analysis"],
   },
 ] as const;
 
 export const hangaraeRecap = {
   definition:
-    "행가래는 고령자와 편마비 사용자의 재활 동작을 Depth Camera·YOLO로 인식하고, 좌표와 관절 각도를 실시간 게임 피드백으로 바꾸는 AIoT 재활 보조 시스템입니다. 저는 React·Three.js 기반 실시간 피드백 UI와, 자세 데이터를 피드백으로 연결하는 흐름을 맡았습니다.",
+    "행가래는 YOLO Pose + Depth로 18 keypoints·프레임당 54개 좌표를 처리하고, Jetson Nano·Redis를 거쳐 게임 피드백에 연결한 팀 AIoT 재활 보조 시스템입니다. 저는 20,507장 발 데이터 선별·수동 라벨링, YOLOv11-M fine-tuning, 온디바이스 모델 선택·성능 분석에 참여하고 React·Three.js 피드백 UI·게이미피케이션·3D 자산 파이프라인을 맡았습니다.",
   takeaways: [
     {
       label: "Realtime Coordinates",
-      note: "프레임당 54개 좌표를 다 쓰지 않고, 최신 값만 화면에 안정적으로 반영했습니다.",
+      note: "프레임당 54개 좌표를 최신 상태로 저장하고, 과거 프레임 누적 없이 현재 자세를 화면에 반영했습니다.",
     },
     {
       label: "Threshold Tuning",

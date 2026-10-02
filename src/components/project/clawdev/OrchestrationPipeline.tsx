@@ -41,9 +41,9 @@ export function OrchestrationPipeline() {
         단계를 클릭해 세부 동작을 확인하세요
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
         {/* 좌: 페이즈 레일 (클릭 가능) */}
-        <div className="rounded-[28px] border border-[var(--clawdev-line)] bg-[var(--clawdev-surface)] p-5 md:p-6">
+        <div className="min-w-0 rounded-[28px] border border-[var(--clawdev-line)] bg-[var(--clawdev-surface)] p-5 md:p-6">
           <div className="space-y-2">
             {clawdevPhases.map((phase, index) => {
               const state =
@@ -90,7 +90,7 @@ export function OrchestrationPipeline() {
                       {state === "completed" ? "✓" : index + 1}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-bold text-white">{phase.label}</p>
+                      <p className="break-words text-sm font-bold text-white md:break-normal">{phase.label}</p>
                       <p className="truncate text-[11px] text-slate-500">
                         {phase.summary}
                       </p>
@@ -106,13 +106,13 @@ export function OrchestrationPipeline() {
         </div>
 
         {/* 우: 선택 페이즈 디테일 */}
-        <div className="flex flex-col gap-4">
+        <div className="flex min-w-0 flex-col gap-4">
           <motion.div
             key={activePhase.key}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="flex-1 rounded-[28px] border border-[var(--clawdev-line)] bg-[#070C18] p-6 md:p-8"
+            className="min-w-0 flex-1 rounded-[28px] border border-[var(--clawdev-line)] bg-[#070C18] p-6 md:p-8"
           >
             <div className="flex items-center justify-between">
               <p className="text-xs font-bold tracking-[0.16em] text-[var(--clawdev-accent)]">
@@ -141,7 +141,7 @@ export function OrchestrationPipeline() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.08 }}
-                    className="rounded-[12px] border border-[var(--clawdev-line)] bg-white/[0.04] px-2 py-3 text-center"
+                    className="min-w-0 break-all rounded-[12px] border border-[var(--clawdev-line)] bg-white/[0.04] px-2 py-3 text-center md:break-normal"
                   >
                     <span className="text-[11px] font-semibold text-slate-300">
                       {branch}
@@ -155,7 +155,7 @@ export function OrchestrationPipeline() {
             ) : null}
 
             {/* emits */}
-            <div className="mt-6 rounded-[14px] border border-white/[0.06] bg-black/30 px-4 py-3 font-mono text-[12px] text-[var(--clawdev-accent-2)]">
+            <div className="mt-6 break-all rounded-[14px] border border-white/[0.06] bg-black/30 px-4 py-3 font-mono text-[12px] text-[var(--clawdev-accent-2)] md:break-normal">
               {activePhase.emits}
             </div>
 

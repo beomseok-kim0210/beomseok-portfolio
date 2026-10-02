@@ -1,4 +1,5 @@
-import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { SplitHeadline } from "@/components/ui/SplitHeadline";
 import { ShowcaseMotion } from "@/components/sections/HomeShowcase/ShowcaseMotion";
 
@@ -9,7 +10,7 @@ const chain = [
   { stage: "EVIDENCE", label: "Report · Run · Events", note: "성공만이 아니라 재시도와 실패도 남는다" },
 ];
 
-const keywords = ["Task Contract", "Host Verification", "Independent Review", "Benchmark Harness"];
+const keywords = ["Task Contract", "Host Verification", "Independent Review", "Event Audit"];
 
 export function HomeBcosShowcase() {
   return (
@@ -60,16 +61,24 @@ export function HomeBcosShowcase() {
       </ShowcaseMotion>
 
       <ShowcaseMotion preset="cta" className="mt-8 text-center">
-        <a
-          href="https://github.com/beomseok-kim0210/bcos"
-          target="_blank"
-          rel="noreferrer noopener"
-          className="inline-flex h-[48px] items-center gap-2 rounded-full bg-[#111827] px-6 text-[14px] font-semibold text-white transition-transform hover:-translate-y-0.5"
-        >
-          View on GitHub <ArrowUpRight className="h-4 w-4" />
-        </a>
+        <div className="flex flex-wrap justify-center gap-3">
+          <a
+            href="https://github.com/beomseok-kim0210/bcos"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="inline-flex h-[48px] items-center gap-2 rounded-full bg-[#111827] px-6 text-[14px] font-semibold text-white transition-transform hover:-translate-y-0.5"
+          >
+            View on GitHub <ArrowUpRight className="h-4 w-4" />
+          </a>
+          <Link
+            href="/projects/bcos"
+            className="inline-flex h-[48px] items-center gap-2 rounded-full border border-slate-300 bg-white px-6 text-[14px] font-semibold text-[#111827] transition-transform hover:-translate-y-0.5"
+          >
+            Case Study <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
         <p className="mt-4 text-[13px] text-slate-500">
-          v0.1.0 · Core Complete · Dogfood Ready · 아직 비교 실험 전입니다
+          v1 Done · T-015 APPROVED · AC 50/50 · 272/272 tests · 비교 벤치마크는 계획 단계
         </p>
       </ShowcaseMotion>
     </section>

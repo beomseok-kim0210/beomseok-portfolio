@@ -83,8 +83,6 @@ const MUST_NOT_ANSWER: Array<[string, string]> = [
   ["Wedding AI 투자금은?", "투자금"],
   ["ARMI 월간 활성 사용자 수는?", "월간"],
   ["Claw Dev 투자 유치 금액은?", "투자"],
-  // 거짓 전제: 코퍼스에서 Redis 는 행가래에만 있다
-  ["ARMI에서 Redis를 왜 썼어?", "Redis"],
 ];
 
 for (const [q, fact] of MUST_NOT_ANSWER) {
@@ -103,6 +101,21 @@ for (const [q, fact] of MUST_NOT_ANSWER) {
     assert.ok(a.kind === "unsupported" || a.kind === "partial");
   });
 }
+
+// 사이트 콘텐츠 리메이크(2026-10-02): ARMI의 Redis 원문·실시간 상태와 Chroma 장기 기억 분리가 명시됐습니다.
+test("ARMI의 Redis 사용 이유는 프로젝트 근거로 답한다", () => {
+  const q = "ARMI에서 Redis를 왜 썼어?";
+  const r = retrieve(q, null, { topK: 8 });
+  assert.equal(r.activeProject, "armi");
+  assert.equal(others(r, ["armi"]).length, 0);
+  assert.notEqual(r.support, "none");
+  assert.ok(!r.coverage.uncovered.some((word) => word.includes("Redis")));
+  const memory = r.results.find((item) => item.chunk.id === "project:armi:architecture:card:agent-decision-memory");
+  assert.ok(memory, "Redis와 Chroma의 역할을 설명하는 구조 근거가 실려야 한다");
+  assert.match(memory.chunk.text, /Redis는 빠른 원문·실시간 상태 조회/);
+  assert.match(memory.chunk.text, /Chroma는 중요 내용의 장기 기억 의미 검색/);
+  assert.notEqual(answerFromEvidence(q, null, r).kind, "unsupported");
+});
 
 /* ------------------------------------------------------------ 프로젝트 × 질문 유형 전수 */
 

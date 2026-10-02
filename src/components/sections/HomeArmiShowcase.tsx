@@ -7,7 +7,7 @@ import { ShowcaseMotion } from "@/components/sections/HomeShowcase/ShowcaseMotio
 export function HomeArmiShowcase() {
   return (
     <section
-      id="projects"
+      id="armi"
       className="scene-shell flex min-h-screen flex-col items-center justify-center bg-[#000814] px-5 py-12 text-white md:py-16"
     >
       <ShowcaseMotion className="w-full text-center">
