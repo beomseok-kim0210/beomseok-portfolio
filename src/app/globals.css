@@ -5,6 +5,9 @@
 @tailwind utilities;
 
 :root {
+  --type-body: 16px;
+  --type-support: 15px;
+  --type-action: 15px;
   --background: #fafafa;
   --foreground: #111827;
   --muted: #6b7280;
