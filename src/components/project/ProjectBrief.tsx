@@ -15,7 +15,7 @@ export function ProjectBrief({ brief, dark = false, className = "" }: ProjectBri
   const inset = dark ? "bg-white/[0.05]" : "bg-slate-50";
   const heading = dark ? "text-white" : "text-[#111827]";
   const body = dark ? "text-slate-300" : "text-slate-600";
-  const muted = dark ? "text-slate-400" : "text-slate-500";
+  const muted = dark ? "text-slate-300" : "text-slate-600";
   const accent = dark ? "text-blue-300" : "text-blue-600";
 
   return (
@@ -53,8 +53,8 @@ export function ProjectBrief({ brief, dark = false, className = "" }: ProjectBri
           <div>
             <p className={`small-label ${accent}`}>My Role</p>
             <div className={`mt-4 rounded-[24px] p-5 ${inset}`}>
-              <p className={`text-xs font-semibold ${muted}`}>개인 기여</p>
-              <ul className={`mt-3 space-y-2 text-sm leading-6 ${body}`}>
+              <p className={`text-support font-semibold ${body}`}>개인 기여</p>
+              <ul className={`mt-3 space-y-2 text-body ${body}`}>
                 {brief.role.personal.map((item) => (
                   <li key={item} className="flex gap-3">
                     <span aria-hidden="true" className={accent}>•</span>
@@ -65,8 +65,8 @@ export function ProjectBrief({ brief, dark = false, className = "" }: ProjectBri
             </div>
             {brief.role.team?.length ? (
               <div className={`mt-3 rounded-[24px] p-5 ${inset}`}>
-                <p className={`text-xs font-semibold ${muted}`}>팀 공통</p>
-                <ul className={`mt-3 space-y-2 text-sm leading-6 ${body}`}>
+                <p className={`text-support font-semibold ${body}`}>팀 공통</p>
+                <ul className={`mt-3 space-y-2 text-body ${body}`}>
                   {brief.role.team.map((item) => (
                     <li key={item} className="flex gap-3">
                       <span aria-hidden="true" className={accent}>•</span>
@@ -85,8 +85,8 @@ export function ProjectBrief({ brief, dark = false, className = "" }: ProjectBri
             {brief.decisions.map((decision, index) => (
               <article key={decision.title} className={`rounded-[24px] p-5 ${inset}`}>
                 <p className={`small-label ${muted}`}>{String(index + 1).padStart(2, "0")}</p>
-                <h3 className={`mt-4 text-lg font-semibold ${heading}`}>{decision.title}</h3>
-                <p className={`mt-3 text-sm leading-6 ${body}`}>{decision.reason}</p>
+                <h3 className={`mt-4 text-xl font-semibold ${heading}`}>{decision.title}</h3>
+                <p className={`mt-3 text-body ${body}`}>{decision.reason}</p>
               </article>
             ))}
           </div>
@@ -100,8 +100,8 @@ export function ProjectBrief({ brief, dark = false, className = "" }: ProjectBri
                 <p className={`font-display text-3xl font-semibold tracking-[-0.04em] ${heading}`}>
                   {item.value}
                 </p>
-                <p className={`mt-3 text-sm font-semibold ${body}`}>{item.label}</p>
-                {item.note ? <p className={`mt-2 text-xs leading-5 ${muted}`}>{item.note}</p> : null}
+                <p className={`mt-3 text-support font-semibold ${body}`}>{item.label}</p>
+                {item.note ? <p className={`mt-2 text-support ${muted}`}>{item.note}</p> : null}
               </div>
             ))}
           </div>

@@ -47,7 +47,7 @@ export function ClawDevHero() {
         <p className="project-body mt-8 max-w-[820px] text-slate-300">
           {clawdevHero.premise}
         </p>
-        <p className="project-caption mt-4 max-w-[760px] text-slate-500">
+        <p className="project-caption mt-4 max-w-[760px] text-slate-300">
           {clawdevHero.subPremise}
         </p>
       </motion.div>
@@ -61,7 +61,7 @@ export function ClawDevHero() {
             <span className="h-3 w-3 rounded-full bg-[#34D399]" />
             <span className="ml-3 text-xs font-medium text-slate-500">claw-dev — boot</span>
           </div>
-          <div className="mt-5 min-h-[132px] space-y-1.5 font-mono text-[13px] leading-6">
+          <div className="mt-5 min-h-[132px] space-y-1.5 font-mono text-support">
             {bootLines.slice(0, bootCount).map((line) => (
               <motion.p
                 key={line}
@@ -112,8 +112,8 @@ export function ClawDevHero() {
                   className="inline-block h-2 w-2 rounded-full"
                   style={{ background: agent.accent }}
                 />
-                <p className="mt-3 text-base font-bold text-white">{agent.role}</p>
-                <p className="mt-1 text-[11px] font-medium tracking-[0.04em] text-slate-500">
+                <p className="mt-3 text-xl font-bold text-white">{agent.role}</p>
+                <p className="mt-1 text-support font-medium text-slate-300">
                   {agent.tagline}
                 </p>
               </motion.div>
@@ -135,10 +135,10 @@ export function ClawDevHero() {
             <p className="text-[32px] font-bold leading-none tracking-[-0.04em] text-white">
               {stat.value}
             </p>
-            <p className="mt-3 text-sm font-semibold text-[var(--clawdev-accent)]">
+            <p className="mt-3 text-support font-semibold text-[var(--clawdev-accent)]">
               {stat.label}
             </p>
-            <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
+            <p className="mt-1.5 text-support text-slate-300">
               {stat.detail}
             </p>
           </motion.div>

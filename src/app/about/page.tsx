@@ -91,7 +91,7 @@ export default function AboutPage() {
                   <span className="text-[15px] font-semibold text-slate-900">
                     {link.label}
                   </span>
-                  <span className="text-[13px] text-slate-400">
+                  <span className="text-support text-slate-600">
                     {link.handle}
                   </span>
                   <ArrowUpRight className="h-4 w-4 text-slate-400 transition-colors group-hover:text-[#111827]" />
@@ -299,7 +299,7 @@ export default function AboutPage() {
                     <p className="break-words text-[16px] font-semibold leading-[1.4] text-slate-800">
                       {item.name}
                     </p>
-                    <p className="mt-1 break-words text-[13px] leading-[1.45] text-slate-400">
+                    <p className="mt-1 break-words text-support text-slate-600">
                       Used in · {item.usedIn.join(" · ")}
                     </p>
                   </div>

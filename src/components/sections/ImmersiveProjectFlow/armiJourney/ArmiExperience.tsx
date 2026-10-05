@@ -2,7 +2,8 @@
 import dynamic from "next/dynamic";
 import { Component, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useArmiScrollDirector } from "./ArmiScrollDirector";
-import { entryPhases, productEvidence } from "./experienceData";
+import { journeyPhases, productEvidence, returnRecordingTime } from "./experienceData";
+import { ArmiStillWorld } from "./ArmiStillWorld";
 import styles from "./journey.module.css";
 const ArmiCanvas = dynamic(() => import("./ArmiCanvas"), { ssr: false });
 
@@ -40,31 +41,38 @@ export function ArmiExperience() {
     if (section.current) observer.observe(section.current);
     return () => { observer.disconnect(); motion.removeEventListener("change",sync); size.removeEventListener("change",sync); };
   }, []);
-  useEffect(() => { if (phase >= 2) videoRef.current?.pause(); }, [phase]);
-  const step = entryPhases[phase];
+  useEffect(() => {
+    const original = videoRef.current;
+    if (!original) return;
+    if (phase >= 2) original.pause();
+    if (phase >= 4 && original.readyState === 0) original.load();
+    if (original.readyState >= 1 && phase >= 9) original.currentTime = returnRecordingTime;
+    else if (original.readyState >= 1 && phase < 4 && original.currentTime===returnRecordingTime) original.currentTime = 0;
+  }, [phase]);
+  const step = journeyPhases[phase];
   const staticMode = mode !== "3d";
   async function play() {
     if (!videoRef.current) return;
     if (playing) videoRef.current.pause(); else try { await videoRef.current.play(); } catch { setPlaying(false); }
   }
-  return <section ref={section} className={styles.track} aria-label="ARMI: 음성 요청이 되어 제품 내부로 진입" data-armi-journey="pass1">
+  return <section ref={section} className={styles.track} aria-label="ARMI: 음성 요청의 해석·라우팅·응답·제품 복귀 여정" data-armi-journey="golden">
     <div className={styles.viewport} data-phase={step.id} data-render-mode={mode}>
       {!staticMode && <div className={styles.canvas} aria-hidden="true"><CanvasBoundary onFailure={fail}><ArmiCanvas progress={progress} video={video} compact={compact} active={active} onFailure={fail}/></CanvasBoundary></div>}
       <div className={styles.overlay}>
         <header className={styles.identity}><p>01 / ARMI</p>{phase === 0 ? <><h2>ARMI</h2><h3>VOICE BECOMES<br/>ACTION.</h3></> : <span>ARMI / REQUEST JOURNEY</span>}</header>
         <div className={styles.narrative} aria-live="polite"><p className={styles.label}>{step.label}</p>{phase > 0 && <h3>{step.title}</h3>}<p>{step.text}</p></div>
-        <div className={styles.footer}><span>{phase === 3 ? "SCROLL TO ENTER →" : "SCROLL TO TRAVEL ↓"}</span><p>원본 제품 시연 · 공간과 신호는 설명용 시각화</p></div>
-        {phase < 2 && <div className={styles.mediaControl}><p>PATIENT TABLET APP</p><button type="button" onClick={play} aria-pressed={playing}>{playing ? "시연 일시정지 Ⅱ" : "원본 시연 재생 ▷"}</button></div>}
+        <div className={styles.footer}><span>{phase === 10 ? "SCROLL FOR EVIDENCE ↓" : "SCROLL TO TRAVEL ↓"}</span><p>원본 제품 시연 · 공간과 신호는 설명용 시각화</p></div>
+        {(phase < 2 || phase === 10) && <div className={styles.mediaControl}><p>PATIENT TABLET APP</p><button type="button" onClick={play} aria-pressed={playing}>{playing ? "시연 일시정지 Ⅱ" : "원본 시연 재생 ▷"}</button></div>}
         <a className={styles.skip} href="#armi-brief">설명으로 건너뛰기 ↓</a>
       </div>
       {/* Accessible/reduced-motion narrative keeps the same stages in one viewport. */}
-      {staticMode && <div className={styles.staticScene}>
+      {staticMode && <div className={styles.staticScene} data-interior={phase>=3 && phase<9} data-response={phase>=8} data-key-world={phase>=4 && phase<9}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={productEvidence.poster} alt="실제 ARMI 환자 앱: 음성 요청, 물건 반납, 긴급 호출, 로봇 정지"/>
-        <div className={styles.staticSignal} data-phase={step.id} aria-hidden="true">{phase === 1 ? "▂ ▅ ▃ ▇ ▂ ▆ ▄" : phase >= 2 ? "→" : ""}</div>
-        {phase === 3 && <div className={styles.staticInterior}><span>PRODUCT / ENTRY</span><p>요청과 함께 인터페이스 뒤의 공간으로.</p></div>}
+        <img src={phase>=9 ? productEvidence.returnPoster : productEvidence.poster} alt={phase>=9 ? "원본 ARMI 환자 앱 기록의 대화 모드" : "실제 ARMI 환자 앱: 음성 요청, 물건 반납, 긴급 호출, 로봇 정지"}/>
+        <div className={styles.staticSignal} data-phase={step.id} aria-hidden="true">{phase === 1 ? "▂ ▅ ▃ ▇ ▂ ▆ ▄" : phase === 4 ? "━ ▰ ━" : phase>=8 ? "━ ▰ →" : phase >= 2 ? "→" : ""}</div>
+        <ArmiStillWorld phase={step.id}/>
       </div>}
-      <video ref={videoRef} className={staticMode && playing && phase < 2 ? styles.staticVideo : styles.originalVideo} src={productEvidence.video} poster={productEvidence.poster} playsInline muted preload="none" onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onEnded={()=>setPlaying(false)} aria-label="ARMI 원본 제품 시연"/>
+      <video ref={videoRef} className={staticMode && ((playing && phase<2) || phase>=9) ? styles.staticVideo : styles.originalVideo} src={productEvidence.video} poster={productEvidence.poster} playsInline muted preload="none" onLoadedMetadata={()=>{if(phase>=9 && videoRef.current) videoRef.current.currentTime=returnRecordingTime;}} onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onEnded={()=>setPlaying(false)} aria-label="ARMI 원본 제품 시연"/>
     </div>
   </section>;
 }

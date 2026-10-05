@@ -17,7 +17,7 @@ export function AgentTeamRoom() {
             type="button"
             onMouseEnter={() => setActive(agent.id)}
             onClick={() => setActive(agent.id)}
-            animate={{ opacity: isActive ? 1 : 0.62 }}
+            animate={{ opacity: isActive ? 1 : 0.9 }}
             transition={{ duration: 0.3 }}
             className="rounded-[24px] border bg-[var(--clawdev-surface)] p-6 text-left"
             style={{
@@ -25,20 +25,20 @@ export function AgentTeamRoom() {
               boxShadow: isActive ? `0 24px 80px ${agent.accent}1f` : "none",
             }}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2.5">
                 <span
                   className="h-2.5 w-2.5 rounded-full"
                   style={{ background: agent.accent }}
                 />
-                <p className="text-lg font-bold text-white">{agent.role}</p>
+                <p className="text-xl font-bold text-white">{agent.role}</p>
               </div>
-              <span className="text-[11px] font-semibold tracking-[0.06em] text-slate-500">
+              <span className="text-support font-semibold text-slate-300">
                 {agent.tagline}
               </span>
             </div>
 
-            <p className="mt-4 text-sm leading-relaxed text-slate-300">
+            <p className="mt-4 text-body text-slate-300">
               {agent.objective}
             </p>
 
@@ -52,28 +52,28 @@ export function AgentTeamRoom() {
                   className="overflow-hidden"
                 >
                   <div className="mt-5 border-t border-white/10 pt-5">
-                    <p className="text-[11px] font-bold tracking-[0.14em] text-slate-500">
+                    <p className="text-xs font-bold tracking-[0.14em] text-slate-500">
                       RESPONSIBILITIES
                     </p>
                     <ul className="mt-2.5 space-y-1.5">
                       {agent.responsibilities.map((item) => (
                         <li
                           key={item}
-                          className="flex gap-2 text-sm text-slate-300"
+                          className="flex gap-2 text-body text-slate-300"
                         >
                           <span style={{ color: agent.accent }}>›</span>
                           {item}
                         </li>
                       ))}
                     </ul>
-                    <p className="mt-4 text-[11px] font-bold tracking-[0.14em] text-slate-500">
+                    <p className="mt-4 text-xs font-bold tracking-[0.14em] text-slate-500">
                       CONSTRAINTS
                     </p>
                     <div className="mt-2.5 flex flex-wrap gap-2">
                       {agent.constraints.map((c) => (
                         <span
                           key={c}
-                          className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-slate-400"
+                          className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-support text-slate-300"
                         >
                           {c}
                         </span>

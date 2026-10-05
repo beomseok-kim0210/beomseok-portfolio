@@ -67,7 +67,7 @@ export function ImmersiveProjectFlow() {
       <div className={styles.stickyStage} style={css} data-stage-progress={progress.toFixed(4)} data-stage-phase={heroActive?"SYSTEM":briefActive?"BRIEF":"HANDOFF"} data-transition-progress={transition.toFixed(4)}>
         <div id="armi-brief" className={styles.armiBrief} data-active={briefActive || heroActive} style={{opacity:briefOpacity,transform:`translateY(${-64*(1-briefOpacity)}px)`,pointerEvents:briefOpacity>.8?"auto":"none"}}><HomeProjectBrief project="armi"/></div>
 
-        <div className={styles.visual} style={{visibility:heroActive?"hidden":"visible"}}>
+        <div className={styles.visual} style={{visibility:transition<.15?"hidden":"visible"}}>
           <ProjectStage progress={progress} branch="response" hideSystemLabels/>
         </div>
         <div className={styles.hangaraeCopy} style={{opacity:hangaraeOpacity,visibility:hangaraeOpacity>.01?"visible":"hidden"}}><HangaraeNarrative/></div>

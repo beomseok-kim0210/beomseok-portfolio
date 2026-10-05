@@ -25,7 +25,7 @@ export function Button({
     <Link
       href={href}
       aria-label={ariaLabel}
-      className={`inline-flex h-12 items-center gap-2 rounded-full px-6 small-label transition-transform hover:scale-[1.02] ${className}`}
+      className={`inline-flex h-12 items-center gap-2 rounded-full px-6 text-action transition-transform hover:scale-[1.02] ${className}`}
     >
       {children}
       {Icon ? <Icon className="h-4 w-4" aria-hidden="true" /> : null}

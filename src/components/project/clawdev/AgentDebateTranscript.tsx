@@ -27,9 +27,9 @@ export function AgentDebateTranscript() {
       ref={ref}
       className="rounded-[28px] border border-[var(--clawdev-line)] bg-[#070C18] p-5 md:p-8"
     >
-      <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
-        <p className="text-sm font-bold text-white"># shared-room</p>
-        <p className="text-[11px] text-slate-500">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+        <p className="text-xl font-bold text-white"># shared-room</p>
+        <p className="text-support text-slate-300">
           발언 순서 = hash(request) % 5 · 상호 참조 = msg-###
         </p>
       </div>
@@ -47,32 +47,32 @@ export function AgentDebateTranscript() {
             >
               <div className="flex flex-wrap items-center gap-2">
                 <span
-                  className="flex h-6 items-center rounded-full px-2.5 text-[11px] font-bold"
+                  className="flex h-6 items-center rounded-full px-2.5 text-xs font-bold"
                   style={{ background: `${msg.accent}22`, color: msg.accent }}
                 >
                   {msg.speaker}
                 </span>
-                <span className="font-mono text-[11px] text-slate-500">
+                <span className="font-mono text-support text-slate-300">
                   {msg.msgId}
                 </span>
                 {msg.refs?.map((ref) => (
                   <span
                     key={ref}
-                    className="flex items-center gap-1 font-mono text-[11px] text-[var(--clawdev-accent)]"
+                    className="flex items-center gap-1 font-mono text-xs text-[var(--clawdev-accent)]"
                   >
                     ↳ {ref}
                   </span>
                 ))}
                 {reaction ? (
                   <span
-                    className="ml-auto rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em]"
+                    className="ml-auto rounded-full px-2.5 py-1 text-xs font-bold uppercase tracking-[0.08em]"
                     style={{ background: reaction.bg, color: reaction.color }}
                   >
                     {reaction.label}
                   </span>
                 ) : null}
               </div>
-              <p className="mt-2.5 text-sm leading-relaxed text-slate-200">
+              <p className="mt-2.5 text-body text-slate-200">
                 {msg.content}
               </p>
             </motion.div>
@@ -83,7 +83,7 @@ export function AgentDebateTranscript() {
           <motion.div
             animate={{ opacity: [0.3, 1, 0.3] }}
             transition={{ duration: 1.2, repeat: Infinity }}
-            className="px-4 py-2 text-xs text-slate-500"
+            className="px-4 py-2 text-support text-slate-300"
           >
             agent is typing…
           </motion.div>

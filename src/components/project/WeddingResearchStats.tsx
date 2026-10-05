@@ -17,13 +17,13 @@ export function WeddingResearchStats() {
               transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.05 }}
               className="rounded-[32px] border border-[#E5E7EB] bg-white/80 p-7 backdrop-blur"
             >
-              <p className="small-label text-[#B98979]">{stat.label}</p>
+              <p className="small-label text-[#8B5948]">{stat.label}</p>
               <p className="mt-5 text-4xl font-bold leading-none tracking-[-0.04em] text-[#111827]">
                 {stat.value}
               </p>
               <div className="mt-5 space-y-2">
                 {stat.caption.map((line) => (
-                  <p key={line} className="text-sm leading-6 text-slate-500">
+                  <p key={line} className="text-support text-slate-600">
                     {line}
                   </p>
                 ))}

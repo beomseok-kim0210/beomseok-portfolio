@@ -3,11 +3,13 @@ import { useEffect, useMemo, useRef, type RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import { DoubleSide, ShaderMaterial, SRGBColorSpace, VideoTexture } from "three";
-import { ease, interval, productEvidence } from "./experienceData";
+import { ease, entryLocal, interval, productEvidence } from "./experienceData";
 
 /** Original media + an explicitly illustrative aperture. Never a simulated app. */
 export function ArmiTabletPortal({ progress, video }: { progress: RefObject<number>; video: HTMLVideoElement | null }) {
   const poster = useTexture(productEvidence.poster);
+  const returnPoster = useTexture(productEvidence.returnPoster);
+  useEffect(() => { returnPoster.colorSpace = SRGBColorSpace; returnPoster.needsUpdate = true; }, [returnPoster]);
   useEffect(() => { poster.colorSpace = SRGBColorSpace; poster.needsUpdate = true; }, [poster]);
   const videoTexture = useMemo(() => video ? new VideoTexture(video) : null, [video]);
   useEffect(() => { if (videoTexture) videoTexture.colorSpace = SRGBColorSpace; return () => videoTexture?.dispose(); }, [videoTexture]);
@@ -28,9 +30,14 @@ export function ArmiTabletPortal({ progress, video }: { progress: RefObject<numb
   }), [poster]);
   useEffect(() => () => material.dispose(), [material]);
   const surface = useRef<ShaderMaterial>(null);
+  const uploadedTime = useRef(-1);
   useFrame(() => {
-    material.uniforms.opening.value = ease(interval(progress.current, .66, .94));
-    material.uniforms.original.value = video && video.readyState >= 2 && videoTexture ? videoTexture : poster;
+    material.uniforms.opening.value = ease(interval(entryLocal(progress.current), .66, .94)) * (1-ease(interval(progress.current,.955,.985)));
+    material.uniforms.original.value = video && video.readyState >= 2 && videoTexture ? videoTexture : progress.current>=.89 ? returnPoster : poster;
+    // A paused video seek does not reliably request a new WebGL frame on every browser.
+    if(video && videoTexture && video.readyState>=2 && !video.seeking && uploadedTime.current!==video.currentTime) {
+      videoTexture.needsUpdate=true; uploadedTime.current=video.currentTime;
+    }
   });
   return <group position={[2.4, 0, 0]} rotation={[0, -.16, -.025]}>
     <mesh><planeGeometry args={[8.5, 8.5 / productEvidence.aspect]}/><primitive ref={surface} object={material} attach="material"/></mesh>

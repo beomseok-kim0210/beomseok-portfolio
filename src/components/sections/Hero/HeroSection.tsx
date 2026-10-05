@@ -152,7 +152,7 @@ export function HeroSection() {
           ].map((proof) => (
             <span
               key={proof}
-              className="max-w-full rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-[12px] font-semibold tracking-[-0.01em] text-blue-700 sm:text-[13px]"
+              className="max-w-full rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-support font-semibold tracking-[-0.01em] text-blue-700"
             >
               {proof}
             </span>

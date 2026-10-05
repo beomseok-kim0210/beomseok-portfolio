@@ -26,7 +26,7 @@ export function ProjectMediaSection({ project }: ProjectMediaSectionProps) {
           controls
         />
       )}
-      <p className="small-label mt-6 text-slate-500">{project.media.caption}</p>
+      <p className="text-support mt-6 text-slate-600">{project.media.caption}</p>
     </section>
   );
 }

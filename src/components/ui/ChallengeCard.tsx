@@ -51,7 +51,7 @@ export function ChallengeCard({
             className="overflow-hidden"
           >
             <div className="mt-8 grid gap-4 border-t border-slate-200 pt-6 sm:grid-cols-2">
-              <div className="col-span-full mb-2 grid grid-cols-4 gap-2">
+              <div className="col-span-full mb-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {["Problem", "Investigation", "Solution", "Result"].map(
                   (step, stepIndex) => (
                     <div key={step}>
@@ -67,7 +67,7 @@ export function ChallengeCard({
                           className="h-full origin-left rounded-full bg-blue-600"
                         />
                       </div>
-                      <p className="text-[11px] font-medium text-slate-500">
+                      <p className="text-xs font-medium text-slate-500">
                         {step}
                       </p>
                     </div>
@@ -82,7 +82,7 @@ export function ChallengeCard({
               ].map(([label, text]) => (
                 <div key={label} className="rounded-[24px] bg-[#FAFAFA] p-5">
                   <p className="small-label text-blue-600">{label}</p>
-                  <p className="mt-3 text-[15px] leading-7 text-slate-700">
+                  <p className="mt-3 text-body text-slate-700">
                     {text}
                   </p>
                 </div>
@@ -91,7 +91,7 @@ export function ChallengeCard({
                 {challenge.tech.map((tech) => (
                   <span
                     key={tech}
-                    className="rounded-full border border-slate-200 bg-white px-3 py-2 text-[12px] font-medium text-slate-600"
+                    className="rounded-full border border-slate-200 bg-white px-3 py-2 text-support font-medium text-slate-600"
                   >
                     {tech}
                   </span>

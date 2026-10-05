@@ -3,7 +3,7 @@ import { useEffect, type RefObject } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { observeScrollLayout } from "../observeScrollLayout";
-import { entryPhase } from "./experienceData";
+import { journeyPhase } from "./experienceData";
 
 /** One scroll clock. Frame-critical consumers read the ref, not React state. */
 export function useArmiScrollDirector(section: RefObject<HTMLElement | null>, progress: RefObject<number>, onPhase: (phase: number) => void) {
@@ -13,14 +13,14 @@ export function useArmiScrollDirector(section: RefObject<HTMLElement | null>, pr
     const clock = { value: 0 };
     const publish = () => {
       progress.current = clock.value;
-      if (previous !== entryPhase(clock.value)) {
-        previous = entryPhase(clock.value);
+      if (previous !== journeyPhase(clock.value)) {
+        previous = journeyPhase(clock.value);
         onPhase(previous);
       }
     };
     const context = gsap.context(() => {
       gsap.to(clock, { value: 1, ease: "none", onUpdate: publish,
-        scrollTrigger: { trigger: section.current, start: "top 72px", end: "bottom bottom", scrub: .4, invalidateOnRefresh: true,
+        scrollTrigger: { trigger: section.current, start: "top 72px", end: "bottom bottom", scrub: matchMedia("(prefers-reduced-motion: reduce)").matches ? true : .4, invalidateOnRefresh: true,
           onRefresh: self => { clock.value = self.progress; publish(); } },
       });
     }, section);
@@ -28,4 +28,3 @@ export function useArmiScrollDirector(section: RefObject<HTMLElement | null>, pr
     return () => { stop(); context.revert(); };
   }, [section, progress, onPhase]);
 }
-

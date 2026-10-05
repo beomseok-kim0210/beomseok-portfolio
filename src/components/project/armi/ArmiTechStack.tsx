@@ -19,7 +19,7 @@ export function ArmiTechStack() {
                   {group.items.map((item) => (
                     <span
                       key={item}
-                      className="rounded-full border border-slate-200 bg-[#F8FAFC] px-4 py-3 text-sm font-semibold text-slate-700"
+                      className="rounded-full border border-slate-200 bg-[#F8FAFC] px-4 py-3 text-support font-semibold text-slate-700"
                     >
                       {item}
                     </span>

@@ -23,12 +23,12 @@ export function MetricCard({
           : "border-slate-200 bg-white"
       }`}
     >
-      <p className="text-[13px] font-semibold text-slate-500">{label}</p>
+      <p className="text-support font-semibold text-slate-600">{label}</p>
       <div className="mt-7 flex items-end gap-3">
         {before ? (
           <>
-            <p className="text-2xl font-semibold text-slate-400">{before}</p>
-            <span className="pb-2 text-slate-400">→</span>
+            <p className="text-2xl font-semibold text-slate-600">{before}</p>
+            <span className="pb-2 text-slate-600">→</span>
           </>
         ) : null}
         <p className="text-[56px] font-[760] leading-none tracking-[-0.04em] text-[#111827]">
@@ -36,7 +36,7 @@ export function MetricCard({
         </p>
       </div>
       {caption ? (
-        <p className="mt-3 text-[13px] font-semibold text-slate-500">{caption}</p>
+        <p className="mt-3 text-support font-semibold text-slate-600">{caption}</p>
       ) : null}
     </div>
   );

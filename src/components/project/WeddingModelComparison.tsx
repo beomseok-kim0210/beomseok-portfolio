@@ -10,7 +10,7 @@ export function WeddingModelComparison() {
   return (
     <div className="overflow-hidden rounded-[32px] border border-[#E5E7EB] bg-white/75 backdrop-blur">
       <div className="overflow-x-auto">
-        <table className="min-w-[980px] w-full border-separate border-spacing-0 text-left text-[14px] text-[#111827]">
+        <table className="min-w-[980px] w-full border-separate border-spacing-0 text-left text-body text-[#111827]">
           <thead className="bg-[#111827] text-white">
             <tr>
               {[
@@ -67,7 +67,7 @@ export function WeddingModelComparison() {
         </table>
       </div>
       <div className="border-t border-[#E5E7EB] px-6 py-5">
-        <p className="small-label text-[#B98979]">Note</p>
+        <p className="small-label text-[#8B5948]">Note</p>
         <p className="project-caption mt-3">
           {weddingComparisonNote}
         </p>

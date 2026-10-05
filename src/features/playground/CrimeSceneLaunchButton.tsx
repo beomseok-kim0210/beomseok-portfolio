@@ -32,7 +32,7 @@ export function CrimeSceneLaunchButton({
         type="button"
         onClick={launch}
         disabled={launching}
-        className={`inline-flex h-12 items-center gap-2 rounded-full bg-blue-500 px-6 text-sm font-semibold text-white outline-none transition-[background-color,transform] hover:-translate-y-0.5 hover:bg-blue-400 focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B1120] disabled:cursor-wait motion-reduce:transform-none motion-reduce:transition-none ${className}`}
+        className={`inline-flex h-12 items-center gap-2 rounded-full bg-blue-500 px-6 text-action text-white outline-none transition-[background-color,transform] hover:-translate-y-0.5 hover:bg-blue-400 focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B1120] disabled:cursor-wait motion-reduce:transform-none motion-reduce:transition-none ${className}`}
       >
         체험하기 <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
       </button>

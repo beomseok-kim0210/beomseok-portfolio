@@ -145,7 +145,7 @@ export function PromptFlowArchitecture() {
               style={{ left: `${node.x}%`, top: `${node.y}%` }}
             >
               <div
-                className="w-[150px] rounded-[14px] border bg-[var(--clawdev-surface)] px-3.5 py-2.5 text-center"
+                className="w-[190px] rounded-[14px] border bg-[var(--clawdev-surface)] px-3.5 py-2.5 text-center"
                 style={{
                   borderColor: `${accent}66`,
                   boxShadow: `0 0 0 1px ${accent}1f, 0 14px 40px rgba(0,0,0,0.4)`,
@@ -156,10 +156,10 @@ export function PromptFlowArchitecture() {
                     className="h-1.5 w-1.5 rounded-full"
                     style={{ background: accent }}
                   />
-                  <p className="text-[12px] font-bold text-white">{node.title}</p>
+                  <p className="text-support font-bold text-white">{node.title}</p>
                 </div>
                 {node.sub ? (
-                  <p className="mt-1 text-[10px] leading-tight text-slate-500">
+                  <p className="mt-1 text-support text-slate-300">
                     {node.sub}
                   </p>
                 ) : null}
@@ -169,7 +169,7 @@ export function PromptFlowArchitecture() {
         })}
 
         {/* 범례 */}
-        <div className="absolute -bottom-2 left-0 flex gap-3 text-[10px] text-slate-500">
+        <div className="absolute -bottom-2 left-0 flex gap-3 text-xs text-slate-400">
           <span className="flex items-center gap-1">
             <span className="h-2 w-4 rounded-full bg-[#60A5FA]/60" /> data flow
           </span>
@@ -192,10 +192,10 @@ export function PromptFlowArchitecture() {
                   className="h-1.5 w-1.5 rounded-full"
                   style={{ background: accentFor(node) }}
                 />
-                <p className="text-sm font-bold text-white">{node.title}</p>
+                <p className="text-xl font-bold text-white">{node.title}</p>
               </div>
               {node.sub ? (
-                <p className="mt-1 text-[11px] text-slate-500">{node.sub}</p>
+                <p className="mt-1 text-support text-slate-300">{node.sub}</p>
               ) : null}
             </div>
             {i < packetPath.length - 1 ? (
@@ -206,7 +206,7 @@ export function PromptFlowArchitecture() {
           </div>
         ))}
         <div className="rounded-[14px] border border-dashed border-[#FBBF24]/40 bg-white/[0.02] px-4 py-3">
-          <p className="text-[11px] text-slate-400">
+          <p className="text-support text-slate-300">
             <span className="font-semibold text-[#FBBF24]">+ 사이드 시스템</span> ·
             Project Memory ↔ Orchestrator · LLM Layer(Gemini→Ollama·Zod) → Codegen ·
             Verify 실패 시 Repair Loop → Codegen

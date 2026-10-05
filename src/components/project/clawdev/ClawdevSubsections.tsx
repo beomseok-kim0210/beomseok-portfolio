@@ -23,7 +23,7 @@ export function ResilienceFallback() {
           <p className="mt-3 text-xl font-bold text-white">
             {clawdevResilience.primary.name}
           </p>
-          <p className="mt-1 font-mono text-[11px] text-slate-500">
+          <p className="mt-1 font-mono text-support text-slate-300">
             {clawdevResilience.primary.sub}
           </p>
         </div>
@@ -33,7 +33,7 @@ export function ResilienceFallback() {
             {clawdevResilience.triggers.map((t) => (
               <span
                 key={t}
-                className="rounded-full border border-[#F87171]/30 bg-[#F87171]/10 px-2.5 py-1 text-[10px] font-semibold text-[#F87171]"
+                className="rounded-full border border-[#F87171]/30 bg-[#F87171]/10 px-2.5 py-1 text-support font-semibold text-[#F87171]"
               >
                 {t}
               </span>
@@ -46,7 +46,7 @@ export function ResilienceFallback() {
           >
             →
           </motion.span>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-500">
+          <span className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">
             on detect
           </span>
         </div>
@@ -58,12 +58,12 @@ export function ResilienceFallback() {
           <p className="mt-3 text-xl font-bold text-white">
             {clawdevResilience.fallback.name}
           </p>
-          <p className="mt-1 font-mono text-[11px] text-slate-500">
+          <p className="mt-1 font-mono text-support text-slate-300">
             {clawdevResilience.fallback.sub}
           </p>
         </div>
       </div>
-      <p className="mt-6 text-sm leading-relaxed text-slate-400">
+      <p className="mt-6 text-body text-slate-300">
         {clawdevResilience.behavior}
       </p>
     </div>
@@ -75,10 +75,10 @@ export function ProjectMemory() {
   return (
     <div className="rounded-[28px] border border-[var(--clawdev-line)] bg-[var(--clawdev-surface)] p-6 md:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="font-mono text-[13px] text-[var(--clawdev-accent)]">
+        <p className="font-mono text-support text-[var(--clawdev-accent)]">
           {clawdevMemory.path}
         </p>
-        <span className="rounded-full border border-[var(--clawdev-accent-2)]/30 bg-[var(--clawdev-accent-2)]/10 px-3 py-1.5 text-[11px] font-bold text-[var(--clawdev-accent-2)]">
+        <span className="rounded-full border border-[var(--clawdev-accent-2)]/30 bg-[var(--clawdev-accent-2)]/10 px-3 py-1.5 text-xs font-bold text-[var(--clawdev-accent-2)]">
           continue mode
         </span>
       </div>
@@ -88,14 +88,14 @@ export function ProjectMemory() {
             key={field.label}
             className="rounded-[16px] border border-white/[0.08] bg-white/[0.03] p-4"
           >
-            <p className="text-sm font-bold text-white">{field.label}</p>
-            <p className="mt-1.5 text-[11px] leading-relaxed text-slate-500">
+            <p className="text-xl font-bold text-white">{field.label}</p>
+            <p className="mt-1.5 text-support text-slate-300">
               {field.detail}
             </p>
           </div>
         ))}
       </div>
-      <p className="mt-5 text-sm leading-relaxed text-slate-400">
+      <p className="mt-5 text-body text-slate-300">
         {clawdevMemory.continueMode}
       </p>
     </div>
@@ -112,18 +112,18 @@ export function DualInterface() {
             key={node.name}
             className="rounded-[20px] border border-white/10 bg-white/[0.03] p-6"
           >
-            <p className="text-lg font-bold text-white">{node.name}</p>
-            <p className="mt-1.5 font-mono text-[11px] text-[var(--clawdev-accent)]">
+            <p className="text-xl font-bold text-white">{node.name}</p>
+            <p className="mt-1.5 font-mono text-support text-[var(--clawdev-accent)]">
               {node.stack}
             </p>
-            <p className="mt-4 text-sm leading-relaxed text-slate-400">
+            <p className="mt-4 text-body text-slate-300">
               {node.detail}
             </p>
           </div>
         ))}
       </div>
       <div className="mt-5 rounded-[18px] border border-dashed border-[var(--clawdev-line)] bg-[#070C18] p-5 text-center">
-        <p className="text-sm font-semibold text-slate-300">
+        <p className="text-body font-semibold text-slate-300">
           두 인터페이스가 하나의{" "}
           <span className="font-mono text-[var(--clawdev-accent)]">
             {clawdevInterfaces.shared}
@@ -134,7 +134,7 @@ export function DualInterface() {
           {clawdevInterfaces.hooks.map((hook) => (
             <span
               key={hook}
-              className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 font-mono text-[11px] text-slate-400"
+              className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 font-mono text-support text-slate-300"
             >
               {hook}
             </span>
@@ -156,10 +156,10 @@ export function ResultsAndLimitations() {
               <p className="text-[28px] font-bold leading-none tracking-[-0.03em] text-white">
                 {result.value}
               </p>
-              <p className="mt-3 text-sm font-bold text-[var(--clawdev-accent)]">
+              <p className="mt-3 text-support font-bold text-[var(--clawdev-accent)]">
                 {result.label}
               </p>
-              <p className="mt-2 text-[13px] leading-relaxed text-slate-400">
+              <p className="mt-2 text-support text-slate-300">
                 {result.detail}
               </p>
             </div>
@@ -172,7 +172,7 @@ export function ResultsAndLimitations() {
         </p>
         <ul className="mt-4 space-y-2.5">
           {clawdevLimitations.map((item) => (
-            <li key={item} className="flex gap-3 text-sm text-slate-400">
+            <li key={item} className="flex gap-3 text-body text-slate-300">
               <span className="text-[var(--clawdev-warn)]">—</span>
               {item}
             </li>
@@ -190,14 +190,14 @@ export function ClawdevTechStack() {
       {clawdevTechGroups.map((group, i) => (
         <MotionBlock key={group.label} delay={i * 0.05}>
           <div className="h-full rounded-[24px] border border-[var(--clawdev-line)] bg-[var(--clawdev-surface)] p-6">
-            <p className="text-[11px] font-bold tracking-[0.14em] text-[var(--clawdev-accent)]">
+            <p className="text-xs font-bold tracking-[0.14em] text-[var(--clawdev-accent)]">
               {group.label.toUpperCase()}
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               {group.items.map((item) => (
                 <span
                   key={item}
-                  className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-semibold text-slate-300"
+                  className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-body font-semibold text-slate-300"
                 >
                   {item}
                 </span>

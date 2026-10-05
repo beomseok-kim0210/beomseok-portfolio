@@ -15,16 +15,16 @@ export function ModelProfileMatrix() {
       <div className="overflow-hidden rounded-[28px] border border-[var(--clawdev-line)] bg-[var(--clawdev-surface)]">
         {/* 헤더 */}
         <div className="hidden grid-cols-[140px_1fr_1fr_minmax(0,1.2fr)] gap-4 border-b border-white/10 px-6 py-4 md:grid">
-          <span className="text-[11px] font-bold tracking-[0.12em] text-slate-500">
+          <span className="text-xs font-bold tracking-[0.12em] text-slate-500">
             STAGE
           </span>
-          <span className="text-[11px] font-bold tracking-[0.12em] text-slate-500">
+          <span className="text-xs font-bold tracking-[0.12em] text-slate-500">
             TEMPERATURE
           </span>
-          <span className="text-[11px] font-bold tracking-[0.12em] text-slate-500">
+          <span className="text-xs font-bold tracking-[0.12em] text-slate-500">
             NUM_PREDICT
           </span>
-          <span className="text-[11px] font-bold tracking-[0.12em] text-slate-500">
+          <span className="text-xs font-bold tracking-[0.12em] text-slate-500">
             NOTE
           </span>
         </div>
@@ -41,10 +41,10 @@ export function ModelProfileMatrix() {
               background: row.highlight ? "rgba(96,165,250,0.06)" : "transparent",
             }}
           >
-            <span className="font-mono text-sm font-bold text-white">
+            <span className="font-mono text-support font-bold text-white">
               {row.stage}
               {row.highlight ? (
-                <span className="ml-2 rounded-full bg-[var(--clawdev-accent)] px-2 py-0.5 text-[9px] font-bold text-[#0B1120]">
+                <span className="ml-2 rounded-full bg-[var(--clawdev-accent)] px-2 py-0.5 text-xs font-bold text-[#0B1120]">
                   KEY
                 </span>
               ) : null}
@@ -62,7 +62,7 @@ export function ModelProfileMatrix() {
                   style={{ background: row.highlight ? "#60A5FA" : "#34D399" }}
                 />
               </div>
-              <span className="w-10 shrink-0 font-mono text-xs text-slate-300">
+              <span className="w-10 shrink-0 font-mono text-support text-slate-300">
                 {row.temperature.toFixed(2)}
               </span>
             </div>
@@ -79,12 +79,12 @@ export function ModelProfileMatrix() {
                   style={{ background: row.highlight ? "#60A5FA" : "#A78BFA" }}
                 />
               </div>
-              <span className="w-12 shrink-0 font-mono text-xs text-slate-300">
+              <span className="w-12 shrink-0 font-mono text-support text-slate-300">
                 {row.numPredict}
               </span>
             </div>
 
-            <span className="text-xs leading-relaxed text-slate-500">
+            <span className="text-support text-slate-300">
               {row.note}
             </span>
           </motion.div>
@@ -92,20 +92,20 @@ export function ModelProfileMatrix() {
       </div>
 
       <div className="rounded-[20px] border border-[var(--clawdev-line)] bg-[var(--clawdev-surface)] p-5">
-        <p className="text-[11px] font-bold tracking-[0.14em] text-[var(--clawdev-accent)]">
+        <p className="text-xs font-bold tracking-[0.14em] text-[var(--clawdev-accent)]">
           MODEL FAMILIES
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           {clawdevModelMeta.families.map((fam) => (
             <span
               key={fam}
-              className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 font-mono text-xs text-slate-300"
+              className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 font-mono text-support text-slate-300"
             >
               {fam}
             </span>
           ))}
         </div>
-        <p className="mt-4 font-mono text-[11px] leading-5 text-slate-500">
+        <p className="mt-4 font-mono text-support text-slate-300">
           {clawdevModelMeta.resolver}
         </p>
       </div>

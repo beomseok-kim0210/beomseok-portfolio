@@ -35,13 +35,13 @@ export function ProjectIndexSection() {
                 </div>
 
                 <p className="mt-6 text-lg font-semibold leading-7 text-slate-900">{project.oneLiner}</p>
-                <p className="mt-3 text-sm leading-6 text-slate-500">{project.problem}</p>
+                <p className="mt-3 text-body text-slate-600">{project.problem}</p>
 
                 <div className="mt-6 flex min-w-0 flex-wrap gap-2">
                   {project.highlights.map((highlight) => (
                     <span
                       key={highlight}
-                      className="max-w-full break-words rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-medium leading-5 text-slate-600"
+                      className="max-w-full break-words rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-support font-medium text-slate-600"
                     >
                       {highlight}
                     </span>
@@ -50,7 +50,7 @@ export function ProjectIndexSection() {
 
                 <Link
                   href={project.href}
-                  className="mt-8 inline-flex items-center gap-2 self-start text-sm font-semibold text-blue-700 transition-colors hover:text-blue-900"
+                  className="mt-8 inline-flex items-center gap-2 self-start text-action text-blue-700 transition-colors hover:text-blue-900"
                 >
                   상세보기 <ArrowRight className="h-4 w-4" />
                 </Link>

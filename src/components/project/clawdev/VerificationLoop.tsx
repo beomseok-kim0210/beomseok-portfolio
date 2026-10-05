@@ -38,7 +38,7 @@ export function VerificationLoop() {
   return (
     <div ref={ref} className="space-y-4">
       {/* 루프 흐름 라벨 */}
-      <div className="flex flex-wrap items-center gap-2 text-[11px] font-semibold text-slate-400">
+      <div className="flex flex-wrap items-center gap-2 text-support font-semibold text-slate-300">
         {["draft", "peer review", "verify", "PM intervene", "revise", "repair"].map(
           (s, i, arr) => (
             <span key={s} className="flex items-center gap-2">
@@ -75,10 +75,10 @@ export function VerificationLoop() {
                   <p className="text-xs font-bold tracking-[0.14em] text-[var(--clawdev-accent)]">
                     {round.round}
                   </p>
-                  <p className="mt-2 text-lg font-bold text-white">{round.title}</p>
+                  <p className="mt-2 text-xl font-bold text-white">{round.title}</p>
                 </div>
                 <span
-                  className="rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.08em]"
+                  className="rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-[0.08em]"
                   style={{ background: reaction.bg, color: reaction.color }}
                 >
                   {round.reaction}
@@ -87,16 +87,16 @@ export function VerificationLoop() {
 
               {/* 리뷰어 노트 */}
               <div className="mt-4 rounded-[16px] border border-white/[0.08] bg-white/[0.03] p-4">
-                <p className="text-[11px] font-semibold text-slate-500">
+                <p className="text-xs font-semibold text-slate-400">
                   {round.reviewer} review
                 </p>
-                <p className="mt-1.5 font-mono text-[12px] leading-5 text-slate-300">
+                <p className="mt-1.5 font-mono text-support text-slate-300">
                   {round.note}
                 </p>
               </div>
 
               {/* 검증 콘솔 */}
-              <div className="mt-4 space-y-2 rounded-[16px] bg-[#070C18] p-4 font-mono text-[12px]">
+              <div className="mt-4 space-y-2 rounded-[16px] bg-[#070C18] p-4 font-mono text-support">
                 {round.checks.map((check, ci) => {
                   const st = statusStyle[check.status];
                   return (
@@ -105,7 +105,7 @@ export function VerificationLoop() {
                       initial={{ opacity: 0 }}
                       animate={revealed ? { opacity: 1 } : { opacity: 0.3 }}
                       transition={{ delay: revealed ? ci * 0.22 : 0 }}
-                      className="flex items-center justify-between gap-3"
+                      className="flex flex-wrap items-center justify-between gap-3"
                     >
                       <span className="text-slate-400">
                         <span className="text-slate-600">$ </span>
@@ -122,7 +122,7 @@ export function VerificationLoop() {
                 })}
               </div>
 
-              <p className="mt-4 text-[13px] leading-relaxed text-slate-400">
+              <p className="mt-4 text-body text-slate-300">
                 {round.outcome}
               </p>
             </motion.div>
@@ -133,10 +133,10 @@ export function VerificationLoop() {
       {/* 자율 수리 담당 추론 */}
       <div className="rounded-[26px] border border-[var(--clawdev-line)] bg-[var(--clawdev-surface)] p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm font-bold text-white">
+          <p className="text-xl font-bold text-white">
             Autonomous Repair — 실패 경로로 담당 추론
           </p>
-          <div className="flex flex-wrap gap-2 text-[10px] font-semibold text-slate-500">
+          <div className="flex flex-wrap gap-2 text-xs font-semibold text-slate-400">
             <span className="rounded-full border border-white/10 px-2.5 py-1">
               {clawdevLoopMeta.reviewRounds}
             </span>
@@ -151,15 +151,15 @@ export function VerificationLoop() {
               key={rule.pattern}
               className="rounded-[14px] border border-white/[0.08] bg-white/[0.03] p-4"
             >
-              <p className="font-mono text-[12px] text-[var(--clawdev-accent)]">
+              <p className="font-mono text-support text-[var(--clawdev-accent)]">
                 {rule.pattern}
               </p>
-              <p className="mt-2 text-sm font-bold text-white">→ {rule.owner}</p>
-              <p className="mt-1 text-[11px] text-slate-500">{rule.reason}</p>
+              <p className="mt-2 text-body font-bold text-white">→ {rule.owner}</p>
+              <p className="mt-1 text-support text-slate-300">{rule.reason}</p>
             </div>
           ))}
         </div>
-        <p className="mt-4 text-[12px] text-slate-500">{clawdevLoopMeta.stall}</p>
+        <p className="mt-4 text-support text-slate-300">{clawdevLoopMeta.stall}</p>
       </div>
     </div>
   );

@@ -30,7 +30,7 @@ export function ProjectRecap({
           <p className="step-label" style={{ color: accent }}>
             회고
           </p>
-          <p className="mt-6 text-[17px] leading-[1.8] text-white/50 md:text-[18px]">
+          <p className="mt-6 text-[17px] leading-[1.8] text-white/75 md:text-[18px]">
             {definition}
           </p>
         </MotionBlock>
@@ -58,7 +58,7 @@ export function ProjectRecap({
         ) : null}
 
         <MotionBlock delay={0.16} className="mt-14 border-t border-white/10 pt-10">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-white/35">
+          <p className="text-support font-semibold text-white/75">
             이 글의 배경이 된 문제들
           </p>
           <ul className="mt-6 space-y-4">
@@ -68,12 +68,12 @@ export function ProjectRecap({
                 className="flex flex-col gap-1 md:flex-row md:items-baseline md:gap-6"
               >
                 <span
-                  className="shrink-0 text-[14px] font-semibold md:w-[190px]"
+                  className="shrink-0 text-support font-semibold md:w-[190px]"
                   style={{ color: accent }}
                 >
                   {t.label}
                 </span>
-                <span className="text-[15px] leading-7 text-white/65">
+                <span className="text-support text-white/80">
                   {t.note}
                 </span>
               </li>

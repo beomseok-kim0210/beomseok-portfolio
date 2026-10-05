@@ -105,7 +105,7 @@ export function AnimatedFlowDiagram({ nodes }: AnimatedFlowDiagramProps) {
         })}
       </div>
 
-      <div className="mt-8 min-h-24 rounded-[22px] bg-[rgba(2,6,23,0.4)] p-5 font-mono text-[13px] leading-7 text-blue-100">
+      <div className="mt-8 min-h-24 rounded-[22px] bg-[rgba(2,6,23,0.4)] p-5 font-mono text-support text-blue-100">
         {eventLogs.slice(0, Math.max(activeIndex + 1, 1)).map((log) => (
           <p key={log}>{log}</p>
         ))}

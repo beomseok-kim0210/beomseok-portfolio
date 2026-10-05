@@ -1,3 +1,5 @@
+import { routingAnchors } from "./armiRouting";
+
 /** Editorial coordinates, never sensor values or a model keypoint schema. */
 export type Point = readonly [number, number];
 export type TransitionPoint = {
@@ -20,16 +22,10 @@ export const illustrativeBones = [
   [1, 8], [8, 9], [9, 10], [1, 11], [11, 12], [12, 13], [8, 11],
 ] as const;
 
-const sourcePoints: readonly Point[] = [
-  [465, 350], [560, 350], [650, 310], [720, 315], [800, 350],
-  [865, 300], [935, 350], [1015, 300], [1110, 245], [1110, 350],
-  [1110, 455], [830, 540], [960, 565], [1100, 565],
-];
-
 // Identity belongs to the transition geometry, not VOICE/Redis/etc.
 export const transitionPoints: readonly TransitionPoint[] = illustrativePose.map((point, i) => ({
   id: `transition-${i}`,
-  armiPosition: sourcePoints[i],
+  armiPosition: routingAnchors[i],
   neutralPosition: [670 + (i % 5) * 108 + Math.floor(i / 5) * 34, 240 + Math.floor(i / 5) * 140 + (i % 2) * 36],
   poseTarget: [910 + (point[0] - 50) * 6.3, 110 + point[1] * 5.6],
 }));
