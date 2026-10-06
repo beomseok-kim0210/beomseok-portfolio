@@ -1,45 +1,42 @@
 "use client";
-import dynamic from "next/dynamic";
-import { Component, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { useArmiScrollDirector } from "./ArmiScrollDirector";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useWorldHost } from "@/features/world/runtime/WorldHost";
+import { useWorldDirector } from "@/features/world/director/useWorldDirector";
+import type { WorldRenderMode } from "@/features/world/types/contracts";
 import { journeyPhases, productEvidence, returnRecordingTime } from "./experienceData";
 import { ArmiStillWorld } from "./ArmiStillWorld";
 import styles from "./journey.module.css";
-const ArmiCanvas = dynamic(() => import("./ArmiCanvas"), { ssr: false });
-
-class CanvasBoundary extends Component<{children: ReactNode; onFailure: () => void}, {failed: boolean}> {
-  state = { failed: false };
-  static getDerivedStateFromError() { return { failed: true }; }
-  componentDidCatch() { this.props.onFailure(); }
-  render() { return this.state.failed ? null : this.props.children; }
-}
 
 export function ArmiExperience() {
   const section = useRef<HTMLElement>(null);
-  const progress = useRef(0);
+  const surface = useRef<HTMLDivElement>(null);
+  const { runtime, setSurface } = useWorldHost();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [video, setVideo] = useState<HTMLVideoElement | null>(null);
   const [phase, setPhase] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [mode, setMode] = useState<"loading" | "3d" | "reduced" | "fallback">("loading");
-  const [compact, setCompact] = useState(false);
   const [active, setActive] = useState(false);
   const fail = useCallback(() => setMode("fallback"), []);
-  useArmiScrollDirector(section, progress, setPhase);
+  const worldMode: WorldRenderMode = mode === "3d" ? "webgl" : mode === "reduced" ? "reduced-motion" : mode === "fallback" ? "fallback" : "static";
+  useWorldDirector(section, runtime, setPhase, worldMode);
+  useEffect(() => {
+    if (surface.current) setSurface({ element: surface.current, video, active, mode: worldMode, onFailure: fail });
+    return () => setSurface(null);
+  }, [setSurface, video, active, worldMode, fail]);
   useEffect(() => {
     setVideo(videoRef.current);
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
-    const size = matchMedia("(max-width: 700px)");
-    const sync = () => { setCompact(size.matches); if (motion.matches) setMode("reduced"); else {
+    const sync = () => { if (motion.matches) setMode("reduced"); else {
       const test = document.createElement("canvas");
       const gl = test.getContext("webgl2");
       setMode(gl ? "3d" : "fallback");
       gl?.getExtension("WEBGL_lose_context")?.loseContext();
     }};
-    sync(); motion.addEventListener("change",sync); size.addEventListener("change",sync);
+    sync(); motion.addEventListener("change",sync);
     const observer = new IntersectionObserver(([entry]) => { setActive(entry.isIntersecting); if (!entry.isIntersecting) videoRef.current?.pause(); });
     if (section.current) observer.observe(section.current);
-    return () => { observer.disconnect(); motion.removeEventListener("change",sync); size.removeEventListener("change",sync); };
+    return () => { observer.disconnect(); motion.removeEventListener("change",sync); };
   }, []);
   useEffect(() => {
     const original = videoRef.current;
@@ -57,7 +54,7 @@ export function ArmiExperience() {
   }
   return <section ref={section} className={styles.track} aria-label="ARMI: 음성 요청의 해석·라우팅·응답·제품 복귀 여정" data-armi-journey="golden">
     <div className={styles.viewport} data-phase={step.id} data-render-mode={mode}>
-      {!staticMode && <div className={styles.canvas} aria-hidden="true"><CanvasBoundary onFailure={fail}><ArmiCanvas progress={progress} video={video} compact={compact} active={active} onFailure={fail}/></CanvasBoundary></div>}
+      <div ref={surface} className={styles.canvas} aria-hidden="true"/>
       <div className={styles.overlay}>
         <header className={styles.identity}><p>01 / ARMI</p>{phase === 0 ? <><h2>ARMI</h2><h3>VOICE BECOMES<br/>ACTION.</h3></> : <span>ARMI / REQUEST JOURNEY</span>}</header>
         <div className={styles.narrative} aria-live="polite"><p className={styles.label}>{step.label}</p>{phase > 0 && <h3>{step.title}</h3>}<p>{step.text}</p></div>

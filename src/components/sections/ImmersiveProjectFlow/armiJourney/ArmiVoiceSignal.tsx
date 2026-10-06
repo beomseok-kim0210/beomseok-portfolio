@@ -7,7 +7,7 @@ import { compressWorld, sampleSignal } from "./goldenPaths";
 const responseLengths=[1,.82,.94,.68,.87,.55];
 
 
-export function ArmiVoiceSignal({ progress }: { progress: RefObject<number> }) {
+export function ArmiVoiceSignal({ progress, compact: compactPolicy }: { progress: RefObject<number>; compact?: boolean }) {
   const waveform = useRef<InstancedMesh>(null);
   const packet = useRef<Group>(null);
   const inner = useRef<MeshBasicMaterial>(null);
@@ -21,7 +21,7 @@ export function ArmiVoiceSignal({ progress }: { progress: RefObject<number> }) {
   useFrame(({camera, size}) => {
     const master = progress.current;
     const p = entryLocal(master);
-    const compact = size.width < 700;
+    const compact = compactPolicy ?? size.width < 700;
     const peripheralX = compact ? .1 : .25;
     const peripheralY = -.25 + (compact ? .22 : .20)*ease(interval(master,.32,.35));
     const gather = ease(interval(p, .24, .42));

@@ -69,7 +69,8 @@
 @media(min-width:701px) {
   .viewport:not([data-render-mode=3d])[data-phase=product] .narrative { max-width:460px; }
 }
-@media(prefers-reduced-motion:reduce) { .track { height:750svh; } }
+/* Stills and the existing skip link remain available without a cinematic flight. */
+@media(prefers-reduced-motion:reduce) { .track { height:180svh; } }
 /* Interior still keys replace flight, preserving its different silhouettes. */
 .staticScene[data-key-world=true] img { opacity:0; }
 .staticScene[data-key-world=true] .staticSignal { display:none; }

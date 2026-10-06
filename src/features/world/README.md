@@ -1,7 +1,7 @@
-# Portfolio World foundation (Phase 1A)
+# Portfolio World foundation and ARMI runtime (Phase 1B)
 
-These modules are unintegrated contracts. No page, Canvas, GSAP timeline or V1
-component imports them. Registry publication means inclusion in the intended
+The Phase 1A metadata contracts now feed the Home runtime through an ARMI-only
+mounted itinerary projection. Registry publication means inclusion in the intended
 exhibition, **not** that its scene, camera, landmark or lookdev exists.
 
 ## Responsibilities
@@ -31,8 +31,9 @@ exhibition, **not** that its scene, camera, landmark or lookdev exists.
 ## Position and boundary rules
 
 World position is in cumulative **scrollWeight units**, not normalized world
-progress and not pixels. Phase 1B must supply a DOM/scroll adapter; no such adapter
-is wired now. The derived start/end positions may move when itinerary weights or
+progress and not pixels. `useWorldDirector` maps the existing section ScrollTrigger
+clock to its resolved segment weight; direct DOM range evaluation is also pure.
+The derived start/end positions may move when itinerary weights or
 entries change. District shot ranges and `(districtId, shotId)` identities do not.
 
 Intervals are half-open `[start,end)`. Exact segment/shot seams choose the next
@@ -54,12 +55,41 @@ V1's `armiJourney/worldConfig.ts` uses "district" for ARMI function/service bran
 World District means an exhibition such as ARMI or Hangarae. The future internal
 rename should be `serviceZone`/`serviceZones`; V1 files are not renamed now.
 
-Entry, Voice, Tablet Approach and Portal remain V1 runtime-owned. The adapter
-records their phase IDs without numeric conversion. Routing Reveal, Observe /
+Entry, Voice, Tablet Approach and Portal retain V1 choreography. The World runtime
+uses the separate `adapters/armiRuntime.ts` compatibility implementation. The 1A
+`armiAdapterBoundary` remains planning metadata, not a mounted runtime adapter.
+Routing Reveal, Observe /
 Decision and Exit are conceptual identities; STT, Travel, Result and Return are
-explicitly unresolved legacy phases, not removed. Phase 1B must review their
-mapping and preserve V1 choreography; the provisional shot ranges must not be
+explicitly unresolved legacy phases, named `legacy-*` in the runtime profile.
+The compatibility profile preserves V1 choreography; the provisional equal spans must not be
 used to rescale the legacy clock accidentally.
+
+## Runtime ownership
+
+Home wraps the immersive flow in `WorldHost`, which portals one `WorldCanvas`
+into the original ARMI DOM slot. `ArmiExperience` retains narrative, media,
+fallback and skip UI. `ArmiDistrictScene` mounts only the preserved scene content.
+`WorldCameraController` alone applies camera samples before district callbacks;
+`WorldRenderPipeline` alone submits the final render (same direct/bloom windows,
+passes, fog and strengths). Legacy owners remain on disk but are unmounted.
+
+`worldRuntime` stores continuous director/legacy progress in refs. Semantic
+subscriptions change only at segment/district/shot/mode changes. No other
+district has a DOM binding or renderer in Phase 1B. Full itinerary traversal,
+district loading and authored post-Portal shots await later phases.
+
+Motion capability is separate from actual Canvas width/aspect. Container resize
+selects the existing 700px camera/geometry and DPR policy. The signal receives
+the same compact policy, including exactly
+700px (V1 independently used `<700` for the signal and `<=700` for the camera).
+Active frames remain
+continuous; inactive frames use demand invalidation on progress/size updates,
+instead of V1's `never`, so refreshes can apply a current pose without reload.
+Reduced motion uses the existing stills and media with a shortened 180svh track
+(formerly 750svh); keyboard/skip navigation remains available.
+
+Texture/media caching and disposal remain in the original scene. There is no
+preload manager, GPU eviction system, new asset loader or Phase 2 art.
 
 ## Adding a district
 
@@ -78,3 +108,7 @@ must be supplied when those projects actually exist.
 Retain the approved 22-test V1 baseline, build and browser regression before any
 future integration. Passing these contracts does not validate new art or a World
 render pipeline.
+
+Runtime tests: `node --import ./tests/alias-hook.mjs --test tests/world-runtime.test.ts`.
+The camera oracle executes the preserved tag's V1 callback and verifies its path
+dependencies still match, then compares both layouts and pointer offsets.
