@@ -112,3 +112,20 @@ render pipeline.
 Runtime tests: `node --import ./tests/alias-hook.mjs --test tests/world-runtime.test.ts`.
 The camera oracle executes the preserved tag's V1 callback and verifies its path
 dependencies still match, then compares both layouts and pointer offsets.
+
+## v015 production asset / static lookdev checkpoint
+
+The first production GLB now replaces V1 primitive chamber content in
+ArmiDistrictScene. Original product entry, district/director contracts and
+WorldCameraController ownership remain. Post-portal holds RoutingHero while
+scroll choreography is pending; this is not the final website camera path.
+WorldRuntime exposes armiAsset with independent semantic groups, manifest,
+source-name lookup and idle clips. motion-samples.json is retained as reference,
+not an autoplay player. WorldRenderPipeline owns AgX, stage lighting look,
+restrained bloom, fog and the isolated Product UI pass.
+
+/world/armi-review uses the actual WorldCanvas for static hero/Product inspection.
+Its Save QA render endpoint only writes during development and checks same origin.
+See docs/design-references/immersive-portfolio/armi-v015-runtime/QA.md for measured
+limits and remaining Blender-to-web differences. useLoader retains geometry in
+its session cache; asset eviction infrastructure remains future work.

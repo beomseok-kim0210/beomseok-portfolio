@@ -1,0 +1,60 @@
+(node:19452) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/UserData/Desktop/beomseok-portfolio/tests/armi-choreography.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to D:\UserData\Desktop\beomseok-portfolio\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ arbitrary reverse seeks restore the same authored transforms and visibility (47.1256ms)
+✔ camera path is continuous and independent of scroll direction (37.9097ms)
+✔ real UI has deterministic opaque endpoints and an unobstructed chamber middle (0.4246ms)
+(node:28896) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/UserData/Desktop/beomseok-portfolio/tests/armi-v015.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to D:\UserData\Desktop\beomseok-portfolio\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ shared materials calibrate once, keep authored loader materials and independent groups intact (3.3158ms)
+✔ manifest default pose visibility and UI isolation do not require playing an animation (2.1195ms)
+✔ reference sampling keeps the live camera and honors authored world transform (4.1822ms)
+(node:10760) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/UserData/Desktop/beomseok-portfolio/tests/world-foundation.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to D:\UserData\Desktop\beomseok-portfolio\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ published district references, project references, shot and manifest ownership resolve (1.8889ms)
+✔ duplicate stable IDs are rejected within each namespace (0.727ms)
+✔ experimental installations resolve to a non-project Experimental Wing (0.2504ms)
+✔ Claw Dev remains in existing project data/catalog but outside initial itinerary (0.1999ms)
+✔ Digital Docent identity explicitly bridges existing summary key and route (0.2073ms)
+✔ adding a synthetic future district changes traversal, never existing shot-local ranges (1.8521ms)
+✔ forward/reverse/direct-jump evaluation selects identical identities at the same position (1.4263ms)
+✔ segment seams use next entry, final endpoint uses final entry, independent of direction (0.2233ms)
+✔ shot seams are district-local and deterministic with a complete final endpoint (0.264ms)
+✔ shot anchor seams remain exact after weighted offsets and future insertion (0.6942ms)
+✔ non-project segments have no district/shot; publication filtering recomputes adjacency (0.2713ms)
+✔ finite out-of-range positions clamp while invalid positions and weights reject (0.5176ms)
+✔ malformed local partitions reject gaps, overlaps, reversed and incomplete ranges (1.9263ms)
+✔ dangling references, installation parents and ownership violations reject (1.8783ms)
+✔ asset fallbacks resolve and reject missing targets or cycles without loading assets (0.5585ms)
+✔ render capability changes only the renderMode field, not choreography (0.4093ms)
+✔ ARMI boundary stays semantic, unintegrated and explicit about unresolved legacy phases (0.2421ms)
+(node:26072) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/UserData/Desktop/beomseok-portfolio/tests/world-runtime.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to D:\UserData\Desktop\beomseok-portfolio\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ A: mounted Home runtime exposes ARMI and separates continuous/semantic notifications (4.3876ms)
+✔ B/C: equal absolute positions restore deterministic identity forward, reverse and direct (1.144ms)
+✔ D: direct ARMI anchor/range resolves without event replay or document normalization (0.3381ms)
+✔ E/F: isolated compatibility preserves all V1 phases and protected local clock (21.0888ms)
+✔ G: V1 numeric choreography remains outside catalog/registry/itinerary (1.461ms)
+✔ H: active district supplies samples; only World controller applies final camera (1.2935ms)
+✔ I/J: one mounted World Canvas/final render, legacy owners retained but unmounted (3.2686ms)
+✔ K: reduced/fallback director preserves identities without WebGL; reduced track is brief (1.1519ms)
+✔ L/M: all existing routes and Docent identity remain available; Claw Dev excluded (0.2017ms)
+✔ N: production district replaces primitive world, preserves original product entry (0.9628ms)
+✔ responsive synchronization uses actual size and invalidates demand frames (1.9551ms)
+✔ numeric camera/fog regression uses preserved V1 callback as oracle at both layouts and pointer offsets (1060.6624ms)
+✔ numeric render intent preserves V1 direct/bloom dispatch and strengths (203.4839ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1967.6792

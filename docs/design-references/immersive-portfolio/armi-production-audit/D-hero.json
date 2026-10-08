@@ -1,0 +1,116 @@
+{
+  "stats": {
+    "loads": [
+      {
+        "url": "/models/armi/audit/D_initial.glb?trial=0",
+        "bytes": 1239992,
+        "fetchMs": 43,
+        "parseDecodeMs": 93.90000000596046,
+        "totalMs": 136.90000000596046
+      },
+      {
+        "url": "/models/armi/audit/D_response.glb?trial=0",
+        "bytes": 304116,
+        "fetchMs": 18.600000023841858,
+        "parseDecodeMs": 68.39999997615814,
+        "totalMs": 87
+      },
+      {
+        "url": "/models/armi/audit/D_alternatives.glb?trial=0",
+        "bytes": 807468,
+        "fetchMs": 55,
+        "parseDecodeMs": 67.5,
+        "totalMs": 122.5
+      }
+    ],
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1060 3GB (0x00001C02) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "instances": {
+      "batches": 0,
+      "sources": 0
+    }
+  },
+  "metrics": {
+    "loaded": true,
+    "cameraOwner": "WorldCameraController",
+    "shot": "RoutingHero",
+    "progress": 0,
+    "clipTimes": [
+      {
+        "clip": "Core_AuthoredMotion",
+        "localProgress": 0
+      },
+      {
+        "clip": "Text_AuthoredMotion",
+        "localProgress": 0
+      },
+      {
+        "clip": "Response_AuthoredMotion",
+        "localProgress": 0
+      }
+    ],
+    "camera": {
+      "position": [
+        0,
+        50,
+        60
+      ],
+      "quaternion": [
+        -0.005544307163603261,
+        0.027745287803336606,
+        0.00015389849397283014,
+        0.9995996378440917
+      ]
+    },
+    "geometryDrawCalls": 255,
+    "geometryTriangles": 404766,
+    "drawCallsByDomain": {
+      "RuntimeEffects": 4,
+      "Environment": 52,
+      "Core": 41,
+      "Routes": 6,
+      "Text": 36,
+      "Response": 38,
+      "Memory": 25,
+      "Tavily": 24,
+      "Robot": 29
+    },
+    "totalDrawCalls": 269,
+    "totalTriangles": 404780,
+    "fps": 57,
+    "fpsSamples": [
+      55.8,
+      56.9,
+      55.6,
+      56.4,
+      56,
+      57
+    ],
+    "fpsAverage": 56.3,
+    "viewport": [
+      1440,
+      900
+    ],
+    "dpr": 1,
+    "semanticGroups": [
+      "Core",
+      "Text",
+      "Memory",
+      "Tavily",
+      "Robot",
+      "Response",
+      "Product",
+      "Routes",
+      "Environment",
+      "Anchors"
+    ],
+    "availableClips": [
+      "Core_AuthoredMotion",
+      "Text_AuthoredMotion",
+      "Memory_AuthoredMotion",
+      "Tavily_AuthoredMotion",
+      "Robot_AuthoredMotion",
+      "Response_AuthoredMotion"
+    ],
+    "playingClips": 0
+  }
+}

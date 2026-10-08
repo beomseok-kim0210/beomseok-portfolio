@@ -40,16 +40,16 @@ test("D: direct ARMI anchor/range resolves without event replay or document norm
   assert.equal(worldPositionForScroll(99999, 100, 1100), 4);
   assert.equal(worldPositionForScroll(-100, 100, 1100), 0);
   assert.throws(() => worldPositionForScroll(100, 100, 100));
-  assert.equal(evaluateRuntime(0, "stationary", "webgl").shotId, "entry");
+  assert.equal(evaluateRuntime(0, "stationary", "webgl").shotId, "product");
 });
 test("E/F: isolated compatibility preserves all V1 phases and protected local clock", () => {
   for (let i = 0; i <= 10000; i++) {
     const p = i / 10000;
-    const state = evaluateRuntime(worldPositionForDomProgress("armi", p), "forward", "webgl");
+    const state = evaluateRuntime(worldPositionForDomProgress("armi", p), "forward", "fallback");
     assert.equal(state.localProgress, p);
     assert.equal(armiLegacyPhase(state.shotId), journeyPhase(p), `legacy phase at ${p}`);
   }
-  assert.deepEqual([0, .08, .18, .235].map(p => evaluateRuntime(p * 4, "forward", "webgl").shotId), ["entry", "voice", "tablet-approach", "portal"]);
+  assert.deepEqual([0, .08, .18, .235].map(p => evaluateRuntime(p * 4, "forward", "fallback").shotId), ["entry", "voice", "tablet-approach", "portal"]);
   assert.ok(armiRuntimeProfile.shots.some(shot => shot.shotId === "legacy-stt"));
 });
 test("G: V1 numeric choreography remains outside catalog/registry/itinerary", () => {
@@ -85,8 +85,11 @@ test("L/M: all existing routes and Docent identity remain available; Claw Dev ex
   assert.equal(projectCatalog.find(project => project.projectId === "digital-docent")?.summaryReference?.key, "docent");
   assert.equal(projectCatalog.find(project => project.projectId === "claw-dev")?.worldParticipation, "excluded");
 });
-test("N: adopted scene contains only preserved V1 scene modules, no Phase 2 art", () => {
-  assert.deepEqual([...read(world + "adapters/ArmiDistrictScene.tsx").matchAll(/import \{ (Armi\w+) \}/g)].map(match => match[1]), ["ArmiEnvironment", "ArmiSystemWorld", "ArmiTabletPortal", "ArmiVoiceSignal"]);
+test("N: production district replaces primitive world, preserves original product entry", () => {
+  const scene = read(world + "adapters/ArmiDistrictScene.tsx");
+  assert.doesNotMatch(scene, /ArmiSystemWorld|ArmiEnvironment/);
+  assert.match(scene, /prepareArmiV015/);
+  assert.deepEqual([...scene.matchAll(/import \{ (Armi\w+) \}/g)].map(match => match[1]), ["ArmiTabletPortal", "ArmiVoiceSignal"]);
   assert.doesNotMatch(read(world + "runtime/WorldCanvas.tsx"), /RoutingChamber|Hangarae|Wedding/);
 });
 test("responsive synchronization uses actual size and invalidates demand frames", () => {
@@ -94,7 +97,7 @@ test("responsive synchronization uses actual size and invalidates demand frames"
   assert.match(read(world + "runtime/WorldCanvas.tsx"), /subscribeFrame\(invalidate\)/);
   assert.match(read(world + "runtime/WorldCanvas.tsx"), /active \? "always" : "demand"/);
   assert.match(read(world + "runtime/WorldHost.tsx"), /ResizeObserver\(measure\)/);
-  assert.match(read(world + "adapters/ArmiDistrictScene.tsx"), /ArmiVoiceSignal progress=\{progress\} compact=\{compact\}/);
+  assert.match(read(world + "adapters/ArmiDistrictScene.tsx"), /ArmiVoiceSignal progress=\{runtime.progress\} compact=\{compact\}/);
   assert.match(read(base + "ArmiVoiceSignal.tsx"), /compactPolicy \?\? size\.width < 700/);
 });
 

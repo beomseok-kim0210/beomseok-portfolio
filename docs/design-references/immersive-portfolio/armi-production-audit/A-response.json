@@ -1,0 +1,96 @@
+{
+  "stats": {
+    "loads": [
+      {
+        "url": "/models/armi/audit/A.glb?trial=2",
+        "bytes": 3438132,
+        "fetchMs": 131.19999998807907,
+        "parseDecodeMs": 156.5,
+        "totalMs": 287.69999998807907
+      }
+    ],
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1060 3GB (0x00001C02) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "instances": {
+      "batches": 0,
+      "sources": 0
+    }
+  },
+  "metrics": {
+    "loaded": true,
+    "cameraOwner": "WorldCameraController",
+    "shot": "structured",
+    "progress": 0.84,
+    "clipTimes": [
+      {
+        "clip": "Core_AuthoredMotion",
+        "localProgress": 1
+      },
+      {
+        "clip": "Text_AuthoredMotion",
+        "localProgress": 1
+      },
+      {
+        "clip": "Response_AuthoredMotion",
+        "localProgress": 0.7499999999999999
+      }
+    ],
+    "camera": {
+      "position": [
+        0,
+        61,
+        -135.19970703125
+      ],
+      "quaternion": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "geometryDrawCalls": 63,
+    "geometryTriangles": 141920,
+    "drawCallsByDomain": {
+      "Environment": 41,
+      "Response": 19,
+      "RuntimeEffects": 3
+    },
+    "totalDrawCalls": 77,
+    "totalTriangles": 141934,
+    "fps": 44.8,
+    "fpsSamples": [
+      44.8,
+      44.6,
+      44.9,
+      44.9,
+      44.8,
+      44.8
+    ],
+    "fpsAverage": 44.8,
+    "viewport": [
+      1440,
+      900
+    ],
+    "dpr": 1,
+    "semanticGroups": [
+      "Core",
+      "Text",
+      "Memory",
+      "Tavily",
+      "Robot",
+      "Response",
+      "Product",
+      "Routes",
+      "Environment",
+      "Anchors"
+    ],
+    "availableClips": [
+      "Core_AuthoredMotion",
+      "Text_AuthoredMotion",
+      "Memory_AuthoredMotion",
+      "Tavily_AuthoredMotion",
+      "Robot_AuthoredMotion",
+      "Response_AuthoredMotion"
+    ],
+    "playingClips": 0
+  }
+}

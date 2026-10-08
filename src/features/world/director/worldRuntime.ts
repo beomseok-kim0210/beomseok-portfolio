@@ -1,8 +1,9 @@
 import { resolveWorldItinerary, worldSegments } from "../itinerary/worldItinerary";
 import { districtRegistry } from "../registry/districtRegistry";
 import { evaluateWorld, positionForSegment } from "./evaluateWorld";
-import { adaptArmiRuntime, armiRuntimeProfile } from "../adapters/armiRuntime";
+import { adaptArmiRuntime, armiRuntimeProfile, armiProductionProfile } from "../adapters/armiRuntime";
 import type { TraversalDirection, WorldDirectorState, WorldRenderMode } from "../types/contracts";
+import type { ArmiProductionAsset } from "../adapters/armiV015";
 
 // A projection of published metadata onto currently mounted DOM bindings.
 // Only ARMI is adopted in 1B. Unbuilt districts have no synthetic scroll tracks.
@@ -16,7 +17,7 @@ export function worldPositionForScroll(scroll: number, start: number, end: numbe
   return worldPositionForDomProgress(segmentId, (scroll - start) / (end - start));
 }
 export function evaluateRuntime(position: number, direction: TraversalDirection, renderMode: WorldRenderMode) {
-  return evaluateWorld({ position, direction, renderMode }, adoptedWorldItinerary, districtRegistry, [armiRuntimeProfile]);
+  return evaluateWorld({ position, direction, renderMode }, adoptedWorldItinerary, districtRegistry, [renderMode === "webgl" ? armiProductionProfile : armiRuntimeProfile]);
 }
 export function createWorldRuntime() {
   const progress = { current: 0 }; // Explicit ARMI-local legacy clock; never World-normalized.
@@ -26,6 +27,8 @@ export function createWorldRuntime() {
   let position = 0;
   return {
     progress, state,
+    armiAsset: { current: null as ArmiProductionAsset | null },
+    armiReview: { current: null as string | null },
     subscribeFrame(listener: () => void) { listeners.add(listener); return () => { listeners.delete(listener); }; },
     subscribeSemantic(listener: () => void) { semanticListeners.add(listener); return () => { semanticListeners.delete(listener); }; },
     publish(nextPosition: number, renderMode: WorldRenderMode) {

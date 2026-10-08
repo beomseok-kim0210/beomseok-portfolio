@@ -1,0 +1,45 @@
+{
+  "loaded": true,
+  "cameraOwner": "WorldCameraController",
+  "shot": "ProductOpening",
+  "geometryDrawCalls": 4,
+  "geometryTriangles": 648,
+  "totalDrawCalls": 19,
+  "totalTriangles": 664,
+  "fps": 138.2,
+  "fpsSamples": [
+    136.9,
+    140.2,
+    142.6,
+    138.7,
+    134.9,
+    138.2
+  ],
+  "fpsAverage": 138.6,
+  "viewport": [
+    795.125,
+    900
+  ],
+  "dpr": 1,
+  "semanticGroups": [
+    "Core",
+    "Text",
+    "Memory",
+    "Tavily",
+    "Robot",
+    "Response",
+    "Product",
+    "Routes",
+    "Environment",
+    "Anchors"
+  ],
+  "availableClips": [
+    "Core_AuthoredMotion",
+    "Text_AuthoredMotion",
+    "Memory_AuthoredMotion",
+    "Tavily_AuthoredMotion",
+    "Robot_AuthoredMotion",
+    "Response_AuthoredMotion"
+  ],
+  "playingClips": 0
+}

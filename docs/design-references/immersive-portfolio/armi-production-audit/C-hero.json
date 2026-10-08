@@ -1,0 +1,102 @@
+{
+  "stats": {
+    "loads": [
+      {
+        "url": "/models/armi/audit/C.glb?trial=3",
+        "bytes": 3333808,
+        "fetchMs": 140.30000001192093,
+        "parseDecodeMs": 147.19999998807907,
+        "totalMs": 287.5
+      }
+    ],
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1060 3GB (0x00001C02) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "instances": {
+      "batches": 0,
+      "sources": 0
+    }
+  },
+  "metrics": {
+    "loaded": true,
+    "cameraOwner": "WorldCameraController",
+    "shot": "RoutingHero",
+    "progress": 0,
+    "clipTimes": [
+      {
+        "clip": "Core_AuthoredMotion",
+        "localProgress": 0
+      },
+      {
+        "clip": "Text_AuthoredMotion",
+        "localProgress": 0
+      },
+      {
+        "clip": "Response_AuthoredMotion",
+        "localProgress": 0
+      }
+    ],
+    "camera": {
+      "position": [
+        0,
+        50,
+        60
+      ],
+      "quaternion": [
+        -0.005544307163603261,
+        0.027745287803336606,
+        0.00015389849397283014,
+        0.9995996378440917
+      ]
+    },
+    "geometryDrawCalls": 255,
+    "geometryTriangles": 357594,
+    "drawCallsByDomain": {
+      "RuntimeEffects": 4,
+      "Environment": 52,
+      "Core": 41,
+      "Routes": 6,
+      "Text": 36,
+      "Response": 38,
+      "Memory": 25,
+      "Tavily": 24,
+      "Robot": 29
+    },
+    "totalDrawCalls": 269,
+    "totalTriangles": 357608,
+    "fps": 55.7,
+    "fpsSamples": [
+      54.6,
+      56.1,
+      56.3,
+      55.6,
+      54.6,
+      55.7
+    ],
+    "fpsAverage": 55.5,
+    "viewport": [
+      1440,
+      900
+    ],
+    "dpr": 1,
+    "semanticGroups": [
+      "Core",
+      "Text",
+      "Memory",
+      "Tavily",
+      "Robot",
+      "Response",
+      "Product",
+      "Routes",
+      "Environment",
+      "Anchors"
+    ],
+    "availableClips": [
+      "Core_AuthoredMotion",
+      "Text_AuthoredMotion",
+      "Memory_AuthoredMotion",
+      "Tavily_AuthoredMotion",
+      "Robot_AuthoredMotion",
+      "Response_AuthoredMotion"
+    ],
+    "playingClips": 0
+  }
+}

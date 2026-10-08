@@ -1,0 +1,45 @@
+{
+  "loaded": true,
+  "cameraOwner": "WorldCameraController",
+  "shot": "RoutingHero",
+  "geometryDrawCalls": 257,
+  "geometryTriangles": 415326,
+  "totalDrawCalls": 271,
+  "totalTriangles": 415340,
+  "fps": 85.6,
+  "fpsSamples": [
+    83.4,
+    87,
+    87,
+    87.2,
+    86.6,
+    85.6
+  ],
+  "fpsAverage": 86.1,
+  "viewport": [
+    795.125,
+    900
+  ],
+  "dpr": 1,
+  "semanticGroups": [
+    "Core",
+    "Text",
+    "Memory",
+    "Tavily",
+    "Robot",
+    "Response",
+    "Product",
+    "Routes",
+    "Environment",
+    "Anchors"
+  ],
+  "availableClips": [
+    "Core_AuthoredMotion",
+    "Text_AuthoredMotion",
+    "Memory_AuthoredMotion",
+    "Tavily_AuthoredMotion",
+    "Robot_AuthoredMotion",
+    "Response_AuthoredMotion"
+  ],
+  "playingClips": 0
+}

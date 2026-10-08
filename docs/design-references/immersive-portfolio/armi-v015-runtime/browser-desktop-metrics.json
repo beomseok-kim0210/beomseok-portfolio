@@ -1,0 +1,73 @@
+{
+  "loaded": true,
+  "cameraOwner": "WorldCameraController",
+  "shot": "RoutingHero",
+  "progress": 0.5,
+  "clipTimes": [
+    {
+      "clip": "Core_AuthoredMotion",
+      "localProgress": 1
+    },
+    {
+      "clip": "Text_AuthoredMotion",
+      "localProgress": 0
+    },
+    {
+      "clip": "Response_AuthoredMotion",
+      "localProgress": 0
+    }
+  ],
+  "camera": {
+    "position": [
+      0,
+      50,
+      60
+    ],
+    "quaternion": [
+      -0.005544307163603261,
+      0.027745287803336606,
+      0.00015389849397283014,
+      0.9995996378440917
+    ]
+  },
+  "geometryDrawCalls": 255,
+  "geometryTriangles": 404766,
+  "totalDrawCalls": 269,
+  "totalTriangles": 404780,
+  "fps": 55.4,
+  "fpsSamples": [
+    52.4,
+    52.8,
+    52.7,
+    51.4,
+    52.2,
+    55.4
+  ],
+  "fpsAverage": 52.8,
+  "viewport": [
+    1440,
+    900
+  ],
+  "dpr": 1,
+  "semanticGroups": [
+    "Core",
+    "Text",
+    "Memory",
+    "Tavily",
+    "Robot",
+    "Response",
+    "Product",
+    "Routes",
+    "Environment",
+    "Anchors"
+  ],
+  "availableClips": [
+    "Core_AuthoredMotion",
+    "Text_AuthoredMotion",
+    "Memory_AuthoredMotion",
+    "Tavily_AuthoredMotion",
+    "Robot_AuthoredMotion",
+    "Response_AuthoredMotion"
+  ],
+  "playingClips": 0
+}

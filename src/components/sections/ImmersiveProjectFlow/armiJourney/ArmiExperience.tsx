@@ -6,6 +6,9 @@ import type { WorldRenderMode } from "@/features/world/types/contracts";
 import { journeyPhases, productEvidence, returnRecordingTime } from "./experienceData";
 import { ArmiStillWorld } from "./ArmiStillWorld";
 import styles from "./journey.module.css";
+import { armiStage } from "@/features/world/adapters/armiChoreography";
+import { ArmiRoutingOptions } from "./ArmiRoutingOptions";
+import { ArmiProductTransition } from "./ArmiProductTransition";
 
 export function ArmiExperience() {
   const section = useRef<HTMLElement>(null);
@@ -14,12 +17,20 @@ export function ArmiExperience() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [video, setVideo] = useState<HTMLVideoElement | null>(null);
   const [phase, setPhase] = useState(0);
+  const [productionStage, setProductionStage] = useState(() => armiStage(0));
   const [playing, setPlaying] = useState(false);
   const [mode, setMode] = useState<"loading" | "3d" | "reduced" | "fallback">("loading");
   const [active, setActive] = useState(false);
   const fail = useCallback(() => setMode("fallback"), []);
   const worldMode: WorldRenderMode = mode === "3d" ? "webgl" : mode === "reduced" ? "reduced-motion" : mode === "fallback" ? "fallback" : "static";
   useWorldDirector(section, runtime, setPhase, worldMode);
+  useEffect(() => {
+    let previous = "";
+    return runtime.subscribeFrame(() => {
+      const next = armiStage(runtime.progress.current);
+      if (next.id !== previous) { previous = next.id; setProductionStage(next); }
+    });
+  }, [runtime]);
   useEffect(() => {
     if (surface.current) setSurface({ element: surface.current, video, active, mode: worldMode, onFailure: fail });
     return () => setSurface(null);
@@ -46,20 +57,24 @@ export function ArmiExperience() {
     if (original.readyState >= 1 && phase >= 9) original.currentTime = returnRecordingTime;
     else if (original.readyState >= 1 && phase < 4 && original.currentTime===returnRecordingTime) original.currentTime = 0;
   }, [phase]);
-  const step = journeyPhases[phase];
+  const step = mode === "3d" ? { ...productionStage, label: `ARMI / ${productionStage.title}` } : journeyPhases[phase];
   const staticMode = mode !== "3d";
   async function play() {
     if (!videoRef.current) return;
     if (playing) videoRef.current.pause(); else try { await videoRef.current.play(); } catch { setPlaying(false); }
   }
   return <section ref={section} className={styles.track} aria-label="ARMI: 음성 요청의 해석·라우팅·응답·제품 복귀 여정" data-armi-journey="golden">
-    <div className={styles.viewport} data-phase={step.id} data-render-mode={mode}>
+    <div className={styles.viewport} data-phase={step.id} data-render-mode={mode} data-world-asset={mode === "3d" ? "armi-v015" : undefined}>
       <div ref={surface} className={styles.canvas} aria-hidden="true"/>
+      {mode === "3d" && <><ArmiProductTransition runtime={runtime}/><ArmiRoutingOptions runtime={runtime}/></>}
       <div className={styles.overlay}>
         <header className={styles.identity}><p>01 / ARMI</p>{phase === 0 ? <><h2>ARMI</h2><h3>VOICE BECOMES<br/>ACTION.</h3></> : <span>ARMI / REQUEST JOURNEY</span>}</header>
         <div className={styles.narrative} aria-live="polite"><p className={styles.label}>{step.label}</p>{phase > 0 && <h3>{step.title}</h3>}<p>{step.text}</p></div>
         <div className={styles.footer}><span>{phase === 10 ? "SCROLL FOR EVIDENCE ↓" : "SCROLL TO TRAVEL ↓"}</span><p>원본 제품 시연 · 공간과 신호는 설명용 시각화</p></div>
-        {(phase < 2 || phase === 10) && <div className={styles.mediaControl}><p>PATIENT TABLET APP</p><button type="button" onClick={play} aria-pressed={playing}>{playing ? "시연 일시정지 Ⅱ" : "원본 시연 재생 ▷"}</button></div>}
+        {staticMode && (phase < 2 || phase === 10) && <div className={styles.mediaControl}><p>PATIENT TABLET APP</p><button type="button" onClick={play} aria-pressed={playing}>{playing ? "시연 일시정지 Ⅱ" : "원본 시연 재생 ▷"}</button></div>}
+        {mode === "3d" && productionStage.id === "decision" && <div className={styles.routeChoices} aria-label="네 가지 라우팅 후보">
+          {["TEXT ANSWER", "MEMORY RETRIEVAL", "TAVILY SEARCH", "ROBOT ACTION"].map(name => <span key={name} data-selected={productionStage.id === "decision" && name === "TEXT ANSWER"}>{name}{productionStage.id === "decision" ? name === "TEXT ANSWER" ? " · SELECTED" : " · INACTIVE" : " · AVAILABLE"}</span>)}
+        </div>}
         <a className={styles.skip} href="#armi-brief">설명으로 건너뛰기 ↓</a>
       </div>
       {/* Accessible/reduced-motion narrative keeps the same stages in one viewport. */}

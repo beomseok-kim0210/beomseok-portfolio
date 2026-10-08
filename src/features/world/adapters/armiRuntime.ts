@@ -4,6 +4,7 @@ import { ease, entryEnd, entryLocal, interval, journeyPhases } from "@/component
 import { travelProgress } from "@/components/sections/ImmersiveProjectFlow/armiJourney/paths";
 import type { DistrictShotProfile, WorldDirectorState } from "../types/contracts";
 import type { ArmiLegacyEvaluation } from "./armiAdapter";
+import { armiStages } from "./armiChoreography";
 
 // Temporary V1 compatibility, NOT Phase 2 shot authoring. All numeric timing
 // stays here; the catalog, registry and itinerary remain choreography-free.
@@ -15,11 +16,22 @@ export const armiRuntimeProfile: DistrictShotProfile = {
     shotId, localStart: boundaries[i], localEnd: boundaries[i + 1],
     desktopCameraProfileId: "armi/v1-camera", mobileCameraProfileId: "armi/v1-camera-mobile",
     narrativeReferenceId: `armi/v1/${journeyPhases[i].id}`,
-    requiredAssetIds: ["armi/tablet-poster", "armi/tablet-return-poster", "armi/tablet-video"],
+    requiredAssetIds: ["armi/tablet-poster", "armi/tablet-return-poster", "armi/tablet-video", ...(i >= 4 ? ["armi/routing-v015"] : [])],
     reducedMotion: i === 0 || i === 10 ? "product-media" : "still",
   })),
 };
+export const armiProductionProfile: DistrictShotProfile = {
+  profileId: "armi/shots", districtId: "armi", publishState: "published",
+  shots: armiStages.map(stage => ({
+    shotId: stage.id, localStart: stage.start, localEnd: stage.end,
+    desktopCameraProfileId: "armi/v015-scroll-camera", mobileCameraProfileId: "armi/v015-scroll-camera",
+    narrativeReferenceId: `armi/v015/${stage.id}`, requiredAssetIds: ["armi/routing-v015", "armi/tablet-poster", "armi/tablet-return-poster"],
+    reducedMotion: stage.id === "product" || stage.id === "returned" ? "product-media" : "still",
+  })),
+};
 export function armiLegacyPhase(shotId: string | null) {
+  const production: Record<string, number> = { product: 0, enter: 3, routing: 5, options: 5, decision: 6, core: 6, route: 7, text: 7, memory: 7, tavily: 7, robot: 7, response: 8, structured: 8, return: 9, returned: 10 };
+  if (shotId && shotId in production) return production[shotId];
   const index = armiRuntimeShotIds.findIndex(id => id === shotId);
   if (index < 0) throw new Error(`Unknown ARMI compatibility shot: ${shotId}`);
   return index;

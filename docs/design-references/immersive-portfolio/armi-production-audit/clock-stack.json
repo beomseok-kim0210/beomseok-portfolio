@@ -1,0 +1,2286 @@
+[
+  {
+    "sequence": 597,
+    "source": {
+      "tabId": 2
+    },
+    "method": "Runtime.consoleAPICalled",
+    "params": {
+      "args": [
+        {
+          "type": "string",
+          "value": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+        }
+      ],
+      "executionContextId": 92,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "columnNumber": 20,
+            "functionName": "warn",
+            "lineNumber": 1969,
+            "scriptId": "8355",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/three/build/three.core.js"
+          },
+          {
+            "columnNumber": 8,
+            "functionName": "Clock",
+            "lineNumber": 39431,
+            "scriptId": "8355",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/three/build/three.core.js"
+          },
+          {
+            "columnNumber": 19,
+            "functionName": "eval",
+            "lineNumber": 1019,
+            "scriptId": "8713",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/@react-three/fiber/dist/events-b389eeca.esm.js"
+          },
+          {
+            "columnNumber": 31,
+            "functionName": "createStoreImpl",
+            "lineNumber": 22,
+            "scriptId": "8720",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/zustand/esm/vanilla.mjs"
+          },
+          {
+            "columnNumber": 52,
+            "functionName": "createStore",
+            "lineNumber": 25,
+            "scriptId": "8720",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/zustand/esm/vanilla.mjs"
+          },
+          {
+            "columnNumber": 74,
+            "functionName": "createWithEqualityFnImpl",
+            "lineNumber": 26,
+            "scriptId": "8715",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/zustand/esm/traditional.mjs"
+          },
+          {
+            "columnNumber": 80,
+            "functionName": "createWithEqualityFn",
+            "lineNumber": 31,
+            "scriptId": "8715",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/zustand/esm/traditional.mjs"
+          },
+          {
+            "columnNumber": 95,
+            "functionName": "createStore",
+            "lineNumber": 952,
+            "scriptId": "8713",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/@react-three/fiber/dist/events-b389eeca.esm.js"
+          },
+          {
+            "columnNumber": 31,
+            "functionName": "createRoot",
+            "lineNumber": 14640,
+            "scriptId": "8713",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/@react-three/fiber/dist/events-b389eeca.esm.js"
+          },
+          {
+            "columnNumber": 98,
+            "functionName": "eval",
+            "lineNumber": 104,
+            "scriptId": "8712",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/@react-three/fiber/dist/react-three-fiber.esm.js"
+          },
+          {
+            "columnNumber": 19,
+            "functionName": "react_stack_bottom_frame",
+            "lineNumber": 23668,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 29,
+            "functionName": "runWithFiberInDEV",
+            "lineNumber": 871,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 28,
+            "functionName": "commitHookEffectListMount",
+            "lineNumber": 12344,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitHookLayoutEffects",
+            "lineNumber": 12294,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 12,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13049,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13163,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 16,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13246,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13215,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13163,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13163,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 16,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13246,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13215,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13163,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13163,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13163,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13163,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13163,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13129,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 14,
+            "functionName": "flushLayoutEffects",
+            "lineNumber": 16155,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 8,
+            "functionName": "commitRoot",
+            "lineNumber": 15996,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 6,
+            "functionName": "commitRootWhenReady",
+            "lineNumber": 15227,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 14,
+            "functionName": "performWorkOnRoot",
+            "lineNumber": 15146,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 6,
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "lineNumber": 16815,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 47,
+            "functionName": "performWorkUntilDeadline",
+            "lineNumber": 44,
+            "scriptId": "8195",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js"
+          }
+        ]
+      },
+      "timestamp": 1791433831273.485,
+      "type": "warning"
+    }
+  },
+  {
+    "sequence": 598,
+    "source": {
+      "tabId": 2
+    },
+    "method": "Runtime.consoleAPICalled",
+    "params": {
+      "args": [
+        {
+          "type": "string",
+          "value": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+        }
+      ],
+      "executionContextId": 92,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "columnNumber": 20,
+            "functionName": "warn",
+            "lineNumber": 1969,
+            "scriptId": "8355",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/three/build/three.core.js"
+          },
+          {
+            "columnNumber": 8,
+            "functionName": "Clock",
+            "lineNumber": 39431,
+            "scriptId": "8355",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/three/build/three.core.js"
+          },
+          {
+            "columnNumber": 19,
+            "functionName": "eval",
+            "lineNumber": 1019,
+            "scriptId": "8713",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/@react-three/fiber/dist/events-b389eeca.esm.js"
+          },
+          {
+            "columnNumber": 31,
+            "functionName": "createStoreImpl",
+            "lineNumber": 22,
+            "scriptId": "8720",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/zustand/esm/vanilla.mjs"
+          },
+          {
+            "columnNumber": 52,
+            "functionName": "createStore",
+            "lineNumber": 25,
+            "scriptId": "8720",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/zustand/esm/vanilla.mjs"
+          },
+          {
+            "columnNumber": 74,
+            "functionName": "createWithEqualityFnImpl",
+            "lineNumber": 26,
+            "scriptId": "8715",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/zustand/esm/traditional.mjs"
+          },
+          {
+            "columnNumber": 80,
+            "functionName": "createWithEqualityFn",
+            "lineNumber": 31,
+            "scriptId": "8715",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/zustand/esm/traditional.mjs"
+          },
+          {
+            "columnNumber": 95,
+            "functionName": "createStore",
+            "lineNumber": 952,
+            "scriptId": "8713",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/@react-three/fiber/dist/events-b389eeca.esm.js"
+          },
+          {
+            "columnNumber": 31,
+            "functionName": "createRoot",
+            "lineNumber": 14640,
+            "scriptId": "8713",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/@react-three/fiber/dist/events-b389eeca.esm.js"
+          },
+          {
+            "columnNumber": 98,
+            "functionName": "eval",
+            "lineNumber": 104,
+            "scriptId": "8712",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/@react-three/fiber/dist/react-three-fiber.esm.js"
+          },
+          {
+            "columnNumber": 19,
+            "functionName": "react_stack_bottom_frame",
+            "lineNumber": 23668,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 29,
+            "functionName": "runWithFiberInDEV",
+            "lineNumber": 871,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 28,
+            "functionName": "commitHookEffectListMount",
+            "lineNumber": 12344,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitHookLayoutEffects",
+            "lineNumber": 12294,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 12,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13049,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 16,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13246,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13215,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13163,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13163,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13163,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13163,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13052,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13047,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13254,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "recursivelyTraverseLayoutEffects",
+            "lineNumber": 14120,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 10,
+            "functionName": "commitLayoutEffectOnFiber",
+            "lineNumber": 13129,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 14,
+            "functionName": "flushLayoutEffects",
+            "lineNumber": 16155,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 8,
+            "functionName": "commitRoot",
+            "lineNumber": 15996,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 6,
+            "functionName": "commitRootWhenReady",
+            "lineNumber": 15227,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 14,
+            "functionName": "performWorkOnRoot",
+            "lineNumber": 15146,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 6,
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "lineNumber": 16815,
+            "scriptId": "8193",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js"
+          },
+          {
+            "columnNumber": 47,
+            "functionName": "performWorkUntilDeadline",
+            "lineNumber": 44,
+            "scriptId": "8195",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js"
+          }
+        ]
+      },
+      "timestamp": 1791433831711.63,
+      "type": "warning"
+    }
+  }
+]

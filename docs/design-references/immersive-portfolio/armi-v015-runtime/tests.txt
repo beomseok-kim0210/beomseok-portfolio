@@ -1,0 +1,53 @@
+(node:15912) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/UserData/Desktop/beomseok-portfolio/tests/armi-v015.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to D:\UserData\Desktop\beomseok-portfolio\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ shared materials calibrate once, keep authored loader materials and independent groups intact (12.41ms)
+✔ manifest default pose visibility and UI isolation do not require playing an animation (0.5675ms)
+✔ reference sampling keeps the live camera and honors authored world transform (2.366ms)
+(node:21872) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/UserData/Desktop/beomseok-portfolio/tests/world-foundation.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to D:\UserData\Desktop\beomseok-portfolio\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ published district references, project references, shot and manifest ownership resolve (1.7125ms)
+✔ duplicate stable IDs are rejected within each namespace (0.6912ms)
+✔ experimental installations resolve to a non-project Experimental Wing (0.2064ms)
+✔ Claw Dev remains in existing project data/catalog but outside initial itinerary (0.1694ms)
+✔ Digital Docent identity explicitly bridges existing summary key and route (0.1826ms)
+✔ adding a synthetic future district changes traversal, never existing shot-local ranges (1.7385ms)
+✔ forward/reverse/direct-jump evaluation selects identical identities at the same position (1.2464ms)
+✔ segment seams use next entry, final endpoint uses final entry, independent of direction (0.2002ms)
+✔ shot seams are district-local and deterministic with a complete final endpoint (0.236ms)
+✔ shot anchor seams remain exact after weighted offsets and future insertion (0.5728ms)
+✔ non-project segments have no district/shot; publication filtering recomputes adjacency (0.2318ms)
+✔ finite out-of-range positions clamp while invalid positions and weights reject (0.4453ms)
+✔ malformed local partitions reject gaps, overlaps, reversed and incomplete ranges (0.3448ms)
+✔ dangling references, installation parents and ownership violations reject (0.5694ms)
+✔ asset fallbacks resolve and reject missing targets or cycles without loading assets (0.4808ms)
+✔ render capability changes only the renderMode field, not choreography (0.1852ms)
+✔ ARMI boundary stays semantic, unintegrated and explicit about unresolved legacy phases (0.1967ms)
+(node:34796) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/UserData/Desktop/beomseok-portfolio/tests/world-runtime.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to D:\UserData\Desktop\beomseok-portfolio\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ A: mounted Home runtime exposes ARMI and separates continuous/semantic notifications (2.4177ms)
+✔ B/C: equal absolute positions restore deterministic identity forward, reverse and direct (1.5245ms)
+✔ D: direct ARMI anchor/range resolves without event replay or document normalization (0.5824ms)
+✔ E/F: isolated compatibility preserves all V1 phases and protected local clock (27.6195ms)
+✔ G: V1 numeric choreography remains outside catalog/registry/itinerary (1.4145ms)
+✔ H: active district supplies samples; only World controller applies final camera (1.1833ms)
+✔ I/J: one mounted World Canvas/final render, legacy owners retained but unmounted (3.074ms)
+✔ K: reduced/fallback director preserves identities without WebGL; reduced track is brief (1.1991ms)
+✔ L/M: all existing routes and Docent identity remain available; Claw Dev excluded (0.2004ms)
+✔ N: production district replaces primitive world, preserves original product entry (0.9691ms)
+✔ responsive synchronization uses actual size and invalidates demand frames (2.0695ms)
+✔ numeric camera/fog regression uses preserved V1 callback as oracle at both layouts and pointer offsets (1071.4161ms)
+✔ numeric render intent preserves V1 direct/bloom dispatch and strengths (197.306ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1944.9146
