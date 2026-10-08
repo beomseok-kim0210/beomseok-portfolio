@@ -1,13 +1,13 @@
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import type { CSSProperties, Ref } from "react";
+import styles from "./ImmersiveProjectFlow/wedding-transition.module.css";
 import { BeforeAfterFrame } from "@/components/ui/BeforeAfterFrame";
 import { SplitHeadline } from "@/components/ui/SplitHeadline";
-import { ShowcaseMotion } from "@/components/sections/HomeShowcase/ShowcaseMotion";
 
-export function HomeWeddingShowcase() {
+
+export function HomeWeddingShowcase({ progress = 1, frameRef }: { progress?: number; frameRef?: Ref<HTMLDivElement> }) {
   return (
-    <section className="scene-shell flex min-h-screen flex-col items-center justify-center bg-[#FFF9F7] px-5 py-12 text-[#111827] md:py-16">
-      <ShowcaseMotion className="w-full text-center">
+    <section className={styles.weddingHero} style={{"--wedding-progress":progress} as CSSProperties} aria-label="Wedding AI 대표 이미지 비교">
+      <div className={styles.weddingCopy}>
         <p className="cinematic-label text-[var(--wedding-accent)]">
           Choice Intelligence
         </p>
@@ -16,26 +16,18 @@ export function HomeWeddingShowcase() {
         </h2>
         <SplitHeadline
           lines={["사람은", "자신에게 가장 어울리는 선택을", "얼마나 알고 있을까?"]}
-          className="mx-auto mt-4 max-w-[860px] text-[clamp(20px,2vw,30px)] font-medium leading-[1.4] tracking-normal opacity-60"
+          className="mx-auto mt-4 max-w-[860px] text-[clamp(20px,2vw,30px)] font-medium leading-[1.4] tracking-normal text-slate-600"
         />
-      </ShowcaseMotion>
+      </div>
 
-      <ShowcaseMotion preset="media" className="mt-6 w-full max-w-[1060px]">
+      <div ref={frameRef} className={styles.frameSlot}><div className={styles.imageReveal}>
         <BeforeAfterFrame
           beforeSrc="/images/before_wedding.png"
           afterSrc="/images/after_wedding.png"
           beforePosition="center calc(50% + 5px)"
         />
-      </ShowcaseMotion>
+      </div></div>
 
-      <ShowcaseMotion delay={0.25} className="mt-6 text-center">
-        <Link
-          href="/projects/wedding"
-          className="inline-flex h-[48px] items-center gap-2 rounded-full bg-[#111827] px-6 text-[14px] font-semibold text-white transition-transform hover:-translate-y-0.5"
-        >
-          View Case Study <ArrowRight className="h-4 w-4" />
-        </Link>
-      </ShowcaseMotion>
     </section>
   );
 }

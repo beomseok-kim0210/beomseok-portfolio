@@ -39,7 +39,7 @@ export function HangaraeMediaSurface({
         <div>
           <p className="small-label text-emerald-200">Placeholder</p>
           <p className="mt-4 text-xl font-semibold">Add visual asset here</p>
-          {caption ? <p className="mt-3 text-sm text-white/70">{caption}</p> : null}
+          {caption ? <p className="mt-3 text-support text-white/85">{caption}</p> : null}
         </div>
       </div>
     );
@@ -62,7 +62,7 @@ export function HangaraeMediaSurface({
             fit === "contain" ? "object-contain" : "object-cover"
           } ${className}`}
         />
-        {caption ? <p className="text-sm text-slate-500">{caption}</p> : null}
+        {caption ? <p className="text-support text-slate-600">{caption}</p> : null}
       </div>
     );
   }
@@ -78,7 +78,7 @@ export function HangaraeMediaSurface({
           fit === "contain" ? "object-contain" : "object-cover"
         } ${className}`}
       />
-      {caption ? <p className="text-sm text-slate-500">{caption}</p> : null}
+      {caption ? <p className="text-support text-slate-600">{caption}</p> : null}
     </div>
   );
 }

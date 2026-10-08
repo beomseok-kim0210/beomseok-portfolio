@@ -19,7 +19,7 @@ export function WeddingResearchInsight() {
   return (
     <div className="space-y-12">
       <MotionBlock>
-        <p className="small-label text-[#B98979]">Research Insight</p>
+        <p className="small-label text-[#8B5948]">Research Insight</p>
         <h2 className="mt-6 max-w-[980px] text-[44px] font-bold leading-[0.95] tracking-[-0.04em] text-[#111827] md:text-[72px]">
           문제는 모델의 성능이 아니었습니다.
         </h2>
@@ -28,7 +28,7 @@ export function WeddingResearchInsight() {
       <div className="grid gap-8 xl:grid-cols-[0.85fr_1.3fr_0.85fr] xl:items-start">
         <MotionBlock>
           <article className="rounded-[32px] border border-[#E5E7EB] bg-white/75 p-8 backdrop-blur">
-            <p className="small-label text-[#B98979]">Left Problem Space</p>
+            <p className="small-label text-[#8B5948]">Left Problem Space</p>
             <h3 className="mt-5 text-3xl font-semibold text-[#111827]">
               {weddingResearchInsight.leftTitle}
             </h3>
@@ -40,7 +40,7 @@ export function WeddingResearchInsight() {
 
         <MotionBlock delay={0.06}>
           <article className="rounded-[36px] border border-[#E5E7EB] bg-white/80 p-8 backdrop-blur">
-            <p className="small-label text-[#B98979]">Comparison Diagram</p>
+            <p className="small-label text-[#8B5948]">Comparison Diagram</p>
             <div className="mt-8 space-y-4">
               {weddingResearchInsight.comparisons.map((item) => (
                 <div
@@ -67,7 +67,7 @@ export function WeddingResearchInsight() {
 
         <MotionBlock delay={0.12}>
           <article className="rounded-[32px] border border-[#E5E7EB] bg-white/75 p-8 backdrop-blur">
-            <p className="small-label text-[#B98979]">Right Problem Space</p>
+            <p className="small-label text-[#8B5948]">Right Problem Space</p>
             <h3 className="mt-5 text-3xl font-semibold text-[#111827]">
               {weddingResearchInsight.rightTitle}
             </h3>

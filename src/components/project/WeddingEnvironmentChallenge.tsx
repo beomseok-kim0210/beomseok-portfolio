@@ -8,7 +8,7 @@ export function WeddingEnvironmentChallenge() {
   return (
     <div className="space-y-12">
       <MotionBlock>
-        <p className="small-label text-[#B98979]">Environment Challenge</p>
+        <p className="small-label text-[#8B5948]">Environment Challenge</p>
         <h2 className="mt-6 max-w-[980px] text-[44px] font-bold leading-[0.95] tracking-[-0.04em] text-[#111827] md:text-[72px]">
           모델보다 환경 구축이 더 어려웠습니다.
         </h2>
@@ -18,7 +18,7 @@ export function WeddingEnvironmentChallenge() {
         {weddingEnvironmentSteps.map((item, index) => (
           <MotionBlock key={item.step} delay={index * 0.04}>
             <article className="relative h-full rounded-[28px] border border-[#E5E7EB] bg-white/80 p-6 backdrop-blur">
-              <p className="small-label text-[#B98979]">{item.step}</p>
+              <p className="small-label text-[#8B5948]">{item.step}</p>
               <p className="mt-5 text-xl font-semibold leading-tight text-[#111827]">
                 {item.title}
               </p>

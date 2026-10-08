@@ -19,7 +19,7 @@ export function ProjectTechStack({ project, personal = false }: ProjectTechStack
         {project.techStack.map((tech) => (
           <span
             key={tech}
-            className="max-w-full break-words rounded-full border border-slate-200 bg-white px-4 py-3 small-label text-slate-700"
+            className="max-w-full break-words rounded-full border border-slate-200 bg-white px-4 py-3 text-support font-semibold text-slate-700"
           >
             {tech}
           </span>

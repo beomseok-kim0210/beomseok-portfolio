@@ -23,10 +23,10 @@ export function WeddingExpertPromptSystem() {
           <MotionBlock key={expert.title} delay={index * 0.05}>
             <article className="h-full rounded-[32px] border border-[#E5E7EB] bg-white/75 p-7 backdrop-blur transition-transform duration-200 hover:-translate-y-1">
               <div className="flex items-start justify-between gap-4">
-                <p className="small-label text-[#B98979]">
+                <p className="small-label text-[#8B5948]">
                   {String(index + 1).padStart(2, "0")}
                 </p>
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-[#FFF4EF] text-[#B98979]">
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-[#FFF4EF] text-[#8B5948]">
                   <FileText className="h-5 w-5" />
                 </span>
               </div>
@@ -36,7 +36,7 @@ export function WeddingExpertPromptSystem() {
               <p className="project-caption mt-4">
                 {expert.description}
               </p>
-              <p className="mt-5 text-sm font-medium text-slate-500">
+              <p className="mt-5 text-support font-medium text-slate-500">
                 {expert.fileName}
               </p>
             </article>
@@ -46,8 +46,8 @@ export function WeddingExpertPromptSystem() {
 
       <MotionBlock delay={0.12}>
         <div className="rounded-[32px] border border-[#E5E7EB] bg-white/78 p-8 backdrop-blur">
-          <p className="small-label text-[#B98979]">Expert Flow Diagram</p>
-          <div className="mt-8 grid gap-4 lg:grid-cols-7">
+          <p className="small-label text-[#8B5948]">Expert Flow Diagram</p>
+          <div className="mt-8 grid gap-4 lg:grid-cols-4 xl:grid-cols-7">
             {promptFlow.map((step, index) => {
               const isMarkdown = step.endsWith(".md");
               return (
@@ -55,11 +55,11 @@ export function WeddingExpertPromptSystem() {
                   <div className="flex min-h-[112px] w-full items-center justify-center rounded-[24px] border border-[#E5E7EB] bg-[#FFFCFB] p-5 text-center">
                     <div>
                       {isMarkdown ? (
-                        <span className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#FFF4EF] text-[#B98979]">
+                        <span className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#FFF4EF] text-[#8B5948]">
                           <FileText className="h-4 w-4" />
                         </span>
                       ) : null}
-                      <p className={`font-semibold text-[#111827] ${isMarkdown ? "mt-4 text-sm" : "text-base"}`}>
+                      <p className={`font-semibold text-[#111827] ${isMarkdown ? "mt-4 text-support" : "text-base"}`}>
                         {step}
                       </p>
                     </div>
@@ -82,7 +82,7 @@ export function WeddingExpertPromptSystem() {
               {weddingPromptMethods.map((method) => (
                 <span
                   key={method}
-                  className="rounded-full border border-[#E5E7EB] bg-white px-4 py-3 text-sm font-medium text-slate-600"
+                  className="rounded-full border border-[#E5E7EB] bg-white px-4 py-3 text-support font-medium text-slate-600"
                 >
                   {method}
                 </span>

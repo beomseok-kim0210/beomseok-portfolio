@@ -45,12 +45,12 @@ export function SchemaRetryTerminal() {
               transition={{ duration: 0.45 }}
             >
               <p
-                className="mb-2 text-[11px] font-bold uppercase tracking-[0.1em]"
+                className="mb-2 text-xs font-bold uppercase tracking-[0.1em]"
                 style={{ color: toneColor[frame.tone] }}
               >
                 {frame.label}
               </p>
-              <pre className="overflow-x-auto rounded-[14px] border border-white/[0.06] bg-black/40 p-4 font-mono text-[12px] leading-6 text-slate-300">
+              <pre className="overflow-x-auto rounded-[14px] border border-white/[0.06] bg-black/40 p-4 font-mono text-[15px] leading-[1.6] text-slate-300">
                 {frame.lines.map((line) => (
                   <div
                     key={line}
@@ -83,10 +83,10 @@ export function SchemaRetryTerminal() {
             key={row.k}
             className="rounded-[18px] border border-[var(--clawdev-line)] bg-[var(--clawdev-surface)] p-5"
           >
-            <p className="text-[11px] font-bold tracking-[0.14em] text-[var(--clawdev-accent)]">
+            <p className="text-xs font-bold tracking-[0.14em] text-[var(--clawdev-accent)]">
               {row.k.toUpperCase()}
             </p>
-            <p className="mt-2 font-mono text-[12px] leading-5 text-slate-300">
+            <p className="mt-2 font-mono text-support text-slate-300">
               {row.v}
             </p>
           </div>

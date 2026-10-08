@@ -59,7 +59,7 @@ export function ProjectTroubleshooting({ project, personal = false }: ProjectTro
               {item.tech.map((tech) => (
                 <span
                   key={tech}
-                  className="max-w-full break-words rounded-full border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600"
+                  className="max-w-full break-words rounded-full border border-slate-200 px-3 py-2 text-support font-semibold text-slate-600"
                 >
                   {tech}
                 </span>

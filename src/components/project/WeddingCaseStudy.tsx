@@ -51,7 +51,7 @@ function SectionHeading({
 }) {
   return (
     <MotionBlock>
-      <p className="project-section-label text-[#B98979]">{label}</p>
+      <p className="project-section-label text-[#8B5948]">{label}</p>
       <h2
         className={`mt-6 text-[44px] font-bold leading-[0.95] tracking-[-0.04em] text-[#111827] md:text-[72px] ${maxWidth}`}
       >
@@ -76,7 +76,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
     <>
       <section className="min-h-[88vh] max-w-[1100px] pt-32 pb-20 md:pt-44 md:pb-24" data-docent-section="overview">
         <MotionBlock>
-          <p className="project-section-label text-[#B98979]">AI Research Case Study</p>
+          <p className="project-section-label text-[#8B5948]">AI Research Case Study</p>
           <h1 className="mt-8 text-2xl font-semibold text-slate-500">
             {project.title}
           </h1>
@@ -95,7 +95,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
             {weddingHeroChips.map((chip) => (
               <span
                 key={chip}
-                className="rounded-full border border-[#E5E7EB] bg-white/80 px-4 py-3 text-sm font-semibold text-slate-600 backdrop-blur"
+                className="rounded-full border border-[#E5E7EB] bg-white/80 px-4 py-3 text-support font-semibold text-slate-600 backdrop-blur"
               >
                 {chip}
               </span>
@@ -127,7 +127,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
                 <p className="text-2xl font-semibold tracking-[-0.03em] text-[#111827] md:text-3xl">
                   {item.value}
                 </p>
-                <p className="small-label mt-3 text-[#B98979]">{item.label}</p>
+                <p className="small-label mt-3 text-[#8B5948]">{item.label}</p>
               </div>
             ))}
           </div>
@@ -170,7 +170,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
               <article className="h-full rounded-[32px] border border-[#E5E7EB] bg-white/75 p-8 backdrop-blur transition-transform duration-200 hover:-translate-y-1">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
-                    <p className="small-label text-[#B98979]">Model</p>
+                    <p className="small-label text-[#8B5948]">Model</p>
                     <h3 className="mt-4 text-3xl font-semibold text-[#111827]">
                       {item.model}
                     </h3>
@@ -198,7 +198,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
                     </p>
                   </div>
                   <div className="rounded-[24px] bg-[#FFF4EF] p-5">
-                    <p className="small-label text-[#B98979]">Research Outcome</p>
+                    <p className="small-label text-[#8B5948]">Research Outcome</p>
                     <p className="project-caption mt-3 text-slate-700">
                       {item.outcome}
                     </p>
@@ -246,7 +246,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
         <div className="mt-10 grid gap-6 xl:grid-cols-2">
           <MotionBlock delay={0.12}>
             <article className="rounded-[32px] border border-[#E5E7EB] bg-white/75 p-8 backdrop-blur transition-transform duration-200 hover:-translate-y-1">
-              <p className="small-label text-[#B98979]">Success</p>
+              <p className="small-label text-[#8B5948]">Success</p>
               <h3 className="mt-5 text-3xl font-semibold text-[#111827]">
                 {weddingVisualAnalysis.successTitle}
               </h3>
@@ -270,7 +270,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
           </MotionBlock>
           <MotionBlock delay={0.18}>
             <article className="rounded-[32px] border border-[#E5E7EB] bg-white/75 p-8 backdrop-blur transition-transform duration-200 hover:-translate-y-1">
-              <p className="small-label text-[#B98979]">Failure</p>
+              <p className="small-label text-[#8B5948]">Failure</p>
               <h3 className="mt-5 text-3xl font-semibold text-[#111827]">
                 {weddingVisualAnalysis.failureTitle}
               </h3>
@@ -295,7 +295,7 @@ export function WeddingCaseStudy({ project }: WeddingCaseStudyProps) {
         </div>
         <MotionBlock delay={0.2} className="mt-10 max-w-[1280px]">
           <div className="rounded-[32px] border border-[#E5E7EB] bg-white/75 p-6 backdrop-blur">
-            <p className="small-label text-[#B98979]">Failure Detail</p>
+            <p className="small-label text-[#8B5948]">Failure Detail</p>
             <div className="mt-6">
               <WeddingResearchImage
                 src={weddingVisualAnalysis.failureImageSrc}

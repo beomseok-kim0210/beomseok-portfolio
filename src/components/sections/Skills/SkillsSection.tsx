@@ -48,10 +48,10 @@ export function SkillsSection({ variant = "preview" }: SkillsSectionProps) {
                         <p className="small-label text-slate-900">
                           {item.technology}
                         </p>
-                        <p className="mt-1 text-[14px] leading-6 text-slate-500">
+                        <p className="mt-1 text-body text-slate-600">
                           Used in: {item.usedIn}
                         </p>
-                        <p className="mt-1 text-[14px] leading-6 text-slate-600">
+                        <p className="mt-1 text-body text-slate-600">
                           {item.description}
                         </p>
                       </div>

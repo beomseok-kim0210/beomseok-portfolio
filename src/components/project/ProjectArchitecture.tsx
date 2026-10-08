@@ -20,7 +20,7 @@ export function ProjectArchitecture({ project, showTech = true }: ProjectArchite
             className="min-w-0 rounded-[28px] border border-slate-200 bg-white p-7"
           >
             <h3 className="text-2xl font-semibold">{item.title}</h3>
-            <p className="project-caption mt-5">
+            <p className="project-body mt-5">
               {item.description}
             </p>
             {showTech && item.tech ? (
@@ -28,7 +28,7 @@ export function ProjectArchitecture({ project, showTech = true }: ProjectArchite
                 {item.tech.map((tech) => (
                   <span
                     key={tech}
-                    className="max-w-full break-words rounded-full bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-600"
+                    className="max-w-full break-words rounded-full bg-slate-100 px-3 py-2 text-support font-semibold text-slate-600"
                   >
                     {tech}
                   </span>

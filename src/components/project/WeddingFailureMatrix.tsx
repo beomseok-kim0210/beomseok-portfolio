@@ -12,7 +12,7 @@ function ScoreBar({ value }: { value: number }) {
           style={{ width: `${(value / 5) * 100}%` }}
         />
       </div>
-      <span className="text-sm font-medium text-slate-600">{value}/5</span>
+      <span className="text-support font-medium text-slate-600">{value}/5</span>
     </div>
   );
 }
@@ -36,7 +36,7 @@ export function WeddingFailureMatrix() {
         >
           <div className="grid gap-6 xl:grid-cols-[180px_repeat(5,minmax(0,1fr))_1.5fr] xl:items-start">
             <div>
-              <p className="small-label text-[#B98979]">Model</p>
+              <p className="small-label text-[#8B5948]">Model</p>
               <h3 className="mt-4 text-2xl font-semibold text-[#111827]">
                 {row.model}
               </h3>

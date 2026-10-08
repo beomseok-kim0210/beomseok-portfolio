@@ -35,7 +35,7 @@ export function ArmiVisualTroubleshooting() {
                     <p className="mt-3 text-[17px] font-semibold leading-7 text-[#111827] md:text-[19px]">
                       {item.summary.problem}
                     </p>
-                    <p className="mt-2 text-[14px] leading-6 text-red-700/70">
+                    <p className="mt-2 text-support text-red-800">
                       원인 · {item.cause}
                     </p>
                   </div>
@@ -65,7 +65,7 @@ export function ArmiVisualTroubleshooting() {
                               {chosen ? "✓" : i + 1}
                             </span>
                             <span
-                              className={`text-[15px] leading-7 ${
+                              className={`text-body ${
                                 chosen
                                   ? "font-semibold text-[#111827]"
                                   : "text-slate-600"
@@ -73,7 +73,7 @@ export function ArmiVisualTroubleshooting() {
                             >
                               {opt}
                               {chosen && (
-                                <span className="ml-2 inline-block rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white">
+                                <span className="ml-2 inline-block rounded-full bg-blue-600 px-2 py-0.5 text-xs font-bold text-white">
                                   선택
                                 </span>
                               )}
@@ -90,13 +90,13 @@ export function ArmiVisualTroubleshooting() {
                     <p className="mt-4 text-[20px] font-bold leading-[1.5] tracking-[-0.02em] md:text-[26px]">
                       {item.summary.solution}
                     </p>
-                    <p className="mt-4 text-[15px] leading-7 text-white/85 md:text-[16px]">
+                    <p className="mt-4 text-body text-white/85 md:text-[16px]">
                       <span className="font-semibold text-white">왜 이 방법인가 · </span>
                       {item.rationale}
                     </p>
                     <div className="mt-6 border-t border-white/15 pt-5">
                       <p className="step-label text-white/70">결과</p>
-                      <p className="mt-2 text-[15px] font-semibold leading-7 text-white md:text-[16px]">
+                      <p className="mt-2 text-body font-semibold text-white md:text-[16px]">
                         {item.summary.result}
                       </p>
                     </div>
@@ -120,7 +120,7 @@ export function ArmiVisualTroubleshooting() {
                     {item.tech.map((chip) => (
                       <span
                         key={chip}
-                        className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600"
+                        className="rounded-full border border-slate-200 bg-white px-3 py-2 text-support font-semibold text-slate-600"
                       >
                         {chip}
                       </span>

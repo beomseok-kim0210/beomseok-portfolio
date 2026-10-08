@@ -52,7 +52,7 @@ function TroubleFlow({ trouble }: { trouble: HangaraeTrouble }) {
         <p className="mt-3 text-[17px] font-semibold leading-7 text-[#111827] md:text-[18px]">
           {trouble.problem}
         </p>
-        <p className="mt-2 text-[14px] leading-6 text-red-700/70">
+        <p className="mt-2 text-support text-red-800">
           원인 · {trouble.cause}
         </p>
       </div>
@@ -80,13 +80,13 @@ function TroubleFlow({ trouble }: { trouble: HangaraeTrouble }) {
                   {chosen ? "✓" : i + 1}
                 </span>
                 <span
-                  className={`text-[15px] leading-7 ${
+                  className={`text-body ${
                     chosen ? "font-semibold text-[#111827]" : "text-slate-600"
                   }`}
                 >
                   {opt}
                   {chosen && (
-                    <span className="ml-2 inline-block rounded-full bg-[#15803D] px-2 py-0.5 text-[11px] font-bold text-white">
+                    <span className="ml-2 inline-block rounded-full bg-[#15803D] px-2 py-0.5 text-xs font-bold text-white">
                       선택
                     </span>
                   )}
@@ -103,13 +103,13 @@ function TroubleFlow({ trouble }: { trouble: HangaraeTrouble }) {
         <p className="mt-4 text-[19px] font-bold leading-[1.5] tracking-[-0.02em] md:text-[24px]">
           {trouble.decision}
         </p>
-        <p className="mt-4 text-[15px] leading-7 text-white/85 md:text-[16px]">
+        <p className="mt-4 text-body text-white/85 md:text-[16px]">
           <span className="font-semibold text-white">왜 이 방법인가 · </span>
           {trouble.rationale}
         </p>
         <div className="mt-6 border-t border-white/15 pt-5">
           <p className="small-label text-white/70">결과</p>
-          <p className="mt-2 text-[15px] font-semibold leading-7 text-white md:text-[16px]">
+          <p className="mt-2 text-body font-semibold text-white md:text-[16px]">
             {trouble.result}
           </p>
         </div>
@@ -133,7 +133,7 @@ function TroubleFlow({ trouble }: { trouble: HangaraeTrouble }) {
         {trouble.tech.map((chip) => (
           <span
             key={chip}
-            className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600"
+            className="rounded-full border border-slate-200 bg-white px-3 py-2 text-support font-semibold text-slate-600"
           >
             {chip}
           </span>
@@ -157,7 +157,7 @@ function FeedbackMediaPair({
   return (
     <div className="grid gap-6">
       <div className="rounded-[32px] border border-[#E2E8F0] bg-white p-5">
-        <p className="small-label text-[#22C55E]">{leftTitle}</p>
+        <p className="small-label text-[#15803D]">{leftTitle}</p>
         <HangaraeMediaSurface
           src={leftSrc}
           alt={leftTitle}
@@ -167,7 +167,7 @@ function FeedbackMediaPair({
         />
       </div>
       <div className="rounded-[32px] border border-[#E2E8F0] bg-white p-5">
-        <p className="small-label text-[#22C55E]">{rightTitle}</p>
+        <p className="small-label text-[#15803D]">{rightTitle}</p>
         <HangaraeMediaSurface
           src={rightSrc}
           alt={rightTitle}
@@ -353,7 +353,7 @@ export function HangaraeCaseStudy() {
       <section className="py-[96px] md:py-[180px]" data-docent-section="overview">
         <div className="mx-auto max-w-[1280px]">
           <MotionBlock>
-            <p className="project-section-label text-[#22C55E]">{hangaraeHero.eyebrow}</p>
+            <p className="project-section-label text-[#15803D]">{hangaraeHero.eyebrow}</p>
             <h1 className="mt-8 text-[44px] font-bold leading-[0.95] tracking-[-0.04em] text-[#111827] md:text-[72px]">
               {hangaraeHero.title.map((line) => (
                 <span key={line} className="block">
@@ -368,7 +368,7 @@ export function HangaraeCaseStudy() {
               {hangaraeHero.metrics.map((metric) => (
                 <span
                   key={metric}
-                  className="rounded-full border border-[#DCFCE7] bg-[#F0FDF4] px-4 py-3 text-sm font-semibold text-[#15803D]"
+                  className="rounded-full border border-[#DCFCE7] bg-[#F0FDF4] px-4 py-3 text-support font-semibold text-[#15803D]"
                 >
                   {metric}
                 </span>
@@ -394,7 +394,7 @@ export function HangaraeCaseStudy() {
                   href={`#${card.id}`}
                   className="flex h-full min-h-[220px] flex-col rounded-[28px] border border-[#E2E8F0] bg-white p-7 transition-transform duration-200 hover:-translate-y-1"
                 >
-                  <p className="small-label text-[#22C55E]">{card.label}</p>
+                  <p className="small-label text-[#15803D]">{card.label}</p>
                   <p className="mt-5 text-2xl font-semibold leading-[1.2] tracking-[-0.03em] text-[#111827]">
                     {card.title}
                   </p>
@@ -479,12 +479,12 @@ export function HangaraeCaseStudy() {
             {hangaraeTechGroups.map((group, index) => (
               <MotionBlock key={group.label} delay={index * 0.04}>
                 <div className="h-full rounded-[32px] border border-[#E2E8F0] bg-white p-7">
-                  <p className="small-label text-[#22C55E]">{group.label}</p>
+                  <p className="small-label text-[#15803D]">{group.label}</p>
                   <div className="mt-5 flex flex-wrap gap-2">
                     {group.items.map((item) => (
                       <span
                         key={item}
-                        className="rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-2 text-sm font-semibold text-slate-700"
+                        className="rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-2 text-support font-semibold text-slate-700"
                       >
                         {item}
                       </span>

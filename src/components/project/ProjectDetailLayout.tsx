@@ -48,7 +48,7 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
         <div className="pt-24">
           <Link
             href={project.personalStory ? "/#projects" : "/#armi"}
-            className={`inline-flex items-center gap-2 small-label transition-colors ${
+            className={`inline-flex items-center gap-2 text-action transition-colors ${
               isClawDevCaseStudy
                 ? "text-slate-400 hover:text-white"
                 : "text-slate-500 hover:text-[#111827]"
@@ -89,7 +89,7 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
                 <h2 className="mt-4 max-w-[20ch] text-3xl font-semibold tracking-[-0.03em]">
                   읽던 흐름 그대로, 도슨트에게 질문해 보세요.
                 </h2>
-                <p className="mt-4 max-w-[58ch] text-sm leading-7 text-slate-300">
+                <p className="mt-4 max-w-[58ch] text-body text-slate-300">
                   아래 버튼은 새 채팅을 만들지 않습니다. 지금 모든 페이지에 떠 있는 하나의 도슨트 런타임을 확장합니다.
                 </p>
                 <div className="mt-7">
@@ -102,7 +102,7 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
                 <h2 className="mt-4 max-w-[22ch] text-3xl font-semibold tracking-[-0.03em]">
                   사건 현장으로 들어가 직접 수사해 보세요.
                 </h2>
-                <p className="mt-4 max-w-[58ch] text-sm leading-7 text-slate-300">
+                <p className="mt-4 max-w-[58ch] text-body text-slate-300">
                   게임은 별도 앱으로 이동하며, 브라우저의 뒤로 가기로 포트폴리오에 돌아올 수 있습니다.
                 </p>
                 <div className="mt-7">

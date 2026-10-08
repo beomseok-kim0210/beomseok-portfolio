@@ -80,7 +80,7 @@ export function ProjectVideoFrame({
           <div className="absolute left-6 top-6 md:left-8 md:top-8">
             <p className="cinematic-label opacity-70">{eyebrow}</p>
             <p className="mt-3 text-3xl font-bold md:text-5xl">{title}</p>
-            <p className="mt-3 text-sm font-semibold opacity-60">{duration}</p>
+            <p className="mt-3 text-support font-semibold opacity-80">{duration}</p>
           </div>
           <div className="absolute inset-0 flex items-center justify-center">
             {theme === "hangarae" ? (
@@ -101,7 +101,7 @@ export function ProjectVideoFrame({
             {config.chips.map((chip) => (
               <span
                 key={chip}
-                className="rounded-full border border-current/15 bg-white/10 px-4 py-2 text-xs font-semibold backdrop-blur-xl"
+                className="rounded-full border border-current/15 bg-white/10 px-4 py-2 text-support font-semibold backdrop-blur-xl"
               >
                 {chip}
               </span>

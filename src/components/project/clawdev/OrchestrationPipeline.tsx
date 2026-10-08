@@ -36,7 +36,7 @@ export function OrchestrationPipeline() {
 
   return (
     <div ref={ref}>
-      <div className="mb-4 flex items-center gap-2 text-xs font-semibold text-slate-500">
+      <div className="mb-4 flex items-center gap-2 text-support font-semibold text-slate-300">
         <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--clawdev-accent)]" />
         단계를 클릭해 세부 동작을 확인하세요
       </div>
@@ -60,7 +60,7 @@ export function OrchestrationPipeline() {
                   className="w-full text-left transition-transform hover:translate-x-0.5"
                 >
                   <div
-                    className="flex items-center gap-3 rounded-[16px] border px-4 py-3"
+                    className="grid grid-cols-[24px_minmax(0,1fr)] items-start gap-x-3 gap-y-2 rounded-[16px] border px-4 py-3"
                     style={{
                       borderColor:
                         state === "active"
@@ -72,11 +72,11 @@ export function OrchestrationPipeline() {
                         state === "active"
                           ? "rgba(96,165,250,0.1)"
                           : "transparent",
-                      opacity: state === "pending" ? 0.55 : 1,
+                      opacity: state === "pending" ? 0.9 : 1,
                     }}
                   >
                     <span
-                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
+                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold"
                       style={{
                         background:
                           state === "completed"
@@ -90,12 +90,12 @@ export function OrchestrationPipeline() {
                       {state === "completed" ? "✓" : index + 1}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="break-words text-sm font-bold text-white md:break-normal">{phase.label}</p>
-                      <p className="truncate text-[11px] text-slate-500">
+                      <p className="break-words text-xl font-bold text-white md:break-normal">{phase.label}</p>
+                      <p className="text-support text-slate-300">
                         {phase.summary}
                       </p>
                     </div>
-                    <span className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-500">
+                    <span className="col-start-2 text-xs font-semibold uppercase tracking-[0.1em] text-slate-400">
                       {phase.actor}
                     </span>
                   </div>
@@ -118,23 +118,23 @@ export function OrchestrationPipeline() {
               <p className="text-xs font-bold tracking-[0.16em] text-[var(--clawdev-accent)]">
                 PHASE {selected + 1} / {clawdevPhases.length}
               </p>
-              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-semibold uppercase tracking-[0.1em] text-slate-400">
                 {activePhase.actor}
               </span>
             </div>
             <p className="mt-3 text-2xl font-bold text-white md:text-[28px]">
               {activePhase.label}
             </p>
-            <p className="mt-2 text-sm font-semibold text-slate-400">
+            <p className="mt-2 text-support font-semibold text-slate-300">
               {activePhase.summary}
             </p>
-            <p className="mt-5 text-sm leading-relaxed text-slate-300 md:text-base">
+            <p className="mt-5 text-body text-slate-300">
               {activePhase.detail}
             </p>
 
             {/* spec 단계: 5개 병렬 분기 */}
             {activePhase.key === "spec" ? (
-              <div className="mt-6 grid grid-cols-5 gap-2">
+              <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
                 {specBranches.map((branch, i) => (
                   <motion.div
                     key={branch}
@@ -143,10 +143,10 @@ export function OrchestrationPipeline() {
                     transition={{ delay: i * 0.08 }}
                     className="min-w-0 break-all rounded-[12px] border border-[var(--clawdev-line)] bg-white/[0.04] px-2 py-3 text-center md:break-normal"
                   >
-                    <span className="text-[11px] font-semibold text-slate-300">
+                    <span className="text-support font-semibold text-slate-300">
                       {branch}
                     </span>
-                    <p className="mt-1 text-[9px] text-[var(--clawdev-accent-2)]">
+                    <p className="mt-1 text-support text-[var(--clawdev-accent-2)]">
                       Promise.all
                     </p>
                   </motion.div>
@@ -155,7 +155,7 @@ export function OrchestrationPipeline() {
             ) : null}
 
             {/* emits */}
-            <div className="mt-6 break-all rounded-[14px] border border-white/[0.06] bg-black/30 px-4 py-3 font-mono text-[12px] text-[var(--clawdev-accent-2)] md:break-normal">
+            <div className="mt-6 break-all rounded-[14px] border border-white/[0.06] bg-black/30 px-4 py-3 font-mono text-support text-[var(--clawdev-accent-2)] md:break-normal">
               {activePhase.emits}
             </div>
 
@@ -165,7 +165,7 @@ export function OrchestrationPipeline() {
                 type="button"
                 onClick={() => select(Math.max(selected - 1, 0))}
                 disabled={selected === 0}
-                className="rounded-full border border-white/10 px-4 py-2 text-xs font-semibold text-slate-300 transition-colors hover:border-white/40 disabled:opacity-30"
+                className="rounded-full border border-white/10 px-4 py-2 text-action font-semibold text-slate-300 transition-colors hover:border-white/40 disabled:opacity-30"
               >
                 ← 이전
               </button>
@@ -175,7 +175,7 @@ export function OrchestrationPipeline() {
                   select(Math.min(selected + 1, clawdevPhases.length - 1))
                 }
                 disabled={selected === clawdevPhases.length - 1}
-                className="rounded-full border border-white/10 px-4 py-2 text-xs font-semibold text-slate-300 transition-colors hover:border-white/40 disabled:opacity-30"
+                className="rounded-full border border-white/10 px-4 py-2 text-action font-semibold text-slate-300 transition-colors hover:border-white/40 disabled:opacity-30"
               >
                 다음 →
               </button>
@@ -183,9 +183,9 @@ export function OrchestrationPipeline() {
           </motion.div>
 
           {/* 이벤트 로그 */}
-          <div className="rounded-[22px] border border-[var(--clawdev-line)] bg-[#070C18] p-5 font-mono text-[12px] leading-7 text-blue-100">
+          <div className="rounded-[22px] border border-[var(--clawdev-line)] bg-[#070C18] p-5 font-mono text-support leading-7 text-blue-100">
             {clawdevPhases.slice(0, selected + 1).map((phase) => (
-              <p key={phase.key} className="truncate">
+              <p key={phase.key} className="break-words">
                 <span className="text-[var(--clawdev-accent-2)]">
                   {phase.emits}
                 </span>
