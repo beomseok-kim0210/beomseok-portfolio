@@ -1,5 +1,5 @@
 .flow { width:100%; --stage-bg:#060a0c; --stage-ink:#eff1e3; --stage-muted:#9eaaaa; --stage-accent:#d2f059; }
-.scrollTrack { height:calc(315vh - 72px); position:relative; }
+.scrollTrack { height:calc(215vh - 72px); position:relative; }
 .armiBrief { position:absolute; inset:0; z-index:4; visibility:hidden; }
 .armiBrief[data-active=true] { visibility:visible; }
 .armiBrief > section { height:100%; display:flex; align-items:center; }

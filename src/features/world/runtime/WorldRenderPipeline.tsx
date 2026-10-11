@@ -1,7 +1,7 @@
 "use client";
 import { useContext, useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { AgXToneMapping, ACESFilmicToneMapping, Color, Fog, Vector2 } from "three";
+import { AgXToneMapping, ACESFilmicToneMapping, NoToneMapping, Color, Fog, Vector2 } from "three";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
@@ -42,6 +42,19 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
   useEffect(() => () => { pipeline.composer.passes.forEach(pass => pass.dispose()); pipeline.composer.dispose(); }, [pipeline]);
   // Exactly one final render owner. Camera samples have already been applied at -1.
   useFrame((_, delta) => {
+    if(runtime.state.current.districtId === "hangarae") {
+      gl.info.autoReset=false;gl.info.reset();gl.toneMapping=NoToneMapping;gl.toneMappingExposure=1;
+      if(scene.background instanceof Color)scene.background.set("#040a16");
+      else scene.background=new Color("#040a16");
+      scene.fog=null;camera.layers.set(0);
+      // Neon glow: HDR bloom over values >1 only, so the camera photo stays clean.
+      const {strength,threshold,radius}=pipeline.bloom;
+      pipeline.bloom.strength=compact?.32:.4;pipeline.bloom.threshold=1;pipeline.bloom.radius=.38;
+      pipeline.composer.render();
+      pipeline.bloom.strength=strength;pipeline.bloom.threshold=threshold;pipeline.bloom.radius=radius;
+      gl.domElement.dataset.hangaraeMetrics=JSON.stringify({progress:runtime.hangaraeProgress.current,cameraOwner:"WorldCameraController",renderOwner:"WorldRenderPipeline",calls:gl.info.render.calls,triangles:gl.info.render.triangles,frameMs:delta*1000,viewport:[size.width,size.height],dpr:gl.getPixelRatio(),camera:camera.position.toArray()});
+      return;
+    }
     const chamber = !!runtime.armiAsset.current;
     const intent = sampleArmiLookdev(runtime.progress.current, compact);
     gl.info.autoReset = false; gl.info.reset();

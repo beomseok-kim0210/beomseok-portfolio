@@ -14,6 +14,8 @@ export function useWorldDirector(section: RefObject<HTMLElement | null>, runtime
     const clock = { value: runtime.progress.current };
     let previous = -1;
     const publish = () => {
+      // An offscreen ARMI refresh must not take ownership from Hangarae.
+      if (section.current && section.current.getBoundingClientRect().bottom < 72) return;
       const progress = renderMode === "webgl" ? armiScrollProgress(clock.value) : clock.value;
       const state = runtime.publish(worldPositionForDomProgress("armi", progress), renderMode);
       const phase = armiLegacyPhase(state.shotId);
