@@ -8,12 +8,24 @@ import { applyArmiReferenceCamera } from "../adapters/armiV015";
 import { createArmiCameraPath } from "../adapters/armiChoreography";
 import { useRef } from "react";
 import { sampleHangaraeCamera } from "../adapters/hangaraeAnimatic";
+import { docentOverlayPx } from "@/features/docent/docentOverlay";
+import type { Camera } from "three";
+
+/** The canvas spans under the floating docent; shift the projection so the shot centres on the visible stage. */
+function centreOnStage(camera: Camera, width: number, height: number) {
+  if (!(camera instanceof PerspectiveCamera)) return;
+  const shift = docentOverlayPx() / 2;
+  // clearViewOffset() only flips `enabled` and keeps the old offsetX, so re-docking must check `enabled` too.
+  if (shift > 0 && width > shift * 2) { if (!camera.view?.enabled || camera.view.offsetX !== shift || camera.view.fullWidth !== width || camera.view.fullHeight !== height) camera.setViewOffset(width, height, shift, 0, width, height); }
+  else if (camera.view?.enabled) camera.clearViewOffset();
+}
 
 export function WorldCameraController({ runtime, compact }: { runtime: WorldRuntime; compact: boolean }) {
   const sample = useMemo(createArmiCameraSample, []);
   const path = useRef<{ asset: NonNullable<WorldRuntime["armiAsset"]["current"]>; sample: ReturnType<typeof createArmiCameraPath> } | null>(null);
   // Apply before district callbacks (priority 0), matching V1's registration order.
-  useFrame(({ camera, pointer }) => {
+  useFrame(({ camera, pointer, size }) => {
+    centreOnStage(camera, size.width, size.height);
     if (runtime.state.current.districtId === "hangarae") {
       sampleHangaraeCamera(runtime.hangaraeProgress.current,compact,false,sample);
       camera.position.copy(sample.position);camera.up.copy(sample.up);camera.lookAt(sample.target);

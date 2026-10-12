@@ -49,6 +49,8 @@ html {
 
 body {
   margin: 0;
+  /* 100vw full-bleed sections include the classic scrollbar width; clip (not hidden) keeps sticky working. */
+  overflow-x: clip;
   background: var(--background);
   color: var(--foreground);
   font-family: Pretendard, Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -61,16 +63,30 @@ body {
   padding-right: 0;
 }
 
-/* 도슨트가 오른쪽 사이드 패널로 붙어 있을 때만 본문을 비켜 준다. 본문은 확대·축소하지
-   않고, 가운데 정렬된 1440px 의 오른쪽 여백이 모자란 만큼만 민다 (0 ~ 예약 폭).
-   예약 폭 = 패널 440 + 바깥 여백 16 + 본문 간격 24 — globalDocentState 와 같은 값. */
+/* 도슨트는 레이아웃 칸을 차지하지 않고 오른쪽 위에 떠 있는 오버레이다. 배경·3D 는 전체 폭을
+   쓰고, 읽어야 할 내용만 --docent-overlay 만큼 비켜 준다 (패널 440 + 바깥 16 + 간격 24,
+   src/features/docent/docentOverlay.ts 와 같은 값). 투명 테두리라 배경은 테두리 밑까지 칠해진다. */
 @media (min-width: 1280px) {
   html[data-global-docent-view="docked"] {
-    --docent-inset: clamp(0px, calc(2 * 480px + 1440px - 100vw), 480px);
+    --docent-overlay: 480px;
   }
+}
+main > section {
+  border-right: var(--docent-overlay, 0px) solid transparent;
+}
 
-  html[data-global-docent-view="docked"] .global-docent-layout {
-    padding-right: var(--docent-inset);
+/* Journey grammar (src/features/world/runtime/journeyGeometry.ts): entry gate and exit debrief
+   lengths. Narrow / reduced-motion screens keep plain document flow (both 0). */
+:root {
+  --hero-gate: 0px;
+  --world-gate: 0px;
+  --world-debrief: 0px;
+}
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  :root {
+    --world-gate: 110svh;
+    --hero-gate: 90svh;
+    --world-debrief: calc(100svh - 72px);
   }
 }
 
@@ -111,13 +127,10 @@ input:focus-visible {
   margin: 0 auto;
 }
 
-/* 풀블리드 섹션. 도슨트가 오른쪽에 붙어 본문을 비킬 때(--docent-inset) 뷰포트 기준
-   계산이 그 비킴을 무시해 섹션이 inset/2 만큼 왼쪽 밖으로 밀렸다. 투명한 오른쪽 테두리로
-   내용 폭만 줄이고, 배경은 테두리 밑까지 그대로 칠한다(가장자리까지 풀블리드 유지). */
+/* 풀블리드 섹션. 도슨트 회피는 위의 투명 테두리(--docent-overlay)가 맡는다. */
 .scene-shell {
   width: 100vw;
-  margin-left: calc(50% - 50vw + var(--docent-inset, 0px) / 2);
-  border-right: var(--docent-inset, 0px) solid transparent;
+  margin-left: calc(50% - 50vw);
 }
 
 .content-grid {
@@ -275,6 +288,10 @@ input:focus-visible {
   backdrop-filter: blur(18px);
   border-bottom: 1px solid rgba(229, 231, 235, 0.72);
 }
+.glass-nav { transition: background-color .35s ease, border-color .35s ease; }
+.glass-nav[data-tone="dark"] { background: rgba(5, 8, 15, 0.55); border-bottom-color: rgba(200, 214, 238, 0.07); }
+.glass-nav[data-tone="dark"] a { color: #aeb9c6; }
+.glass-nav[data-tone="dark"] a:hover, .glass-nav[data-tone="dark"] a[href="/#hero"] { color: #eef2f5; }
 
 .product-surface {
   border: 1px solid rgba(229, 231, 235, 0.86);
@@ -611,3 +628,10 @@ input:focus-visible {
     display: none !important;
   }
 }
+
+/* Home entrance: pure CSS so the claim paints with the HTML, independent of hydration. */
+@keyframes hero-enter { from { opacity: 0; transform: translateY(40px); filter: blur(12px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes hero-enter-word { from { opacity: 0; filter: blur(14px); } to { opacity: 1; filter: blur(0); } }
+.hero-enter { animation: hero-enter .9s cubic-bezier(.22, 1, .36, 1) both; }
+.hero-enter-word { display: inline-block; animation: hero-enter-word .8s cubic-bezier(.22, 1, .36, 1) .7s both; }
+@media (prefers-reduced-motion: reduce) { .hero-enter, .hero-enter-word { animation: none; } }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import type { NavItem } from "@/types/portfolio";
 
@@ -18,9 +18,22 @@ export function SiteHeader({ items }: SiteHeaderProps) {
     [items],
   );
   const activeSection = useActiveSection(sectionIds);
+  // Dark glass over dark worlds: read the section under the header band (data-header-tone).
+  const [tone, setTone] = useState<"light" | "dark">("light");
+  useEffect(() => {
+    let raf = 0;
+    const read = () => {
+      raf = 0;
+      const under = document.elementsFromPoint(window.innerWidth / 2, 40).find(el => !el.closest("header, [data-loader]")); // the loading overlay is not a section
+      setTone(under?.closest<HTMLElement>("[data-header-tone]")?.dataset.headerTone === "dark" ? "dark" : "light");
+    };
+    const queue = () => { if (!raf) raf = requestAnimationFrame(read); };
+    read(); window.addEventListener("scroll", queue, { passive: true }); window.addEventListener("resize", queue);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", queue); window.removeEventListener("resize", queue); };
+  }, []);
 
   return (
-    <header className="glass-nav fixed left-0 right-0 top-0 z-50">
+    <header className="glass-nav fixed left-0 right-0 top-0 z-50" data-tone={tone}>
       <div className="mx-auto flex h-14 max-w-[1440px] items-center justify-between px-6 md:px-10">
         <Link href="/#hero" className="nav-label text-[#111827]">
           Kim Beom Seok

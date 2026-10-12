@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 import path from "node:path";
 
 const nextConfig: NextConfig = {
+  // Separate build dir for side-by-side production checks (dev keeps .next). Default unchanged.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   reactStrictMode: true,
   pageExtensions: ["ts", "tsx", "md", "mdx"],
   // 도슨트 챗 라우트가 knowledge/*.md를 fs로 읽으므로 서버리스 번들에 포함시킨다

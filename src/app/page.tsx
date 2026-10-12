@@ -3,6 +3,8 @@ import { ContactSection } from "@/components/sections/Contact/ContactSection";
 import { ImmersiveProjectFlow } from "@/components/sections/ImmersiveProjectFlow/ImmersiveProjectFlow";
 
 import { HeroSection } from "@/components/sections/Hero/HeroSection";
+import { WorldLoader } from "@/components/sections/Loader/WorldLoader";
+import { JourneyIndex } from "@/components/sections/JourneyIndex/JourneyIndex";
 import { ProjectIndexSection } from "@/components/sections/ProjectIndex/ProjectIndexSection";
 import { navItems } from "@/data/navigation";
 import { WorldHost } from "@/features/world/runtime/WorldHost";
@@ -11,7 +13,11 @@ export default function Home() {
   return (
     <main>
       <SiteHeader items={navItems} />
+      {/* First-visit loading screen: reports real 3D readiness, never pads time. */}
+      <WorldLoader />
       <HeroSection />
+      {/* Project index: the space from which each 3D world is entered (owns --world-gate). */}
+      <JourneyIndex />
       <WorldHost><ImmersiveProjectFlow /></WorldHost>
 
       <ProjectIndexSection />

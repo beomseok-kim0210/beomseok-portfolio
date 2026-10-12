@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { hgShots, hgSceneRanges } from "@/features/world/adapters/hangaraeAnimatic";
 import styles from "./hangarae.module.css";
+import { SceneHeaderList } from "../SceneHud";
 
 /** Every curve/patch here is authored explanatory graphics, never recorded telemetry. */
 function tracePath(variant: number, n = 64, w = 240, h = 56) {
@@ -21,11 +22,7 @@ export function Trace({ variant = 0, tone = "upper" }: { variant?: number; tone?
 
 export function SceneHeaders() {
   const scenes = hgSceneRanges.map((_, i) => hgShots.find(s => Number(s.scene) === i + 1)!);
-  return <div className={styles.headers}>{scenes.map((s, i) =>
-    <header key={s.scene} className={styles.sceneHeader} style={{ opacity: `var(--h${i})` }} data-scene={s.scene}>
-      <b className={styles.sceneNo}>{s.scene}</b>
-      <div><h3>{s.title}</h3><p className={styles.sceneKo}>{s.ko}</p>{s.text && <p className={styles.sceneText}>{s.text}</p>}</div>
-    </header>)}</div>;
+  return <SceneHeaderList scenes={scenes.map(s => ({ no: s.scene, title: s.title, ko: s.ko, text: s.text }))}/>;
 }
 
 export function PoseLegend() {

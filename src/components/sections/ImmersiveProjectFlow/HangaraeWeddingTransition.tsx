@@ -65,7 +65,7 @@ export function HangaraeWeddingTransition({ children }: { children: ReactNode })
   const align = smooth(phase(progress,.12,.55));
   const {x,y,width:w,height:h} = frame;
   const target: [Point,Point][] = [[[x,y],[x+w,y]],[[x,y+h],[x+w,y+h]],[[x,y],[x,y+h]],[[x+w,y],[x+w,y+h]]];
-  const css = {"--handoff-bg":mixColor([244,242,236],[255,249,247],smooth(progress)),"--brief-opacity":1-exit,"--brief-y":`${-60*exit}px`,"--image-inset":`${50*(1-reveal)}%`,"--image-scale":.96+.04*reveal,"--title-opacity":title,"--title-y":`${24*(1-title)}px`} as CSSProperties;
+  const css = {"--handoff-bg":mixColor([7,12,20],[255,249,247],smooth(progress)),"--brief-opacity":1-exit,"--brief-y":`${-60*exit}px`,"--image-inset":`${50*(1-reveal)}%`,"--image-scale":.96+.04*reveal,"--title-opacity":title,"--title-y":`${24*(1-title)}px`} as CSSProperties;
 
   return <>
     <div ref={track} className={styles.track} style={css} data-wedding-transition={progress.toFixed(4)}>
@@ -76,7 +76,7 @@ export function HangaraeWeddingTransition({ children }: { children: ReactNode })
           <svg className={styles.frameBridge} viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" style={{opacity:smooth(phase(progress,.04,.12))*(1-smooth(phase(progress,.65,.9)))}}>
             {source.map(([a,b],i)=>{
               const start=mixPoint(a,target[i][0],align),end=mixPoint(b,target[i][1],align);
-              return <g key={i}><path d={`M${start[0]} ${start[1]} L${end[0]} ${end[1]}`} fill="none" stroke={mixColor([65,77,207],[185,137,121],align)} strokeWidth="1" vectorEffect="non-scaling-stroke"/><circle cx={end[0]} cy={end[1]} r="3" fill="#414dcf" opacity={1-align}/></g>;
+              return <g key={i}><path d={`M${start[0]} ${start[1]} L${end[0]} ${end[1]}`} fill="none" stroke={mixColor([99,203,219],[185,137,121],align)} strokeWidth="1" vectorEffect="non-scaling-stroke"/><circle cx={end[0]} cy={end[1]} r="3" fill="#63cbdb" opacity={1-align}/></g>;
             })}
           </svg>
         </div>

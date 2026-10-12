@@ -99,23 +99,24 @@ test("desktop docks on the right and pushes the content only as far as it must",
   }
 });
 
-test("content is pushed (never scaled) only while docked on desktop", () => {
+test("docked docent floats over full-width content (no reserved column, never scaled)", () => {
   const layout = read("src/app/layout.tsx");
   const styles = read("src/app/globals.css");
   const shell = read("src/features/docent/GlobalDocent.tsx");
+  const overlay = read("src/features/docent/docentOverlay.ts");
   assert.match(layout, /data-global-docent-layout/);
   assert.match(shell, /dataset\.globalDocentView = state/);
   assert.match(styles, /\.global-docent-layout\s*\{[^}]*padding-right:\s*0;/);
-  // CSS 식은 dockedContentInset 과 같아야 한다 — 한 변수(--docent-inset)로 둔다.
-  assert.match(
-    styles,
-    /@media \(min-width: 1280px\)\s*\{\s*html\[data-global-docent-view="docked"\]\s*\{\s*--docent-inset: clamp\(0px, calc\(2 \* 480px \+ 1440px - 100vw\), 480px\);/,
-  );
-  assert.match(styles, /html\[data-global-docent-view="docked"\] \.global-docent-layout\s*\{\s*padding-right: var\(--docent-inset\);/);
-  // 풀블리드 섹션도 같은 변수를 따른다 — 뷰포트 기준 계산이 비킴을 무시하던 버그.
-  assert.match(styles, /\.scene-shell\s*\{[^}]*margin-left: calc\(50% - 50vw \+ var\(--docent-inset, 0px\) \/ 2\);[^}]*border-right: var\(--docent-inset, 0px\) solid transparent;/);
+  // 본문 칸을 비우지 않는다 — 예전 --docent-inset 밀기 방식은 제거.
+  assert.doesNotMatch(styles, /--docent-inset:/);
+  assert.doesNotMatch(styles, /global-docent-layout\s*\{\s*padding-right: var\(/);
+  // 오버레이 폭은 CSS 와 3D 보정(docentOverlay.ts)이 같은 값을 쓴다.
+  assert.match(styles, /@media \(min-width: 1280px\)\s*\{\s*html\[data-global-docent-view="docked"\]\s*\{\s*--docent-overlay: 480px;/);
+  assert.match(overlay, /DOCENT_OVERLAY_PX = 480/);
+  // 읽을 내용만 투명 테두리로 비킨다 — 배경은 전체 폭.
+  assert.match(styles, /main > section\s*\{\s*border-right: var\(--docent-overlay, 0px\) solid transparent;/);
+  assert.match(styles, /\.scene-shell\s*\{[^}]*margin-left: calc\(50% - 50vw\);/);
   assert.doesNotMatch(styles, /data-global-docent-view="fullscreen"/);
-  assert.doesNotMatch(styles, /global-docent-layout[\s\S]{0,160}transition:\s*padding-right/);
   assert.doesNotMatch(styles, /global-docent-layout[^{]*\{[^}]*(zoom|scale)/);
 });
 

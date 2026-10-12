@@ -143,7 +143,7 @@ export default function AvatarCanvas({
         <Canvas
           className="relative z-10"
           camera={{ position: [0, 0, 0.7], fov: 30 }}
-          dpr={[1, 1.75]}
+          dpr={[1, 1.5]}
           gl={{
             antialias: true,
             powerPreference: "high-performance",

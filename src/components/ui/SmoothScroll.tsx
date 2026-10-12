@@ -23,6 +23,7 @@ export function SmoothScroll() {
       smoothWheel: true,
     });
 
+    window.__lenis = lenis; // journey transitions drive scroll through the same inertia
     gsap.registerPlugin(ScrollTrigger);
     const raf = (seconds: number) => lenis.raf(seconds * 1000);
     lenis.on("scroll", ScrollTrigger.update);
@@ -55,6 +56,7 @@ export function SmoothScroll() {
       lenis.off("scroll", ScrollTrigger.update);
       document.removeEventListener("click", onClick);
       lenis.destroy();
+      delete window.__lenis;
     };
   }, []);
 

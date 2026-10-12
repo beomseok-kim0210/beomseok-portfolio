@@ -45,7 +45,9 @@ function GlobalDocentPresentation() {
   const [canDock, setCanDock] = useState(false);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const { hint, dismiss } = useContextualHint(runtime.pageContext, state);
-  const isOpen = state !== "minimized";
+  // Hidden until the stored view is known: the server render has no viewport width, and a
+  // full-width panel painted before hydration would cover Home on slow first loads.
+  const isOpen = storageReady && state !== "minimized";
   // 좁은 화면에는 옆에 붙을 자리가 없다 — docked 도 헤더 아래 전체 시트로 그린다.
   const sidecar = state === "docked" && canDock;
 
@@ -154,10 +156,11 @@ function GlobalDocentPresentation() {
         data-docent-view={sidecar ? "sidecar" : "workspace"}
         /* 사이드 패널: 헤더(56px) 아래 12px 부터 바닥 12px 까지, 오른쪽 16px 여백에 440px.
            전체 화면/좁은 화면: 헤더 아래 전체 (fixed inset-x-0 bottom-0 top-14). */
-        className={`pointer-events-auto fixed flex flex-col overflow-hidden bg-[#030711]/[0.985] text-white backdrop-blur-xl transition-[opacity,transform,visibility] duration-200 motion-reduce:transition-none ${
+        className={`pointer-events-auto fixed flex flex-col overflow-hidden text-white backdrop-blur-xl transition-[opacity,transform,visibility] duration-200 motion-reduce:transition-none ${
           sidecar
-            ? "bottom-3 right-4 top-[68px] w-[440px] rounded-[28px] border border-white/10 shadow-[0_24px_90px_rgba(2,6,23,0.45)]"
-            : "fixed inset-x-0 bottom-0 top-14 shadow-[0_-18px_70px_rgba(0,0,0,0.38)]"
+            ? /* floating overlay: navy glass so the full-width scene reads through at the edges */
+              "bottom-3 right-4 top-[68px] w-[440px] rounded-[28px] border border-white/[0.12] bg-[#0a1424]/[0.74] backdrop-blur-2xl backdrop-saturate-150 shadow-[0_24px_90px_rgba(2,6,23,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]"
+            : "fixed inset-x-0 bottom-0 top-14 bg-[#030711]/[0.985] shadow-[0_-18px_70px_rgba(0,0,0,0.38)]"
         } ${
           isOpen
             ? "visible translate-y-0 opacity-100"

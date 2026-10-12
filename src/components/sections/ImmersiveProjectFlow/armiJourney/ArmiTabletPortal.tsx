@@ -4,11 +4,12 @@ import { useFrame } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import { DoubleSide, ShaderMaterial, SRGBColorSpace, VideoTexture } from "three";
 import { ease, entryLocal, interval, productEvidence } from "./experienceData";
+const webp = (src: string) => src.replace(/\.png$/, ".webp"); // WebP twins of the frozen evidence paths
 
 /** Original media + an explicitly illustrative aperture. Never a simulated app. */
 export function ArmiTabletPortal({ progress, video }: { progress: RefObject<number>; video: HTMLVideoElement | null }) {
-  const poster = useTexture(productEvidence.poster);
-  const returnPoster = useTexture(productEvidence.returnPoster);
+  const poster = useTexture(webp(productEvidence.poster));
+  const returnPoster = useTexture(webp(productEvidence.returnPoster));
   useEffect(() => { returnPoster.colorSpace = SRGBColorSpace; returnPoster.needsUpdate = true; }, [returnPoster]);
   useEffect(() => { poster.colorSpace = SRGBColorSpace; poster.needsUpdate = true; }, [poster]);
   const videoTexture = useMemo(() => video ? new VideoTexture(video) : null, [video]);

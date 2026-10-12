@@ -6,6 +6,23 @@ export function ProjectDetailLink({ href, children }: { href: string; children: 
   return <Link href={href} className={styles.detailLink}>{children}<span aria-hidden="true">→</span></Link>;
 }
 
+/**
+ * The end of a project journey: every scene just travelled, lit, beside the one solid call to action
+ * in the sheet. It sits after the evidence, so it is the last thing read — and the obvious next step.
+ */
+export function JourneyComplete({ href, cta, sub, recap }: { href: string; cta: string; sub: string; recap?: readonly string[] }) {
+  return <div className={styles.complete}>
+    {recap && <div className={styles.recap}>
+      <p className={styles.recapLabel}>JOURNEY COMPLETE · {String(recap.length).padStart(2, "0")}/{String(recap.length).padStart(2, "0")}</p>
+      <ol aria-label="지나온 장면">{recap.map((title, i) => <li key={title}><span>{String(i + 1).padStart(2, "0")}</span>{title}</li>)}</ol>
+    </div>}
+    <Link href={href} className={styles.cta}>
+      <span className={styles.ctaText}><strong>{cta}</strong><small>{sub}</small></span>
+      <span className={styles.ctaArrow} aria-hidden="true">→</span>
+    </Link>
+  </div>;
+}
+
 const briefs = {
   armi: {
     label: "ARMI / BRIEF EVIDENCE", title: "요청을 이해하는 데서, 실제 동작까지.",
@@ -17,7 +34,7 @@ const briefs = {
       ["입출력 상태 분리", "TTS 완료 콜백을 상태 전환 기준으로 삼고, 말하는 동안 STT를 차단했습니다. 입력 모드에 따라 듣기 재시작 여부를 구분했습니다."],
     ],
     note: "개인 기여: Agent 라우팅·구조화 출력·기억 흐름, 클라이언트 UI·음성 상태. 서버·로봇·태블릿·Watch 연동은 팀 구현입니다.",
-    cta: "ARMI 상세 보기", href: "/projects/armi", accent: "#d2f059", background: "#060a0c", ink: "#eff1e3", muted: "#b4bec0",
+    cta: "ARMI 상세 기록 열기", ctaSub: "문제 정의 · 설계 판단 · 트러블슈팅 · 기술 스택", href: "/projects/armi", ctaInk: "#0b1016", accent: "#d2f059", background: "#060a0c", ink: "#eff1e3", muted: "#b4bec0",
   },
   wedding: {
     label: "WEDDING DRESS AI / BRIEF EVIDENCE", title: "복원의 한계를 분석하고, 비교 경험으로 전환했습니다.",
@@ -29,13 +46,13 @@ const briefs = {
       ["비교 경험과 팀 성과", "여러 생성 옵션과 설명 근거를 비교하는 경험을 구성했습니다. 팀 프로젝트는 생성형 AI 활용 산업융합 프로젝트 최우수상을 수상했습니다."],
     ],
     note: "개인 기여: 3D 후보 검토·환경 검증·실패 분석·문제 재정의·전환 판단·프롬프트 구조 설계. 생성과 비교 결과는 팀 구현입니다.",
-    cta: "Wedding Dress AI 상세 보기", href: "/projects/wedding", accent: "#8b5948", background: "#fff9f7", ink: "#111827", muted: "#525b69",
+    cta: "Wedding Dress AI 상세 기록 열기", ctaSub: "후보 검토 · 실패 분석 · 방향 전환 · 기술 스택", href: "/projects/wedding", ctaInk: "#ffffff", accent: "#8b5948", background: "#fff9f7", ink: "#111827", muted: "#525b69",
   },
 };
 
-export function HomeProjectBrief({ project }: { project: keyof typeof briefs }) {
+export function HomeProjectBrief({ project, recap }: { project: keyof typeof briefs; recap?: readonly string[] }) {
   const brief = briefs[project];
-  const theme = { "--brief-accent": brief.accent, "--brief-bg": brief.background, "--brief-ink": brief.ink, "--brief-muted": brief.muted } as CSSProperties;
+  const theme = { "--brief-accent": brief.accent, "--brief-bg": brief.background, "--brief-ink": brief.ink, "--brief-muted": brief.muted, "--brief-cta-ink": brief.ctaInk } as CSSProperties;
   return <section className={styles.brief} style={theme} aria-label={`${project === "armi" ? "ARMI" : "Wedding Dress AI"} Brief Evidence`}>
     <div className={styles.inner}>
       <p className={styles.label}>{brief.label}</p>
@@ -44,7 +61,7 @@ export function HomeProjectBrief({ project }: { project: keyof typeof briefs }) 
       <ol className={styles.pipeline}>{brief.pipeline.map(([label, text]) => <li key={label}><span>{label}</span><p>{text}</p></li>)}</ol>
       <div className={styles.evidence}>{brief.evidence.map(([title, text]) => <article key={title}><h3>{title}</h3><p>{text}</p></article>)}</div>
       <p className={styles.note}>{brief.note}</p>
-      <ProjectDetailLink href={brief.href}>{brief.cta}</ProjectDetailLink>
+      <JourneyComplete href={brief.href} cta={brief.cta} sub={brief.ctaSub} recap={recap}/>
     </div>
   </section>;
 }

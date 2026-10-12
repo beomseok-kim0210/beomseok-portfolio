@@ -1,13 +1,16 @@
-.track { position:relative; height:980svh; background:#080d10; color:#f4f2e9; }
+/* Transparent track: during Home's gate only the apertured viewport may cover Home. */
+.track { --accent:#d2f059; overflow-x:clip; position:relative; height:980svh; background:transparent; color:var(--world-ink,#f4f2e9); }
 .track:has(> [data-render-mode=3d]) { height:1220svh; }
-.viewport { position:sticky; top:72px; height:calc(100svh - 72px); min-height:520px; overflow:hidden; isolation:isolate; }
-.canvas { position:absolute; inset:0; z-index:0; }
+.viewport { position:sticky; top:72px; height:calc(100svh - 72px); min-height:520px; overflow-x:visible; overflow-y:clip; isolation:isolate; border-right:var(--docent-overlay,0px) solid transparent; background:var(--world-bg,#080d10); box-shadow:0 -96px 0 0 var(--world-bg,#080d10); /* fills the band under the 56px header (as Hangarae) */ }
+/* Canvas reaches under the floating docent; DOM overlays stay in the visible stage (padding box). */
+.canvas { position:absolute; inset:0; right:calc(var(--docent-overlay,0px) * -1); z-index:0; }
 .overlay { position:absolute; inset:0; z-index:2; pointer-events:none; }
 .overlay:before { content:""; position:absolute; inset:0; background:linear-gradient(180deg,#080d10bd,transparent 23%),linear-gradient(0deg,#080d10f0,transparent 34%); }
 .viewport:not([data-phase=entry]) .overlay:before { background:linear-gradient(90deg,#080d10d9,transparent 42%),linear-gradient(180deg,#080d10bd,transparent 23%),linear-gradient(0deg,#080d10f0,transparent 34%); }
 .viewport:is([data-phase=stt],[data-phase=routing],[data-phase=decision],[data-phase=travel],[data-phase=result]) .overlay:before { background:linear-gradient(180deg,#080d10bd,transparent 25%),linear-gradient(0deg,#080d10fa 0%,#080d10ed 24%,transparent 48%); }
 .identity { position:absolute; left:5%; top:8%; }
-.identity p,.identity span,.label,.mediaControl p,.footer span { font:12px/1.5 ui-monospace,monospace; letter-spacing:.14em; color:#adbab8; }
+.identity p,.identity span,.label,.mediaControl p,.footer span { font:var(--world-label); letter-spacing:.14em; color:var(--world-muted); }
+.narrative .label { color:var(--accent); }
 .identity p { margin:0 0 24px; }
 .identity h2 { font:500 clamp(95px,10vw,150px)/.9 var(--font-display),sans-serif; letter-spacing:-.065em; margin:0 0 27px; }
 .identity h3 { font-size:clamp(23px,2.5vw,36px); line-height:1.08; letter-spacing:-.035em; font-weight:400; margin:0; }
@@ -128,11 +131,25 @@
 .viewport:is([data-phase=options],[data-phase=decision]) .identity,.viewport:is([data-phase=options],[data-phase=decision]) .narrative,.viewport:is([data-phase=options],[data-phase=decision]) .routeChoices { visibility:hidden; }
 @media(max-width:700px) { .routingOptions > div { padding:14px 10px; } .routingOptions h4 { font-size:14px; } .routingOptions small { font-size:9px; } .routingRequest { width:88%; top:53%; padding:24px 20px; gap:12px; } .routingRequest strong { font-size:20px; } .routingRequest span { font-size:14px; } }
 
-.viewport:is([data-phase=options],[data-phase=decision]) .footer,.viewport:is([data-phase=options],[data-phase=decision]) .skip { visibility:hidden; }
+.viewport:is([data-phase=options],[data-phase=decision]) .footer,.viewport:is([data-phase=options],[data-phase=decision]) .skip,.viewport:is([data-phase=options],[data-phase=decision]) .hudSlot { visibility:hidden; }
+/* Shared scene HUD (see ../sceneHud.module.css); the hero title keeps its own block. */
+.hudSlot { position:absolute; inset:0; }
+/* ARMI's lit 3D world sits behind the header (Hangarae's is already dark): local scrim, top band only. */
+.hudSlot:before { content:""; position:absolute; inset:0 0 auto 0; height:34%; background:linear-gradient(180deg,#070c14f2 0%,#070c14c4 45%,transparent); pointer-events:none; }
+.hudSlot:after { content:""; position:absolute; inset:auto 0 0 0; height:12%; background:linear-gradient(0deg,#070c14d9,transparent); pointer-events:none; }
+.srOnly { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
 
 /* Extra scroll is spent only on the selected Text hold; later timing stays authored. */
 @media(prefers-reduced-motion:no-preference) {
-  .track { height:1006.4svh; }
-  @media(max-width:700px) { .track { height:841.6svh; } }
+  /* ×(1.15/1.27) with coreExtraScroll .24 → .12, so every other scene keeps its scroll pace. */
+  .track { height:calc(911.3svh + var(--world-gate) + var(--world-debrief)); }
+  @media(max-width:700px) { .track { height:762.1svh; } }
+  /* Pinned under Home from the first pixel: Home's gate opens an aperture onto this world. */
+  @media(min-width:901px) { .track { margin-top:calc(-100svh - var(--world-gate) + 72px); } }
+  /* Closed until script opens it, so the first paint is always Home — never an unprepared world. */
+  @media(min-width:901px) and (scripting:enabled) { .viewport { clip-path:inset(50% 50% 50% 50%); } }
 }
 @media(prefers-reduced-motion:reduce) { .track { height:180svh; } }
+
+/* Aperture rim: the window outline while Home opens onto ARMI (shared shape with Hangarae's entry). */
+.apertureEdge { position:absolute; z-index:20; border:1.5px solid color-mix(in srgb,var(--accent) 70%,transparent); box-shadow:0 0 24px color-mix(in srgb,var(--accent) 25%,transparent); opacity:0; pointer-events:none; }

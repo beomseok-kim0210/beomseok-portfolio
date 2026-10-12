@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { docentOverlayPx } from "@/features/docent/docentOverlay";
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import {
   BoxGeometry, BufferAttribute, BufferGeometry, Camera, Color, Group, Matrix4, Mesh, MeshBasicMaterial, PlaneGeometry, Points,
@@ -15,18 +16,18 @@ import { hangaraeBodySpecs, loadBody } from "./hangaraeBodyLoader";
 
 /* Palette (linear, HDR so the bloom pass picks the neon up). Kept restrained: glow, not glare. */
 const C = {
-  up: new Color(.20, .74, 1.0).multiplyScalar(1.05),
-  upSoft: new Color(.30, .62, 1.0),
-  face: new Color(.42, .95, 1.0),
-  low: new Color(.95, .30, .92),
-  lowSoft: new Color(.62, .38, 1.0),
-  active: new Color(1.0, .26, .80).multiplyScalar(1.25),
-  orange: new Color(1.0, .50, .20).multiplyScalar(1.2),
-  plate: new Color(.25, .80, 1.0).multiplyScalar(1.25),
-  device: new Color(.55, .85, 1.0).multiplyScalar(1.1),
-  red: new Color(1.0, .25, .3).multiplyScalar(1.3),
+  up: new Color(0.35, 0.78, 0.85).multiplyScalar(1.05),
+  upSoft: new Color(0.44, 0.64, 0.86),
+  face: new Color(0.53, 0.84, 0.89),
+  low: new Color(0.86, 0.66, 0.39),
+  lowSoft: new Color(0.9, 0.69, 0.42),
+  active: new Color(0.9, 0.67, 0.36).multiplyScalar(1.25),
+  orange: new Color(0.92, 0.52, 0.28).multiplyScalar(1.2),
+  plate: new Color(0.39, 0.8, 0.86).multiplyScalar(1.25),
+  device: new Color(0.64, 0.88, 0.91).multiplyScalar(1.1),
+  red: new Color(0.93, 0.32, 0.36).multiplyScalar(1.3),
 };
-const depthStops = [new Color(.22, .30, 1.0), new Color(.18, .85, 1.0), new Color(1.0, .86, .32), new Color(1.0, .42, .18)];
+const depthStops = [new Color(0.38, 0.59, 0.84), new Color(0.34, 0.78, 0.84), new Color(0.93, 0.82, 0.39), new Color(0.92, 0.45, 0.26)];
 function depthColor(z: number, out: Color) {
   const t = Math.max(0, Math.min(1, (z + 14) / 54)) * 3, i = Math.min(2, Math.floor(t));
   return out.copy(depthStops[i]).lerp(depthStops[i + 1], t - i).multiplyScalar(1.2);
@@ -60,8 +61,8 @@ function makeHolo(prepass: MeshBasicMaterial, mat: ShaderMaterial): Holo {
 /** Single load-cell footplate: dark glass slab + pressure discs; edges are glow segments. */
 function makePlate(geo: { box: BoxGeometry; disc: PlaneGeometry }) {
   const group = new Group(); group.matrixAutoUpdate = false; group.visible = false;
-  const slab = new MeshBasicMaterial({ color: "#081a38", transparent: true, depthWrite: false });
-  const discs = [createDiscMaterial("#3fd8ff"), createDiscMaterial("#3fd8ff"), createDiscMaterial("#8f7bff"), createDiscMaterial("#5a6bff")];
+  const slab = new MeshBasicMaterial({ color: "#121f2e", transparent: true, depthWrite: false });
+  const discs = [createDiscMaterial("#63cbdb"), createDiscMaterial("#63cbdb"), createDiscMaterial("#e7b16a"), createDiscMaterial("#7ba9de")];
   const [, , cz] = HG_PLATE.center, topY = HG_PLATE.center[1] + HG_PLATE.size[1] / 2 + .004, botY = HG_PLATE.center[1] - HG_PLATE.size[1] / 2 - .01;
   const box = new Mesh(geo.box, slab); box.position.set(HG_PLATE.center[0], HG_PLATE.center[1], HG_PLATE.center[2]); box.renderOrder = 3;
   group.add(box);
@@ -84,9 +85,9 @@ export function HangaraeDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     // Depth prepass pushed back slightly so the shell's own front surface always wins (no speckle).
     const prepass = new MeshBasicMaterial({ colorWrite: false, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 2 });
     const holo = {
-      u: makeHolo(prepass, createHoloMaterial("#2a6dff", "#57d2ff")),
-      l: makeHolo(prepass, createHoloMaterial("#6a36ff", "#ff74dc")),
-      hero: makeHolo(prepass, createHoloMaterial("#2a6dff", "#57d2ff", "#6a36ff", "#ff74dc")),
+      u: makeHolo(prepass, createHoloMaterial("#5590d4", "#77d1df")),
+      l: makeHolo(prepass, createHoloMaterial("#e3a452", "#e7b16a")),
+      hero: makeHolo(prepass, createHoloMaterial("#5590d4", "#77d1df", "#e3a452", "#e7b16a")),
     };
     holo.u.mat.uniforms.uFadeY.value.set(.93, 1.09, 1e4, 1e4 + 1);
     holo.l.mat.uniforms.uFadeY.value.set(-1e4, -9999, .95, 1.07);
@@ -95,7 +96,7 @@ export function HangaraeDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     // Hero assembly particles live in the hero group (body space), filled once the hero body is built.
     const assemblyMat = createAssemblyMaterial(), assembly = new Points(new BufferGeometry(), assemblyMat);
     assembly.frustumCulled = false; assembly.renderOrder = 7; holo.hero.group.add(assembly);
-    return { bones, deco, joints, prepass, holo, geo, plate: makePlate(geo), heroPlate: makePlate(geo), gridMat: createGridMaterial("#2c8fff"), cloudMat: createCloudMaterial(), assembly, assemblyMat };
+    return { bones, deco, joints, prepass, holo, geo, plate: makePlate(geo), heroPlate: makePlate(geo), gridMat: createGridMaterial("#5691d5"), cloudMat: createCloudMaterial(), assembly, assemblyMat };
   }, []);
   useEffect(() => () => {
     kit.bones.dispose(); kit.deco.dispose(); kit.joints.dispose(); kit.prepass.dispose(); kit.gridMat.dispose(); kit.cloudMat.dispose(); kit.assemblyMat.dispose(); kit.assembly.geometry.dispose();
@@ -135,9 +136,10 @@ export function HangaraeDistrictScene({ runtime }: { runtime: WorldRuntime }) {
 
   useFrame(({ camera, clock }) => {
     const W = size.width, H = size.height, p = runtime.hangaraeProgress.current;
-    const s = sampleHangarae(p, W, H), q = s.q, cmp = s.layout.compact, t = clock.elapsedTime, dpr = gl.getPixelRatio();
+    const SW = W - docentOverlayPx(); // stage width: same rect the DOM layer composes in
+    const s = sampleHangarae(p, SW, H), q = s.q, cmp = s.layout.compact, t = clock.elapsedTime, dpr = gl.getPixelRatio();
     const deep = cmp ? basePose.compact : basePose.desktop, flat = cmp ? basePose.flatC : basePose.flatD;
-    const place = hgRigPlacement(W, H), U = hgRigWorld(hgUpperRig, place.upper), L = hgRigWorld(hgLowerRig, place.lower);
+    const place = hgRigPlacement(SW, H), U = hgRigWorld(hgUpperRig, place.upper), L = hgRigWorld(hgLowerRig, place.lower);
     const e = s.split, out = 1 - ramp(q, .705, .735), alive = out * (1 - s.merge) * (1 - s.hero);
     const B = kit.bones, J = kit.joints, D = kit.deco; B.begin(); J.begin(); D.begin();
     const sz = cmp ? .78 : 1;
@@ -159,7 +161,7 @@ export function HangaraeDistrictScene({ runtime }: { runtime: WorldRuntime }) {
 
     /* 00 Hero: one standing hologram (upper cyan / lower violet) turning on the footplate. */
     const heroA = s.hero;
-    const hp: RigPlacement = { ...hgHeroPlacement(W, H), yaw: .45 + t * .28 };
+    const hp: RigPlacement = { ...hgHeroPlacement(SW, H), yaw: .45 + t * .28 };
     const hm = hgRigMatrix(hp, work.hm);
     kit.holo.hero.group.visible = heroA > .002 && kit.holo.hero.ready;
     kit.heroPlate.group.visible = heroA > .002;
@@ -182,7 +184,7 @@ export function HangaraeDistrictScene({ runtime }: { runtime: WorldRuntime }) {
 
     /* 02-03: the camera crop as an analytic plane on z=0, exactly under the DOM rect. */
     if (cameraPlane.current) {
-      const r = s.layout.camera, c = hgWorldFromPx(r.x + r.width / 2, r.y + r.height / 2, W, H), k = hgViewHeight(8) / H;
+      const r = s.layout.camera, c = hgWorldFromPx(r.x + r.width / 2, r.y + r.height / 2, SW, H), k = hgViewHeight(8) / H;
       cameraPlane.current.position.copy(c); cameraPlane.current.scale.set(r.width * k, r.height * k, 1);
       const m = cameraPlane.current.material as MeshBasicMaterial;
       m.opacity = (q >= .226 ? 1 : 0) * s.person; cameraPlane.current.visible = m.opacity > .002;

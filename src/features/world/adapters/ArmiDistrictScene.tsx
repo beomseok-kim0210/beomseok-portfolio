@@ -1,5 +1,6 @@
 "use client";
 import { Suspense, useContext, useEffect, useMemo, useState } from "react";
+import { reportWorldReady } from "../runtime/journeyGeometry";
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
@@ -66,6 +67,7 @@ export function ArmiDistrictScene({ runtime, compact, video }: { runtime: WorldR
   useEffect(() => () => motion.dispose(), [motion]);
   useEffect(() => {
     runtime.armiAsset.current = asset; invalidate();
+    requestAnimationFrame(() => reportWorldReady()); // first frame with the chamber is about to draw
     return () => { runtime.armiAsset.current = null; };
   }, [asset, runtime, invalidate]);
   useEffect(() => {

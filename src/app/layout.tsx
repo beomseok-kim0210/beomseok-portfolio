@@ -56,7 +56,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={display.variable}>
+    <html lang="ko" className={display.variable} suppressHydrationWarning>
+      <head>
+        {/* Docent view before first paint (same rule as globalDocentState): the floating docent's
+            reserved overlay is known up front, so layouts that avoid it never shift (CLS). */}
+        <script dangerouslySetInnerHTML={{ __html: `try{var v=localStorage.getItem("portfolio:ai-docent:view-state");if(v==="expanded")v="docked";if(v!=="minimized"&&v!=="docked"&&v!=="fullscreen")v=innerWidth>=1280?"docked":"minimized";document.documentElement.dataset.globalDocentView=v}catch(e){}` }} />
+      </head>
       <body>
         <SmoothScroll />
         <div className="global-docent-layout" data-global-docent-layout>

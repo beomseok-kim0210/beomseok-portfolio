@@ -1,0 +1,96 @@
+/* Hero: night landscape with a lit doorway. Copy left, rail right, SCROLL cue bottom centre. */
+/* Section is transparent and taller than the screen: its stage pins while the visitor walks
+   through the doorway; the project index waits underneath (journey-index margin-top). */
+/* The section box overlaps the project index during the gate: it must never take clicks itself. */
+.hero { pointer-events:none; position:relative; z-index:3; height:calc(100svh + var(--hero-gate, 0px)); color:#eef2f5; container-type:inline-size; }
+/* The docent floats over the Hero: the stage reaches under it (no reserved column, no page colour showing). */
+.stage { pointer-events:auto; position:sticky; top:0; height:100svh; min-height:600px; overflow:hidden; isolation:isolate; background:#05080f; margin-right:calc(-1 * var(--docent-overlay, 0px)); --p:0; --zoom:1; --flood:0; --leave:0;
+  opacity:calc(1 - var(--leave)); }
+/* Camera plate is shifted left by half the docent so the doorway sits in the visible part. Camera stays still. */
+/* Shifted with transform, not `left`: the docent docking after hydration must not count as a layout shift (CLS). */
+.camera { position:absolute; top:0; bottom:0; left:0; width:calc(100% + var(--docent-overlay, 0px) * .5); transform:translateX(calc(var(--docent-overlay, 0px) * -.5)); z-index:-1; }
+.scene { position:absolute; inset:0; width:100%; height:100%; }
+.copy, .rail { transition:none; }
+
+.copy { position:absolute; left:8.5%; top:29%; width:min(620px,52%); animation:hero-enter .9s cubic-bezier(.22,1,.36,1) backwards; opacity:calc(1 - var(--p) * 3.2); translate:0 calc(var(--p) * -70px); }
+.title { margin:0; font:500 clamp(36px,3.9cqw,60px)/1.28 Pretendard,var(--font-display),sans-serif; letter-spacing:-.035em; word-break:keep-all; color:#f2f5f8; }
+.line { display:block; }
+.word { font-style:normal; color:#7cbcff; text-shadow:0 0 28px rgba(124,188,255,.35); display:inline-block; animation:hero-enter-word .8s cubic-bezier(.22,1,.36,1) .7s both; }
+.lede { margin:30px 0 0; font-size:clamp(15px,1.15cqw,17px); line-height:1.85; color:#b7c2ce; word-break:keep-all; }
+.srEnter { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+.srEnter:focus-visible { position:static; width:auto; height:auto; clip:auto; display:inline-block; margin-top:20px; color:#7cbcff; }
+
+.rail { opacity:calc(1 - var(--p) * 4); position:absolute; right:calc(5% + var(--docent-overlay, 0px)); top:30%; margin:0; padding-left:20px; border-left:1px solid rgba(220,230,245,.28); display:grid; gap:18px; font:11px/2 ui-monospace,monospace; letter-spacing:.2em; color:#c3cdd8; animation:hero-enter .9s cubic-bezier(.22,1,.36,1) .25s backwards; }
+.rail i { display:block; width:14px; height:1px; background:rgba(220,230,245,.5); }
+
+.scroll { opacity:calc(1 - var(--p) * 5); position:absolute; left:calc(50% - var(--docent-overlay, 0px) / 2); bottom:28px; transform:translateX(-50%); display:grid; justify-items:center; gap:10px; font:10px/1 ui-monospace,monospace; letter-spacing:.24em; color:#9aa7b5; text-decoration:none; }
+.scroll i { position:relative; width:16px; height:26px; border:1.3px solid rgba(200,212,228,.6); border-radius:9px; }
+.scroll b { position:absolute; left:50%; top:5px; width:2px; height:5px; margin-left:-1px; border-radius:1px; background:#dfe8f2; animation:wheel 1.8s ease-in-out infinite; }
+.scroll:focus-visible { outline:2px solid #7cbcff; outline-offset:6px; border-radius:6px; }
+@keyframes wheel { 0% { transform:translateY(0); opacity:1; } 70% { transform:translateY(8px); opacity:0; } 100% { opacity:0; } }
+
+/* Ambient life: twinkling stars, a breathing doorway, light travelling along the path */
+.stars circle { animation:twinkle 6s ease-in-out infinite alternate; }
+@keyframes twinkle { from { opacity:.15; } }
+.breathe { animation:breathe 5s ease-in-out infinite alternate; transform-origin:940px 470px; }
+@keyframes breathe { from { opacity:.55; } to { opacity:.85; } }
+.flow { stroke-dasharray:60 900; animation:flow 4.5s linear infinite; }
+@keyframes flow { from { stroke-dashoffset:960; } to { stroke-dashoffset:0; } }
+
+@container (max-width:1180px) { .copy { left:6%; width:44%; } .title { font-size:clamp(30px,3.6cqw,46px); } .rail { right:4%; } }
+@media (max-width:700px) {
+  /* Portrait: keep the doorway in frame (it sits at 68% of the drawing). */
+  .copy { left:22px; right:22px; top:16%; width:auto; }
+  .title { font-size:34px; }
+  .lede { margin-top:18px; font-size:15px; }
+  .lede br { display:none; }
+  .rail { display:none; }
+}
+@media (prefers-reduced-motion:reduce) { .stars circle, .breathe, .flow, .scroll b, .copy, .rail, .word { animation:none; } }
+
+/* ── Photographic plate ─────────────────────────────────── */
+.backdrop { position:absolute; inset:0; overflow:hidden; background:#05080f; }
+.plate { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 50%; }
+/* Doorway breathes (screen blend over the plate's own light) */
+.doorGlow { position:absolute; left:66%; top:45.8%; width:34%; aspect-ratio:1/1.35; transform:translate(-50%,-50%); border-radius:50%;
+  background:radial-gradient(ellipse at 50% 55%, rgba(205,230,255,.07), rgba(120,170,255,.02) 45%, transparent 70%); mix-blend-mode:screen;
+  animation:breathe 5s ease-in-out infinite alternate; }
+/* Low haze drifting over the wet plaza */
+.haze { position:absolute; left:-20%; right:-20%; bottom:12%; height:22%; background:radial-gradient(ellipse 40% 50% at 30% 50%, rgba(150,180,230,.14), transparent 70%), radial-gradient(ellipse 35% 45% at 75% 60%, rgba(150,180,230,.1), transparent 70%);
+  filter:blur(18px); mix-blend-mode:screen; animation:drift 22s ease-in-out infinite alternate; }
+@keyframes drift { from { transform:translateX(-4%); } to { transform:translateX(4%); } }
+/* Scrim: keeps the headline crisp on the left, deepens the frame edges */
+.scrim { position:absolute; inset:0; background:
+  linear-gradient(90deg, rgba(4,7,13,.72) 0%, rgba(4,7,13,.45) 30%, rgba(4,7,13,0) 55%),
+  linear-gradient(180deg, rgba(4,7,13,.45) 0%, rgba(4,7,13,0) 18%, rgba(4,7,13,0) 80%, rgba(4,7,13,.55) 100%); }
+@media (max-width:700px) { .plate { object-position:66% 50%; } .doorGlow { left:50%; } .scrim { background:linear-gradient(180deg, rgba(4,7,13,.75) 0%, rgba(4,7,13,.35) 40%, rgba(4,7,13,0) 60%, rgba(4,7,13,.5) 100%); } }
+@media (prefers-reduced-motion:reduce) { .doorGlow, .haze { animation:none; } }
+
+/* ── Door-light transition (camera still) ──────────────── */
+.night { position:absolute; inset:0; background:#04070d; opacity:calc(var(--spill, 0) * .55); pointer-events:none; }
+.flare { position:absolute; inset:0; z-index:2; pointer-events:none; mix-blend-mode:screen; }
+/* the opening itself, burning brighter */
+.core { position:absolute; left:var(--door-x); top:var(--door-y); width:var(--door-w); height:var(--door-h);
+  background:linear-gradient(180deg, #bfe0ff 0%, #eef7ff 55%, #ffffff 100%);
+  opacity:calc(var(--charge, 0) * .22); filter:blur(calc(2px + var(--charge, 0) * 4px));
+  box-shadow:0 0 calc(var(--charge, 0) * 30px) calc(var(--charge, 0) * 6px) rgba(200,228,255,.35); }
+/* light spilling sideways out of the opening, widening past the pillars */
+.spill { position:absolute; left:calc(var(--door-x) + var(--door-w) / 2); top:calc(var(--door-y) - var(--door-h) * .08); height:calc(var(--door-h) * 1.16);
+  width:calc(var(--door-w) * 1.4); transform:translateX(-50%) scaleX(calc(1 + var(--spill, 0) * 22));
+  background:radial-gradient(ellipse 50% 50% at 50% 55%, rgba(255,255,255,.95), rgba(190,222,255,.55) 40%, rgba(120,170,255,0) 72%);
+  opacity:calc(var(--spill, 0) * .32); filter:blur(calc(10px + var(--spill, 0) * 30px)); }
+/* bloom around the doorway */
+.bloom { position:absolute; left:calc(var(--door-x) + var(--door-w) / 2); top:calc(var(--door-y) + var(--door-h) * .55);
+  width:calc(var(--door-h) * 1.6); aspect-ratio:1; transform:translate(-50%,-50%) scale(calc(.6 + var(--charge, 0) * .6 + var(--spill, 0) * 2.4));
+  border-radius:50%; background:radial-gradient(circle, rgba(220,238,255,.75), rgba(140,190,255,.25) 40%, transparent 70%);
+  opacity:calc(var(--charge, 0) * .18); }
+/* god rays fanning out of the door */
+.rays { position:absolute; left:calc(var(--door-x) + var(--door-w) / 2); top:calc(var(--door-y) + var(--door-h) * .6);
+  width:220vmax; aspect-ratio:1; transform:translate(-50%,-50%) rotate(calc(var(--spill, 0) * 8deg));
+  background:repeating-conic-gradient(from 0deg, rgba(210,232,255,.22) 0deg 1.4deg, transparent 1.4deg 7deg);
+  -webkit-mask:radial-gradient(circle, transparent 2%, #000 8%, transparent 46%); mask:radial-gradient(circle, transparent 2%, #000 8%, transparent 46%);
+  opacity:calc(var(--spill, 0) * (1 - var(--flash, 0)) * .15); filter:blur(2px); }
+/* white-out, centred on the door */
+.flash { position:absolute; inset:0; z-index:3; pointer-events:none; opacity:var(--flash, 0);
+  background:radial-gradient(circle at calc(var(--door-x) + var(--door-w) / 2) calc(var(--door-y) + var(--door-h) * .6), #c9dcf5 0%, #7f9fcf 30%, #2a3e66 70%, #0b1424 100%); }
+@media (prefers-reduced-motion:reduce) { .flare, .flash { display:none; } }

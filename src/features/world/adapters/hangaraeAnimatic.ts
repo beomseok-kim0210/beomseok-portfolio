@@ -9,21 +9,30 @@ const INNER = [0, .12, .24, .35, .49, .56, .72, .80, .89, 1] as const;
 export const hgInner = (p: number) => Math.max(0, Math.min(1, (p - HG_HERO) / (1 - HG_HERO)));
 export const hgOuter = (q: number) => HG_HERO + q * (1 - HG_HERO);
 export const hgRanges = [0, ...INNER.map(hgOuter)] as readonly number[];
+/** Scroll pacing only (authored timeline untouched): [timeline end, scroll weight] per segment.
+ *  06 correction focus gets 2.2× room; the static 07 return hold keeps 35% so it closes the loop briefly. */
+const HG_PACE = [[hgOuter(.762), 1], [hgOuter(.80), 2.2], [hgOuter(.885), 1], [1, .35]] as const;
+export const HG_SCROLL_LENGTH = HG_PACE.reduce((sum, [end, w], i) => sum + (end - (i ? HG_PACE[i - 1][0] : 0)) * w, 0);
+export function hgScrollToTimeline(scroll: number) {
+  let left = Math.max(0, Math.min(1, scroll)) * HG_SCROLL_LENGTH, start = 0;
+  for (const [end, w] of HG_PACE) { const span = (end - start) * w; if (left <= span) return start + left / w; left -= span; start = end; }
+  return 1;
+}
 /** Scene copy follows the approved 7-scene reference; facts follow the repo audit. */
 export const hgShots = [
   { id: "hero", scene: "00", title: "HANGARAE", ko: "행가래", text: "카메라가 읽은 움직임과 발판의 하중이, 다시 게임이 됩니다." },
   { id: "product", scene: "01", title: "ACTUAL GAME", ko: "실제 행가래 게임 화면", text: "상체 · 하체 두 가지 재활 게임을 먼저 보여줍니다." },
   { id: "camera", scene: "02", title: "CAMERA", ko: "카메라로 확대", text: "게임 UI가 사라지고 실시간 카메라 화면으로 접근합니다." },
   { id: "pose", scene: "03", title: "POSE", ko: "사람 → 21개 관절 스켈레톤", text: "사람 영상이 사라지고 관절 스켈레톤만 남습니다." },
-  { id: "depth", scene: "04", title: "DEPTH / 3D XYZ", ko: "깊이 카메라가 관절에 Z를 더한다", text: "깊이 카메라가 몸까지의 거리를 읽고, 관절 주변 깊이로 3차원 좌표를 만듭니다." },
-  { id: "split", scene: "05", title: "BRANCH ANALYSIS", ko: "상체 / 하체 분석으로 분기", text: "상체는 관절 움직임을, 하체는 발판 하중을 분석합니다." },
-  { id: "analysis", scene: "05", title: "BRANCH ANALYSIS", ko: "상체 / 하체 분석으로 분기", text: "상체는 관절 움직임을, 하체는 발판 하중을 분석합니다." },
-  { id: "reaction", scene: "06", title: "GAME REACTION", ko: "성공과 교정, 각자의 게임으로", text: "" },
-  { id: "merge", scene: "07", title: "ACTUAL GAME (RETURN)", ko: "다시 실제 행가래 게임 화면으로", text: "" },
-  { id: "return", scene: "07", title: "ACTUAL GAME (RETURN)", ko: "다시 실제 행가래 게임 화면으로", text: "" },
+  { id: "depth", scene: "04", title: "DEPTH / 3D XYZ", ko: "깊이 카메라가 관절에 Z를 더한다", text: "영상 속 관절은 평면 좌표뿐이라 카메라 쪽으로 움직이는 동작을 구분하기 어렵습니다. 그래서 관절 주변 깊이를 읽어 3차원 좌표를 만듭니다." },
+  { id: "split", scene: "05", title: "BRANCH ANALYSIS", ko: "상체 / 하체 분석으로 분기", text: "두 게임이 동작을 판정하는 신호가 다릅니다. 상체는 관절 움직임을, 하체는 발판에 실린 하중을 분석합니다." },
+  { id: "analysis", scene: "05", title: "BRANCH ANALYSIS", ko: "상체 / 하체 분석으로 분기", text: "두 게임이 동작을 판정하는 신호가 다릅니다. 상체는 관절 움직임을, 하체는 발판에 실린 하중을 분석합니다." },
+  { id: "reaction", scene: "06", title: "GAME REACTION", ko: "성공과 교정, 각자의 게임으로", text: "분석 결과가 게임의 반응이 됩니다. 맞으면 성공을, 틀리면 교정 피드백을 돌려줍니다." },
+  { id: "merge", scene: "07", title: "ACTUAL GAME (RETURN)", ko: "다시 실제 행가래 게임 화면으로", text: "처음 본 같은 게임 화면입니다. 이제 그 뒤의 인식과 분석을 알고 봅니다." },
+  { id: "return", scene: "07", title: "ACTUAL GAME (RETURN)", ko: "다시 실제 행가래 게임 화면으로", text: "처음 본 같은 게임 화면입니다. 이제 그 뒤의 인식과 분석을 알고 봅니다." },
 ] as const;
 /** Header cross-fade windows for scenes 01-07 (hero has its own title block). */
-export const hgSceneRanges = ([[0, .12], [.12, .24], [.24, .35], [.35, .49], [.49, .72], [.72, .80], [.80, 1]] as const).map(([a, b]) => [hgOuter(a), hgOuter(b)] as const);
+export const hgSceneRanges = ([[0, .12], [.12, .24], [.24, .35], [.35, .49], [.49, .72], [.72, .82], [.82, 1]] as const).map(([a, b]) => [hgOuter(a), hgOuter(b)] as const);
 export const hangaraeRuntimeProfile: DistrictShotProfile = {
   profileId: "hangarae/shots", districtId: "hangarae", publishState: "published",
   shots: hgShots.map((s, i) => ({ shotId: s.id, localStart: hgRanges[i], localEnd: hgRanges[i + 1],
@@ -41,6 +50,11 @@ export const hgGif = {
   upper: encodeURI("/images/상체_collect.gif"), lower: encodeURI("/images/하체_collect.gif"),
   upperFail: encodeURI("/images/상체틀림.gif"), lowerFail: encodeURI("/images/하체틀림.gif"),
 } as const;
+/** The same recordings re-encoded as video (GIF 44.4MB → mp4 1.1MB); the GIF paths stay for reference. */
+export const hgVideo = {
+  upper: "/images/hangarae/video/upper-collect", lower: "/images/hangarae/video/lower-collect",
+  upperFail: "/images/hangarae/video/upper-fail", lowerFail: "/images/hangarae/video/lower-fail",
+} as const;
 /** GIFs exported 854-wide carry black padding right of the 768px UI; these need cropping. */
 export const hgGifPadded = { upper: true, lower: true, upperFail: false, lowerFail: true } as const;
 export const hgMedia = {
@@ -49,7 +63,8 @@ export const hgMedia = {
   upperReturn: "upper-normal-172.png", upperSuccess: "upper-normal-156.png",
   upperFailure: "upper-failure-47.png", lowerFailure: "lower-failure-73.png",
 } as const;
-export const hgAsset = (name: string) => `/images/hangarae/animatic/${name}`;
+/** Animatic stills are served as WebP (PNG originals kept alongside): 1.9MB → ~0.2MB. */
+export const hgAsset = (name: string) => `/images/hangarae/animatic/${name.replace(/\.png$/, ".webp")}`;
 /** Camera panel inside the 768×480 product frame. */
 export const HG_FRAME = { width: 768, height: 480 } as const;
 export const HG_CAMERA_REGION = { x: 14, y: 55, width: 214, height: 407 } as const;
@@ -95,7 +110,7 @@ export function sampleHangarae(p: number, width: number, height: number, reduced
   if (reduced) p = shot === 0 ? .02 : hgOuter([.06, .235, .33, .46, .555, .66, .775, .86, .95][shot - 1]);
   // Hero: wipe in over the ARMI brief, particles assemble the body, title reveals, then hands to 01.
   const eff = p, hero = 1 - ramp(p, .084, .1), intro = ramp(p, .09, .108);
-  const wipe = reduced ? 1 : ramp(p, 0, .026), assemble = reduced ? 1 : ramp(p, .01, .055), shell = reduced ? 1 : ramp(p, .042, .07), title = reduced ? 1 : ramp(p, .026, .062);
+  const wipe = reduced ? 1 : ramp(p, 0, .026), assemble = reduced ? 1 : ramp(p, .01, .055), shell = reduced ? 1 : ramp(p, .042, .07), title = reduced ? 1 : ramp(p, .004, .04);
   p = hgInner(p);
   const layout = hgLayout(width, height);
   const zoom = ramp(p, .125, .215), split = ramp(p, .495, .565), merge = ramp(p, .80, .872);

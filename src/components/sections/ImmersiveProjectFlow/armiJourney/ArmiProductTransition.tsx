@@ -4,6 +4,7 @@ import type { WorldRuntime } from "@/features/world/director/worldRuntime";
 import { local, productTransition } from "@/features/world/adapters/armiChoreography";
 import { productEvidence } from "./experienceData";
 import styles from "./journey.module.css";
+const webp = (src: string) => src.replace(/\.png$/, ".webp"); // WebP twins of the frozen evidence paths
 
 /** Original product pixels stay in DOM, outside WebGL exposure and bloom. */
 export function ArmiProductTransition({ runtime }: { runtime: WorldRuntime }) {
@@ -91,7 +92,7 @@ export function ArmiProductTransition({ runtime }: { runtime: WorldRuntime }) {
       <div className={styles.tabletDevice}>
       <span className={styles.tabletCamera} aria-hidden="true"/>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={productEvidence.poster} alt="실제 ARMI 환자 태블릿 앱"/>
+      <img src={webp(productEvidence.poster)} alt="실제 ARMI 환자 태블릿 앱"/>
       </div>
       <span className={styles.tabletCaption}>SAMSUNG GALAXY TAB <span>실제 사용 기기 · 환자용 ARMI</span></span>
     </div>
@@ -103,7 +104,7 @@ export function ArmiProductTransition({ runtime }: { runtime: WorldRuntime }) {
       <div className={styles.tabletDevice}>
       <span className={styles.tabletCamera} aria-hidden="true"/>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={productEvidence.poster} alt="처음 보았던 실제 ARMI 환자 태블릿 UI로 복귀"/>
+      <img src={webp(productEvidence.poster)} alt="처음 보았던 실제 ARMI 환자 태블릿 UI로 복귀"/>
       </div>
       <span className={styles.tabletCaption}>SAMSUNG GALAXY TAB <span>실제 사용 기기 · 환자용 ARMI</span></span>
     </div>

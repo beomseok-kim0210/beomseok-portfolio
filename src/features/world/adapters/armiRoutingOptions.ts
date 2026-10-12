@@ -1,4 +1,5 @@
 import { Color, PerspectiveCamera, Vector3, Vector4, Scene, OrthographicCamera, Mesh, PlaneGeometry, MeshBasicMaterial, WebGLRenderTarget, HalfFloatType } from "three";
+import { docentOverlayPx } from "@/features/docent/docentOverlay";
 import type { WebGLRenderer } from "three";
 import type { ArmiProductionAsset } from "./armiV015";
 import { armiOptionsWindow } from "./armiChoreography";
@@ -42,7 +43,8 @@ export function createArmiRoutingOptions() {
           } else if (ref) {
             ref.updateWorldMatrix(true, false); ref.getWorldPosition(camera.position); ref.getWorldQuaternion(camera.quaternion); camera.fov = ref.fov;
           }
-          const tileWidth = Math.floor(width / 2), tileHeight = Math.floor(height / 2);
+          const stage = Math.round(width * (1 - docentOverlayPx() / Math.max(1, window.innerWidth))); // visible part beside the floating docent
+          const tileWidth = Math.floor(stage / 2), tileHeight = Math.floor(height / 2);
           const x = (i % 2) * tileWidth, y = i < 2 ? tileHeight : 0;
           camera.aspect = tileWidth / tileHeight;
           if (camera.aspect < 1) camera.fov = 2 * Math.atan(Math.tan(camera.fov * Math.PI / 360) / camera.aspect) * 180 / Math.PI;

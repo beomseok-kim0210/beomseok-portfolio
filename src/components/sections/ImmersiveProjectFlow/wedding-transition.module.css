@@ -1,5 +1,7 @@
-.track { position:relative; height:calc(var(--reading-height,100vh) + 115vh); background:var(--handoff-bg,#f4f2ec); }
-.stage { position:sticky; top:calc(100vh - var(--reading-height,100vh)); height:var(--reading-height,100vh); overflow:hidden; isolation:isolate; }
+/* EXIT (shared with ARMI): this sheet rises over Hangarae's held final frame. */
+.track { position:relative; height:calc(var(--reading-height,100vh) + 115vh); background:var(--handoff-bg,#070c14); margin-top:calc(-1 * var(--world-debrief, 0px)); box-shadow:0 -40px 90px rgba(0,0,0,.6); }
+.track:before { content:""; position:absolute; top:0; left:0; right:0; height:1px; z-index:5; background:linear-gradient(90deg,transparent,#63cbdb99 20%,#63cbdb99 80%,transparent); pointer-events:none; }
+.stage { position:sticky; top:calc(100vh - var(--reading-height,100vh)); height:var(--reading-height,100vh); overflow:hidden; isolation:isolate; border-right:var(--docent-overlay,0px) solid transparent; }
 .reading { position:relative; z-index:2; opacity:var(--brief-opacity,1); transform:translateY(var(--brief-y,0)); }
 .reading > section { background:transparent; }
 .arrival { position:absolute; bottom:0; width:100%; height:calc(100vh - 72px); }
@@ -24,6 +26,6 @@
   .frameBridge { display:none; }
 }
 
-@media (max-width:900px), (prefers-reduced-motion:reduce) { .reading > section { background:#f4f2ec; } }
+@media (max-width:900px), (prefers-reduced-motion:reduce) { .reading > section { background:#070c14; } }
 
 @media (max-width:900px), (prefers-reduced-motion:reduce) { .arrival { background:#FFF9F7; } }

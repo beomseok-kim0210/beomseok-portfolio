@@ -1,9 +1,16 @@
-.flow { width:100%; --stage-bg:#060a0c; --stage-ink:#eff1e3; --stage-muted:#9eaaaa; --stage-accent:#d2f059; }
-.scrollTrack { height:calc(215vh - 72px); position:relative; }
+.flow { width:100%;
+  /* Shared world base: both project worlds read as one system; only --accent differs per project. */
+  --world-bg:#070c14; --world-ink:#eef2f5; --world-muted:#9eabb8; --world-line:rgba(190,205,220,.2);
+  --world-label:12px/1.5 ui-monospace,monospace; --world-display:var(--font-display),Pretendard,sans-serif;
+  --stage-bg:#070c14; --stage-ink:#eff1e3; --stage-muted:#9eaaaa; --stage-accent:#d2f059; }
+/* EXIT: the debrief is a sheet that rises over ARMI's held final frame (overlap = --world-debrief). */
+/* Track carries the sheet colour, so the 56→72px band under the fixed header never shows the scene behind. */
+.scrollTrack { height:calc(215vh - 72px); position:relative; margin-top:calc(-1 * var(--world-debrief, 0px)); background:var(--stage-bg); box-shadow:0 -40px 90px rgba(0,0,0,.6); }
 .armiBrief { position:absolute; inset:0; z-index:4; visibility:hidden; }
 .armiBrief[data-active=true] { visibility:visible; }
 .armiBrief > section { height:100%; display:flex; align-items:center; }
-.stickyStage { position:sticky; top:72px; height:calc(100vh - 72px); min-height:0; overflow:hidden; background:var(--stage-bg); color:var(--stage-ink); isolation:isolate; }
+.stickyStage { position:sticky; top:72px; height:calc(100vh - 72px); min-height:0; overflow:hidden; background:var(--stage-bg); color:var(--stage-ink); isolation:isolate; border-right:var(--docent-overlay,0px) solid transparent; }
+.scrollTrack:before { content:""; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--stage-accent) 60%,transparent) 20%,color-mix(in srgb,var(--stage-accent) 60%,transparent) 80%,transparent); z-index:5; pointer-events:none; }
 .stageHeader,.stageFooter { position:absolute; left:4.5%; right:4.5%; display:flex; align-items:center; justify-content:space-between; font:12px/1.5 ui-monospace,monospace; letter-spacing:.13em; color:var(--stage-muted); z-index:2; }
 .stageHeader { top:35px; border-top:1px solid color-mix(in srgb,var(--stage-muted) 25%,transparent); padding-top:18px; }
 .stageFooter { bottom:45px; left:90px; right:230px; gap:25px; }
@@ -46,22 +53,24 @@
 .spatialLegend div { display:grid; grid-template-columns:78px 1fr; padding:11px 0; border-top:1px solid color-mix(in srgb,var(--stage-muted) 20%,transparent); }
 .spatialLegend dt { font:12px/1.5 ui-monospace,monospace; color:var(--stage-accent); }
 .spatialLegend dd { margin:0; color:var(--stage-muted); }
-.evidence { --stage-accent:#414dcf; background:#f4f2ec; color:#181d28; padding:100px 4.5% 110px; scroll-margin-top:72px; }
+.evidence { --stage-accent:#63cbdb; background:var(--world-bg); color:var(--world-ink); padding:64px 4.5% 72px; scroll-margin-top:72px; }
 .evidenceHeading { display:flex; justify-content:space-between; align-items:flex-start; gap:40px; }
-.evidenceHeading h2 { width:66%; font-size:48px; font-weight:500; line-height:1.25; letter-spacing:-.045em; margin:0; }
-.pipeline { list-style:none; padding:0; margin:66px 0 70px; display:grid; grid-template-columns:repeat(5,1fr); border-top:1px solid #b9bdc8; }
+.evidenceHeading h2 { width:66%; font-size:clamp(28px,2.6vw,38px); font-weight:600; line-height:1.25; letter-spacing:-.035em; margin:18px 0 0; }
+.evidenceHeading { flex-direction:column; gap:0; }
+.pipeline { list-style:none; padding:0; margin:32px 0; display:grid; grid-template-columns:repeat(5,1fr); border-top:1px solid var(--world-line); }
 .pipeline li { position:relative; padding:22px 20px 0 0; }
-.pipeline li:not(:last-child):after { content:"→"; position:absolute; right:24px; top:20px; color:#414dcf; }
-.pipeline span { font:var(--type-action)/1.5 ui-monospace,monospace; color:#414dcf; }
+.pipeline li:not(:last-child):after { content:"→"; position:absolute; right:24px; top:20px; color:var(--stage-accent); }
+.pipeline span { font:12px/1.6 ui-monospace,monospace; letter-spacing:.08em; color:var(--stage-accent); }
 .pipeline p { font-size:var(--type-body); line-height:1.6; margin:12px 0 0; }
-.evidenceGrid { display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:45px; border-top:1px solid #b9bdc8; padding-top:28px; }
-.evidenceGrid h3 { font-size:28px; font-weight:500; letter-spacing:-.025em; margin:18px 0 14px; }
+.evidenceGrid { display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:32px; border-top:1px solid var(--world-line); padding-top:18px; }
+.evidenceGrid h3 { font-size:20px; font-weight:600; letter-spacing:-.025em; margin:18px 0 14px; }
 .evidenceGrid p:not(.eyebrow):not(.metric) { font-size:var(--type-body); line-height:1.7; }
-.evidenceGrid small,.evidenceDetail { color:#4b5567; font-size:var(--type-support); line-height:1.7; }
+.evidenceGrid small,.evidenceDetail { color:var(--world-muted); font-size:var(--type-support); line-height:1.7; }
 .metric { display:flex; align-items:center; gap:16px; font-family:var(--font-display),sans-serif; font-size:42px; letter-spacing:-.06em; margin:16px 0 10px; }
-.metric span:nth-child(2) { font-size:25px; color:#929aaa; }
-.metric strong { font-weight:500; color:#414dcf; }
-.evidenceLink { display:inline-flex; gap:40px; font-size:16px; line-height:1.5; min-height:44px; align-items:center; margin-top:32px; border-bottom:1px solid #687184; padding-bottom:9px; }
+.metric span:nth-child(2) { font-size:25px; color:var(--world-muted); }
+.metric strong { font-weight:500; color:var(--stage-accent); }
+.evidenceNote { font-size:15px; line-height:1.7; color:var(--world-muted); margin:24px 0 0; max-width:960px; word-break:keep-all; }
+.evidenceLink { display:inline-flex; gap:40px; font-size:16px; line-height:1.5; min-height:44px; align-items:center; margin-top:24px; border-bottom:1px solid var(--world-muted); padding-bottom:9px; color:var(--world-ink); }
 .staticArmi,.staticTransition,.staticHangarae { display:none; }
 .mobileFlow { display:none; }
 
@@ -100,13 +109,13 @@
   .branchExplanation { min-height:44px; } .staticVisual { margin:24px -10px 0; }
   .evidence { padding:60px 6% 75px; } .evidenceHeading h2 { font-size:31px; }
   .pipeline { grid-template-columns:1fr; gap:0; margin:36px 0; }
-  .pipeline li { display:flex; align-items:center; justify-content:space-between; padding:17px 0; border-bottom:1px solid #d6d6db; }
+  .pipeline li { display:flex; align-items:center; justify-content:space-between; padding:17px 0; border-bottom:1px solid var(--world-line); }
   .pipeline li:not(:last-child):after { display:none; } .pipeline p { margin:0; font-size:var(--type-body); }
   .evidenceGrid { grid-template-columns:1fr; } .modelEvidence { grid-column:auto; } .metric { font-size:40px; }
 }
 
 /* Shared field: the light edge travels through the existing geometry. */
-.armiBrief > section { background:transparent; }
+.armiBrief > section { background:transparent; border-right:0; }
 .armiBrief:before { content:""; position:absolute; inset:0; background:#060a0c; z-index:-1; }
 .staticHangarae .staticVisual { clip-path:inset(0 calc((1 - var(--mobile-reveal,1))*35%) 0 0); }
 .evidenceGrid > div { min-width:0; overflow-wrap:anywhere; }
@@ -118,3 +127,6 @@
 .armiExperience { position:absolute; inset:0; z-index:3; }
 .armiExperienceStatic { display:none; }
 @media (max-width:900px), (prefers-reduced-motion:reduce) { .armiExperienceStatic { display:block; } }
+
+/* Hangarae debrief CTA shares the brief theme variables. */
+.evidenceComplete { --brief-accent:var(--stage-accent); --brief-ink:var(--world-ink); --brief-muted:var(--world-muted); --brief-cta-ink:#071016; }

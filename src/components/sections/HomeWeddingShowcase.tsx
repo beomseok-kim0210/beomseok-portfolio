@@ -22,8 +22,8 @@ export function HomeWeddingShowcase({ progress = 1, frameRef }: { progress?: num
 
       <div ref={frameRef} className={styles.frameSlot}><div className={styles.imageReveal}>
         <BeforeAfterFrame
-          beforeSrc="/images/before_wedding.png"
-          afterSrc="/images/after_wedding.png"
+          beforeSrc="/images/before_wedding.webp"
+          afterSrc="/images/after_wedding.webp"
           beforePosition="center calc(50% + 5px)"
         />
       </div></div>

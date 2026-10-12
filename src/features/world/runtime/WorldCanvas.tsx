@@ -6,6 +6,11 @@ import { HangaraeDistrictScene } from "../adapters/HangaraeDistrictScene";
 import { WorldCameraController } from "./WorldCameraController";
 import { WorldRenderPipeline } from "./WorldRenderPipeline";
 import type { WorldRuntime } from "../director/worldRuntime";
+import { DefaultLoadingManager } from "three";
+import { reportWorldProgress } from "./journeyGeometry";
+
+// Real asset progress (GLB, Draco decoder, textures) feeds the Home entry cue.
+DefaultLoadingManager.onProgress = (_url, loaded, total) => { if (total > 0) reportWorldProgress(loaded / total); };
 
 function FrameSync({ runtime, onFailure }: { runtime: WorldRuntime; onFailure: () => void }) {
   const { gl, invalidate, size } = useThree();

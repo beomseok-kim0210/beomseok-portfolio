@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { observeScrollLayout } from "@/components/sections/ImmersiveProjectFlow/observeScrollLayout";
 import { armiLegacyPhase } from "../adapters/armiRuntime";
 import { armiScrollProgress } from "../adapters/armiScrollTiming";
+import { debriefPx, gatePx } from "../runtime/journeyGeometry";
 import { worldPositionForDomProgress, type WorldRuntime } from "./worldRuntime";
 import type { WorldRenderMode } from "../types/contracts";
 
@@ -30,7 +31,8 @@ export function useWorldDirector(section: RefObject<HTMLElement | null>, runtime
     };
     const context = gsap.context(() => {
       gsap.fromTo(clock, { value: 0 }, { value: 1, ease: "none", onUpdate: publish,
-        scrollTrigger: { trigger: section.current, start: "top 72px", end: "bottom bottom",
+        // The authored timeline runs between Home's entry gate and the debrief hold (journeyGeometry).
+        scrollTrigger: { trigger: section.current, start: () => `top+=${gatePx()} 72px`, end: () => `bottom-=${debriefPx()} bottom`,
           scrub: true, invalidateOnRefresh: true,
           onRefresh: self => { clock.value = self.progress; publish(); } },
       });

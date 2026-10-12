@@ -23,7 +23,8 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
   const timing = useRef({ seconds: 0, frames: 0, fps: 0, samples: [] as number[] });
   const pipeline = useMemo(() => {
     const composer = new EffectComposer(gl);
-    composer.renderTarget1.samples = 4; composer.renderTarget2.samples = 4;
+    // 2× MSAA on the HDR targets: edges stay clean at a third of the 4× fill cost.
+    composer.renderTarget1.samples = 2; composer.renderTarget2.samples = 2;
     const bloom = new UnrealBloomPass(new Vector2(1, 1), armiLook.bloomStrength, armiLook.bloomRadius, armiLook.bloomThreshold);
     const render = new RenderPass(scene, camera);
     const geometry = { calls: 0, triangles: 0 };
@@ -49,7 +50,7 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
       scene.fog=null;camera.layers.set(0);
       // Neon glow: HDR bloom over values >1 only, so the camera photo stays clean.
       const {strength,threshold,radius}=pipeline.bloom;
-      pipeline.bloom.strength=compact?.32:.4;pipeline.bloom.threshold=1;pipeline.bloom.radius=.38;
+      pipeline.bloom.enabled=true; pipeline.bloom.strength=compact?.2:.24;pipeline.bloom.threshold=1;pipeline.bloom.radius=.38;
       pipeline.composer.render();
       pipeline.bloom.strength=strength;pipeline.bloom.threshold=threshold;pipeline.bloom.radius=radius;
       gl.domElement.dataset.hangaraeMetrics=JSON.stringify({progress:runtime.hangaraeProgress.current,cameraOwner:"WorldCameraController",renderOwner:"WorldRenderPipeline",calls:gl.info.render.calls,triangles:gl.info.render.triangles,frameMs:delta*1000,viewport:[size.width,size.height],dpr:gl.getPixelRatio(),camera:camera.position.toArray()});
@@ -62,6 +63,8 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
       gl.toneMapping = AgXToneMapping; gl.toneMappingExposure = armiLook.exposure;
       scene.background = pipeline.background; scene.fog = pipeline.fog;
       pipeline.bloom.strength = armiLook.bloomStrength;
+      // ARMI's authored bloom (.025) is below visibility; skip the full-res blur chain instead of paying for it.
+      pipeline.bloom.enabled = armiLook.bloomStrength >= .05;
       pipeline.bloom.threshold = armiLook.bloomThreshold;
       pipeline.bloom.radius = armiLook.bloomRadius;
       camera.layers.set(0);
@@ -85,7 +88,7 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
       gl.toneMapping = ACESFilmicToneMapping; gl.toneMappingExposure = 1;
       scene.fog = new Fog("#060b10", intent.fogNear, intent.fogFar);
       if (intent.direct) gl.render(scene, camera);
-      else { pipeline.bloom.strength = intent.bloomStrength; pipeline.composer.render(); }
+      else { pipeline.bloom.enabled = true; pipeline.bloom.strength = intent.bloomStrength; pipeline.composer.render(); }
     }
     const timer = timing.current;
     const shot=runtime.armiReview.current ?? armiStage(runtime.progress.current).id;

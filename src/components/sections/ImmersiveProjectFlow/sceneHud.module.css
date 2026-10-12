@@ -1,0 +1,27 @@
+/* Shared scene HUD for every project world (ARMI, Hangarae): one grammar, one type scale.
+   Per-project difference is only --accent (set on each project's track). Compact/medium follow the
+   viewport's own data attributes because the docked docent panel makes window width unreliable. */
+.headers{position:absolute;left:4%;top:4.2%;z-index:7;pointer-events:none;width:min(720px,60%)}
+.sceneHeader{position:absolute;left:0;top:0;display:flex;gap:18px;align-items:flex-start;width:100%;transition:opacity .35s ease}
+.sceneNo{font:500 clamp(46px,4.6vw,70px)/.86 var(--world-display);color:var(--world-ink);letter-spacing:-.05em}
+.sceneHeader h3{font:400 clamp(22px,2.05vw,31px)/1.1 var(--world-display);letter-spacing:-.035em;margin:1px 0 0;color:var(--world-ink)}
+.sceneKo{margin:8px 0 0;font-size:clamp(15px,1.3vw,19px);font-weight:500;color:var(--accent);letter-spacing:-.02em}
+.sceneText{margin:8px 0 0;font-size:15px;line-height:1.6;color:var(--world-muted);max-width:520px;word-break:keep-all}
+.identity{position:absolute;right:4%;top:4.6%;z-index:7;text-align:right;pointer-events:none;opacity:calc(1 - var(--hero,0))}
+.identity span{display:block;font:var(--world-label);letter-spacing:.14em;color:var(--world-muted)}
+.identity strong{font-size:19px;letter-spacing:-.04em;color:var(--world-ink)}
+.skip{position:absolute;top:calc(4.6% + 42px);right:4%;font-size:15px;z-index:8;color:var(--world-muted);padding:8px 0;pointer-events:auto;text-decoration:none}
+.skip:focus-visible{outline:2px solid var(--accent);outline-offset:5px}
+.rail{position:absolute;right:1.6%;top:50%;transform:translateY(-50%);z-index:7;opacity:calc(1 - var(--hero,0));list-style:none;margin:0;padding:0;display:grid;gap:10px;pointer-events:none}
+.rail li{font:11px/1 ui-monospace,monospace;letter-spacing:.08em;color:color-mix(in srgb,var(--world-muted) 45%,transparent);padding-right:12px;position:relative;text-align:right}
+.rail li::after{content:"";position:absolute;right:0;top:50%;width:5px;height:5px;border-radius:50%;background:color-mix(in srgb,var(--world-muted) 30%,transparent);transform:translateY(-50%)}
+.rail li[data-on=true]{color:var(--world-ink)}
+.rail li[data-on=true]::after{background:var(--accent);box-shadow:0 0 10px var(--accent)}
+.footer{position:absolute;bottom:2.2%;left:4%;right:4%;display:flex;justify-content:space-between;gap:24px;z-index:7;color:var(--world-muted);font:14px/1.5 Pretendard,sans-serif;letter-spacing:0;pointer-events:none}
+[data-compact=true] .headers{left:5%;top:3%;width:90%}
+[data-compact=true] .sceneNo{font-size:40px}
+[data-compact=true] .sceneHeader h3{font-size:20px}
+[data-compact=true] .sceneText{display:none}
+[data-compact=true] .identity,[data-compact=true] .skip,[data-compact=true] .rail{display:none}
+[data-compact=true] .footer{font-size:9.5px}
+[data-medium=true] .rail{display:none}

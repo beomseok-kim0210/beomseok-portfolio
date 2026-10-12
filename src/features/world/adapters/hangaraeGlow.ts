@@ -176,7 +176,7 @@ export function createCloudMaterial() {
         vVis = step(uScanY, position.y); vBand = exp(-pow((position.y - uScanY) * 9., 2.));
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); gl_PointSize = uSize * uDpr * (1. + vBand * 1.6); }`,
     fragmentShader: `uniform float uAlpha; varying float vT; varying float vVis; varying float vBand;
-      vec3 ramp(float t){ vec3 a = vec3(1., .45, .18), b = vec3(1., .86, .32), c = vec3(.2, .86, 1.), d = vec3(.25, .3, 1.);
+      vec3 ramp(float t){ vec3 a = vec3(0.92, 0.48, 0.26), b = vec3(0.93, 0.82, 0.39), c = vec3(0.35, 0.78, 0.85), d = vec3(0.4, 0.61, 0.85);
         return t < .33 ? mix(a, b, t / .33) : t < .66 ? mix(b, c, (t - .33) / .33) : mix(c, d, (t - .66) / .34); }
       void main(){ vec2 q = gl_PointCoord * 2. - 1.; float r = dot(q, q); if (r > 1.) discard;
         float a = uAlpha * max(vVis, vBand) * (1. - r);
@@ -196,7 +196,7 @@ export function createAssemblyMaterial() {
         gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.); gl_PointSize = uSize * uDpr * (1.6 - .6 * t); }`,
     fragmentShader: `uniform float uAlpha; varying float vT; varying float vUp;
       void main(){ vec2 q = gl_PointCoord * 2. - 1.; float r = dot(q, q); if (r > 1.) discard;
-        vec3 c = mix(vec3(.75, .4, 1.), vec3(.35, .85, 1.), vUp) * (1.1 + (1. - vT) * .6);
+        vec3 c = mix(vec3(0.9, 0.69, 0.42), vec3(0.47, 0.82, 0.88), vUp) * (1.1 + (1. - vT) * .6);
         gl_FragColor = vec4(c * uAlpha * (.25 + .75 * vT) * (1. - r), 1.); }`,
   });
 }
