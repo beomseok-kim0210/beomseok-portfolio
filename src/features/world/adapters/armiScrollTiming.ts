@@ -1,6 +1,17 @@
 /** Expand inspection/selection scroll distance without changing authored scene samples. */
 export const selectionExtraScroll = .03;
 export const coreExtraScroll = .12; // was .24: the request card held ~3 identical screens
+/** Inverse of armiScrollProgress: journey progress → scroll fraction (for scene stops). */
+export function armiProgressToScroll(p: number) {
+  const E = 1 + selectionExtraScroll + coreExtraScroll;
+  let e: number;
+  if (p <= .31) e = p;
+  else if (p <= .345) e = .31 + (p - .31) * ((.035 + coreExtraScroll) / .035);
+  else if (p <= .402) e = p + coreExtraScroll;
+  else if (p <= .442) e = .402 + (p - .402) * (.07 / .04) + coreExtraScroll;
+  else e = p + selectionExtraScroll + coreExtraScroll;
+  return Math.max(0, Math.min(1, e / E));
+}
 export function armiScrollProgress(scroll: number) {
   const expanded = Math.max(0, Math.min(1, scroll)) * (1 + selectionExtraScroll + coreExtraScroll);
   if (expanded <= .31) return expanded;

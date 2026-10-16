@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useWorldHost } from "@/features/world/runtime/WorldHost";
 import { worldPositionForDomProgress } from "@/features/world/director/worldRuntime";
 import {
-  HG_CAMERA_REGION as CR, HG_FRAME, hgAnchors, hgAsset, hgBones, hgGifPadded, hgVideo, hgMedia, hgRanges, hgSceneRanges, hgScrollToTimeline, hgShots, ramp, sampleHangarae, type Rect,
+  HG_CAMERA_REGION as CR, HG_FRAME, hgAnchors, hgAsset, hgBones, hgGifPadded, hgVideo, hgMedia, hgRanges, hgSceneRanges, hgScrollToTimeline, hgTimelineToScroll, HG_STOPS_INNER, hgOuter, hgShots, ramp, sampleHangarae, type Rect,
 } from "@/features/world/adapters/hangaraeAnimatic";
 import type { WorldRenderMode } from "@/features/world/types/contracts";
 import { prewarmHangaraeBodies } from "@/features/world/adapters/hangaraeBodyLoader";
@@ -15,7 +15,8 @@ import styles from "./hangarae.module.css";
 import { DepthHud, PoseLegend, SceneHeaders, SplitHud } from "./HangaraeGraphics";
 import { SceneChrome, SceneFooter } from "../SceneHud";
 import { onDocentOverlayChange } from "@/features/docent/docentOverlay";
-import { applyAperture, debriefPx } from "@/features/world/runtime/journeyGeometry";
+import { applyAperture, armiBriefStopY, debriefPx } from "@/features/world/runtime/journeyGeometry";
+import { registerSteppedRange } from "@/features/world/runtime/sceneStepper";
 
 function place(el: HTMLElement | null, rect: Rect, opacity: number) {
   if (!el) return;
@@ -163,7 +164,23 @@ export function HangaraeExperience() {
     // Explicit review/deep-link restores DOM range after layout settles.
     const jump = () => { const value = new URLSearchParams(location.search).get("hangarae"); if (value !== null && Number.isFinite(Number(value))) { const p = Math.max(0, Math.min(1, Number(value))); ScrollTrigger.refresh(); window.scrollTo({ top: trigger.start + (trigger.end - trigger.start) * p, behavior: "instant" }); apply(p); } };
     const frame = requestAnimationFrame(jump);
-    return () => { cancelAnimationFrame(frame); stop(); stopDocent(); resize.disconnect(); trigger.kill(); runtime.hangaraeViewport.current = null; };
+    /* Stepped scenes: ARMI brief (shared stop) → hero (wipe + assembly plays on the way) → 01…07 → the Hangarae
+       brief, which then scrolls freely. */
+    const stopRange = registerSteppedRange({
+      id: "hangarae",
+      enabled: () => mode === "webgl",
+      stops: () => {
+        const at = (t: number) => trigger.start + (trigger.end - trigger.start) * hgTimelineToScroll(t);
+        const brief = armiBriefStopY(), evidence = document.getElementById("hangarae-evidence");
+        return [
+          ...(brief !== null ? [{ y: brief, duration: 1.8, label: "armi-brief" }] : []),
+          { y: at(.075), duration: 2.4, label: "hero" },
+          ...HG_STOPS_INNER.map(q => ({ y: at(hgOuter(q)), duration: 1.5 })),
+          ...(evidence ? [{ y: evidence.getBoundingClientRect().top + window.scrollY - 72, duration: 1.8, label: "hangarae-brief" }] : []),
+        ];
+      },
+    });
+    return () => { cancelAnimationFrame(frame); stop(); stopDocent(); stopRange(); resize.disconnect(); trigger.kill(); runtime.hangaraeViewport.current = null; };
   }, [runtime, mode]);
   function seek(p: number) { const el = section.current; if (!el) return; const top = el.getBoundingClientRect().top + scrollY - 72, range = el.offsetHeight - (innerHeight - 72); window.scrollTo({ top: top + range * p, behavior: "instant" }); }
   const step = hgShots[shot], reduced = mode === "reduced-motion", scene = Number(step.scene);

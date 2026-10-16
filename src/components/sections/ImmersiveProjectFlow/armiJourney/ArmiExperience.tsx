@@ -2,7 +2,9 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { applyCircleAperture, gatePx, reportWorldReady } from "@/features/world/runtime/journeyGeometry";
+import { applyCircleAperture, armiBriefStopY, debriefPx, gatePx, reportWorldReady } from "@/features/world/runtime/journeyGeometry";
+import { registerSteppedRange } from "@/features/world/runtime/sceneStepper";
+import { armiProgressToScroll } from "@/features/world/adapters/armiScrollTiming";
 import { useWorldHost } from "@/features/world/runtime/WorldHost";
 import { useWorldDirector } from "@/features/world/director/useWorldDirector";
 import type { WorldRenderMode } from "@/features/world/types/contracts";
@@ -35,6 +37,24 @@ export function ArmiExperience() {
   const fail = useCallback(() => setMode("fallback"), []);
   const worldMode: WorldRenderMode = mode === "3d" ? "webgl" : mode === "reduced" ? "reduced-motion" : mode === "fallback" ? "fallback" : "static";
   useWorldDirector(section, runtime, setPhase, worldMode);
+  /* Stepped scenes: one gesture = one authored ARMI stage; the camera flight between stages plays on the way.
+     The last stop is the pinned ARMI brief, shared with the Hangarae entry (one continuous region). */
+  useEffect(() => {
+    const STAGE_STOPS = [.045, .11, .2, .3, .338, .396, .437, .495, .585, .81, .885, .935, .985];
+    return registerSteppedRange({
+      id: "armi",
+      enabled: () => worldMode === "webgl",
+      stops: () => {
+        const el = section.current; if (!el) return [];
+        const top = el.getBoundingClientRect().top + window.scrollY, start = top + gatePx() - 72, end = top + el.offsetHeight - debriefPx() - window.innerHeight;
+        const brief = armiBriefStopY();
+        return [
+          ...STAGE_STOPS.map(p => ({ y: start + (end - start) * armiProgressToScroll(p), duration: 1.6 })),
+          ...(brief !== null ? [{ y: brief, duration: 1.8, label: "armi-brief" }] : []),
+        ];
+      },
+    });
+  }, [worldMode]);
   useEffect(() => {
     let previous = "";
     return runtime.subscribeFrame(() => {

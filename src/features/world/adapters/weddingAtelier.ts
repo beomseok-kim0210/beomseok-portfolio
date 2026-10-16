@@ -108,9 +108,9 @@ export function sampleWedding(p: number, reduced = false) {
     /** 05: table, experts seat one by one, threads to the dress, consensus. */
     table: ramp(L(4), 0, .25) * (1 - ramp(L(5), .1, .4)),
     seated: 5 * ramp(L(4), .1, .55),
-    threads: ramp(L(4), .45, .78),
+    threads: ramp(L(4), .42, .72),
     rag: ramp(L(4), .15, .6),
-    consensus: ramp(L(4), .78, .95) * (1 - ramp(L(5), .1, .35)),
+    consensus: ramp(L(4), .7, .86) * (1 - ramp(L(5), .1, .35)),
     /** 06: mirror becomes the before / generated comparison. */
     mirror: ramp(L(5), .15, .5),
     dressAway: ramp(L(5), .05, .4),

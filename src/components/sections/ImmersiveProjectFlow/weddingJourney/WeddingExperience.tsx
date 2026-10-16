@@ -58,8 +58,8 @@ export function WeddingExperience() {
       node.dataset.worldDistrict = "wedding"; node.dataset.worldProgress = String(p);
       view.dataset.phase = wdShots[s.shot].id; view.dataset.compact = String(view.clientWidth <= 700); view.dataset.medium = String(view.clientWidth > 700 && view.clientWidth < 1100); view.dataset.static = String(mode !== "webgl");
       const set = (k: string, v: number) => view.style.setProperty(k, v.toFixed(4));
-      wdScenes.forEach((_, i) => set(`--h${i}`, i === 0 ? ramp(q, .0, .03) * (1 - ramp(q, .11, .125)) : ramp(wdLocal(q, i), .0, .12) * (i === 6 ? 1 : 1 - ramp(wdLocal(q, i), .9, 1))));
-      wdScenes.forEach((_, i) => set(`--s${i + 1}`, ramp(wdLocal(q, i), .04, .2) * (i === 6 ? 1 : 1 - ramp(wdLocal(q, i), .84, .98))));
+      wdScenes.forEach((_, i) => set(`--h${i}`, i === 0 ? ramp(q, .0, .03) * (1 - ramp(q, .11, .125)) : ramp(wdLocal(q, i), .0, .12) * (i === 6 ? 1 : 1 - ramp(wdLocal(q, i), .95, 1))));
+      wdScenes.forEach((_, i) => set(`--s${i + 1}`, ramp(wdLocal(q, i), .04, .2) * (i === 6 ? 1 : 1 - ramp(wdLocal(q, i), .93, 1))));
       wdModels.forEach((_, i) => set(`--r${i}`, Math.max(0, Math.min(1, s.reveal - i)) * (1 - s.recede)));
       wdExperts.forEach((_, i) => set(`--e${i}`, Math.max(0, Math.min(1, s.seated - i)) * s.table));
       // 04 chart: A runs to the deadline, then into the unknown; B lands before it; then the judgement.
@@ -86,7 +86,7 @@ export function WeddingExperience() {
        finished; the glide between them plays that animation. The hold (Hangarae brief + cue) is the first
        stop, the wedding brief the last; outside them the page scrolls freely. */
     const at = (t: number) => trigger.start + (trigger.end - trigger.start) * wdTimelineToScroll(t);
-    const SETTLED = [.6, .86, .92, .75, .96, .7, .3] as const;
+    const SETTLED = [.6, .86, .9, .75, .9, .7, .3] as const;
     const stopRange = registerSteppedRange({
       id: "wedding",
       enabled: () => mode !== "reduced-motion",

@@ -18,6 +18,14 @@ export function hgScrollToTimeline(scroll: number) {
   for (const [end, w] of HG_PACE) { const span = (end - start) * w; if (left <= span) return start + left / w; left -= span; start = end; }
   return 1;
 }
+/** Inverse of hgScrollToTimeline: timeline → scroll fraction (for scene stops). */
+export function hgTimelineToScroll(t: number) {
+  let acc = 0, start = 0;
+  for (const [end, w] of HG_PACE) { if (t <= end) return (acc + (t - start) * w) / HG_SCROLL_LENGTH; acc += (end - start) * w; start = end; }
+  return 1;
+}
+/** Stops (inner timeline q) where each scene's own animation has settled: 01 … 05, 06 success / correction, 07. */
+export const HG_STOPS_INNER = [.07, .22, .33, .46, .685, .755, .788, .9] as const;
 /** Scene copy follows the approved 7-scene reference; facts follow the repo audit. */
 export const hgShots = [
   { id: "hero", scene: "00", title: "HANGARAE", ko: "행가래", text: "카메라가 읽은 움직임과 발판의 하중이, 다시 게임이 됩니다." },

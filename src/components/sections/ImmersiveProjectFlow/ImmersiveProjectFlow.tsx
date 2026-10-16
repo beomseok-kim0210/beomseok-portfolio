@@ -43,7 +43,7 @@ export function ImmersiveProjectFlow() {
 
   return <div id="armi" className={styles.flow}>
     <ArmiExperience/>
-    <section ref={section} className={styles.scrollTrack} data-header-tone="dark" aria-label="ARMI에서 행가래로 이어지는 시각적 전환">
+    <section ref={section} className={styles.scrollTrack} data-header-tone="dark" data-armi-brief-track aria-label="ARMI에서 행가래로 이어지는 시각적 전환">
       <div className={styles.stickyStage} style={css} data-stage-progress={progress.toFixed(4)} data-stage-phase={heroActive?"SYSTEM":briefActive?"BRIEF":"HANDOFF"} data-transition-progress={transition.toFixed(4)}>
         <div id="armi-brief" className={styles.armiBrief} data-active={briefActive || heroActive}><HomeProjectBrief project="armi" recap={armiScenes.map(s => s.title)}/></div>
       </div>

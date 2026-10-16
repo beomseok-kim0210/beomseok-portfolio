@@ -53,6 +53,14 @@ export function scrollToY(y: number, options: { duration?: number; immediate?: b
   else window.scrollTo({ top: y, behavior: options.immediate ? "instant" : "smooth" });
 }
 
+/** Scroll Y at which the pinned ARMI brief is fully readable (shared ARMI-end / Hangarae-start stop). */
+export function armiBriefStopY() {
+  const track = typeof document !== "undefined" ? document.querySelector<HTMLElement>("[data-armi-brief-track]") : null;
+  if (!track) return null;
+  const top = track.getBoundingClientRect().top + window.scrollY, start = top - 72, end = top + track.offsetHeight - window.innerHeight;
+  return start + (end - start) * .55;
+}
+
 /* ── Entry readiness (Home waits for nothing; it only reports) ───────────────── */
 type WorldLoad = { progress: number; ready: boolean };
 declare global { interface Window { __portfolioWorld?: WorldLoad } }

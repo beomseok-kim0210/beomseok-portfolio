@@ -25,13 +25,20 @@ const insideIgnored = (target: EventTarget | null) => {
   const el = target as HTMLElement | null;
   return !!el?.closest?.("[data-docent-panel], input, textarea, select, [contenteditable=true], [data-step-ignore]");
 };
-/** The active range is the one whose first..last stop span contains the current scroll position. */
-function active(y = window.scrollY) {
-  for (const r of ranges.values()) {
-    if (!r.enabled()) continue;
-    const stops = r.stops(); if (stops.length < 2) continue;
-    if (y >= stops[0].y - EDGE && y <= stops[stops.length - 1].y + EDGE) return stops;
+/** Ranges whose end and start stops coincide (e.g. ARMI brief → Hangarae entry) merge into one region. */
+function regions() {
+  const lists = [...ranges.values()].filter(r => r.enabled()).map(r => r.stops()).filter(s => s.length >= 2).sort((a, b) => a[0].y - b[0].y);
+  const out: Stop[][] = [];
+  for (const list of lists) {
+    const last = out[out.length - 1];
+    if (last && list[0].y <= last[last.length - 1].y + 4) { for (const s of list) if (s.y > last[last.length - 1].y + 4) last.push(s); }
+    else out.push([...list]);
   }
+  return out;
+}
+/** The active region is the one whose first..last stop span contains the current scroll position. */
+function active(y = window.scrollY) {
+  for (const stops of regions()) if (y >= stops[0].y - EDGE && y <= stops[stops.length - 1].y + EDGE) return stops;
   return null;
 }
 function go(stop: Stop, fallback: number) {
