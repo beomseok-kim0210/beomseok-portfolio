@@ -88,6 +88,7 @@ export function WeddingExperience() {
        finished; the glide between them plays that animation. The hold (Hangarae brief + cue) is the first
        stop, the wedding brief the last; outside them the page scrolls freely. */
     const at = (t: number) => trigger.start + (trigger.end - trigger.start) * wdTimelineToScroll(t);
+    // Half the speed of before; the brief → wedding door (01) plays at a quarter speed.
     const SETTLED = [.6, .92, .9, .75, .9, .7, .3] as const;
     const stopRange = registerSteppedRange({
       id: "wedding",
@@ -96,8 +97,8 @@ export function WeddingExperience() {
         const brief = document.getElementById("wedding-brief");
         return [
           { y: weddingHoldStopY(wdTimelineToScroll(WD_HOLD * .5)) ?? at(WD_HOLD * .5), duration: 1.8, label: "hold" },
-          ...wdSceneRanges.map(([a, b], i) => ({ y: at(wdOuter(a + (b - a) * SETTLED[i])), duration: i === 0 ? 2.6 : i === 1 ? 4.5 : 1.5, label: wdScenes[i].id })),
-          ...(brief ? [{ y: brief.getBoundingClientRect().top + window.scrollY - 72, duration: 2.1, label: "brief" }] : []),
+          ...wdSceneRanges.map(([a, b], i) => ({ y: at(wdOuter(a + (b - a) * SETTLED[i])), duration: i === 0 ? 10.4 : i === 1 ? 9 : 3, label: wdScenes[i].id })),
+          ...(brief ? [{ y: brief.getBoundingClientRect().top + window.scrollY - 72, duration: 4.2, label: "brief" }] : []),
         ];
       },
     });

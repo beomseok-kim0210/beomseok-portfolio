@@ -176,7 +176,7 @@ export function HangaraeExperience() {
         const brief = armiBriefStopY(), hold = weddingHoldStopY(wdTimelineToScroll(WD_HOLD * .5));
         return [
           ...(brief !== null ? [{ y: brief, duration: 1.8, label: "armi-brief" }] : []),
-          { y: at(.075), duration: 2.4, label: "hero" },
+          { y: at(.075), duration: 9.6, label: "hero" }, // ARMI brief → Hangarae plays at a quarter speed
           ...HG_STOPS_INNER.map(q => ({ y: at(hgOuter(q)), duration: 1.5 })),
           ...(hold !== null ? [{ y: hold, duration: 1.8, label: "hangarae-brief" }] : []),
         ];
