@@ -4,7 +4,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { applyCircleAperture, armiBriefStopY, debriefPx, gatePx, reportWorldReady } from "@/features/world/runtime/journeyGeometry";
 import { registerSteppedRange } from "@/features/world/runtime/sceneStepper";
-import { armiProgressToScroll } from "@/features/world/adapters/armiScrollTiming";
+import { armiOverviewToScroll, armiProgressToScroll } from "@/features/world/adapters/armiScrollTiming";
+import { ArmiOverviewFocus } from "./ArmiOverviewFocus";
 import { useWorldHost } from "@/features/world/runtime/WorldHost";
 import { useWorldDirector } from "@/features/world/director/useWorldDirector";
 import type { WorldRenderMode } from "@/features/world/types/contracts";
@@ -40,9 +41,10 @@ export function ArmiExperience() {
   /* Stepped scenes: one gesture = one authored ARMI stage; the camera flight between stages plays on the way.
      The last stop is the pinned ARMI brief, shared with the Hangarae entry (one continuous region). */
   useEffect(() => {
-    // 00 hero · 01 voice · 02 into the system · 03 core → TEXT → MEMORY → TAVILY → ROBOT → decision
-    // · 04 text answer · 05 structured response · 06 back to product
-    const STAGE_STOPS = [.045, .11, .3, .338, .359, .373, .387, .399, .437, .585, .885, .985];
+    // 00 hero · 01 voice → neon orb → into the UI · 02 overview: TEXT → ROBOT → TAVILY → MEMORY, then up the rail
+    // · 03 routing core · 4-split with TEXT blinking · 04 text answer · 05 structured response · 06 back to product
+    // ARMI moves at half the speed of the other worlds (scene moves 3.2s).
+    const BEFORE = [.045, .154], AFTER = [.3, .338, .437, .585, .885, .985], FOCUS = [.125, .375, .625, .875];
     return registerSteppedRange({
       id: "armi",
       enabled: () => worldMode === "webgl",
@@ -50,9 +52,12 @@ export function ArmiExperience() {
         const el = section.current; if (!el) return [];
         const top = el.getBoundingClientRect().top + window.scrollY, start = top + gatePx() - 72, end = top + el.offsetHeight - debriefPx() - window.innerHeight;
         const brief = armiBriefStopY();
+        const at = (f: number) => start + (end - start) * f;
         return [
-          ...STAGE_STOPS.map(p => ({ y: start + (end - start) * armiProgressToScroll(p), duration: 1.6 })),
-          ...(brief !== null ? [{ y: brief, duration: 1.8, label: "armi-brief" }] : []),
+          ...BEFORE.map(p => ({ y: at(armiProgressToScroll(p)), duration: 3.2 })),
+          ...FOCUS.map((f, i) => ({ y: at(armiOverviewToScroll(f)), duration: i === 0 ? 3.2 : 1.6, label: "overview" })),
+          ...AFTER.map(p => ({ y: at(armiProgressToScroll(p)), duration: 3.2 })),
+          ...(brief !== null ? [{ y: brief, duration: 3.6, label: "armi-brief" }] : []),
         ];
       },
     });
@@ -60,7 +65,8 @@ export function ArmiExperience() {
   useEffect(() => {
     let previous = "";
     return runtime.subscribeFrame(() => {
-      const next = armiStage(runtime.progress.current);
+      const p = armiStage(runtime.progress.current), next = p.id === "enter" && runtime.progress.current < .156 ? armiStage(.1) : p;
+      // Scene 01 owns the voice → neon orb → into-the-UI move; 02 starts when the camera dives in.
       if (next.id !== previous) { previous = next.id; setProductionStage(next); }
     });
   }, [runtime]);
@@ -127,7 +133,7 @@ export function ArmiExperience() {
     <div ref={viewport} className={styles.viewport} style={{ "--hero": scene < 0 ? 1 : 0 } as CSSProperties} data-phase={step.id} data-render-mode={mode} data-world-asset={mode === "3d" ? "armi-v015" : undefined}>
       <div ref={surface} className={styles.canvas} aria-hidden="true"/>
       <div ref={apertureEdge} className={styles.apertureEdge} aria-hidden="true"/>
-      {mode === "3d" && <><ArmiProductTransition runtime={runtime}/><ArmiRoutingOptions runtime={runtime}/></>}
+      {mode === "3d" && <><ArmiProductTransition runtime={runtime}/><ArmiRoutingOptions runtime={runtime}/><ArmiOverviewFocus runtime={runtime}/></>}
       <div className={styles.overlay}>
         {(staticMode ? phase === 0 : scene < 0) && <header className={styles.identity}><p>01 / ARMI</p><h2>ARMI</h2><h3>VOICE BECOMES<br/>ACTION.</h3></header>}
         {staticMode ? <>

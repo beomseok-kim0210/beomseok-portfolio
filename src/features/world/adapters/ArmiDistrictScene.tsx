@@ -6,7 +6,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { RectAreaLightUniformsLib } from "three/addons/lights/RectAreaLightUniformsLib.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import { Color, FileLoader, Mesh, PMREMGenerator } from "three";
+import { Box3, Color, FileLoader, Mesh, PMREMGenerator, Vector3 } from "three";
 import { clone } from "three/addons/utils/SkeletonUtils.js";
 import type { Group } from "three";
 import { armiV015Base, armiLook, createArmiLightRig, prepareArmiV015, type ArmiManifest } from "./armiV015";
@@ -27,7 +27,8 @@ function AuditLateAsset({url,onLoad}:{url:string;onLoad:(asset:GLTF)=>void}){
 }
 
 export function ArmiDistrictScene({ runtime, compact, video }: { runtime: WorldRuntime; compact: boolean; video: HTMLVideoElement | null }) {
-  const { gl, scene, invalidate, camera } = useThree();
+  const { gl, scene, invalidate, camera, size } = useThree();
+  const overviewCentres = useMemo(() => new Map<string, Vector3>(), []);
   const audit=useContext(ArmiAuditContext);
   const auditEnabled=!!audit;
   const [alternatives,setAlternatives]=useState<GLTF|null>(null),[response,setResponse]=useState<GLTF|null>(null);
@@ -106,6 +107,15 @@ export function ArmiDistrictScene({ runtime, compact, video }: { runtime: WorldR
     const legacy = scene.getObjectByName("ARMI_LegacyProductEntry");
     if (legacy) legacy.visible = !chamber;
     instances?.sample();
+    // Overview hold: project the four destinations so the DOM can introduce them one at a time.
+    if (runtime.armiOverview.current >= 0) {
+      for (const name of ["Text", "Robot", "Tavily", "Memory"]) {
+        let c = overviewCentres.get(name);
+        if (!c) { const g = asset.groups.get(name); if (!g) continue; c = new Box3().setFromObject(g).getCenter(new Vector3()); overviewCentres.set(name, c); }
+        const v = c.clone().project(camera);
+        runtime.armiAnchors.current[name] = [(v.x + 1) / 2 * size.width, (1 - v.y) / 2 * size.height];
+      }
+    }
     if(audit){gl.domElement.dataset.auditInstances=JSON.stringify({batches:instances?.count??0,sources:instances?.sources??0});}
   });
   return <>

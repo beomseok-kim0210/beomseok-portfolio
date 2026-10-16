@@ -23,9 +23,7 @@ export function ArmiRoutingOptions({ runtime }: { runtime: WorldRuntime }) {
       }
       root.current.style.visibility = isArmiOptionsVisible(p) ? "visible" : "hidden";
       root.current.style.opacity = String(cue.blend);
-      // Preview walks the four destinations one at a time (TEXT → MEMORY → TAVILY → ROBOT) before the choice.
-      const span = (armiOptionsWindow.select - armiOptionsWindow.start) / 4;
-      const pre = p < armiOptionsWindow.select ? Math.min(3, Math.max(0, Math.floor((p - armiOptionsWindow.start - span * .25) / span))) : -1;
+      const pre = -1; // the four destinations are introduced in the overview shot; here only TEXT is chosen
       root.current.querySelectorAll<HTMLElement>("[data-option]").forEach((panel, i) => {
         const dim = pre >= 0 ? (i === pre ? 0 : .62) : i === 0 ? 0 : selected * .8;
         panel.style.background = dim > 0 ? `rgba(3,8,12,${dim})` : "transparent";

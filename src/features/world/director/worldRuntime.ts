@@ -42,6 +42,10 @@ export function createWorldRuntime() {
     weddingProgress,
     weddingViewport: { current: null as HTMLElement | null },
     armiAsset: { current: null as ArmiProductionAsset | null },
+    /** 0..1 inside the ARMI overview hold (four parts introduced in turn), -1 outside. */
+    armiOverview: { current: -1 },
+    /** Canvas-pixel anchors of the four destinations, written by the ARMI scene while the overview holds. */
+    armiAnchors: { current: {} as Record<string, [number, number]> },
     armiReview: { current: null as string | null },
     subscribeFrame(listener: () => void) { listeners.add(listener); return () => { listeners.delete(listener); }; },
     subscribeSemantic(listener: () => void) { semanticListeners.add(listener); return () => { semanticListeners.delete(listener); }; },

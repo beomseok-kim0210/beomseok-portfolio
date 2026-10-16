@@ -4,7 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { observeScrollLayout } from "@/components/sections/ImmersiveProjectFlow/observeScrollLayout";
 import { armiLegacyPhase } from "../adapters/armiRuntime";
-import { armiScrollProgress } from "../adapters/armiScrollTiming";
+import { armiOverviewFocus, armiScrollProgress } from "../adapters/armiScrollTiming";
 import { debriefPx, gatePx } from "../runtime/journeyGeometry";
 import { worldPositionForDomProgress, type WorldRuntime } from "./worldRuntime";
 import type { WorldRenderMode } from "../types/contracts";
@@ -18,6 +18,7 @@ export function useWorldDirector(section: RefObject<HTMLElement | null>, runtime
       // An offscreen ARMI refresh must not take ownership from Hangarae.
       if (section.current && section.current.getBoundingClientRect().bottom < 72) return;
       const progress = renderMode === "webgl" ? armiScrollProgress(clock.value) : clock.value;
+      runtime.armiOverview.current = renderMode === "webgl" ? armiOverviewFocus(clock.value) : -1;
       const state = runtime.publish(worldPositionForDomProgress("armi", progress), renderMode);
       const phase = armiLegacyPhase(state.shotId);
       if (previous !== phase) { previous = phase; onPhase(phase); }

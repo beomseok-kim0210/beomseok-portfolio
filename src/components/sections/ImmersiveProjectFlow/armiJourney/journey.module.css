@@ -124,6 +124,19 @@
 .routingOptions h4 { font:500 clamp(16px,2vw,26px)/1.2 var(--font-display),sans-serif; margin:0 0 8px; color:#f0f4ef; text-shadow:0 2px 8px #000; }
 .routingOptions small { font:11px/1.5 ui-monospace,monospace; color:#cad4d8; background:#061018d9; padding:4px 8px; }
 .routingOptions > div { transition:background .35s ease, border-color .35s ease; }
+/* Chosen route keeps pulsing while the visitor is parked on the decision. */
+.routingOptions [data-selected=true] { animation:armiPick 1.1s ease-in-out infinite; }
+@keyframes armiPick { 0%,100% { border-color:#d2f059; box-shadow:inset 0 0 18px #d2f05980,0 0 14px #d2f05999; } 50% { border-color:#8fa53a; box-shadow:inset 0 0 4px #d2f05920,0 0 0 #d2f05900; } }
+@media (prefers-reduced-motion:reduce) { .routingOptions [data-selected=true] { animation:none; } }
+/* Overview hold: the chamber dims except the destination being introduced. */
+.overviewFocus { position:absolute; inset:0; right:calc(var(--docent-overlay,0px) * -1); z-index:3; pointer-events:none; visibility:hidden; opacity:0;
+  background:radial-gradient(circle 190px at var(--fx,50%) var(--fy,50%), transparent 0 58%, rgba(3,7,10,.72) 100%); transition:background .45s ease; }
+.overviewRing { position:absolute; left:var(--fx,50%); top:var(--fy,50%); width:250px; height:250px; margin:-125px 0 0 -125px; border-radius:50%; border:2px solid #d2f059; box-shadow:0 0 26px #d2f05966, inset 0 0 26px #d2f05933; transition:left .45s ease, top .45s ease; }
+.overviewCard { position:absolute; left:calc(var(--fx,50%) + 140px); top:calc(var(--fy,50%) - 40px); display:grid; gap:4px; padding:12px 16px; border-radius:8px; background:rgba(6,14,22,.92); border:1px solid #d2f05988; opacity:0; transform:translateY(8px); transition:opacity .35s ease, transform .35s ease, left .45s ease, top .45s ease; }
+.overviewCard[data-on=true] { opacity:1; transform:none; }
+.overviewCard small { font:11px/1.4 ui-monospace,monospace; letter-spacing:.12em; color:#d2f059; }
+.overviewCard strong { font:600 22px/1.2 var(--font-display),sans-serif; color:#f0f4ef; }
+.overviewCard span { font:500 15px/1.4 Pretendard,sans-serif; color:#cad4d8; }
 .routingOptions [data-focus=true] h4,.routingOptions [data-focus=true] small,.routingOptions [data-selected=true] h4,.routingOptions [data-selected=true] small { color:#d2f059; }
 .routeDescription { color:#dee6e9; font-size:13px; width:fit-content; background:#061018d9; padding:5px 8px; }
 .routingRequest { position:absolute; z-index:3; left:50%; top:60%; transform:translate(-50%,-50%); width:min(900px,82%); box-sizing:border-box; display:grid; gap:16px; margin:0; padding:32px 38px; border:1px solid #80995388; border-left:3px solid #d2f059; background:#060e16eb; box-shadow:0 16px 50px #0007; color:#dce4e7; text-align:center; visibility:hidden; opacity:0; pointer-events:none; }
