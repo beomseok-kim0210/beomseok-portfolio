@@ -189,7 +189,7 @@
 .viewport[data-medium=true] .question{width:36%;top:30%}
 .viewport[data-medium=true] .question h2{font-size:clamp(26px,2.5vw,36px)}
 .viewport[data-medium=true] .tape li span{display:none}
-.viewport[data-medium=true] .evidence{width:36%}
+.viewport[data-medium=true] .evidence{width:44%}
 .viewport[data-medium=true] .pairSmall{display:none}
 .viewport[data-medium=true] .summary{width:26%;padding:14px 16px}
 .viewport[data-medium=true] .summary ul{display:none}

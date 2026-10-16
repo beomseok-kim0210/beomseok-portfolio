@@ -69,6 +69,6 @@ export function ImmersiveProjectFlow() {
       <div className={styles.evidenceComplete}><JourneyComplete href="/projects/hangarae" cta="행가래 상세 기록 열기" sub="데이터 구축 · 재학습 · 트러블슈팅 · 기술 스택" recap={hangaraeRecap}/></div>
     </section>
     <WeddingExperience/>
-    <div id="wedding-brief" style={{ position: "relative", zIndex: 1 }}><HomeProjectBrief project="wedding"/></div>
+    <div id="wedding-brief" className={styles.weddingBrief}><HomeProjectBrief project="wedding"/></div>
   </div>;
 }

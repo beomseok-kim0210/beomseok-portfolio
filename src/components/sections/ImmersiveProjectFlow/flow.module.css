@@ -53,7 +53,7 @@
 .spatialLegend div { display:grid; grid-template-columns:78px 1fr; padding:11px 0; border-top:1px solid color-mix(in srgb,var(--stage-muted) 20%,transparent); }
 .spatialLegend dt { font:12px/1.5 ui-monospace,monospace; color:var(--stage-accent); }
 .spatialLegend dd { margin:0; color:var(--stage-muted); }
-.evidence { --stage-accent:#63cbdb; background:var(--world-bg); color:var(--world-ink); padding:64px 4.5% 72px; scroll-margin-top:72px; }
+.evidence { --stage-accent:#63cbdb; background:var(--world-bg); color:var(--world-ink); padding:64px 4.5% 72px; scroll-margin-top:72px; border-right:var(--docent-overlay,0px) solid transparent; }
 .evidenceHeading { display:flex; justify-content:space-between; align-items:flex-start; gap:40px; }
 .evidenceHeading h2 { width:66%; font-size:clamp(28px,2.6vw,38px); font-weight:600; line-height:1.25; letter-spacing:-.035em; margin:18px 0 0; }
 .evidenceHeading { flex-direction:column; gap:0; }
@@ -139,3 +139,7 @@
 .nextCue i { display:block; width:1px; height:18px; background:linear-gradient(var(--stage-accent),transparent); animation:nextCueDrop 1.8s ease-in-out infinite; }
 @keyframes nextCueDrop { 0%,100% { transform:scaleY(.4); transform-origin:top; opacity:.4 } 50% { transform:scaleY(1); opacity:1 } }
 @media (max-width:900px), (prefers-reduced-motion:reduce) { .nextCue { display:none; } }
+
+/* Wedding brief sits right under the 72px band: its paper also fills the band, so nothing behind peeks through. */
+.weddingBrief { position:relative; z-index:1; }
+.weddingBrief > section { box-shadow:0 -32px 0 0 var(--brief-bg); }

@@ -1,5 +1,6 @@
 import { Vector3 } from "three";
 import type { DistrictShotProfile } from "../types/contracts";
+import { docentOverlayPx } from "@/features/docent/docentOverlay";
 
 /**
  * Wedding Dress AI — "The Fitting Room". A bright atelier inside the same building.
@@ -159,6 +160,8 @@ export function sampleWeddingCamera(p: number, compact: boolean, out = { positio
   out.target.set(a.target[0] + (b.target[0] - a.target[0]) * t, a.target[1] + (b.target[1] - a.target[1]) * t, a.target[2] + (b.target[2] - a.target[2]) * t);
   // Phones: the copy sits above the subject, so centre the subject instead of offsetting it.
   if (compact) { const subject = q < .145 ? 0 : q < .5 ? (q < .335 ? out.target.x : wdGalleryX(4) - .67) : q < .6 ? out.target.x : 0; const dx = subject - out.target.x; out.position.x += dx; out.target.x += dx; out.target.y -= .15; }
+  // Docent docked: the stage is narrower, so 03 slides the two results further left to clear the analysis card.
+  if (!compact && docentOverlayPx() > 0) { const k3 = Math.max(0, Math.min(1, (q - .31) / .025)) * (1 - Math.max(0, Math.min(1, (q - .47) / .03))); out.position.x += .32 * k3; out.target.x += .32 * k3; }
   out.up.set(0, 1, 0); out.fov = WD_FOV; out.far = 60;
   return out;
 }
