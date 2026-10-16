@@ -18,12 +18,12 @@ export type SteppedRange = { id: string; stops: () => Stop[]; enabled: () => boo
 
 const WHEEL_IDLE = 320, COOLDOWN = 220, SETTLE = 260, EDGE = 3;
 const ranges = new Map<string, SteppedRange>();
-let installed = false, busyUntil = 0, lastWheel = 0, gestureUsed = false, startedOutside = false, lastY = 0, settleTimer = 0, ownScroll = false;
+let installed = false, busyUntil = 0, lastWheel = 0, gestureUsed = false, gestureRegion: number | null = null, lastY = 0, settleTimer = 0, ownScroll = false;
 
 const isOn = () => window.innerWidth > 900 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const insideIgnored = (target: EventTarget | null) => {
   const el = target as HTMLElement | null;
-  return !!el?.closest?.("[data-docent-panel], input, textarea, select, [contenteditable=true], [data-step-ignore]");
+  return !!el?.closest?.("[data-docent-panel], input:not([type=range]):not([type=checkbox]):not([type=radio]), textarea, select, [contenteditable=true], [data-step-ignore]");
 };
 /** Ranges whose end and start stops coincide (e.g. ARMI brief → Hangarae entry) merge into one region. */
 function regions() {
@@ -46,7 +46,14 @@ function go(stop: Stop, fallback: number) {
   busyUntil = performance.now() + duration * 1000 + 80;
   ownScroll = true;
   scrollToY(stop.y, { duration, lock: true });
-  window.setTimeout(() => { ownScroll = false; }, duration * 1000 + 120);
+  window.setTimeout(() => {
+    // A layout refresh during the glide (pinned briefs, ScrollTrigger) can stop it short: finish the landing.
+    if (Math.abs(window.scrollY - stop.y) > 6) {
+      busyUntil = performance.now() + 480;
+      scrollToY(stop.y, { duration: .4, lock: true });
+      window.setTimeout(() => { ownScroll = false; }, 520);
+    } else ownScroll = false;
+  }, duration * 1000 + 120);
 }
 /** Step in a direction from the current position. Returns false when the range has no stop that way (let the page scroll). */
 function step(dir: 1 | -1): boolean {
@@ -63,12 +70,12 @@ function onWheel(e: WheelEvent) {
   // A new gesture needs a pause in the wheel stream AND the previous move (plus a short cooldown) to be over.
   const now = performance.now(), fresh = now - lastWheel > WHEEL_IDLE && now > busyUntil + COOLDOWN;
   lastWheel = now;
-  if (fresh) { gestureUsed = false; startedOutside = !active(); }
+  if (fresh) { gestureUsed = false; gestureRegion = active()?.[0].y ?? null; }
   const stops = active();
   if (!stops) return;
   const dir: 1 | -1 = e.deltaY > 0 ? 1 : -1;
-  // A free-scroll gesture that runs into the range lands on its boundary stop (never skips past it).
-  if (startedOutside && !gestureUsed) {
+  // A gesture that started outside this region (free page or another region) lands on its boundary stop.
+  if (gestureRegion !== stops[0].y && !gestureUsed) {
     e.preventDefault(); e.stopImmediatePropagation();
     go(dir > 0 ? stops[0] : stops[stops.length - 1], .9); gestureUsed = true; return;
   }

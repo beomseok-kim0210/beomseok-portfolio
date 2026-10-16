@@ -8,6 +8,7 @@ import { worldPositionForDomProgress } from "@/features/world/director/worldRunt
 import type { WorldRenderMode } from "@/features/world/types/contracts";
 import { ramp, sampleWedding, wdExperts, wdModels, wdOuter, wdSceneRanges, wdScenes, wdScrollToTimeline, wdShots, wdTimelineToScroll, wdLocal, WD_ENTRY, WD_HOLD } from "@/features/world/adapters/weddingAtelier";
 import { registerSteppedRange } from "@/features/world/runtime/sceneStepper";
+import { weddingHoldStopY } from "@/features/world/runtime/journeyGeometry";
 import { onDocentOverlayChange } from "@/features/docent/docentOverlay";
 import { observeScrollLayout } from "../observeScrollLayout";
 import { SceneChrome, SceneFooter, SceneHeaderList } from "../SceneHud";
@@ -93,7 +94,7 @@ export function WeddingExperience() {
       stops: () => {
         const brief = document.getElementById("wedding-brief");
         return [
-          { y: at(WD_HOLD * .5), duration: 1.8, label: "hold" },
+          { y: weddingHoldStopY(wdTimelineToScroll(WD_HOLD * .5)) ?? at(WD_HOLD * .5), duration: 1.8, label: "hold" },
           ...wdSceneRanges.map(([a, b], i) => ({ y: at(wdOuter(a + (b - a) * SETTLED[i])), duration: i === 0 ? 2.6 : 1.5, label: wdScenes[i].id })),
           ...(brief ? [{ y: brief.getBoundingClientRect().top + window.scrollY - 72, duration: 2.1, label: "brief" }] : []),
         ];

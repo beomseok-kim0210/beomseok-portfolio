@@ -15,7 +15,8 @@ import styles from "./hangarae.module.css";
 import { DepthHud, PoseLegend, SceneHeaders, SplitHud } from "./HangaraeGraphics";
 import { SceneChrome, SceneFooter } from "../SceneHud";
 import { onDocentOverlayChange } from "@/features/docent/docentOverlay";
-import { applyAperture, armiBriefStopY, debriefPx } from "@/features/world/runtime/journeyGeometry";
+import { applyAperture, armiBriefStopY, debriefPx, weddingHoldStopY } from "@/features/world/runtime/journeyGeometry";
+import { WD_HOLD, wdTimelineToScroll } from "@/features/world/adapters/weddingAtelier";
 import { registerSteppedRange } from "@/features/world/runtime/sceneStepper";
 
 function place(el: HTMLElement | null, rect: Rect, opacity: number) {
@@ -171,12 +172,13 @@ export function HangaraeExperience() {
       enabled: () => mode === "webgl",
       stops: () => {
         const at = (t: number) => trigger.start + (trigger.end - trigger.start) * hgTimelineToScroll(t);
-        const brief = armiBriefStopY(), evidence = document.getElementById("hangarae-evidence");
+        // The Hangarae brief is read where the wedding hold pins it (it is sticky once the wedding mounts).
+        const brief = armiBriefStopY(), hold = weddingHoldStopY(wdTimelineToScroll(WD_HOLD * .5));
         return [
           ...(brief !== null ? [{ y: brief, duration: 1.8, label: "armi-brief" }] : []),
           { y: at(.075), duration: 2.4, label: "hero" },
           ...HG_STOPS_INNER.map(q => ({ y: at(hgOuter(q)), duration: 1.5 })),
-          ...(evidence ? [{ y: evidence.getBoundingClientRect().top + window.scrollY - 72, duration: 1.8, label: "hangarae-brief" }] : []),
+          ...(hold !== null ? [{ y: hold, duration: 1.8, label: "hangarae-brief" }] : []),
         ];
       },
     });

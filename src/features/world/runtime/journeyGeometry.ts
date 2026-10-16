@@ -61,6 +61,14 @@ export function armiBriefStopY() {
   return start + (end - start) * .55;
 }
 
+/** Scroll Y of the wedding hold: the pinned Hangarae brief with the "next project" cue (shared stop). */
+export function weddingHoldStopY(holdScroll: number) {
+  const track = typeof document !== "undefined" ? document.getElementById("wedding") : null;
+  if (!track) return null;
+  const top = track.getBoundingClientRect().top + window.scrollY, start = top - 72, end = top + track.offsetHeight - window.innerHeight;
+  return start + (end - start) * holdScroll;
+}
+
 /* ── Entry readiness (Home waits for nothing; it only reports) ───────────────── */
 type WorldLoad = { progress: number; ready: boolean };
 declare global { interface Window { __portfolioWorld?: WorldLoad } }

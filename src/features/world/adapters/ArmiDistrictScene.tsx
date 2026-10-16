@@ -7,7 +7,7 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { RectAreaLightUniformsLib } from "three/addons/lights/RectAreaLightUniformsLib.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { Color, FileLoader, Mesh, PMREMGenerator } from "three";
-import { projectOverviewAnchors } from "./armiOverview";
+import { overviewParts, projectOverviewAnchors } from "./armiOverview";
 import { clone } from "three/addons/utils/SkeletonUtils.js";
 import type { Group } from "three";
 import { armiV015Base, armiLook, createArmiLightRig, prepareArmiV015, type ArmiManifest } from "./armiV015";
@@ -93,7 +93,10 @@ export function ArmiDistrictScene({ runtime, compact, video }: { runtime: WorldR
   useFrame(() => {
     counter?.reset();
     const chamber = true;
-    if (!runtime.armiReview.current) motion.sample(runtime.progress.current);
+    // Overview hold: the introduced destination loops its authored demo inside the magnified view.
+    const ov = runtime.armiOverview.current;
+    const focus = ov >= 0 && !runtime.armiReview.current ? { group: overviewParts[Math.min(3, Math.floor(ov * 4))].id, t: (performance.now() / 1000 % 3.2) / 3.2 } : undefined;
+    if (!runtime.armiReview.current) motion.sample(runtime.progress.current, focus);
     selectedRoute.sample(runtime.armiReview.current ? 0 : runtime.progress.current, requestFlow.textTrackProgress(camera as import("three").PerspectiveCamera,runtime.armiReview.current ? 0 : runtime.progress.current));
     requestFlow.sample(runtime.armiReview.current ? 0 : runtime.progress.current, camera as import("three").PerspectiveCamera);
     const selection = runtime.armiReview.current ? 0 : Math.max(0, Math.min(1, (runtime.progress.current - .402) / .01));

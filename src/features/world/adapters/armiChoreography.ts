@@ -92,23 +92,31 @@ export function createArmiMotion(asset: ArmiProductionAsset) {
   });
   const rotorTurn=new Quaternion(),rotorAxis=new Vector3(0,1,0);
   return {
-    sample(p: number) {
-      if (p === previousProgress) return;
-      previousProgress = p;
+    /** `focus`: the overview hold plays one destination's authored demo (group, 0..1) in its magnified view. */
+    sample(p: number, focus?: { group: string; t: number }) {
+      const key = focus ? p + focus.t * 1e-3 + focus.group.length : p;
+      if (key === previousProgress) return;
+      previousProgress = key;
       const preview = p >= armiOptionsWindow.start && p < armiOptionsWindow.end;
       for (const { window, clip, mixer, action } of optionMotions) {
         action.play(); action.paused = true;
-        action.time = (preview ? local(p, window.start, window.end) : 0) * clip.duration;
+        action.time = (preview ? local(p, window.start, window.end) : focus?.group === window.group ? focus.t : 0) * clip.duration;
         mixer.update(0);
       }
       for (const { window, clip, mixer, action } of motions) {
         action.play(); action.paused = true;
-        action.time = (preview && window.group === "Text" ? local(p, armiOptionsWindow.start, armiOptionsWindow.select) : local(p, window.start, window.end)) * clip.duration;
+        action.time = (preview && window.group === "Text" ? local(p, armiOptionsWindow.start, armiOptionsWindow.select) : focus?.group === window.group ? focus.t : local(p, window.start, window.end)) * clip.duration;
         mixer.update(0);
       }
       // Spin only the existing upper/lower rotors; no camera or geometry ownership changes.
       for(const {object,rest}of rotors){rotorTurn.setFromAxisAngle(rotorAxis,coreRotorAngle(p));object.quaternion.copy(rest).multiply(rotorTurn);}
       for (const { object, events, window: mainWindow, option } of visibility) {
+        if (focus && option && option.group === focus.group) {
+          const frame = option.frames[0] + focus.t * (option.frames[1] - option.frames[0]);
+          let shown = object.userData.web_default_visible ?? true;
+          for (const [at, state] of events) if (at <= frame) shown = state;
+          object.visible = shown; continue;
+        }
         const window = preview && option ? option : mainWindow;
         const frame = window ? window.frames[0] + local(p, window.start, window.end) * (window.frames[1] - window.frames[0]) : 49;
         let visible = object.userData.web_default_visible ?? true;
