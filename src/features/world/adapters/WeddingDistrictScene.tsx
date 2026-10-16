@@ -272,8 +272,8 @@ export function WeddingDistrictScene({ runtime }: { runtime: WorldRuntime }) {
       kit.pins.forEach((p, i) => set(`pin${i}`, p.getWorldPosition(v).add(new Vector3(0, .08, 0))));
       kit.stations.forEach((st, i) => set(`ex${i}`, v.copy(st.anchor).setY(1.2)));
       set("dress", v.set(kit.hero.group.position.x, 1.62, 0));
-      set("mm", v.set(WD_MERMAID_X, 1.56, .1));
-      set("bg", v.set(wdGalleryX(4), 1.56, 0));
+      set("mm", v.set(WD_MERMAID_X, 1.44, .1));
+      set("bg", v.set(wdGalleryX(4), 1.44, 0));
       const m = WD_MIRROR, tl = project(v.set(m.x - m.w / 2, m.y + m.h / 2, m.z), camera, W, H), br = project(v.set(m.x + m.w / 2, m.y - m.h / 2, m.z), camera, W, H);
       root.style.setProperty("--mirror-x", `${tl[0].toFixed(1)}px`); root.style.setProperty("--mirror-y", `${tl[1].toFixed(1)}px`);
       root.style.setProperty("--mirror-w", `${(br[0] - tl[0]).toFixed(1)}px`); root.style.setProperty("--mirror-h", `${(br[1] - tl[1]).toFixed(1)}px`);

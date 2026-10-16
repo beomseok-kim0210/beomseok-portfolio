@@ -137,8 +137,8 @@ function keys(compact: boolean): Key[] {
     { at: .145, pos: [g0 + .9, 1.5, 7.4 * k], target: [g0 + 1.25, .9, 0] },
     { at: .29, pos: [g4 - 1.6, 1.5, 7.4 * k], target: [g4 - 1.25, .9, 0] },
     // 03: the two ECON results stand on the left third; the analysis card takes the right.
-    { at: .335, pos: [g4 + .45, 1.32, 6.4 * k], target: [g4 + .72, .82, 0] },
-    { at: .45, pos: [g4 + .42, 1.3, 6.2 * k], target: [g4 + .7, .82, 0] },
+    { at: .335, pos: [g4 + 1.15, 1.32, 6.6 * k], target: [g4 + 1.42, .8, 0] },
+    { at: .45, pos: [g4 + 1.12, 1.3, 6.4 * k], target: [g4 + 1.4, .8, 0] },
     { at: .5, pos: [3.6, 3.4, 10.5 * k], target: [3.6, .7, 0] },
     { at: .56, pos: [3.6, 3.5, 10.8 * k], target: [3.6, .7, 0] },
     { at: .6, pos: [0, 2.35, 5.4 * k], target: [0, .86, -.5] },

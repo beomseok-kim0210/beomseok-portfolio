@@ -164,8 +164,8 @@ export function WeddingExperience() {
         </div>
         <p className={styles.verdict3} style={{ opacity: "var(--verdict)" } as CSSProperties}><b>결론</b>웨딩드레스의 핵심은 볼륨 — 볼가운을 복원할 수 없어 3D 방식을 포기</p>
       </figure>
-      <div className={styles.caseBadge} data-ok="true" style={{ left: "var(--a-mm-x)", top: "var(--a-mm-y)", opacity: "calc(var(--success) * var(--s3))" } as CSSProperties}>✓ 복원 성공<small>MERMAID · 몸에 붙는 라인</small></div>
-      <div className={styles.caseBadge} style={{ left: "var(--a-bg-x)", top: "var(--a-bg-y)", opacity: "calc(var(--fail) * var(--s3))" } as CSSProperties}>✕ 복원 실패<small>BALL GOWN · 볼륨 손실</small></div>
+      <div className={styles.caseBadge} data-ok="true" style={{ left: "var(--a-mm-x)", top: "var(--a-mm-y)", opacity: "calc(var(--success) * var(--s3))" } as CSSProperties}>✓ 복원 성공<small>머메이드 · 몸에 붙는 라인</small></div>
+      <div className={styles.caseBadge} style={{ left: "var(--a-bg-x)", top: "var(--a-bg-y)", opacity: "calc(var(--fail) * var(--s3))" } as CSSProperties}>✕ 복원 실패<small>볼가운 · 볼륨 손실</small></div>
       {["스커트 뒤쪽 부피가 잘려 나감", "볼륨이 반쪽만 복원"].map((l, i) => <div key={l} className={styles.pinLabel} data-side={i ? "left" : "right"} style={{ left: `var(--a-pin${i}-x)`, top: `var(--a-pin${i}-y)`, opacity: "var(--pins)" } as CSSProperties}>{l}<small>{i ? "WEDDING VOLUME · FAIL" : "LOOSE SKIRT · FAIL"}</small></div>)}
 
       {/* 04 — the decision bends */}
