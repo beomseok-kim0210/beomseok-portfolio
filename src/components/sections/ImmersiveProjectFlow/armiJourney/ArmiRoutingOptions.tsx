@@ -23,9 +23,14 @@ export function ArmiRoutingOptions({ runtime }: { runtime: WorldRuntime }) {
       }
       root.current.style.visibility = isArmiOptionsVisible(p) ? "visible" : "hidden";
       root.current.style.opacity = String(cue.blend);
+      // Preview walks the four destinations one at a time (TEXT → MEMORY → TAVILY → ROBOT) before the choice.
+      const span = (armiOptionsWindow.select - armiOptionsWindow.start) / 4;
+      const pre = p < armiOptionsWindow.select ? Math.min(3, Math.max(0, Math.floor((p - armiOptionsWindow.start - span * .25) / span))) : -1;
       root.current.querySelectorAll<HTMLElement>("[data-option]").forEach((panel, i) => {
-        panel.style.background = i === 0 ? "transparent" : `rgba(3,8,12,${selected * .8})`;
-        panel.style.borderColor = i === 0 && cue.blink > .15 ? "#d2f059" : "#758991";
+        const dim = pre >= 0 ? (i === pre ? 0 : .62) : i === 0 ? 0 : selected * .8;
+        panel.style.background = dim > 0 ? `rgba(3,8,12,${dim})` : "transparent";
+        panel.style.borderColor = (i === 0 && cue.blink > .15) || i === pre ? "#d2f059" : "#758991";
+        panel.dataset.focus = String(i === pre);
         panel.style.boxShadow = i === 0 ? `inset 0 0 ${18*cue.blink}px #d2f05980,0 0 ${12*cue.blink}px #d2f05980` : "inset 0 0 0 2px #060e16";
         panel.dataset.selected = String(i === 0 && selected > 0);
         const status = panel.querySelector<HTMLElement>("small")!;

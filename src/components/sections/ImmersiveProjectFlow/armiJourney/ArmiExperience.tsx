@@ -40,7 +40,9 @@ export function ArmiExperience() {
   /* Stepped scenes: one gesture = one authored ARMI stage; the camera flight between stages plays on the way.
      The last stop is the pinned ARMI brief, shared with the Hangarae entry (one continuous region). */
   useEffect(() => {
-    const STAGE_STOPS = [.045, .11, .2, .3, .338, .396, .437, .495, .585, .81, .885, .935, .985];
+    // 00 hero · 01 voice · 02 into the system · 03 core → TEXT → MEMORY → TAVILY → ROBOT → decision
+    // · 04 text answer · 05 structured response · 06 back to product
+    const STAGE_STOPS = [.045, .11, .3, .338, .359, .373, .387, .399, .437, .585, .885, .985];
     return registerSteppedRange({
       id: "armi",
       enabled: () => worldMode === "webgl",

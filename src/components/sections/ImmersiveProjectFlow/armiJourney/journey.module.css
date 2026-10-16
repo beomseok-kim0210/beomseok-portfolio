@@ -123,7 +123,8 @@
 .routingOptions > div { position:relative; border:6px solid #758991; box-shadow:inset 0 0 0 2px #060e16; padding:22px 26px; }
 .routingOptions h4 { font:500 clamp(16px,2vw,26px)/1.2 var(--font-display),sans-serif; margin:0 0 8px; color:#f0f4ef; text-shadow:0 2px 8px #000; }
 .routingOptions small { font:11px/1.5 ui-monospace,monospace; color:#cad4d8; background:#061018d9; padding:4px 8px; }
-.routingOptions [data-selected=true] h4,.routingOptions [data-selected=true] small { color:#d2f059; }
+.routingOptions > div { transition:background .35s ease, border-color .35s ease; }
+.routingOptions [data-focus=true] h4,.routingOptions [data-focus=true] small,.routingOptions [data-selected=true] h4,.routingOptions [data-selected=true] small { color:#d2f059; }
 .routeDescription { color:#dee6e9; font-size:13px; width:fit-content; background:#061018d9; padding:5px 8px; }
 .routingRequest { position:absolute; z-index:3; left:50%; top:60%; transform:translate(-50%,-50%); width:min(900px,82%); box-sizing:border-box; display:grid; gap:16px; margin:0; padding:32px 38px; border:1px solid #80995388; border-left:3px solid #d2f059; background:#060e16eb; box-shadow:0 16px 50px #0007; color:#dce4e7; text-align:center; visibility:hidden; opacity:0; pointer-events:none; }
 .routingRequest strong { color:#d2f059; font:500 clamp(20px,2.2vw,32px)/1.3 var(--font-display),sans-serif; }
