@@ -6,8 +6,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useWorldHost } from "@/features/world/runtime/WorldHost";
 import { worldPositionForDomProgress } from "@/features/world/director/worldRuntime";
 import type { WorldRenderMode } from "@/features/world/types/contracts";
-import { ramp, sampleWedding, wdExperts, wdModels, wdScenes, wdScrollToTimeline, wdShots, wdTimelineToScroll, wdLocal, WD_ENTRY, WD_EXIT_FROM, WD_HOLD } from "@/features/world/adapters/weddingAtelier";
-import { debriefPx, scrollToY } from "@/features/world/runtime/journeyGeometry";
+import { ramp, sampleWedding, wdExperts, wdModels, wdOuter, wdSceneRanges, wdScenes, wdScrollToTimeline, wdShots, wdTimelineToScroll, wdLocal, WD_ENTRY, WD_HOLD } from "@/features/world/adapters/weddingAtelier";
+import { registerSteppedRange } from "@/features/world/runtime/sceneStepper";
 import { onDocentOverlayChange } from "@/features/docent/docentOverlay";
 import { observeScrollLayout } from "../observeScrollLayout";
 import { SceneChrome, SceneFooter, SceneHeaderList } from "../SceneHud";
@@ -80,26 +80,25 @@ export function WeddingExperience() {
       node.style.pointerEvents = entryOn && s.entry < .98 ? "none" : "";
       if (previous !== s.shot) { previous = s.shot; setShot(s.shot); }
     };
-    /* ENTRY / EXIT play as authored moves: once the visitor crosses into either window, the page glides
-       through it (no half-open arch, no half-flooded mirror). Reverse travel glides back out. */
-    const holdEnd = wdTimelineToScroll(WD_HOLD), entryEnd = wdTimelineToScroll(WD_ENTRY), exitFrom = wdTimelineToScroll(WD_EXIT_FROM);
-    let gliding = 0;
-    const glide = (y: number, duration = y > scrollY ? 2.1 : 1.6) => { gliding = window.setTimeout(() => { gliding = 0; }, duration * 1000 + 150); scrollToY(y, { duration, lock: true }); };
-    const autoplay = (prog: number, dir: number) => {
-      if (gliding || innerWidth <= 900 || mode === "reduced-motion" || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      const at = (f: number) => trigger.start + (trigger.end - trigger.start) * f;
-      if (dir > 0 && prog > holdEnd + .0008 && prog < entryEnd * .97) glide(at(entryEnd) + 2, 2.6);
-      else if (dir < 0 && prog > holdEnd + .0008 && prog < entryEnd * .995) glide(at(holdEnd) - 2, 1.8);
-      else if (dir > 0 && prog > exitFrom + .002 && prog <= 1) {
-        // Land on the wedding brief: the flooded mirror hands over to the paper of the brief.
-        const brief = document.getElementById("wedding-brief"), y = brief ? brief.getBoundingClientRect().top + scrollY - 72 : trigger.end + debriefPx();
-        if (scrollY < y - 8) glide(y);
-      }
-      else if (dir < 0 && prog > exitFrom && prog < .985) glide(at(exitFrom) - 2);
-    };
-    // The exit (mirror push + flood) spans the whole tail, including the hold before the brief.
     const trigger: ScrollTrigger = ScrollTrigger.create({ trigger: node, start: "top 72px", end: "bottom bottom", invalidateOnRefresh: true,
-      onUpdate: self => { apply(wdScrollToTimeline(self.progress)); autoplay(self.progress, self.direction); }, onRefresh: self => apply(wdScrollToTimeline(self.progress)) });
+      onUpdate: self => apply(wdScrollToTimeline(self.progress)), onRefresh: self => apply(wdScrollToTimeline(self.progress)) });
+    /* Stepped scenes (pilot): one gesture = one scene. Stops sit where each scene's own animation has
+       finished; the glide between them plays that animation. The hold (Hangarae brief + cue) is the first
+       stop, the wedding brief the last; outside them the page scrolls freely. */
+    const at = (t: number) => trigger.start + (trigger.end - trigger.start) * wdTimelineToScroll(t);
+    const SETTLED = [.6, .86, .92, .75, .96, .7, .3] as const;
+    const stopRange = registerSteppedRange({
+      id: "wedding",
+      enabled: () => mode !== "reduced-motion",
+      stops: () => {
+        const brief = document.getElementById("wedding-brief");
+        return [
+          { y: at(WD_HOLD * .5), duration: 1.8, label: "hold" },
+          ...wdSceneRanges.map(([a, b], i) => ({ y: at(wdOuter(a + (b - a) * SETTLED[i])), duration: i === 0 ? 2.6 : 1.5, label: wdScenes[i].id })),
+          ...(brief ? [{ y: brief.getBoundingClientRect().top + window.scrollY - 72, duration: 2.1, label: "brief" }] : []),
+        ];
+      },
+    });
     /* The Hangarae debrief holds still (bottom-pinned) through the hold and the door opening. */
     const pin = () => { if (evidence) evidence.style.top = `${Math.min(72, innerHeight - evidence.offsetHeight)}px`; };
     if (evidence) { evidence.style.position = "sticky"; evidence.style.zIndex = "0"; pin(); }
@@ -110,7 +109,7 @@ export function WeddingExperience() {
     const stop = observeScrollLayout(node);
     const jump = () => { const v = new URLSearchParams(location.search).get("wedding"); if (v !== null && Number.isFinite(Number(v))) { ScrollTrigger.refresh(); const p = wdTimelineToScroll(Math.max(0, Math.min(1, Number(v)))); window.scrollTo({ top: trigger.start + (trigger.end - trigger.start) * p, behavior: "instant" }); } };
     const frame = requestAnimationFrame(jump);
-    return () => { cancelAnimationFrame(frame); stop(); stopDocent(); resize.disconnect(); evResize.disconnect(); if (gliding) clearTimeout(gliding); if (evidence) { evidence.style.position = ""; evidence.style.top = ""; evidence.style.filter = ""; evidence.style.transform = ""; } trigger.kill(); runtime.weddingViewport.current = null; };
+    return () => { cancelAnimationFrame(frame); stop(); stopDocent(); resize.disconnect(); evResize.disconnect(); stopRange(); if (evidence) { evidence.style.position = ""; evidence.style.top = ""; evidence.style.filter = ""; evidence.style.transform = ""; } trigger.kill(); runtime.weddingViewport.current = null; };
   }, [runtime, mode]);
 
   const scene = Math.max(0, shot - 1), isStatic = mode !== "webgl";
