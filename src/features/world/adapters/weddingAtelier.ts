@@ -133,8 +133,9 @@ function keys(compact: boolean): Key[] {
     { at: .1, pos: [-.95, 1.26, 4.25 * k], target: [-.58, .98, 0] },
     { at: .145, pos: [g0 + .9, 1.5, 7.4 * k], target: [g0 + 1.25, .9, 0] },
     { at: .29, pos: [g4 - 1.6, 1.5, 7.4 * k], target: [g4 - 1.25, .9, 0] },
-    { at: .335, pos: [g4 - 1.95, 1.25, 4.75 * k], target: [g4 - 1.5, .88, 0] },
-    { at: .45, pos: [g4 - 2.0, 1.22, 4.6 * k], target: [g4 - 1.52, .88, 0] },
+    // 03: the two ECON results stand on the left third; the analysis card takes the right.
+    { at: .335, pos: [g4 + .45, 1.32, 6.4 * k], target: [g4 + .72, .82, 0] },
+    { at: .45, pos: [g4 + .42, 1.3, 6.2 * k], target: [g4 + .7, .82, 0] },
     { at: .5, pos: [3.6, 3.4, 10.5 * k], target: [3.6, .7, 0] },
     { at: .56, pos: [3.6, 3.5, 10.8 * k], target: [3.6, .7, 0] },
     { at: .6, pos: [0, 2.35, 5.4 * k], target: [0, .86, -.5] },
@@ -154,7 +155,7 @@ export function sampleWeddingCamera(p: number, compact: boolean, out = { positio
   out.position.set(a.pos[0] + (b.pos[0] - a.pos[0]) * t, a.pos[1] + (b.pos[1] - a.pos[1]) * t, a.pos[2] + (b.pos[2] - a.pos[2]) * t);
   out.target.set(a.target[0] + (b.target[0] - a.target[0]) * t, a.target[1] + (b.target[1] - a.target[1]) * t, a.target[2] + (b.target[2] - a.target[2]) * t);
   // Phones: the copy sits above the subject, so centre the subject instead of offsetting it.
-  if (compact) { const subject = q < .145 ? 0 : q < .5 ? out.target.x + (q < .335 ? 0 : .76) : q < .6 ? out.target.x : 0; const dx = subject - out.target.x; out.position.x += dx; out.target.x += dx; out.target.y -= .15; }
+  if (compact) { const subject = q < .145 ? 0 : q < .5 ? (q < .335 ? out.target.x : wdGalleryX(4) - .67) : q < .6 ? out.target.x : 0; const dx = subject - out.target.x; out.position.x += dx; out.target.x += dx; out.target.y -= .15; }
   out.up.set(0, 1, 0); out.fov = WD_FOV; out.far = 60;
   return out;
 }

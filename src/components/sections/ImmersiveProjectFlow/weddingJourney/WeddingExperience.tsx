@@ -95,7 +95,7 @@ export function WeddingExperience() {
         const brief = document.getElementById("wedding-brief");
         return [
           { y: weddingHoldStopY(wdTimelineToScroll(WD_HOLD * .5)) ?? at(WD_HOLD * .5), duration: 1.8, label: "hold" },
-          ...wdSceneRanges.map(([a, b], i) => ({ y: at(wdOuter(a + (b - a) * SETTLED[i])), duration: i === 0 ? 2.6 : 1.5, label: wdScenes[i].id })),
+          ...wdSceneRanges.map(([a, b], i) => ({ y: at(wdOuter(a + (b - a) * SETTLED[i])), duration: i === 0 ? 2.6 : i === 1 ? 4.5 : 1.5, label: wdScenes[i].id })),
           ...(brief ? [{ y: brief.getBoundingClientRect().top + window.scrollY - 72, duration: 2.1, label: "brief" }] : []),
         ];
       },
