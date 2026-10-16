@@ -1,41 +1,50 @@
 "use client";
 import { useEffect, useRef } from "react";
 import type { WorldRuntime } from "@/features/world/director/worldRuntime";
+import { overviewInset, overviewParts } from "@/features/world/adapters/armiOverview";
+import { docentOverlayPx } from "@/features/docent/docentOverlay";
 import styles from "./journey.module.css";
 
-/** Introduction order inside the overview hold (one stop each). */
-export const overviewParts = [
-  { id: "Text", name: "TEXT ANSWER", ko: "일반 질문 → 대화형 답변" },
-  { id: "Robot", name: "ROBOT ACTION", ko: "행동 명령 → 로봇 동작" },
-  { id: "Tavily", name: "TAVILY SEARCH", ko: "외부 정보 검색 → 웹 자료" },
-  { id: "Memory", name: "MEMORY RETRIEVAL", ko: "기억 조회 → 관련 저장 기억" },
-] as const;
-
-/** Spotlight over the establishing shot: the room dims except the destination being introduced. */
+/**
+ * Overview hold (scene 02): the chamber dims except the destination being introduced; a ring sits on the
+ * part and a magnified live view (rendered by the pipeline into the same rect) grows out to the opposite side.
+ */
 export function ArmiOverviewFocus({ runtime }: { runtime: WorldRuntime }) {
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const sync = () => {
       const el = root.current; if (!el) return;
       const f = runtime.armiOverview.current;
-      const on = f >= 0;
-      // Fade in/out at the edges of the hold; inside it, one part per quarter.
-      const alpha = on ? Math.min(1, f / .06, (1 - f) / .06) : 0;
+      const alpha = f >= 0 ? Math.min(1, f / .05, (1 - f) / .05) : 0;
       el.style.opacity = String(Math.max(0, alpha));
       el.style.visibility = alpha > .001 ? "visible" : "hidden";
-      if (!on) return;
-      const i = Math.min(3, Math.floor(f * 4)), part = overviewParts[i], at = runtime.armiAnchors.current[part.id];
-      if (!at) return;
-      el.style.setProperty("--fx", `${at[0].toFixed(1)}px`); el.style.setProperty("--fy", `${at[1].toFixed(1)}px`);
-      el.dataset.part = part.id;
-      el.querySelectorAll<HTMLElement>("[data-part]").forEach((card, k) => { card.dataset.on = String(k === i); });
+      if (f < 0) return;
+      const W = el.clientWidth, H = el.clientHeight, inset = overviewInset(f, runtime.armiAnchors.current, W, H, W - docentOverlayPx());
+      if (!inset) return;
+      const { anchor: a } = inset, set = (k: string, v: number) => el.style.setProperty(k, `${v.toFixed(1)}px`);
+      set("--fx", a.x); set("--fy", a.y); set("--fr", a.r);
+      set("--ix", inset.x); set("--iy", inset.y); set("--iw", inset.w); set("--ih", inset.h);
+      el.style.setProperty("--grow", inset.grow.toFixed(3));
+      el.dataset.side = inset.side;
+      // The veil dims the chamber but never the magnified view (cut out of it, even-odd).
+      const veil = el.firstElementChild as HTMLElement | null;
+      if (veil) veil.style.clipPath = inset.grow > .03 ? `path(evenodd, "M0 0H${W}V${H}H0Z M${inset.x.toFixed(1)} ${inset.y.toFixed(1)}h${inset.w.toFixed(1)}v${inset.h.toFixed(1)}h${(-inset.w).toFixed(1)}Z")` : "";
+      el.querySelectorAll<HTMLElement>("[data-part]").forEach((card, k) => { card.dataset.on = String(k === inset.index); });
     };
-    sync(); return runtime.subscribeFrame(sync);
+    // Anchors are written by the 3D frame after the scroll publish, so keep following them while the hold is on.
+    let raf = 0;
+    const tick = () => { sync(); raf = runtime.armiOverview.current >= 0 ? requestAnimationFrame(tick) : 0; };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    kick(); const stop = runtime.subscribeFrame(kick);
+    return () => { stop(); cancelAnimationFrame(raf); };
   }, [runtime]);
   return <div ref={root} className={styles.overviewFocus} aria-hidden="true">
+    <i className={styles.overviewVeil}/>
     <i className={styles.overviewRing}/>
-    {overviewParts.map((p, k) => <div key={p.id} data-part={p.id} className={styles.overviewCard}>
-      <small>DESTINATION {String(k + 1).padStart(2, "0")} / 04</small><strong>{p.name}</strong><span>{p.ko}</span>
-    </div>)}
+    <div className={styles.overviewInset}>
+      {overviewParts.map((p, k) => <div key={p.id} data-part={p.id} className={styles.overviewCard}>
+        <small>DESTINATION {String(k + 1).padStart(2, "0")} / 04</small><strong>{p.name}</strong><span>{p.ko}</span>
+      </div>)}
+    </div>
   </div>;
 }

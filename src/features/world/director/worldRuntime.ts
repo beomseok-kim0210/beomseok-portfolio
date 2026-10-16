@@ -45,7 +45,7 @@ export function createWorldRuntime() {
     /** 0..1 inside the ARMI overview hold (four parts introduced in turn), -1 outside. */
     armiOverview: { current: -1 },
     /** Canvas-pixel anchors of the four destinations, written by the ARMI scene while the overview holds. */
-    armiAnchors: { current: {} as Record<string, [number, number]> },
+    armiAnchors: { current: {} as Record<string, { x: number; y: number; r: number }> },
     armiReview: { current: null as string | null },
     subscribeFrame(listener: () => void) { listeners.add(listener); return () => { listeners.delete(listener); }; },
     subscribeSemantic(listener: () => void) { semanticListeners.add(listener); return () => { semanticListeners.delete(listener); }; },

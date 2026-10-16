@@ -41,10 +41,10 @@ export function ArmiExperience() {
   /* Stepped scenes: one gesture = one authored ARMI stage; the camera flight between stages plays on the way.
      The last stop is the pinned ARMI brief, shared with the Hangarae entry (one continuous region). */
   useEffect(() => {
-    // 00 hero · 01 voice → neon orb → into the UI · 02 overview: TEXT → ROBOT → TAVILY → MEMORY, then up the rail
-    // · 03 routing core · 4-split with TEXT blinking · 04 text answer · 05 structured response · 06 back to product
+    // 00 hero · 01 voice → neon orb → into the UI · 02 overview: TEXT → ROBOT → TAVILY → MEMORY, then straight
+    // into the routing box · 03 routing core · 4-split with TEXT blinking · 04 text answer · 05 structured response · 06 back to product
     // ARMI moves at half the speed of the other worlds (scene moves 3.2s).
-    const BEFORE = [.045, .154], AFTER = [.3, .338, .437, .585, .885, .985], FOCUS = [.125, .375, .625, .875];
+    const BEFORE = [.045, .154], AFTER = [.338, .437, .585, .885, .985], FOCUS = [.125, .375, .625, .875];
     return registerSteppedRange({
       id: "armi",
       enabled: () => worldMode === "webgl",
@@ -55,7 +55,7 @@ export function ArmiExperience() {
         const at = (f: number) => start + (end - start) * f;
         return [
           ...BEFORE.map(p => ({ y: at(armiProgressToScroll(p)), duration: 3.2 })),
-          ...FOCUS.map((f, i) => ({ y: at(armiOverviewToScroll(f)), duration: i === 0 ? 3.2 : 1.6, label: "overview" })),
+          ...FOCUS.map(f => ({ y: at(armiOverviewToScroll(f)), duration: 3.2, label: "overview" })),
           ...AFTER.map(p => ({ y: at(armiProgressToScroll(p)), duration: 3.2 })),
           ...(brief !== null ? [{ y: brief, duration: 3.6, label: "armi-brief" }] : []),
         ];

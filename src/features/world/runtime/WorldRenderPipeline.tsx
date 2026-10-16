@@ -1,7 +1,9 @@
 "use client";
 import { useContext, useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { AgXToneMapping, ACESFilmicToneMapping, NeutralToneMapping, NoToneMapping, Color, Fog, Vector2 } from "three";
+import { AgXToneMapping, ACESFilmicToneMapping, NeutralToneMapping, NoToneMapping, Color, Fog, PerspectiveCamera, Vector2, Vector4 } from "three";
+import { overviewInset, placeArmiDestinationCamera } from "../adapters/armiOverview";
+import { docentOverlayPx } from "@/features/docent/docentOverlay";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
@@ -39,7 +41,7 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
     gtao.enabled = false; gtao.blendIntensity = .85;
     gtao.updateGtaoMaterial({ radius: .32, distanceExponent: 1.6, thickness: 1.2, scale: 1.1, samples: 12 });
     composer.addPass(render); composer.addPass(gtao); composer.addPass(bloom); composer.addPass(new OutputPass());
-    return { composer, bloom, gtao, geometry, fog: new Fog("#060b10", armiLook.fogNear, armiLook.fogFar), weddingFog: new Fog("#e6e0d6", 12, 28), background: new Color("#060b10") };
+    return { composer, bloom, gtao, geometry, insetCamera: new PerspectiveCamera(60, 1, .08, 1000), fog: new Fog("#060b10", armiLook.fogNear, armiLook.fogFar), weddingFog: new Fog("#e6e0d6", 12, 28), background: new Color("#060b10") };
   }, [gl, scene, camera]);
   useEffect(() => {
     pipeline.composer.setPixelRatio(compact ? 1 : Math.min(gl.getPixelRatio(), 1.5));
@@ -102,6 +104,20 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
       gl.render(scene, camera);
       scene.background = previousBackground;
       camera.layers.set(0); gl.autoClear = previousAutoClear;
+      }
+      // Overview hold: the introduced destination, magnified live into the inset rect the DOM frames.
+      const ov = runtime.armiOverview.current, asset = runtime.armiAsset.current;
+      if (ov >= 0 && asset && !runtime.armiReview.current) {
+        const inset = overviewInset(ov, runtime.armiAnchors.current, size.width, size.height, size.width - docentOverlayPx());
+        if (inset && inset.grow > .03 && inset.w > 8 && inset.h > 8) {
+          const pad = 3, x = inset.x + pad, w = inset.w - pad * 2, h = inset.h - pad * 2, y = size.height - inset.y - inset.h + pad;
+          placeArmiDestinationCamera(asset, inset.part.cam, pipeline.insetCamera, w / h);
+          const vp = gl.getViewport(new Vector4()), sc = gl.getScissor(new Vector4()), scTest = gl.getScissorTest(), ac = gl.autoClear;
+          gl.setScissorTest(true); gl.setViewport(x, y, w, h); gl.setScissor(x, y, w, h);
+          gl.autoClear = false; gl.setClearColor(0x060e16, 1); gl.clear(true, true, false);
+          gl.render(scene, pipeline.insetCamera);
+          gl.setViewport(vp); gl.setScissor(sc); gl.setScissorTest(scTest); gl.autoClear = ac;
+        }
       }
     } else {
       gl.toneMapping = ACESFilmicToneMapping; gl.toneMappingExposure = 1;

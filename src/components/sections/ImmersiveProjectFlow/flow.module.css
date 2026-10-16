@@ -130,3 +130,12 @@
 
 /* Hangarae debrief CTA shares the brief theme variables. */
 .evidenceComplete { --brief-accent:var(--stage-accent); --brief-ink:var(--world-ink); --brief-muted:var(--world-muted); --brief-cta-ink:#071016; }
+
+/* Chapter cue on a pinned brief (mirrors the wedding hold cue). */
+.nextCue { position:absolute; left:calc((100% - var(--docent-overlay,0px)) / 2); bottom:16px; transform:translateX(-50%); z-index:6; display:flex; align-items:center; gap:14px; padding:10px 22px; border-radius:999px; background:rgba(7,12,20,.86); border:1px solid color-mix(in srgb,var(--stage-accent) 45%,transparent); box-shadow:0 0 40px color-mix(in srgb,var(--stage-accent) 14%,transparent); color:#f0f2ea; white-space:nowrap; backdrop-filter:blur(8px); pointer-events:none; transition:opacity .4s ease; }
+.nextCue span { font:700 11px/1 ui-monospace,monospace; letter-spacing:.24em; color:var(--stage-accent); }
+.nextCue strong { font:600 17px/1.3 Pretendard,sans-serif; letter-spacing:-.02em; }
+.nextCue em { font:500 13.5px/1.4 Pretendard,sans-serif; font-style:normal; color:#b6bdb6; }
+.nextCue i { display:block; width:1px; height:18px; background:linear-gradient(var(--stage-accent),transparent); animation:nextCueDrop 1.8s ease-in-out infinite; }
+@keyframes nextCueDrop { 0%,100% { transform:scaleY(.4); transform-origin:top; opacity:.4 } 50% { transform:scaleY(1); opacity:1 } }
+@media (max-width:900px), (prefers-reduced-motion:reduce) { .nextCue { display:none; } }

@@ -46,6 +46,10 @@ export function ImmersiveProjectFlow() {
     <section ref={section} className={styles.scrollTrack} data-header-tone="dark" data-armi-brief-track aria-label="ARMI에서 행가래로 이어지는 시각적 전환">
       <div className={styles.stickyStage} style={css} data-stage-progress={progress.toFixed(4)} data-stage-phase={heroActive?"SYSTEM":briefActive?"BRIEF":"HANDOFF"} data-transition-progress={transition.toFixed(4)}>
         <div id="armi-brief" className={styles.armiBrief} data-active={briefActive || heroActive}><HomeProjectBrief project="armi" recap={armiScenes.map(s => s.title)}/></div>
+        {/* Same chapter cue as the Hangarae brief: the next scroll opens the next world. */}
+        <div className={styles.nextCue} aria-hidden="true" style={{ opacity: briefActive ? 1 : 0 } as CSSProperties}>
+          <span>NEXT PROJECT</span><strong>02 · 행가래</strong><em>계속 내리면 다음 방으로 들어갑니다</em><i/>
+        </div>
       </div>
     </section>
 
