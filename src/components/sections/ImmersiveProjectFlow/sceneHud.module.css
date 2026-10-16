@@ -18,6 +18,13 @@
 .rail li[data-on=true]{color:var(--world-ink)}
 .rail li[data-on=true]::after{background:var(--accent);box-shadow:0 0 10px var(--accent)}
 .footer{position:absolute;bottom:2.2%;left:4%;right:4%;display:flex;justify-content:space-between;gap:24px;z-index:7;color:var(--world-muted);font:14px/1.5 Pretendard,sans-serif;letter-spacing:0;pointer-events:none}
+[data-hud=lg] .sceneKo{font-size:clamp(17px,1.45vw,21px);font-weight:600}
+[data-hud=lg] .sceneText{font-size:17px;line-height:1.6;color:var(--world-ink);max-width:560px;font-weight:500}
+[data-hud=lg] .identity span{font-size:12.5px;color:var(--world-ink)}
+[data-hud=lg] .identity strong{font-size:21px}
+[data-hud=lg] .skip{font-size:16px;color:var(--world-ink)}
+[data-hud=lg] .rail li{font-size:12px;color:color-mix(in srgb,var(--world-ink) 55%,transparent)}
+[data-hud=lg] .footer{font-size:15px;color:var(--world-ink)}
 [data-compact=true] .headers{left:5%;top:3%;width:90%}
 [data-compact=true] .sceneNo{font-size:40px}
 [data-compact=true] .sceneHeader h3{font-size:20px}

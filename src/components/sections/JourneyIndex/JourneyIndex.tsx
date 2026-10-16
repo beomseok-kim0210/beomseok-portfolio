@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties } from "re
 import { createPortal } from "react-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { WD_ENTRY, wdTimelineToScroll } from "@/features/world/adapters/weddingAtelier";
 import { gatePx, heroGatePx, scrollToY } from "@/features/world/runtime/journeyGeometry";
 import { Tunnel } from "./Tunnel";
 import { OrbCanvas } from "./OrbCanvas";
@@ -37,8 +38,10 @@ function destination(id: Id): number {
     const start = top(track) - 72, end = top(track) + track.offsetHeight - window.innerHeight;
     return start + (end - start) * .075;
   }
-  const wedding = document.querySelector<HTMLElement>("[data-wedding-transition]"); if (!wedding) return 0;
-  return top(wedding) + wedding.offsetHeight - window.innerHeight;
+  // Wedding: land just past its arched-light entry, on 01 QUESTION (the entry plays only on the walk-in).
+  const wedding = document.getElementById("wedding"); if (!wedding) return top(document.getElementById("projects"));
+  const start = top(wedding) - 72, end = top(wedding) + wedding.offsetHeight - window.innerHeight;
+  return start + (end - start) * wdTimelineToScroll(WD_ENTRY + .035);
 }
 
 export function JourneyIndex() {

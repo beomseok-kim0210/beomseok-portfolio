@@ -11,7 +11,7 @@ import { hgSceneRanges, hgShots } from "@/features/world/adapters/hangaraeAnimat
 
 const hangaraeRecap = hgSceneRanges.map((_, i) => hgShots.find(s => Number(s.scene) === i + 1)!.title);
 import { briefTimeline } from "./timeline";
-import { HangaraeWeddingTransition } from "./HangaraeWeddingTransition";
+import { WeddingExperience } from "./weddingJourney/WeddingExperience";
 import { ArmiExperience } from "./armiJourney/ArmiExperience";
 import { observeScrollLayout } from "./observeScrollLayout";
 import { HangaraeExperience } from "./hangaraeJourney/HangaraeExperience";
@@ -50,7 +50,6 @@ export function ImmersiveProjectFlow() {
     </section>
 
     <HangaraeExperience/>
-    <HangaraeWeddingTransition>
     <section id="hangarae-evidence" className={styles.evidence}>
       <div className={styles.evidenceHeading}><p className={styles.eyebrow}>HANGARAE / BRIEF EVIDENCE</p><h2>좌표는 목적이 아니라,<br/>피드백으로 가는 과정.</h2></div>
       <ol className={styles.pipeline}>{[
@@ -65,6 +64,7 @@ export function ImmersiveProjectFlow() {
       <Link href="/projects/hangarae#trouble-01" className={styles.evidenceLink}>성과 근거: 데이터 구축과 재학습 과정 <span aria-hidden="true">↗</span></Link>
       <div className={styles.evidenceComplete}><JourneyComplete href="/projects/hangarae" cta="행가래 상세 기록 열기" sub="데이터 구축 · 재학습 · 트러블슈팅 · 기술 스택" recap={hangaraeRecap}/></div>
     </section>
-    </HangaraeWeddingTransition>
+    <WeddingExperience/>
+    <div id="wedding-brief" style={{ position: "relative", zIndex: 1 }}><HomeProjectBrief project="wedding"/></div>
   </div>;
 }

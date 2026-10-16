@@ -90,7 +90,9 @@ test("N: production district replaces primitive world, preserves original produc
   assert.doesNotMatch(scene, /ArmiSystemWorld|ArmiEnvironment/);
   assert.match(scene, /prepareArmiV015/);
   assert.deepEqual([...scene.matchAll(/import \{ (Armi\w+) \}/g)].map(match => match[1]), ["ArmiTabletPortal", "ArmiVoiceSignal"]);
-  assert.doesNotMatch(read(world + "runtime/WorldCanvas.tsx"), /RoutingChamber|Wedding/);
+  assert.doesNotMatch(read(world + "runtime/WorldCanvas.tsx"), /RoutingChamber/);
+  // Wedding is a real district now (atelier scene), not a primitive placeholder.
+  assert.match(read(world + "runtime/WorldCanvas.tsx"), /districtId === "wedding" \? <WeddingDistrictScene/);
   assert.match(read(world + "runtime/WorldCanvas.tsx"), /districtId === "hangarae"/);
 });
 test("responsive synchronization uses actual size and invalidates demand frames", () => {

@@ -8,6 +8,7 @@ import { applyArmiReferenceCamera } from "../adapters/armiV015";
 import { createArmiCameraPath } from "../adapters/armiChoreography";
 import { useRef } from "react";
 import { sampleHangaraeCamera } from "../adapters/hangaraeAnimatic";
+import { sampleWeddingCamera } from "../adapters/weddingAtelier";
 import { docentOverlayPx } from "@/features/docent/docentOverlay";
 import type { Camera } from "three";
 
@@ -26,6 +27,12 @@ export function WorldCameraController({ runtime, compact }: { runtime: WorldRunt
   // Apply before district callbacks (priority 0), matching V1's registration order.
   useFrame(({ camera, pointer, size }) => {
     centreOnStage(camera, size.width, size.height);
+    if (runtime.state.current.districtId === "wedding") {
+      sampleWeddingCamera(runtime.weddingProgress.current, compact, sample);
+      camera.position.copy(sample.position); camera.up.copy(sample.up); camera.lookAt(sample.target);
+      if (camera instanceof PerspectiveCamera) { camera.fov = sample.fov; camera.far = sample.far; camera.updateProjectionMatrix(); }
+      return;
+    }
     if (runtime.state.current.districtId === "hangarae") {
       sampleHangaraeCamera(runtime.hangaraeProgress.current,compact,false,sample);
       camera.position.copy(sample.position);camera.up.copy(sample.up);camera.lookAt(sample.target);

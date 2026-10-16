@@ -1,11 +1,12 @@
 "use client";
 import { useContext, useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { AgXToneMapping, ACESFilmicToneMapping, NoToneMapping, Color, Fog, Vector2 } from "three";
+import { AgXToneMapping, ACESFilmicToneMapping, NeutralToneMapping, NoToneMapping, Color, Fog, Vector2 } from "three";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
 import { sampleArmiLookdev } from "../adapters/armiRuntime";
 import { armiLook } from "../adapters/armiV015";
 import type { WorldRuntime } from "../director/worldRuntime";
@@ -33,8 +34,12 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
       submit(...args);
       geometry.calls = gl.info.render.calls; geometry.triangles = gl.info.render.triangles;
     };
-    composer.addPass(render); composer.addPass(bloom); composer.addPass(new OutputPass());
-    return { composer, bloom, geometry, fog: new Fog("#060b10", armiLook.fogNear, armiLook.fogFar), background: new Color("#060b10") };
+    // Ambient occlusion grounds the bright atelier (contact shading); enabled only there.
+    const gtao = new GTAOPass(scene, camera, 512, 512);
+    gtao.enabled = false; gtao.blendIntensity = .85;
+    gtao.updateGtaoMaterial({ radius: .32, distanceExponent: 1.6, thickness: 1.2, scale: 1.1, samples: 12 });
+    composer.addPass(render); composer.addPass(gtao); composer.addPass(bloom); composer.addPass(new OutputPass());
+    return { composer, bloom, gtao, geometry, fog: new Fog("#060b10", armiLook.fogNear, armiLook.fogFar), weddingFog: new Fog("#e6e0d6", 12, 28), background: new Color("#060b10") };
   }, [gl, scene, camera]);
   useEffect(() => {
     pipeline.composer.setPixelRatio(compact ? 1 : Math.min(gl.getPixelRatio(), 1.5));
@@ -43,6 +48,20 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
   useEffect(() => () => { pipeline.composer.passes.forEach(pass => pass.dispose()); pipeline.composer.dispose(); }, [pipeline]);
   // Exactly one final render owner. Camera samples have already been applied at -1.
   useFrame((_, delta) => {
+    if(runtime.state.current.districtId === "wedding") {
+      // Bright atelier: Khronos neutral tone mapping keeps ivory ivory; a whisper of bloom for satin highlights.
+      gl.info.autoReset=false;gl.info.reset();gl.toneMapping=NeutralToneMapping;gl.toneMappingExposure=.96;
+      if(scene.background instanceof Color)scene.background.set("#e6e0d6"); else scene.background=new Color("#e6e0d6");
+      scene.fog=pipeline.weddingFog;camera.layers.set(0);
+      const {strength,threshold,radius}=pipeline.bloom;
+      pipeline.bloom.enabled=!compact;pipeline.bloom.strength=.08;pipeline.bloom.threshold=.92;pipeline.bloom.radius=.5;
+      pipeline.gtao.enabled=!compact;
+      pipeline.composer.render();
+      pipeline.gtao.enabled=false;
+      pipeline.bloom.strength=strength;pipeline.bloom.threshold=threshold;pipeline.bloom.radius=radius;
+      gl.domElement.dataset.weddingMetrics=JSON.stringify({progress:runtime.weddingProgress.current,calls:gl.info.render.calls,triangles:gl.info.render.triangles,frameMs:delta*1000});
+      return;
+    }
     if(runtime.state.current.districtId === "hangarae") {
       gl.info.autoReset=false;gl.info.reset();gl.toneMapping=NoToneMapping;gl.toneMappingExposure=1;
       if(scene.background instanceof Color)scene.background.set("#040a16");
