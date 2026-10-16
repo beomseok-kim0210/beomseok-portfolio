@@ -1,5 +1,7 @@
 "use client";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { renderTier } from "../runtime/renderTier";
+import { wdInner } from "./weddingAtelier";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, MeshReflectorMaterial } from "@react-three/drei";
 import {
@@ -70,6 +72,11 @@ type Form = { group: Group; dress: Mesh; fabric: ReturnType<typeof createFabricM
 
 export function WeddingDistrictScene({ runtime }: { runtime: WorldRuntime }) {
   const { gl, size } = useThree();
+  // Low tier keeps the room but trims the expensive passes (shadow resolution, mirror resolution).
+  const low = useMemo(() => renderTier() === "low" || size.width <= 700, [size.width]);
+  // The planar mirror re-renders the room: mount it only while the camera can see it
+  // (entry/01 and 04 onward; the 02–03 gallery dolly never frames it).
+  const [mirrorOn, setMirrorOn] = useState(true);
   const key = useRef<DirectionalLight>(null);
   // Shadows only while the atelier is mounted (other districts do not pay for them).
   useEffect(() => {
@@ -195,6 +202,7 @@ export function WeddingDistrictScene({ runtime }: { runtime: WorldRuntime }) {
 
   const v = useMemo(() => new Vector3(), []);
   useFrame(({ camera, clock }) => {
+    { const q = wdInner(runtime.weddingProgress.current), want = q < .16 || q > .46; if (want !== mirrorOn) setMirrorOn(want); }
     const s = sampleWedding(runtime.weddingProgress.current), t = clock.elapsedTime, W = size.width, H = size.height;
     /* Hero dress: steps aside for the mirror in 06; the council halo in 05. */
     const away = s.dressAway;
@@ -283,7 +291,7 @@ export function WeddingDistrictScene({ runtime }: { runtime: WorldRuntime }) {
   return <>
     <hemisphereLight args={["#ffffff", "#cbbfae", .5]}/>
     <directionalLight ref={key} position={[-2.5, 7.5, 6]} intensity={2.3} color="#fff6ec" castShadow target={kit.keyTarget}
-      shadow-mapSize-width={2048} shadow-mapSize-height={2048} shadow-bias={-.0004} shadow-normalBias={.02}
+      shadow-mapSize-width={low ? 1024 : 2048} shadow-mapSize-height={low ? 1024 : 2048} shadow-bias={-.0004} shadow-normalBias={.02}
       shadow-camera-left={-9} shadow-camera-right={9} shadow-camera-top={9} shadow-camera-bottom={-9} shadow-camera-near={.5} shadow-camera-far={30}/>
     <primitive object={kit.keyTarget}/>
     {/* A pool of light on the real dress: the subject of the room. */}
@@ -300,9 +308,9 @@ export function WeddingDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     </Environment>
     <primitive object={kit.room}/>
     {/* The fitting mirror reflects the room and the dress (planar reflection). */}
-    <mesh geometry={kit.geo.mirror} position={[WD_MIRROR.x, WD_MIRROR.y - WD_MIRROR.h / 2, WD_MIRROR.z]}>
-      <MeshReflectorMaterial mirror={.92} resolution={size.width <= 700 ? 512 : 1024} blur={[0, 0]} mixBlur={0} mixStrength={1.15} color="#d9d6d0" metalness={0} roughness={.08} depthScale={0}/>
-    </mesh>
+    {mirrorOn && <mesh geometry={kit.geo.mirror} position={[WD_MIRROR.x, WD_MIRROR.y - WD_MIRROR.h / 2, WD_MIRROR.z]}>
+      <MeshReflectorMaterial mirror={.92} resolution={low ? 512 : 1024} blur={[0, 0]} mixBlur={0} mixStrength={1.15} color="#d9d6d0" metalness={0} roughness={.08} depthScale={0}/>
+    </mesh>}
     <primitive object={kit.hero.group}/>
     {kit.gallery.map((f, i) => <primitive key={i} object={f.group}/>)}
     <primitive object={kit.tableRing}/>

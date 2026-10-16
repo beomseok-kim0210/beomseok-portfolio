@@ -122,7 +122,7 @@ export function WeddingExperience() {
     </div></div>
     <div ref={viewport} className={styles.viewport} data-phase={wdShots[shot].id} data-hud="lg">
       <div ref={surface} className={styles.canvas} aria-hidden="true"/>
-      {isStatic && <div className={styles.still} aria-hidden="true"><img src={`${IMG}/ball-photo.webp`} alt=""/></div>}
+      {isStatic && <div className={styles.still} aria-hidden="true"><img loading="lazy" decoding="async" src={`${IMG}/ball-photo.webp`} alt=""/></div>}
       <div className={styles.veil} aria-hidden="true"/>
       <div ref={glow} className={styles.archGlow} aria-hidden="true"/>
       <div className={styles.scrim} aria-hidden="true"/>
@@ -138,7 +138,7 @@ export function WeddingExperience() {
       </div>
 
       {/* 02 — candidate tags hang above each form */}
-      {wdModels.map((m, i) => <div key={m.id} className={styles.tag} data-status={m.status} style={{ left: `var(--a-g${i}-x)`, top: `var(--a-g${i}-y)`, opacity: `calc(var(--r${i}) * var(--s2) * var(--a-g${i}-z,1) * ${m.id === "econ" ? 1 : "(1 - .65 * var(--pick))"})`, "--d": `${(i % 2) * 1.2}deg` } as CSSProperties} data-picked={m.id === "econ" || undefined}>
+      {wdModels.map((m, i) => <div key={m.id} className={styles.tag} data-status={m.status} style={{ translate: `var(--a-g${i}-x) var(--a-g${i}-y)`, opacity: `calc(var(--r${i}) * var(--s2) * var(--a-g${i}-z,1) * ${m.id === "econ" ? 1 : "(1 - .65 * var(--pick))"})`, "--d": `${(i % 2) * 1.2}deg` } as CSSProperties} data-picked={m.id === "econ" || undefined}>
         {m.id === "econ" && <span className={styles.pickRibbon}>✓ 최종 후보로 선택</span>}
         <i className={styles.string}/>
         <span className={styles.year}>{m.year} · {m.kind}</span>
@@ -157,17 +157,17 @@ export function WeddingExperience() {
         <figcaption><b>ACTUAL RESULT · ECON</b>같은 모델, 두 드레스 — 입력 사진 → 복원 출력</figcaption>
         <div className={styles.cases}>
           <div className={styles.case} data-ok="true"><span className={styles.caseTag}>SUCCESS · 머메이드 라인</span>
-            <div className={styles.casePair}><img src={`${IMG}/mermaid-photo.webp`} alt="머메이드 드레스 입력 사진"/><img src={`${IMG}/mermaid-mesh.webp`} alt="ECON 복원 출력: 몸에 붙는 실루엣이 잘 복원됨"/></div>
+            <div className={styles.casePair}><img loading="lazy" decoding="async" src={`${IMG}/mermaid-photo.webp`} alt="머메이드 드레스 입력 사진"/><img loading="lazy" decoding="async" src={`${IMG}/mermaid-mesh.webp`} alt="ECON 복원 출력: 몸에 붙는 실루엣이 잘 복원됨"/></div>
             <p>몸에 붙는 라인 · 실루엣 복원</p></div>
           <div className={styles.case} style={{ opacity: "calc(.25 + .75 * var(--fail))" } as CSSProperties}><span className={styles.caseTag}>FAIL · 볼가운</span>
-            <div className={styles.casePair}><img src={`${IMG}/ball-photo.webp`} alt="볼가운 드레스 입력 사진"/><img src={`${IMG}/ball-mesh.webp`} alt="ECON 복원 출력: 부피 있는 스커트가 반쪽만 복원됨"/></div>
+            <div className={styles.casePair}><img loading="lazy" decoding="async" src={`${IMG}/ball-photo.webp`} alt="볼가운 드레스 입력 사진"/><img loading="lazy" decoding="async" src={`${IMG}/ball-mesh.webp`} alt="ECON 복원 출력: 부피 있는 스커트가 반쪽만 복원됨"/></div>
             <p>부피 있는 스커트가 반쪽만</p></div>
         </div>
         <p className={styles.verdict3} style={{ opacity: "var(--verdict)" } as CSSProperties}><b>결론</b>웨딩드레스의 핵심은 볼륨 — 볼가운을 복원할 수 없어 3D 방식을 포기</p>
       </figure>
-      <div className={styles.caseBadge} data-ok="true" style={{ left: "var(--a-mm-x)", top: "var(--a-mm-y)", opacity: "calc(var(--success) * var(--s3))" } as CSSProperties}>✓ 복원 성공<small>머메이드 · 몸에 붙는 라인</small></div>
-      <div className={styles.caseBadge} style={{ left: "var(--a-bg-x)", top: "var(--a-bg-y)", opacity: "calc(var(--fail) * var(--s3))" } as CSSProperties}>✕ 복원 실패<small>볼가운 · 볼륨 손실</small></div>
-      {["스커트 뒤쪽 부피가 잘려 나감", "볼륨이 반쪽만 복원"].map((l, i) => <div key={l} className={styles.pinLabel} data-side={i ? "left" : "right"} style={{ left: `var(--a-pin${i}-x)`, top: `var(--a-pin${i}-y)`, opacity: "var(--pins)" } as CSSProperties}>{l}<small>{i ? "WEDDING VOLUME · FAIL" : "LOOSE SKIRT · FAIL"}</small></div>)}
+      <div className={styles.caseBadge} data-ok="true" style={{ translate: "var(--a-mm-x) var(--a-mm-y)", opacity: "calc(var(--success) * var(--s3))" } as CSSProperties}>✓ 복원 성공<small>머메이드 · 몸에 붙는 라인</small></div>
+      <div className={styles.caseBadge} style={{ translate: "var(--a-bg-x) var(--a-bg-y)", opacity: "calc(var(--fail) * var(--s3))" } as CSSProperties}>✕ 복원 실패<small>볼가운 · 볼륨 손실</small></div>
+      {["스커트 뒤쪽 부피가 잘려 나감", "볼륨이 반쪽만 복원"].map((l, i) => <div key={l} className={styles.pinLabel} data-side={i ? "left" : "right"} style={{ translate: `var(--a-pin${i}-x) var(--a-pin${i}-y)`, opacity: "var(--pins)" } as CSSProperties}>{l}<small>{i ? "WEDDING VOLUME · FAIL" : "LOOSE SKIRT · FAIL"}</small></div>)}
 
       {/* 04 — the decision bends */}
       <div className={styles.decision} style={{ opacity: "var(--s4)" } as CSSProperties}>
@@ -192,7 +192,7 @@ export function WeddingExperience() {
       </div>
 
       {/* 05 — the council */}
-      {wdExperts.map((e, i) => <div key={e.id} className={styles.expert} style={{ left: `var(--a-ex${i}-x)`, top: `var(--a-ex${i}-y)`, opacity: `var(--e${i})` } as CSSProperties}>
+      {wdExperts.map((e, i) => <div key={e.id} className={styles.expert} style={{ translate: `var(--a-ex${i}-x) var(--a-ex${i}-y)`, opacity: `var(--e${i})` } as CSSProperties}>
         <small>EXPERT 0{i + 1} · {e.en}</small><strong>{e.name}</strong><span>{e.focus}</span>
         <em><b>ROLE</b><b>SKILL</b><b data-rag="true">논문 RAG</b></em>
       </div>)}
@@ -206,8 +206,8 @@ export function WeddingExperience() {
 
       {/* 06 — the mirror becomes the comparison */}
       <div className={styles.mirror} style={{ opacity: "var(--mirror)", "--split": `${split}%` } as CSSProperties}>
-        <img src="/images/before_wedding.webp" alt="원본 사진"/>
-        <img className={styles.after} src="/images/after_wedding.webp" alt="생성된 드레스 착용 이미지"/>
+        <img loading="lazy" decoding="async" src="/images/before_wedding.webp" alt="원본 사진"/>
+        <img loading="lazy" decoding="async" className={styles.after} src="/images/after_wedding.webp" alt="생성된 드레스 착용 이미지"/>
         <i className={styles.handle} aria-hidden="true"/>
         <span className={styles.lb}>BEFORE</span><span className={styles.la}>GENERATED</span>
         <input type="range" min={0} max={100} value={split} onChange={e => setSplit(Number(e.target.value))} aria-label="원본과 생성 결과 비교 슬라이더"/>

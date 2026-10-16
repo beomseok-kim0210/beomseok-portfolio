@@ -206,3 +206,6 @@
 .viewport[data-compact=true] .expert em,.viewport[data-compact=true] .expert span,.viewport[data-compact=true] .credit{display:none}
 .viewport[data-compact=true] .tape li span{display:none}
 .viewport[data-compact=true] .node{max-width:150px;font-size:13px}
+
+/* Anchored to the 3D projection: positioned with `translate` (compositor), never left/top (no layout shift). */
+.tag,.pinLabel,.caseBadge,.expert{left:0;top:0}

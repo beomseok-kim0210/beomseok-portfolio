@@ -122,7 +122,7 @@
 .anchorLabel b{color:#97dce7}
 .anchorLabel[data-a=shoulder]{left:calc(var(--a-shoulder-x) + 6%);top:calc(var(--a-shoulder-y) - 52px)}
 .anchorLabel[data-a=uwrist]{left:calc(var(--a-uwrist-x) + 34px);top:calc(var(--a-uwrist-y) + 92px)}
-.anchorLabel[data-a=plate]{left:var(--a-plate-x);top:calc(var(--a-plate-y) + 14px);transform:translateX(-50%);text-align:center;text-shadow:0 0 10px rgba(231,177,106,0.44)}
+.anchorLabel[data-a=plate]{left:0;top:0;translate:var(--a-plate-x) calc(var(--a-plate-y) + 14px);transform:translateX(-50%);text-align:center;text-shadow:0 0 10px rgba(231,177,106,0.44)}
 .anchorLabel[data-a=plate] b{display:block;color:#cbeef3}.anchorLabel[data-a=plate] span{display:block;font:500 11.5px/1.4 var(--font-display),sans-serif;letter-spacing:0;color:#cdad84}
 .sensorPanel{position:absolute;right:2.5%;top:29%;width:12.6%;min-width:132px;padding:12px 12px 10px;opacity:var(--analysis,0);transform:translateX(calc((1 - var(--analysis,0))*-18px));border-color:rgba(231,177,106,.4);box-shadow:0 0 26px rgba(231,176,104,0.10),inset 0 0 26px rgba(231,176,104,0.04)}
 .sensorPanel .panelTitle{color:#e7b16a}
@@ -241,7 +241,7 @@
 .viewport[data-compact=true] .heroLine{font-size:12px;gap:8px}
 
 /* ── 04 Depth camera label ── */
-.deviceLabel{position:absolute;left:var(--a-device-x);top:var(--a-device-y);transform:translate(-50%,-115%);text-align:center;white-space:nowrap;opacity:var(--device,0);pointer-events:none}
+.deviceLabel{position:absolute;left:0;top:0;translate:var(--a-device-x) var(--a-device-y);transform:translate(-50%,-115%);text-align:center;white-space:nowrap;opacity:var(--device,0);pointer-events:none}
 .deviceLabel b{display:block;font:700 14px/1 var(--disp);letter-spacing:.16em;color:#e5f6f9;text-shadow:0 0 10px rgba(115,164,220,0.44)}
 .deviceLabel span{display:block;margin-top:5px;font-size:11.5px;color:#a0b9d5}
 .depthHud{opacity:1}

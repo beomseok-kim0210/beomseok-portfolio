@@ -3,6 +3,7 @@ import { useContext, useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { AgXToneMapping, ACESFilmicToneMapping, NeutralToneMapping, NoToneMapping, Color, Fog, PerspectiveCamera, Vector2, Vector4 } from "three";
 import { overviewInset, placeArmiDestinationCamera } from "../adapters/armiOverview";
+import { renderTier } from "./renderTier";
 import { docentOverlayPx } from "@/features/docent/docentOverlay";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
@@ -57,7 +58,8 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
       scene.fog=pipeline.weddingFog;camera.layers.set(0);
       const {strength,threshold,radius}=pipeline.bloom;
       pipeline.bloom.enabled=!compact;pipeline.bloom.strength=.08;pipeline.bloom.threshold=.92;pipeline.bloom.radius=.5;
-      pipeline.gtao.enabled=!compact;
+      // AO is the most expensive pass; low-tier devices keep the look without it.
+      pipeline.gtao.enabled=!compact&&renderTier()!=="low";
       pipeline.composer.render();
       pipeline.gtao.enabled=false;
       pipeline.bloom.strength=strength;pipeline.bloom.threshold=threshold;pipeline.bloom.radius=radius;
