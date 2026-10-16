@@ -88,7 +88,10 @@ export function sampleWedding(p: number, reduced = false) {
     /** "Next project" cue during the hold; gone once the dim begins. */
     cue: reduced ? 0 : ramp(p, .004, .018) * (1 - ramp(p, WD_HOLD, WD_HOLD + .012)),
     /** 02: candidates appear one by one along the gallery; 0..5 */
-    reveal: 5 * ramp(L(1), .05, .82),
+    reveal: 5 * ramp(L(1), .05, .78),
+    /** 02 ends on a choice: the other four step back and ECON is taken forward as the final candidate. */
+    pick: ramp(L(1), .8, .9) * (1 - ramp(L(2), .0, .15)),
+    picked: ramp(L(1), .8, .9),
     /** 03: the ECON form collapses from the input silhouette to its documented failure. */
     /** 03: first the case that worked (mermaid), then the one that did not (ball gown), then the verdict. */
     success: ramp(L(2), .02, .2),

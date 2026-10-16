@@ -183,7 +183,8 @@ export function WeddingDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     const mmForm = new Mesh(geo.form, mmMat); mmForm.position.y = .07; mmForm.castShadow = true;
     const mmPlinth = new Mesh(geo.plinth, mat.plinth.clone()); mmPlinth.position.y = .035; mmPlinth.receiveShadow = true;
     mermaid.add(mmPlinth, mmDress, mmForm); mermaid.visible = false;
-    return { mermaid, mmMat, keyTarget, spotTarget, geo, mat, hero, lace, gallery, stations, tableRing, papers, paperSeeds, halo, pins, room, dust };
+    const pickHalo = new Mesh(new PlaneGeometry(2.4, 2.4), mat.halo.clone()); pickHalo.rotation.x = -Math.PI / 2; pickHalo.position.set(wdGalleryX(4), .095, 0); pickHalo.visible = false;
+    return { pickHalo, mermaid, mmMat, keyTarget, spotTarget, geo, mat, hero, lace, gallery, stations, tableRing, papers, paperSeeds, halo, pins, room, dust };
   }, []);
   useEffect(() => () => {
     (kit.mermaid.children[1] as Mesh).geometry.dispose(); kit.mmMat.dispose();
@@ -203,13 +204,13 @@ export function WeddingDistrictScene({ runtime }: { runtime: WorldRuntime }) {
 
     /* 02–04 gallery. Each candidate receives the same dress, then fails its own documented way. */
     kit.gallery.forEach((f, i) => {
-      const id = wdModels[i].id, a = Math.max(0, Math.min(1, s.reveal - i)), present = a * (1 - .82 * s.recede) * (1 - s.galleryOut) * (id === "econ" ? 1 : 1 - s.solo);
+      const id = wdModels[i].id, a = Math.max(0, Math.min(1, s.reveal - i)), present = a * (1 - .82 * s.recede) * (1 - s.galleryOut) * (id === "econ" ? 1 : (1 - s.solo) * (1 - .62 * s.pick));
       f.group.visible = present > .003;
       if (!f.group.visible) return;
       let d = ramp(a, .4, 1);
       if (id === "econ") d = .5 * d + .5 * s.collapse;
       const fade = (m: { opacity: number; transparent: boolean }) => { m.opacity = present; m.transparent = present < .999; };
-      f.group.position.y = (1 - ramp(a, 0, .5)) * -.12;
+      f.group.position.y = (1 - ramp(a, 0, .5)) * -.12 + (id === "econ" ? .06 * s.picked * (1 - s.recede) : 0);
       fade(f.fabric); fade(f.form.material as MeshStandardMaterial); fade(f.plinth.material as MeshStandardMaterial);
       setClay(f.fabric, ramp(d, 0, .55));
       if (f.dress.morphTargetInfluences) f.dress.morphTargetInfluences[0] = d;
@@ -255,6 +256,9 @@ export function WeddingDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     });
     kit.halo.visible = s.consensus > .01; (kit.halo.material as MeshBasicMaterial).opacity = s.consensus * .9;
     kit.halo.position.x = kit.hero.group.position.x;
+    /* 02 → 03: a pool of gold light marks ECON as the candidate taken forward. */
+    const pk = s.picked * (1 - s.recede) * (1 - s.table);
+    kit.pickHalo.visible = pk > .01; (kit.pickHalo.material as MeshBasicMaterial).opacity = pk;
     kit.spotTarget.position.set(kit.hero.group.position.x, .4, kit.hero.group.position.z);
 
     /* Dust drift. */
@@ -306,5 +310,6 @@ export function WeddingDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     <primitive object={kit.papers}/>
     <primitive object={kit.halo}/>
     <primitive object={kit.mermaid}/>
+    <primitive object={kit.pickHalo}/>
   </>;
 }

@@ -51,6 +51,11 @@
 .tag[data-status=PARTIAL] .status{color:var(--tapeInk);border-color:color-mix(in srgb,var(--tape) 60%,transparent)}
 .tag[data-status="ENV FAILED"] .status{border-style:dashed}
 .tag p{margin:9px 0 0;font:500 14px/1.45 Pretendard,sans-serif;color:var(--ink);word-break:keep-all}
+.tag[data-picked]{border-color:color-mix(in srgb,var(--tape) calc(var(--pick,0) * 100%),rgba(26,27,30,.14));box-shadow:0 0 0 calc(var(--pick,0) * 4px) rgba(184,145,60,.3),0 16px 30px rgba(80,60,30,.12);scale:calc(1 + var(--pick,0) * .08)}
+.pickRibbon{position:absolute;left:12px;right:12px;top:-30px;padding:5px 8px;border-radius:4px;background:var(--tapeInk);color:#fff;font:700 12.5px/1.2 Pretendard,sans-serif;text-align:center;opacity:var(--pick,0);transform:translateY(calc((1 - var(--pick,0)) * 6px))}
+.pickNote{position:absolute;left:4%;bottom:calc(2.2% + 132px);z-index:6;max-width:620px;margin:0;padding:12px 16px;border-radius:8px;background:var(--ink);color:#f3f0ea;font:500 15px/1.5 Pretendard,sans-serif;word-break:keep-all;pointer-events:none}
+.pickNote b{margin-right:10px;font:700 11px/1 var(--mono);letter-spacing:.14em;color:var(--tapeLight)}
+.pickNote strong{color:var(--tapeLight)}
 .fit{margin-top:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
 .fit i{height:7px;border-radius:1px;background:var(--paper2)}
 .fit i[data-on=true]{background:var(--tape)}

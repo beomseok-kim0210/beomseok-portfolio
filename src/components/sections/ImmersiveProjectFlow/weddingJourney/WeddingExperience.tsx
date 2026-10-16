@@ -66,6 +66,7 @@ export function WeddingExperience() {
       // 04 chart: A runs to the deadline, then into the unknown; B lands before it; then the judgement.
       const b = s.bend, r = (x: number, a: number, c: number) => Math.max(0, Math.min(1, (x - a) / (c - a)));
       set("--barA", r(b, 0, .4)); set("--barU", r(b, .3, .6)); set("--barB", r(b, .45, .75)); set("--dl", r(b, .15, .35)); set("--judge", r(b, .75, 1));
+      set("--pick", s.pick);
       set("--success", s.success); set("--fail", s.collapse); set("--verdict", s.verdict);
       set("--evidence", s.evidence); set("--pins", s.pins); set("--bend", s.bend); set("--threads", s.threads); set("--consensus", s.consensus); set("--mirror", s.mirror); set("--result", s.result);
       node.style.setProperty("--cue", s.cue.toFixed(4));
@@ -87,7 +88,7 @@ export function WeddingExperience() {
        finished; the glide between them plays that animation. The hold (Hangarae brief + cue) is the first
        stop, the wedding brief the last; outside them the page scrolls freely. */
     const at = (t: number) => trigger.start + (trigger.end - trigger.start) * wdTimelineToScroll(t);
-    const SETTLED = [.6, .86, .9, .75, .9, .7, .3] as const;
+    const SETTLED = [.6, .92, .9, .75, .9, .7, .3] as const;
     const stopRange = registerSteppedRange({
       id: "wedding",
       enabled: () => mode !== "reduced-motion",
@@ -136,7 +137,8 @@ export function WeddingExperience() {
       </div>
 
       {/* 02 — candidate tags hang above each form */}
-      {wdModels.map((m, i) => <div key={m.id} className={styles.tag} data-status={m.status} style={{ left: `var(--a-g${i}-x)`, top: `var(--a-g${i}-y)`, opacity: `calc(var(--r${i}) * var(--s2) * var(--a-g${i}-z,1))`, "--d": `${(i % 2) * 1.2}deg` } as CSSProperties}>
+      {wdModels.map((m, i) => <div key={m.id} className={styles.tag} data-status={m.status} style={{ left: `var(--a-g${i}-x)`, top: `var(--a-g${i}-y)`, opacity: `calc(var(--r${i}) * var(--s2) * var(--a-g${i}-z,1) * ${m.id === "econ" ? 1 : "(1 - .65 * var(--pick))"})`, "--d": `${(i % 2) * 1.2}deg` } as CSSProperties} data-picked={m.id === "econ" || undefined}>
+        {m.id === "econ" && <span className={styles.pickRibbon}>✓ 최종 후보로 선택</span>}
         <i className={styles.string}/>
         <span className={styles.year}>{m.year} · {m.kind}</span>
         <strong>{m.name}</strong>
@@ -144,7 +146,8 @@ export function WeddingExperience() {
         <p>{m.note}</p>
         <span className={styles.fit} aria-label={`드레스 적합도 ${m.fit}/5`}>{Array.from({ length: 5 }, (_, k) => <i key={k} data-on={k < m.fit}/>)}</span>
       </div>)}
-      <dl className={styles.stats} style={{ opacity: "var(--s2)" } as CSSProperties}>
+      <p className={styles.pickNote} style={{ opacity: "calc(var(--pick) * var(--s2))" } as CSSProperties}><b>SELECTED</b>다섯 후보 중 가장 좋은 결과를 낸 <strong>ECON</strong>을 최종 후보로 골라, 다음 장면에서 성공과 한계를 검증합니다.</p>
+      <dl className={styles.stats} style={{ opacity: "calc(var(--s2) * (1 - var(--pick)))" } as CSSProperties}>
         {[["3 Weeks", "RESEARCH PERIOD"], ["10+", "ENVIRONMENT BUILDS"], ["30+", "REFERENCES"], ["100+", "RECONSTRUCTED SAMPLES"]].map(([v, l]) => <div key={l}><dt>{v}</dt><dd>{l}</dd></div>)}
       </dl>
 
