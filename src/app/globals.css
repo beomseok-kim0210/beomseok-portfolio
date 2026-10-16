@@ -101,6 +101,17 @@ h4 {
   line-break: strict;
 }
 
+/* Line breaks: text blocks wrap into lines of even length (no one-word last line) at every width,
+   docked docent or not. Long running text (over the balancer's line limit) still avoids orphans. */
+body {
+  text-wrap: pretty;
+}
+:where(h1, h2, h3, h4, h5, h6, p, li, dd, dt, figcaption, blockquote, small, label) {
+  text-wrap: balance;
+}
+/* Labels never split inside a word; they wrap between words or not at all. */
+.small-label { overflow-wrap: normal; }
+
 a {
   color: inherit;
   text-decoration: none;

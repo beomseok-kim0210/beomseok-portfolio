@@ -278,7 +278,7 @@ function TroubleEvidence({ trouble }: { trouble: HangaraeTrouble }) {
     return (
       <div className="space-y-6">
         <div className="rounded-[28px] bg-[#F8FAFC] p-6 md:p-8">
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
             <div className="rounded-[24px] border border-[#E2E8F0] bg-white p-6">
               <p className="small-label text-slate-500">Tracked Keypoints</p>
               <p className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-[#111827]">18</p>

@@ -34,7 +34,7 @@ export function WeddingFailureMatrix() {
           }}
           className="rounded-[32px] border border-[#E5E7EB] bg-white/75 p-8 backdrop-blur"
         >
-          <div className="grid gap-6 xl:grid-cols-[180px_repeat(5,minmax(0,1fr))_1.5fr] xl:items-start">
+          <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))] min-[1500px]:grid-cols-[180px_repeat(5,minmax(0,1fr))_1.5fr] xl:items-start">
             <div>
               <p className="small-label text-[#8B5948]">Model</p>
               <h3 className="mt-4 text-2xl font-semibold text-[#111827]">

@@ -98,7 +98,7 @@
 /* 04 decision: two routes against the project deadline */
 .chart{position:absolute;left:0;right:0;top:-6%;display:grid;gap:20px;padding:28px 30px 18px;background:rgba(251,250,247,.96);border:1px solid rgba(26,27,30,.12);border-radius:12px;box-shadow:0 24px 50px rgba(60,40,20,.14)}
 .route{display:grid;grid-template-columns:260px 1fr;grid-template-rows:auto auto;align-items:center;gap:6px 0}
-.routeName{grid-row:span 2;font:700 19px/1.3 Pretendard,sans-serif;word-break:keep-all;padding-right:16px}
+.routeName{grid-row:span 2;text-wrap:balance;font:700 19px/1.3 Pretendard,sans-serif;word-break:keep-all;padding-right:16px}
 .route[data-route="3d"] .routeName{color:#6b665e}
 .routeName small{display:inline-grid;place-items:center;width:26px;height:26px;margin-right:8px;border-radius:50%;background:var(--ink);color:#fff;font:700 12px/1 var(--mono);vertical-align:2px}
 .bar{position:relative;height:30px;margin-right:56px}

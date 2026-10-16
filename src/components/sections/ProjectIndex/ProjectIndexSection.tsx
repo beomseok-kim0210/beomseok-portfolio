@@ -41,7 +41,7 @@ export function ProjectIndexSection() {
                   {project.highlights.map((highlight) => (
                     <span
                       key={highlight}
-                      className="max-w-full break-words rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-support font-medium text-slate-600"
+                      className="max-w-full break-words md:whitespace-nowrap rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-support font-medium text-slate-600"
                     >
                       {highlight}
                     </span>

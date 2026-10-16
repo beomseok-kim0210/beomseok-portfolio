@@ -35,7 +35,7 @@ function ChipList({ items }: { items: readonly string[] }) {
       {items.map((item) => (
         <span
           key={item}
-          className="max-w-full break-words rounded-[8px] border border-slate-200 bg-white px-3.5 py-2 text-[17px] font-semibold text-slate-700"
+          className="max-w-full break-words md:whitespace-nowrap rounded-[8px] border border-slate-200 bg-white px-3.5 py-2 text-[17px] font-semibold text-slate-700"
         >
           {item}
         </span>
@@ -145,7 +145,7 @@ export default function AboutPage() {
                     {item.value.map((value) => (
                       <span
                         key={value}
-                        className="max-w-full break-words rounded-[8px] bg-slate-50 px-3 py-1.5 text-[17px] font-semibold text-slate-900"
+                        className="max-w-full break-words md:whitespace-nowrap rounded-[8px] bg-slate-50 px-3 py-1.5 text-[17px] font-semibold text-slate-900"
                       >
                         {value}
                       </span>
@@ -161,10 +161,10 @@ export default function AboutPage() {
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr] md:items-center md:gap-16">
           <div className="max-w-[840px]">
             <SectionLabel>Who I Am</SectionLabel>
-            <h2 className="mt-8 text-[52px] font-bold leading-[1] text-slate-950 md:text-[72px]">
+            <h2 className="mt-8 font-bold leading-[1] text-slate-950" style={{ fontSize: "clamp(38px, calc((100vw - var(--docent-overlay, 0px)) * .045), 72px)" }}>
               From trade major
               <br />
-              to AI product builder.
+              to AI product{" "}builder.
             </h2>
             <p className="mt-10 text-[24px] leading-[1.7] text-slate-600">
               {aboutIntroduction}
@@ -189,7 +189,7 @@ export default function AboutPage() {
           <div className="mt-16 grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
             {aboutSnapshot.map((item) => (
               <div key={item.label} className="border-t border-white/10 pt-6">
-                <p className="text-[64px] font-bold leading-none tracking-[-0.03em] text-white md:text-[88px]">
+                <p className="font-bold leading-none tracking-[-0.03em] text-white" style={{ fontSize: "clamp(52px, calc((100vw - var(--docent-overlay, 0px)) * .055), 88px)" }}>
                   {item.value}
                 </p>
                 <p className="mt-4 text-[18px] font-semibold leading-[1.3] text-slate-400 md:text-[20px]">
@@ -316,12 +316,12 @@ export default function AboutPage() {
           {aboutAwards.map((award) => (
             <article
               key={award.title}
-              className="min-h-[260px] rounded-[8px] border border-slate-200 bg-white p-8"
+              className="min-h-[260px] rounded-[8px] border border-slate-200 bg-white p-8 [container-type:inline-size]"
             >
               <p className="text-[14px] font-semibold uppercase tracking-[0.18em] text-blue-600">
                 Award
               </p>
-              <h2 className="mt-8 text-[42px] font-bold leading-[1.05] text-slate-950">
+              <h2 className="mt-8 font-bold leading-[1.05] text-slate-950" style={{ fontSize: "clamp(26px, 9cqw, 42px)" }}>
                 {award.title}
               </h2>
               <p className="mt-6 text-[22px] font-semibold leading-[1.55] text-slate-600">

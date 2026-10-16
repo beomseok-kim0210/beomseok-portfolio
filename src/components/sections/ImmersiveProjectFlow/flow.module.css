@@ -65,6 +65,7 @@
 .evidenceGrid { display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:32px; border-top:1px solid var(--world-line); padding-top:18px; }
 .evidenceGrid h3 { font-size:20px; font-weight:600; letter-spacing:-.025em; margin:18px 0 14px; }
 .evidenceGrid p:not(.eyebrow):not(.metric) { font-size:var(--type-body); line-height:1.7; }
+.evidenceGrid small { display:block; }
 .evidenceGrid small,.evidenceDetail { color:var(--world-muted); font-size:var(--type-support); line-height:1.7; }
 .metric { display:flex; align-items:center; gap:16px; font-family:var(--font-display),sans-serif; font-size:42px; letter-spacing:-.06em; margin:16px 0 10px; }
 .metric span:nth-child(2) { font-size:25px; color:var(--world-muted); }

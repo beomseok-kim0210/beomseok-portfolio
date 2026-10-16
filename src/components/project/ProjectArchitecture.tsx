@@ -28,7 +28,7 @@ export function ProjectArchitecture({ project, showTech = true }: ProjectArchite
                 {item.tech.map((tech) => (
                   <span
                     key={tech}
-                    className="max-w-full break-words rounded-full bg-slate-100 px-3 py-2 text-support font-semibold text-slate-600"
+                    className="max-w-full break-words md:whitespace-nowrap rounded-full bg-slate-100 px-3 py-2 text-support font-semibold text-slate-600"
                   >
                     {tech}
                   </span>
