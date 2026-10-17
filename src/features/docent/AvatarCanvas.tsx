@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { Component, Suspense, useCallback, useEffect, useReducer, type ReactNode } from "react";
+import { Component, Suspense, useCallback, useEffect, useReducer, useState, type ReactNode } from "react";
 import { ACESFilmicToneMapping, type WebGLRenderer } from "three";
 import type { VisemeKey } from "@/lib/docent/visemes";
 import type { SemanticMouthPose } from "@/lib/docent/semanticMouth";
@@ -83,6 +83,16 @@ export default function AvatarCanvas({
   onActiveChange,
 }: AvatarCanvasProps) {
   const [gl, dispatch] = useReducer(avatarGlReducer, initialAvatarGlState);
+  // While the global docent is minimized its panel is hidden: stop drawing the head every frame
+  // (it was the one renderer running on every screen, which phones felt most).
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    const root = document.documentElement, sync = () => setHidden(root.dataset.globalDocentView === "minimized");
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(root, { attributes: true, attributeFilter: ["data-global-docent-view"] });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     dispatch({ type: "PROBED", available: webglAvailable() });
@@ -144,6 +154,7 @@ export default function AvatarCanvas({
           className="relative z-10"
           camera={{ position: [0, 0, 0.7], fov: 30 }}
           dpr={[1, 1.5]}
+          frameloop={hidden ? "never" : "always"}
           gl={{
             antialias: true,
             powerPreference: "high-performance",

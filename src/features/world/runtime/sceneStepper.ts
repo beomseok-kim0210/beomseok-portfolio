@@ -11,7 +11,8 @@ import { scrollToY } from "./journeyGeometry";
  *    plays as an authored animation on the way.
  *  - Keyboard (↓ ↑ Space PageDown PageUp) steps too. Scrollbar drags and anchor jumps land on the
  *    nearest stop once scrolling settles.
- *  - Off on narrow screens, reduced motion, and inside the docent panel or any focused input.
+ *  - Touch: one swipe = one scene (phones and tablets).
+ *  - Off for reduced motion, narrow non-touch windows, and inside the docent panel or any focused input.
  */
 export type Stop = { y: number; duration?: number; label?: string };
 export type SteppedRange = { id: string; stops: () => Stop[]; enabled: () => boolean };
@@ -20,7 +21,8 @@ const WHEEL_IDLE = 320, COOLDOWN = 220, SETTLE = 260, EDGE = 3;
 const ranges = new Map<string, SteppedRange>();
 let installed = false, busyUntil = 0, lastWheel = 0, gestureUsed = false, gestureRegion: number | null = null, lastY = 0, settleTimer = 0, ownScroll = false;
 
-const isOn = () => window.innerWidth > 900 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const touchDevice = () => window.matchMedia("(pointer: coarse)").matches;
+const isOn = () => (window.innerWidth > 900 || touchDevice()) && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const insideIgnored = (target: EventTarget | null) => {
   const el = target as HTMLElement | null;
   return !!el?.closest?.("[data-docent-panel], input:not([type=range]):not([type=checkbox]):not([type=radio]), textarea, select, [contenteditable=true], [data-step-ignore]");
@@ -111,11 +113,42 @@ function onScroll() {
   }, SETTLE);
 }
 
+/* Touch: the swipe is held (no native scroll) while inside a region and stepped on release. Swiping out
+   through the first / last stop stays native, so the page can be left freely. */
+let touchY = 0, touchOwned = false, touchLast = 0;
+function onTouchStart(e: TouchEvent) {
+  touchOwned = false;
+  if (!isOn() || e.touches.length !== 1 || insideIgnored(e.target)) return;
+  touchY = touchLast = e.touches[0].clientY;
+  touchOwned = !!active();
+}
+function onTouchMove(e: TouchEvent) {
+  if (!touchOwned || e.touches.length !== 1) return;
+  const y = e.touches[0].clientY; touchLast = y;
+  const stops = active(); if (!stops) { touchOwned = false; return; }
+  const dir = touchY - y > 0 ? 1 : -1, sy = window.scrollY;
+  const atFirst = Math.abs(sy - stops[0].y) <= EDGE, atLast = Math.abs(sy - stops[stops.length - 1].y) <= EDGE;
+  // Leaving the region through its boundary stop is a free-page gesture.
+  if (Math.abs(touchY - y) > 8 && ((dir < 0 && atFirst) || (dir > 0 && atLast)) && performance.now() > busyUntil) { touchOwned = false; return; }
+  if (e.cancelable) e.preventDefault();
+}
+function onTouchEnd() {
+  if (!touchOwned) return;
+  touchOwned = false;
+  const dy = touchY - touchLast;
+  if (Math.abs(dy) < 28 || performance.now() < busyUntil) return;
+  step(dy > 0 ? 1 : -1);
+}
+
 function install() {
   if (installed || typeof window === "undefined") return;
   installed = true;
   window.addEventListener("wheel", onWheel, { passive: false, capture: true });
   window.addEventListener("keydown", onKey, { capture: true });
+  window.addEventListener("touchstart", onTouchStart, { passive: true, capture: true });
+  window.addEventListener("touchmove", onTouchMove, { passive: false, capture: true });
+  window.addEventListener("touchend", onTouchEnd, { capture: true });
+  window.addEventListener("touchcancel", onTouchEnd, { capture: true });
   lastY = window.scrollY;
   window.addEventListener("scroll", onScroll, { passive: true });
 }
@@ -124,6 +157,7 @@ function uninstall() {
   installed = false;
   window.removeEventListener("wheel", onWheel, { capture: true } as EventListenerOptions);
   window.removeEventListener("keydown", onKey, { capture: true } as EventListenerOptions);
+  for (const [t, f] of [["touchstart", onTouchStart], ["touchmove", onTouchMove], ["touchend", onTouchEnd], ["touchcancel", onTouchEnd]] as const) window.removeEventListener(t, f as EventListener, { capture: true } as EventListenerOptions);
   window.removeEventListener("scroll", onScroll);
 }
 export function registerSteppedRange(range: SteppedRange) {
