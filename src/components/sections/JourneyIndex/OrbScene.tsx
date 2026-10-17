@@ -91,7 +91,7 @@ function useFresnel(color: string, power: number, intensity: number) {
 }
 
 /* ── The world ───────────────────────────────────────────── */
-function World({ id, accent }: { id: OrbId; accent: string }) {
+export function World({ id, accent }: { id: OrbId; accent: string }) {
   const root = useRef<Group>(null), content = useRef<Group>(null), orbits = useRef<Group>(null);
   const rim = useFresnel(accent, 3.2, .65), inner = useFresnel("#ffffff", 6, .12);
   useFrame(({ clock, pointer }, dt) => {

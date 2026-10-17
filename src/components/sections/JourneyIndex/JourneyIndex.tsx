@@ -8,6 +8,9 @@ import { WD_ENTRY, wdTimelineToScroll } from "@/features/world/adapters/weddingA
 import { gatePx, heroGatePx, scrollToY } from "@/features/world/runtime/journeyGeometry";
 import { Tunnel } from "./Tunnel";
 import { OrbCanvas } from "./OrbCanvas";
+import dynamic from "next/dynamic";
+import { renderTier } from "@/features/world/runtime/renderTier";
+const OrbStage = dynamic(() => import("./OrbViews"), { ssr: false });
 import { docentOverlayPx } from "@/features/docent/docentOverlay";
 import s from "./journey-index.module.css";
 
@@ -51,7 +54,9 @@ export function JourneyIndex() {
   const [dive, setDive] = useState(0);                 // scroll-driven default journey (0..1)
   const [jump, setJump] = useState<{ id: Id; phase: "in" | "out" } | null>(null); // click-driven
   const [mounted, setMounted] = useState(false);
-  const [live, setLive] = useState(false); // index revealed (Hero no longer covering it)
+  const [live, setLive] = useState(false);
+  const [sharedOrbs, setSharedOrbs] = useState(false);
+  useEffect(() => { const c = document.createElement("canvas"), ok = !!c.getContext("webgl2"); setSharedOrbs(ok && renderTier() === "low"); }, []); // index revealed (Hero no longer covering it)
   useEffect(() => setMounted(true), []);
 
   // Default journey: scroll through the gate.
@@ -111,6 +116,7 @@ export function JourneyIndex() {
           <p className={s.lede}>음성을 행동으로, 움직임을 피드백으로.<br />사람의 경험으로 이어지는 세 개의 AI 프로젝트입니다.</p>
         </div>
 
+        {sharedOrbs && <OrbStage live={live} />}
         <ul className={s.worlds}>
           {projects.map((p, i) => (
             <li key={p.id} className={s.world} style={{ "--accent": p.accent, "--i": i } as CSSProperties} data-id={p.id} data-default={p.id === "armi"} data-chosen={diving === p.id}>

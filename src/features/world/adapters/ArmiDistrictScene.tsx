@@ -47,7 +47,18 @@ export function ArmiDistrictScene({ runtime, compact, video }: { runtime: WorldR
     }
     return prepareArmiV015(root,gltf.animations,JSON.parse(manifestText as string) as ArmiManifest);
   }, [gltf, manifestText, audit?.variant,alternatives,response]);
-  const rig = useMemo(() => { RectAreaLightUniformsLib.init(); return createArmiLightRig(asset.manifest); }, [asset]);
+  const rig = useMemo(() => {
+    RectAreaLightUniformsLib.init();
+    const r = createArmiLightRig(asset.manifest);
+    // The pipeline renders the chamber (layer 0) and then the product screen (layer 2). Lights only on
+    // layer 0 made the light set differ between those passes, which bumped three's light-state version
+    // twice a frame and forced a shader re-check on every lit material each frame. Same lights on both
+    // layers keep it stable (the product screen is unlit, so the picture does not change).
+    r.traverse(o => { if ((o as import("three").Light).isLight) o.layers.enable(2); });
+    return r;
+  }, [asset]);
+  // Same for lights shipped inside the chamber asset itself.
+  useEffect(() => { asset.root.traverse(o => { if ((o as import("three").Light).isLight) o.layers.enable(2); }); }, [asset]);
   const alternateLights = useMemo(() => ["V008-MemoryGold", "V008-SearchBlue", "V008-RobotGold", "V008-RobotFront"].map(name => {
     const light = rig.getObjectByName(`Runtime-${name}`) as import("three").RectAreaLight;
     return { light, intensity: light.intensity };
