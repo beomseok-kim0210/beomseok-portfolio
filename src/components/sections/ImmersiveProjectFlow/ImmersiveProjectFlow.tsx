@@ -12,6 +12,7 @@ import { hgSceneRanges, hgShots } from "@/features/world/adapters/hangaraeAnimat
 const hangaraeRecap = hgSceneRanges.map((_, i) => hgShots.find(s => Number(s.scene) === i + 1)!.title);
 import { briefTimeline } from "./timeline";
 import { WeddingExperience } from "./weddingJourney/WeddingExperience";
+import { LabExperience } from "./labJourney/LabExperience";
 import { ArmiExperience } from "./armiJourney/ArmiExperience";
 import { observeScrollLayout } from "./observeScrollLayout";
 import { HangaraeExperience } from "./hangaraeJourney/HangaraeExperience";
@@ -70,5 +71,6 @@ export function ImmersiveProjectFlow() {
     </section>
     <WeddingExperience/>
     <div id="wedding-brief" className={styles.weddingBrief}><HomeProjectBrief project="wedding"/></div>
+    <LabExperience/>
   </div>;
 }

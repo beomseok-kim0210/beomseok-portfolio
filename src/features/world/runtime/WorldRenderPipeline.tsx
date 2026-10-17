@@ -42,7 +42,7 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
     gtao.enabled = false; gtao.blendIntensity = .85;
     gtao.updateGtaoMaterial({ radius: .32, distanceExponent: 1.6, thickness: 1.2, scale: 1.1, samples: 12 });
     composer.addPass(render); composer.addPass(gtao); composer.addPass(bloom); composer.addPass(new OutputPass());
-    return { composer, bloom, gtao, geometry, insetCamera: new PerspectiveCamera(60, 1, .08, 1000), fog: new Fog("#060b10", armiLook.fogNear, armiLook.fogFar), weddingFog: new Fog("#e6e0d6", 12, 28), background: new Color("#060b10") };
+    return { composer, bloom, gtao, geometry, insetCamera: new PerspectiveCamera(60, 1, .08, 1000), fog: new Fog("#060b10", armiLook.fogNear, armiLook.fogFar), weddingFog: new Fog("#e6e0d6", 12, 28), labFog: new Fog("#070b11", 14, 34), background: new Color("#060b10") };
   }, [gl, scene, camera]);
   useEffect(() => {
     pipeline.composer.setPixelRatio(compact ? 1 : Math.min(gl.getPixelRatio(), 1.5));
@@ -51,6 +51,17 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
   useEffect(() => () => { pipeline.composer.passes.forEach(pass => pass.dispose()); pipeline.composer.dispose(); }, [pipeline]);
   // Exactly one final render owner. Camera samples have already been applied at -1.
   useFrame((_, delta) => {
+    if(runtime.state.current.districtId === "experimental-wing") {
+      // Dark instrument room: ACES, light bloom on the accent rims and the rail pulse.
+      gl.info.autoReset=false;gl.info.reset();gl.toneMapping=ACESFilmicToneMapping;gl.toneMappingExposure=1;
+      if(scene.background instanceof Color)scene.background.set("#070b11"); else scene.background=new Color("#070b11");
+      scene.fog=pipeline.labFog;camera.layers.set(0);
+      const {strength,threshold,radius}=pipeline.bloom;
+      pipeline.bloom.enabled=!compact&&renderTier()!=="low";pipeline.bloom.strength=.35;pipeline.bloom.threshold=.85;pipeline.bloom.radius=.4;
+      pipeline.composer.render();
+      pipeline.bloom.strength=strength;pipeline.bloom.threshold=threshold;pipeline.bloom.radius=radius;
+      return;
+    }
     if(runtime.state.current.districtId === "wedding") {
       // Bright atelier: Khronos neutral tone mapping keeps ivory ivory; a whisper of bloom for satin highlights.
       gl.info.autoReset=false;gl.info.reset();gl.toneMapping=NeutralToneMapping;gl.toneMappingExposure=.96;

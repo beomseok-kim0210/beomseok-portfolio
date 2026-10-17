@@ -6,12 +6,13 @@ import type { TraversalDirection, WorldDirectorState, WorldRenderMode } from "..
 import type { ArmiProductionAsset } from "../adapters/armiV015";
 import { hangaraeRuntimeProfile } from "../adapters/hangaraeAnimatic";
 import { weddingRuntimeProfile } from "../adapters/weddingAtelier";
+import { labRuntimeProfile } from "../adapters/labRoom";
 
 // A projection of published metadata onto currently mounted DOM bindings.
 // ARMI compatibility and the Hangarae animatic are mounted DOM districts.
 const armiItinerary = resolveWorldItinerary(worldSegments.filter(segment => segment.segmentId === "armi"));
 // Transit reserves traversal units only; it does not invent a DOM scroll track.
-export const adoptedWorldItinerary = resolveWorldItinerary(worldSegments.filter(segment => ["armi", "armi-to-hangarae", "hangarae", "hangarae-to-wedding", "wedding"].includes(segment.segmentId)));
+export const adoptedWorldItinerary = resolveWorldItinerary(worldSegments.filter(segment => ["armi", "armi-to-hangarae", "hangarae", "hangarae-to-wedding", "wedding", "wedding-to-wing", "experimental-wing"].includes(segment.segmentId)));
 export function worldPositionForDomProgress(segmentId: string, localProgress: number) {
   const position = positionForSegment(adoptedWorldItinerary, segmentId, localProgress);
   // Seams are half-open (an exact end belongs to the next segment). A mounted district's own
@@ -25,12 +26,13 @@ export function worldPositionForScroll(scroll: number, start: number, end: numbe
 }
 export function evaluateRuntime(position: number, direction: TraversalDirection, renderMode: WorldRenderMode) {
   // Keep the exact ARMI endpoint at 4 owned by ARMI, as in the adopted V1 path.
-  return evaluateWorld({ position, direction, renderMode }, position <= 4 ? armiItinerary : adoptedWorldItinerary, districtRegistry, [renderMode === "webgl" ? armiProductionProfile : armiRuntimeProfile, hangaraeRuntimeProfile, weddingRuntimeProfile]);
+  return evaluateWorld({ position, direction, renderMode }, position <= 4 ? armiItinerary : adoptedWorldItinerary, districtRegistry, [renderMode === "webgl" ? armiProductionProfile : armiRuntimeProfile, hangaraeRuntimeProfile, weddingRuntimeProfile, labRuntimeProfile]);
 }
 export function createWorldRuntime() {
   const progress = { current: 0 }; // Explicit ARMI-local legacy clock; never World-normalized.
   const hangaraeProgress = { current: 0 };
   const weddingProgress = { current: 0 };
+  const labProgress = { current: 0 };
   const state = { current: evaluateRuntime(0, "stationary", "static") };
   const listeners = new Set<() => void>();
   const semanticListeners = new Set<() => void>();
@@ -41,6 +43,8 @@ export function createWorldRuntime() {
     hangaraeViewport: { current: null as HTMLElement | null },
     weddingProgress,
     weddingViewport: { current: null as HTMLElement | null },
+    labProgress,
+    labViewport: { current: null as HTMLElement | null },
     armiAsset: { current: null as ArmiProductionAsset | null },
     /** 0..1 inside the ARMI overview hold (four parts introduced in turn), -1 outside. */
     armiOverview: { current: -1 },
@@ -58,6 +62,7 @@ export function createWorldRuntime() {
       if (next.districtId === "armi") progress.current = adaptArmiRuntime(next).legacyJourneyProgress;
       if (next.districtId === "hangarae") hangaraeProgress.current = next.localProgress;
       if (next.districtId === "wedding") weddingProgress.current = next.localProgress;
+      if (next.districtId === "experimental-wing") labProgress.current = next.localProgress;
       if (semanticKey(previous) !== semanticKey(next)) semanticListeners.forEach(listener => listener());
       listeners.forEach(listener => listener());
       return next;

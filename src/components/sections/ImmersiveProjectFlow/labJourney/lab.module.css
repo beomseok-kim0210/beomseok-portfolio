@@ -1,0 +1,43 @@
+/* 04 Personal Lab — dark instrument room; neutral blue-grey with one accent per station. */
+.track{--world-ink:#eef3f9;--world-muted:#9fb0c3;--accent:#9fc2ee;--world-display:var(--font-display),Pretendard,sans-serif;--world-label:12px/1.5 ui-monospace,monospace;
+  position:relative;overflow-x:clip;height:calc(1050svh + 100svh);color:var(--world-ink);background:#070b11}
+.viewport{position:sticky;top:72px;height:calc(100svh - 72px);min-height:560px;overflow-x:visible;overflow-y:clip;isolation:isolate;background:#070b11;border-right:var(--docent-overlay,0px) solid transparent;box-shadow:0 -24px 0 0 #070b11;clip-path:inset(50% 50% 50% 50%)}
+@media not ((min-width:901px) and (prefers-reduced-motion:no-preference)){.viewport{clip-path:none}}
+.canvas{position:absolute;inset:0;right:calc(var(--docent-overlay,0px) * -1);z-index:0}
+.apertureEdge{position:absolute;z-index:12;padding:1.5px;background:linear-gradient(180deg,#9fc2ee,#e6eef8 55%,#f0be64);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;pointer-events:none}
+.srOnly{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+.header{position:absolute;left:4%;top:4.2%;z-index:7;display:flex;gap:18px;align-items:flex-start;pointer-events:none}
+.header b{font:500 clamp(46px,4.6vw,70px)/.86 var(--world-display);letter-spacing:-.05em}
+.header h3{margin:1px 0 0;font:400 clamp(22px,2.05vw,31px)/1.1 var(--world-display);letter-spacing:-.035em}
+.header p{margin:8px 0 0;font:600 clamp(16px,1.35vw,20px)/1.4 Pretendard,sans-serif;color:#cfe0f5}
+
+/* Station introductions (00) */
+.intro{position:absolute;left:0;top:0;z-index:6;pointer-events:none;opacity:0;transition:opacity .45s ease}
+.intro[data-on=true]{opacity:1}
+.intro i{position:absolute;left:-130px;top:-150px;width:260px;height:260px;border-radius:50%;border:2px solid var(--c);box-shadow:0 0 28px color-mix(in srgb,var(--c) 45%,transparent),inset 0 0 28px color-mix(in srgb,var(--c) 22%,transparent)}
+.intro div{position:absolute;left:150px;top:-60px;display:grid;gap:4px;padding:12px 16px;border-radius:8px;background:rgba(7,12,20,.9);border:1px solid color-mix(in srgb,var(--c) 55%,transparent);white-space:nowrap}
+.intro small{font:11px/1.4 ui-monospace,monospace;letter-spacing:.12em;color:var(--c)}
+.intro strong{font:600 24px/1.2 var(--world-display);color:#f0f4f8}
+.intro span{font:500 15px/1.4 Pretendard,sans-serif;color:#c9d6e4}
+
+/* Empty content slots: exactly on each station's screen */
+.slot{position:absolute;left:0;top:0;z-index:5;display:grid;place-items:center;border:1.5px dashed color-mix(in srgb,var(--c) 70%,transparent);border-radius:6px;background:color-mix(in srgb,var(--c) 6%,transparent);opacity:0;transition:opacity .4s ease;pointer-events:none}
+.slot[data-on=true]{opacity:1}
+.slot span{font:600 12px/1.3 ui-monospace,monospace;letter-spacing:.12em;color:var(--c)}
+.panel{position:absolute;right:calc(4% + 34px);top:24%;z-index:6;width:min(420px,32%);padding:20px 22px;border-radius:10px;background:rgba(10,16,26,.86);border:1px dashed color-mix(in srgb,var(--c) 55%,transparent);opacity:0;transition:opacity .4s ease;pointer-events:none}
+.panel[data-on=true]{opacity:1}
+.panel small{font:600 11px/1 ui-monospace,monospace;letter-spacing:.14em;color:var(--c)}
+.panel strong{display:block;margin-top:10px;font:700 20px/1.35 Pretendard,sans-serif}
+.panel p{margin:10px 0 0;font:500 15px/1.6 Pretendard,sans-serif;color:#aebdcf}
+
+/* Circuit rail HUD (the room's progress bar) */
+.rail{position:absolute;left:4%;right:calc(4% + 34px);bottom:calc(2.2% + 52px);z-index:7;height:2px;background:linear-gradient(90deg,#7cc4ff55,#f0be6455,#f0786e55);pointer-events:none}
+.rail i{position:absolute;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:#e6f2ff;box-shadow:0 0 14px #9fc2ee}
+.rail span{position:absolute;top:10px;transform:translateX(-50%);font:600 11px/1 ui-monospace,monospace;letter-spacing:.14em;color:color-mix(in srgb,var(--c) 55%,#6d7a8a);white-space:nowrap}
+.rail span[data-on=true]{color:var(--c)}
+
+.viewport[data-compact=true] .header{left:5%;top:3%}
+.viewport[data-compact=true] .panel{left:5%;right:5%;width:auto;top:auto;bottom:16%}
+.viewport[data-compact=true] .intro div{left:-90px;top:120px}
+.viewport[data-compact=true] .rail span{display:none}

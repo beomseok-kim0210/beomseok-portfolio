@@ -4,6 +4,7 @@ import { Canvas, useThree } from "@react-three/fiber";
 import { ArmiDistrictScene } from "../adapters/ArmiDistrictScene";
 import { HangaraeDistrictScene } from "../adapters/HangaraeDistrictScene";
 import { WeddingDistrictScene } from "../adapters/WeddingDistrictScene";
+import { LabDistrictScene } from "../adapters/LabDistrictScene";
 import { WorldCameraController } from "./WorldCameraController";
 import { WorldRenderPipeline } from "./WorldRenderPipeline";
 import type { WorldRuntime } from "../director/worldRuntime";
@@ -29,7 +30,7 @@ function District({ runtime, video, districtId }: { runtime: WorldRuntime; video
   const compact = useThree(state => state.size.width <= 700);
   return <>
     <WorldCameraController runtime={runtime} compact={compact}/>
-    {districtId === "hangarae" ? <HangaraeDistrictScene runtime={runtime}/> : districtId === "wedding" ? <WeddingDistrictScene runtime={runtime}/> : <ArmiDistrictScene runtime={runtime} compact={compact} video={video}/>}
+    {districtId === "hangarae" ? <HangaraeDistrictScene runtime={runtime}/> : districtId === "wedding" ? <WeddingDistrictScene runtime={runtime}/> : districtId === "experimental-wing" ? <LabDistrictScene runtime={runtime}/> : <ArmiDistrictScene runtime={runtime} compact={compact} video={video}/>}
     <WorldRenderPipeline runtime={runtime} compact={compact}/>
   </>;
 }
