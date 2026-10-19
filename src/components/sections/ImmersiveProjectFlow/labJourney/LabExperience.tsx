@@ -6,8 +6,7 @@ import { useGLTF } from "@react-three/drei";
 import { useWorldHost } from "@/features/world/runtime/WorldHost";
 import { worldPositionForDomProgress } from "@/features/world/director/worldRuntime";
 import type { WorldRenderMode } from "@/features/world/types/contracts";
-import { LAB_HEAD_URL, labOuter, labScenes, labStations, labStopInner, sampleLab } from "@/features/world/adapters/labRoom";
-import { applyAperture } from "@/features/world/runtime/journeyGeometry";
+import { LAB_HEAD_URL, LAB_HOLD, labOuter, labScenes, labStations, labStopInner, sampleLab } from "@/features/world/adapters/labRoom";
 import { registerSteppedRange } from "@/features/world/runtime/sceneStepper";
 import { onDocentOverlayChange } from "@/features/docent/docentOverlay";
 import { OPEN_GLOBAL_DOCENT_EVENT } from "@/features/docent/globalDocentEvents";
@@ -23,7 +22,7 @@ import styles from "./lab.module.css";
 const railAt = (id: string) => { const first = labScenes.findIndex(sc => sc.station === id), n = labScenes.filter(sc => sc.station === id).length; return (first + n / 2) / labScenes.length; };
 
 export function LabExperience() {
-  const section = useRef<HTMLElement>(null), viewport = useRef<HTMLDivElement>(null), surface = useRef<HTMLDivElement>(null), edge = useRef<HTMLDivElement>(null);
+  const section = useRef<HTMLElement>(null), viewport = useRef<HTMLDivElement>(null), surface = useRef<HTMLDivElement>(null);
   const { runtime, setSurface } = useWorldHost();
   const [mode, setMode] = useState<WorldRenderMode>("static"), [active, setActive] = useState(false), [index, setIndex] = useState(0);
   const fail = useCallback(() => setMode("fallback"), []);
@@ -43,6 +42,8 @@ export function LabExperience() {
     const node = section.current, view = viewport.current; if (!node || !view) return;
     runtime.labViewport.current = view;
     let previous = -1;
+    const brief = document.getElementById("wedding-brief");
+    const ramp = (x: number, a: number, b: number) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
     const apply = (p: number) => {
       const s = sampleLab(p);
       const box = node.getBoundingClientRect();
@@ -50,10 +51,28 @@ export function LabExperience() {
       node.dataset.worldDistrict = "experimental-wing"; node.dataset.worldProgress = String(p);
       view.dataset.phase = s.scene.id; view.dataset.station = s.scene.station ?? ""; view.dataset.compact = String(view.clientWidth <= 700);
       view.style.setProperty("--intro", s.intro.toFixed(3)); view.style.setProperty("--slot", s.slot.toFixed(3)); view.style.setProperty("--rail", s.rail.toFixed(4));
-      applyAperture(view, innerWidth > 900 && mode !== "reduced-motion" ? s.entry : 1, edge.current);
+      node.style.setProperty("--cue", s.cue.toFixed(4));
+      // Entering through the gallery doors (desktop): the wedding brief stays put and dims, the door wall
+      // fades in over it, the leaves swing open and the camera walks through. No downward scroll is seen.
+      const entryOn = innerWidth > 900 && mode !== "reduced-motion", e = entryOn ? s.entry : 1;
+      view.style.clipPath = e > 0 ? "none" : "inset(50% 50% 50% 50%)";
+      view.style.opacity = ramp(e, 0, .28).toFixed(3);
+      view.style.setProperty("--door-open", ramp(e, .3, .82).toFixed(4));
+      view.style.setProperty("--door-through", ramp(e, .7, 1).toFixed(4));
+      view.dataset.doors = String(e < 1);
+      node.style.pointerEvents = e < .98 ? "none" : "";
+      if (brief) {
+        const dim = entryOn ? ramp(s.entry, 0, .3) : 0;
+        brief.style.filter = dim > .001 ? `brightness(${(1 - .55 * dim).toFixed(3)})` : "";
+        brief.style.transform = dim > .001 ? `scale(${(1 - .03 * dim).toFixed(4)})` : "";
+      }
       if (previous !== s.index) { previous = s.index; setIndex(s.index); }
     };
     const trigger: ScrollTrigger = ScrollTrigger.create({ trigger: node, start: "top 72px", end: "bottom bottom", invalidateOnRefresh: true, onUpdate: self => apply(self.progress), onRefresh: self => apply(self.progress) });
+    /* The wedding brief holds still (bottom-pinned) through the hold and the door opening. */
+    const pin = () => { if (brief) brief.style.top = `${Math.min(72, innerHeight - brief.offsetHeight)}px`; };
+    if (brief) { brief.style.position = "sticky"; brief.style.zIndex = "0"; pin(); }
+    const briefResize = new ResizeObserver(pin); if (brief) briefResize.observe(brief);
     apply(trigger.progress);
     const resize = new ResizeObserver(() => apply(trigger.progress)); resize.observe(view);
     const stopDocent = onDocentOverlayChange(() => requestAnimationFrame(() => apply(trigger.progress)));
@@ -62,25 +81,42 @@ export function LabExperience() {
     const stopRange = registerSteppedRange({
       id: "lab",
       enabled: () => mode !== "reduced-motion",
-      stops: () => labScenes.map((sc, i) => ({ y: trigger.start + (trigger.end - trigger.start) * labOuter(labStopInner(i)), duration: i === 0 ? 2.6 : 1.8, label: sc.id })),
+      // First the hold (wedding brief + cue); the glide from it into the hall is the door opening.
+      stops: () => [
+        { y: trigger.start + (trigger.end - trigger.start) * LAB_HOLD * .5, duration: 1.6, label: "hold" },
+        ...labScenes.map((sc, i) => ({ y: trigger.start + (trigger.end - trigger.start) * labOuter(labStopInner(i)), duration: i === 0 ? 3.6 : 1.8, label: sc.id })),
+      ],
     });
-    return () => { stop(); stopDocent(); stopRange(); resize.disconnect(); trigger.kill(); runtime.labViewport.current = null; };
+    return () => {
+      stop(); stopDocent(); stopRange(); resize.disconnect(); briefResize.disconnect(); trigger.kill(); runtime.labViewport.current = null;
+      if (brief) { brief.style.position = ""; brief.style.top = ""; brief.style.zIndex = ""; brief.style.filter = ""; brief.style.transform = ""; }
+    };
   }, [runtime, mode]);
 
   const scene = labScenes[index], station = labStations.find(s => s.id === scene.station);
   const stationNo = station ? labStations.indexOf(station) + 1 : 0;
   const label = scene.label;
   return <section id="lab" ref={section} className={styles.track} data-header-tone="light" aria-label="개인 작업 갤러리: Digital Docent · BCOS · Crime Scene">
+    {/* Hold: the wedding brief is read in place; the same "next" cue as the earlier briefs. */}
+    <div className={styles.cueRail} aria-hidden="true"><div className={styles.cue} style={{ opacity: "var(--cue)" } as CSSProperties}>
+      <span>NEXT</span><strong>04 · 개인 프로젝트</strong><em>계속 내리면 개인 프로젝트 갤러리로 넘어갑니다</em><i/>
+    </div></div>
     <div ref={viewport} className={styles.viewport} data-phase={scene.id} data-hud="lg">
       <div ref={surface} className={styles.canvas} aria-hidden="true"/>
       <div className={styles.veil} aria-hidden="true"/>
-      <div ref={edge} className={styles.apertureEdge} aria-hidden="true"/>
+      {/* The gallery's double doors: frosted glass leaves in a black steel frame, set in the white wall. */}
+      <div className={styles.doors} aria-hidden="true">
+        <div className={styles.doorway}>
+          <p className={styles.sign}><small>04 / PERSONAL WORKS</small>개인 작업 갤러리</p>
+          <span className={styles.leaf} data-side="l"/><span className={styles.leaf} data-side="r"/>
+        </div>
+      </div>
 
       <header className={styles.header}>
         <b>{scene.no}</b>
         <div><h3>{scene.title}</h3><p>{scene.ko}</p></div>
       </header>
-      <SceneChrome project="04 / PERSONAL WORKS" name="개인 작업 갤러리" count={labStations.length} current={stationNo} skipHref="#projects"/>
+      <SceneChrome project="04 / PERSONAL WORKS" name="개인 작업 갤러리" count={labStations.length} current={stationNo} skipHref="#contact"/>
 
       {/* The hall at a glance: a small name tag on each of the three works. */}
       {labStations.map((st, i) => <div key={st.id} className={styles.tag} data-on={scene.id === "entry"} style={{ translate: `var(--d-${st.id}-x) var(--d-${st.id}-y)`, transitionDelay: `${i * 120}ms` } as CSSProperties}>
@@ -91,16 +127,16 @@ export function LabExperience() {
         <i/><div><small>{String(labStations.indexOf(st) + 1).padStart(2, "0")} / 03</small><strong>{st.name}</strong><p>{st.line}</p><span>{st.ko}</span><em>{st.medium}</em></div>
       </div>)}
 
-      {/* Wall label for the scene: kicker, title, text, two measured facts, and an optional action. */}
+      {/* Wall label for the scene: kicker, title, text, two measured facts, and its actions. */}
       <aside className={styles.label} data-on={!!label} style={{ "--c": station?.accent ?? "#17181b" } as CSSProperties} aria-hidden={!label}>
         {label && station && <>
           <small><span>{`${String(stationNo).padStart(2, "0")} · ${station.en}`}</span><span>{label.kicker}</span></small>
           <strong>{label.title}</strong>
           <p>{label.body}</p>
           {label.metrics && <dl>{label.metrics.map(m => <div key={m.label}><dt>{m.value}</dt><dd>{m.label}</dd></div>)}</dl>}
-          {label.cta && (label.cta.kind === "docent"
-            ? <button type="button" className={styles.cta} onClick={() => window.dispatchEvent(new CustomEvent(OPEN_GLOBAL_DOCENT_EVENT))}>{label.cta.text} →</button>
-            : <a className={styles.cta} href={label.cta.href}>{label.cta.text} →</a>)}
+          {label.actions && <div className={styles.actions}>{label.actions.map(a => a.kind === "docent"
+            ? <button key={a.text} type="button" className={styles.cta} data-primary={!!a.primary} onClick={() => window.dispatchEvent(new CustomEvent(OPEN_GLOBAL_DOCENT_EVENT))}>{a.text} →</button>
+            : <a key={a.text} className={styles.cta} data-primary={!!a.primary} href={a.href} {...(a.kind === "external" ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{a.text} {a.kind === "external" ? "↗" : "→"}</a>)}</div>}
         </>}
       </aside>
 

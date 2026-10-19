@@ -25,10 +25,12 @@ export const LAB_FRAME = { dx: 1.35, y: 1.68, w: 1.5, h: 1.06 } as const;
 export const LAB_HEAD_URL = "/models/docent-qka2-m213-runtime-compat.glb";
 
 type Metric = { value: string; label: string };
+/** A wall-label action: open the docent, an internal record, or an external page (new tab). */
+export type LabAction = { kind: "docent" | "link" | "external"; text: string; href?: string; primary?: boolean };
 export type LabScene = {
   id: string; no: string; title: string; ko: string; station: LabStationId | null; slot: boolean;
   shot?: "work" | "detail" | "wall" | "bay";
-  label?: { kicker: string; title: string; body: string; metrics?: readonly Metric[]; cta?: { kind: "docent" | "link"; text: string; href?: string } };
+  label?: { kicker: string; title: string; body: string; metrics?: readonly Metric[]; actions?: readonly LabAction[] };
 };
 
 /** Scenes in order: the hall at a glance, then each work in turn — its short introduction, then its details.
@@ -48,7 +50,7 @@ export const labScenes: readonly LabScene[] = [
     kicker: "RESULT", title: "소리와 입모양이 같은 합성에서 나옵니다",
     body: "LAM 신호만으로는 ㅣ·ㅡ의 가로 벌림과 ㅂ·ㅁ의 닫힘이 나오지 않았습니다. Supertonic 합성 한 번에서 자모 시각을 읽어 모음 모양과 양순음 닫힘을 얹었습니다. 음운 변동과 치아 표현은 남은 한계입니다.",
     metrics: [{ value: "106 / 106", label: "양순음 닫힘 · 운영 경로 22문장" }, { value: "1회", label: "세그먼트당 합성 · 오디오 해시 일치" }],
-    cta: { kind: "docent", text: "이 작품에게 직접 물어보기" } } },
+    actions: [{ kind: "docent", text: "이 작품에게 직접 물어보기", primary: true }] } },
   { id: "intro-bcos", no: "02", title: "BCOS", ko: "간단 설명", station: "bcos", slot: false },
   { id: "b1", no: "02", title: "BCOS", ko: "작품 · 다섯 개의 관문", station: "bcos", slot: true, shot: "work", label: {
     kicker: "WORK", title: "작업 계약이 세션을 열고, 독립 검토가 닫습니다",
@@ -62,7 +64,7 @@ export const labScenes: readonly LabScene[] = [
     kicker: "RESULT", title: "세션이 바뀌어도 결정과 검증이 저장소에 남습니다",
     body: "동결된 Task는 덮어쓰지 않고 Human이 승인한 Amendment로만 고칩니다. 채팅 원문이 아니라 결정 · 규칙 · 실패 기록을 Git이 소유해, 작은 컨텍스트로 이어서 일할 수 있게 했습니다.",
     metrics: [{ value: "50 / 50", label: "Acceptance Criteria" }, { value: "272 / 272", label: "Tests · 최종 제품 범위" }],
-    cta: { kind: "link", text: "프로젝트 기록 보기", href: "/projects/bcos" } } },
+    actions: [{ kind: "link", text: "프로젝트 기록 보기", href: "/projects/bcos", primary: true }] } },
   { id: "intro-crime", no: "03", title: "CRIME SCENE", ko: "간단 설명", station: "crime", slot: false },
   { id: "c1", no: "03", title: "CRIME SCENE", ko: "작품 · 잠긴 진실", station: "crime", slot: true, shot: "work", label: {
     kicker: "WORK", title: "진실은 서버의 금고에, 플레이어에겐 증거만",
@@ -76,12 +78,18 @@ export const labScenes: readonly LabScene[] = [
     kicker: "RESULT", title: "자유 질문이 흔들려도 수사는 멈추지 않습니다",
     body: "자연어 답변의 품질과 게임 진행 판정은 다른 문제였습니다. 증거 제시처럼 결과가 항상 같은 행동을 핵심 경로로 두고, 사건 일지가 사실 → 충돌 → 남은 의문 → 다음 조사로 이어지게 했습니다.",
     metrics: [{ value: "2 / 2", label: "서로 다른 순서의 전체 플레이" }, { value: "194 → 240", label: "사건 일지 회귀 테스트" }],
-    cta: { kind: "link", text: "프로젝트 기록 보기", href: "/projects/crime-scene" } } },
+    actions: [{ kind: "external", text: "체험하기", href: "https://crime-scene-kohl.vercel.app", primary: true }, { kind: "link", text: "프로젝트 기록 보기", href: "/projects/crime-scene" }] } },
 ];
 export type LabSceneId = typeof labScenes[number]["id"];
 
-/** Equal spans per scene after a short entry (the door from the wedding brief). */
-export const LAB_ENTRY = .06;
+/**
+ * A chapter break, not a scroll-through (same grammar as the wedding entry):
+ *  HOLD  [0, LAB_HOLD)          — the wedding brief stays pinned and readable; only a "next" cue shows.
+ *  ENTRY [LAB_HOLD, LAB_ENTRY)  — the brief dims, the gallery's double doors appear and swing open.
+ * Then equal spans per scene.
+ */
+export const LAB_HOLD = .03;
+export const LAB_ENTRY = .09;
 export const labInner = (p: number) => Math.max(0, Math.min(1, (p - LAB_ENTRY) / (1 - LAB_ENTRY)));
 export const labOuter = (q: number) => LAB_ENTRY + q * (1 - LAB_ENTRY);
 const N = labScenes.length;
@@ -106,8 +114,10 @@ export function sampleLab(p: number) {
   const local = q * N - i;
   return {
     p, q, index: i, scene,
-    /** Door from the dimmed wedding brief. */
-    entry: ramp(p, 0, LAB_ENTRY * .95),
+    /** "Next" cue during the hold; gone once the dim begins. */
+    cue: ramp(p, .002, .012) * (1 - ramp(p, LAB_HOLD, LAB_HOLD + .01)),
+    /** The museum doors: dim the brief → doors appear → swing open → walk through. */
+    entry: ramp(p, LAB_HOLD, LAB_ENTRY * .97),
     /** Intro card on the work being introduced. */
     intro: scene.id.startsWith("intro") ? ramp(local, .05, .4) * (1 - ramp(local, .85, 1)) : 0,
     /** Wall label visibility for project scenes. */
@@ -160,6 +170,9 @@ export function sampleLabCamera(p: number, compact: boolean, out = { position: n
   out.position.set(a.pos[0] + (b.pos[0] - a.pos[0]) * t, a.pos[1] + (b.pos[1] - a.pos[1]) * t, a.pos[2] + (b.pos[2] - a.pos[2]) * t);
   out.target.set(a.target[0] + (b.target[0] - a.target[0]) * t, a.target[1] + (b.target[1] - a.target[1]) * t, a.target[2] + (b.target[2] - a.target[2]) * t);
   const sc = labScenes[labSceneIndex(q)];
+  // Walking in through the doors: the hall view starts a few steps back and settles as they open.
+  const walk = ramp(Math.max(0, Math.min(1, p)), LAB_HOLD, LAB_ENTRY);
+  if (walk < 1) { const w = 1 - walk * walk * (3 - 2 * walk); out.position.z += 6 * w; out.position.y += .25 * w; }
   if (compact && sc.station && !sc.id.startsWith("intro")) {
     // Phones: the label sits below; centre the subject instead of offsetting it.
     const cx = labStations.find(s => s.id === sc.station)!.x, subject = sc.shot === "wall" ? cx + LAB_FRAME.dx : sc.shot === "bay" ? cx : labWork(cx).x + (sc.station === "bcos" ? .25 : 0);

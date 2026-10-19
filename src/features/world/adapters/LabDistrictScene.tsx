@@ -157,6 +157,9 @@ export function LabDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     /* Lighting: the bay being visited is brightest; the others settle, as in a real hang. */
     kit.bays.forEach(b => {
       const on = !focus || b.def.id === focus ? 1 : .55;
+      // Only the visited bay re-renders its shadow map (its work moves); the others keep their last one.
+      // (castShadow stays on everywhere so the light/shader setup never changes and nothing recompiles.)
+      b.key.shadow.autoUpdate = !focus || b.def.id === focus;
       b.key.intensity += (b.base.key * on - b.key.intensity) * k;
       b.wash.intensity += (b.base.wash * (on * .5 + .5) - b.wash.intensity) * k;
     });
@@ -212,7 +215,7 @@ export function LabDistrictScene({ runtime }: { runtime: WorldRuntime }) {
       <planeGeometry args={[24, 14]}/>
       {low
         ? <meshStandardMaterial color="#ffffff" map={floorTex} roughness={.55}/>
-        : <MeshReflectorMaterial map={floorTex} color="#ffffff" roughness={.78} roughnessMap={floorTex} metalness={0} blur={[600, 200]} resolution={1024} mixBlur={1.4} mixStrength={.9} mixContrast={1} depthScale={1.1} minDepthThreshold={.3} maxDepthThreshold={1.2} mirror={0}/>}
+        : <MeshReflectorMaterial map={floorTex} color="#ffffff" roughness={.78} roughnessMap={floorTex} metalness={0} blur={[600, 200]} resolution={512} mixBlur={1.4} mixStrength={.9} mixContrast={1} depthScale={1.1} minDepthThreshold={.3} maxDepthThreshold={1.2} mirror={0}/>}
     </mesh>
   </>;
 }

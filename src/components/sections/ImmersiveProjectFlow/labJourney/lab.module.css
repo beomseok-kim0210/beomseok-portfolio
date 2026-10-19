@@ -1,13 +1,39 @@
 /* 04 Personal Gallery — white cube. Ink is near-black; each work carries one quiet accent (label kicker only). */
 .track{--paper:#eceae6;--ink:#17181b;--muted:#5d5c58;
   --world-ink:var(--ink);--world-muted:var(--muted);--accent:#17181b;--world-display:var(--font-display),Pretendard,sans-serif;--world-label:12px/1.5 ui-monospace,monospace;
-  position:relative;overflow-x:clip;height:calc(1050svh + 100svh);color:var(--ink);background:var(--paper)}
+  position:relative;z-index:1;overflow-x:clip;height:calc(1150svh + 100svh);color:var(--ink)}
+/* Desktop: overlap the wedding brief so the gallery doors open over it (it stays pinned and readable). */
+@media (min-width:901px) and (prefers-reduced-motion:no-preference){.track{margin-top:calc(-100svh + 72px)}}
 .viewport{position:sticky;top:72px;height:calc(100svh - 72px);min-height:560px;overflow-x:visible;overflow-y:clip;isolation:isolate;background:var(--paper);border-right:var(--docent-overlay,0px) solid transparent;box-shadow:0 -24px 0 0 var(--paper);clip-path:inset(50% 50% 50% 50%)}
 @media not ((min-width:901px) and (prefers-reduced-motion:no-preference)){.viewport{clip-path:none}}
 .canvas{position:absolute;inset:0;right:calc(var(--docent-overlay,0px) * -1);z-index:0}
 /* A soft lens falloff + a paper wash behind the header keep the render photographic and the copy legible. */
 .veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 125% 100% at 50% 45%,transparent 62%,rgba(70,66,60,.14)),radial-gradient(ellipse 46% 34% at 0% 0%,rgba(240,239,235,.9),rgba(240,239,235,.55) 45%,transparent 75%)}
-.apertureEdge{position:absolute;z-index:12;padding:1.5px;background:linear-gradient(180deg,#ffffff,#d9d6cf);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;pointer-events:none;box-shadow:0 0 60px 20px rgba(255,255,255,.5)}
+/* Hold: the wedding brief is read in place; the same "next" cue as the ARMI / Hangarae briefs. */
+.cueRail{position:sticky;top:calc(100svh - 64px);height:0;z-index:13;pointer-events:none}
+.cue{position:absolute;left:calc((100% - var(--docent-overlay,0px)) / 2);top:0;transform:translate(-50%,calc((1 - var(--cue,0)) * 12px));display:flex;align-items:center;gap:14px;padding:10px 22px;border-radius:999px;background:rgba(7,12,20,.86);border:1px solid rgba(217,190,124,.45);box-shadow:0 0 40px rgba(217,190,124,.14);color:#f0e9dc;white-space:nowrap;backdrop-filter:blur(8px)}
+.cue span{font:700 11px/1 ui-monospace,monospace;letter-spacing:.24em;color:#d9be7c}
+.cue strong{font:600 17px/1.3 Pretendard,sans-serif;letter-spacing:-.02em}
+.cue em{font:500 13.5px/1.4 Pretendard,sans-serif;font-style:normal;color:#b9b2a6}
+.cue i{display:block;width:1px;height:18px;background:linear-gradient(#e6d3a3,transparent);animation:cueDrop 1.8s ease-in-out infinite}
+@keyframes cueDrop{0%,100%{transform:scaleY(.4);transform-origin:top;opacity:.4}50%{transform:scaleY(1);opacity:1}}
+
+/* Entry: museum double doors in the white wall. They swing open, then the visitor walks through. */
+.doors{position:absolute;inset:0;z-index:20;display:none;place-items:center;overflow:hidden;pointer-events:none;perspective:1700px;opacity:calc(1 - var(--door-through,0))}
+.viewport[data-doors=true] .doors{display:grid}
+.doorway{position:relative;width:min(30vw,46vh);height:70%;margin-top:7svh;border:12px solid #1b1c1f;border-bottom:0;
+  box-shadow:0 0 0 220vmax #efeeea,inset 0 0 0 1px rgba(255,255,255,.08);transform:scale(calc(1 + var(--door-through,0) * 2.2));transform-origin:50% 60%;transform-style:preserve-3d}
+.doorway::after{content:"";position:absolute;left:-220vmax;right:-220vmax;bottom:-1px;height:30vh;transform:translateY(100%);background:linear-gradient(#d9d6cf,#cfccc5);pointer-events:none}
+.sign{position:absolute;left:50%;bottom:calc(100% + 34px);transform:translateX(-50%);margin:0;display:grid;justify-items:center;gap:8px;white-space:nowrap;font:300 clamp(22px,2vw,30px)/1 var(--world-display);letter-spacing:.18em;color:var(--ink)}
+.sign small{font:600 11px/1 ui-monospace,monospace;letter-spacing:.24em;color:var(--muted)}
+.leaf{position:absolute;top:0;bottom:0;width:50%;box-sizing:border-box;border:7px solid #1b1c1f;
+  background:linear-gradient(180deg,rgba(255,255,255,.78),rgba(236,238,238,.72) 60%,rgba(220,224,224,.8)),linear-gradient(90deg,rgba(255,255,255,.4),transparent);backdrop-filter:blur(10px);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.6),0 30px 60px -30px rgba(0,0,0,.35);backface-visibility:hidden}
+.leaf::after{content:"";position:absolute;top:38%;width:6px;height:24%;border-radius:3px;background:linear-gradient(90deg,#8a6a22,#d8b56a,#8a6a22);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.leaf[data-side=l]{left:0;transform-origin:0 50%;transform:rotateY(calc(var(--door-open,0) * -104deg))}
+.leaf[data-side=l]::after{right:14px}
+.leaf[data-side=r]{right:0;transform-origin:100% 50%;transform:rotateY(calc(var(--door-open,0) * 104deg))}
+.leaf[data-side=r]::after{left:14px}
 .srOnly{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
 .header{position:absolute;left:4%;top:4.2%;z-index:7;display:flex;gap:18px;align-items:flex-start;pointer-events:none}
@@ -31,6 +57,7 @@
 .tag{position:absolute;left:0;top:0;z-index:6;display:flex;gap:8px;align-items:baseline;transform:translate(-50%,calc(-100% - 70px));padding:7px 12px;background:#fdfcf9;box-shadow:0 10px 24px -14px rgba(40,36,30,.45);font:600 14px/1 Pretendard,sans-serif;color:var(--ink);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .45s ease}
 .tag small{font:600 11px/1 ui-monospace,monospace;letter-spacing:.12em;color:var(--muted)}
 .tag[data-on=true]{opacity:1}
+.viewport[data-doors=true] .tag[data-on=true]{opacity:0}
 
 /* Wall label (museum caption) for each work scene. */
 .label{position:absolute;right:calc(4% + 34px);top:50%;z-index:6;width:min(430px,33%);padding:26px 28px 24px;background:rgba(253,252,249,.96);box-shadow:0 1px 0 rgba(0,0,0,.05),0 30px 60px -28px rgba(40,36,30,.45);
@@ -43,6 +70,10 @@
 .label dl{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0 0;padding-top:18px;border-top:1px solid #dedbd4}
 .label dt{font:400 clamp(20px,1.7vw,26px)/1.1 var(--world-display);letter-spacing:-.03em;color:var(--ink);word-break:keep-all}
 .label dd{margin:6px 0 0;font:500 12.5px/1.45 Pretendard,sans-serif;color:var(--muted);word-break:keep-all}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.actions .cta{margin-top:0}
+.cta[data-primary=false]{background:transparent;color:var(--ink)}
+.cta[data-primary=false]:hover{background:var(--ink);color:#fdfcf9}
 .cta{display:inline-flex;align-items:center;margin-top:20px;padding:11px 18px;border:1px solid var(--ink);border-radius:999px;background:var(--ink);color:#fdfcf9;font:600 14.5px/1 Pretendard,sans-serif;text-decoration:none;cursor:pointer;transition:background .2s ease,color .2s ease}
 .cta:hover{background:transparent;color:var(--ink)}
 .cta:focus-visible{outline:2px solid var(--c);outline-offset:3px}

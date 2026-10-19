@@ -5,7 +5,6 @@ import { ImmersiveProjectFlow } from "@/components/sections/ImmersiveProjectFlow
 import { HeroSection } from "@/components/sections/Hero/HeroSection";
 import { WorldLoader } from "@/components/sections/Loader/WorldLoader";
 import { JourneyIndex } from "@/components/sections/JourneyIndex/JourneyIndex";
-import { ProjectIndexSection } from "@/components/sections/ProjectIndex/ProjectIndexSection";
 import { navItems } from "@/data/navigation";
 import { WorldHost } from "@/features/world/runtime/WorldHost";
 
@@ -20,7 +19,6 @@ export default function Home() {
       <JourneyIndex />
       <WorldHost><ImmersiveProjectFlow /></WorldHost>
 
-      <ProjectIndexSection />
       {/* 도슨트 티저 섹션은 없앴다 — 진짜 3D 도슨트가 오른쪽 사이드 패널에 항상 있다. */}
       <ContactSection />
     </main>

@@ -47,7 +47,7 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
       <div className="mx-auto max-w-[1320px] px-5 md:px-8 lg:px-12">
         <div className="pt-24">
           <Link
-            href={project.personalStory ? "/#projects" : "/#armi"}
+            href={project.personalStory ? "/#lab" : "/#armi"}
             className={`inline-flex items-center gap-2 text-action transition-colors ${
               isClawDevCaseStudy
                 ? "text-slate-400 hover:text-white"
