@@ -2,20 +2,22 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGLTF } from "@react-three/drei";
 import { useWorldHost } from "@/features/world/runtime/WorldHost";
 import { worldPositionForDomProgress } from "@/features/world/director/worldRuntime";
 import type { WorldRenderMode } from "@/features/world/types/contracts";
-import { labOuter, labScenes, labStations, labStopInner, sampleLab } from "@/features/world/adapters/labRoom";
+import { LAB_HEAD_URL, labOuter, labScenes, labStations, labStopInner, sampleLab } from "@/features/world/adapters/labRoom";
 import { applyAperture } from "@/features/world/runtime/journeyGeometry";
 import { registerSteppedRange } from "@/features/world/runtime/sceneStepper";
 import { onDocentOverlayChange } from "@/features/docent/docentOverlay";
+import { OPEN_GLOBAL_DOCENT_EVENT } from "@/features/docent/globalDocentEvents";
 import { observeScrollLayout } from "../observeScrollLayout";
 import { SceneChrome, SceneFooter } from "../SceneHud";
 import styles from "./lab.module.css";
 
 /**
- * 04 Personal Lab (shell). The room, the stations, the stepping and the HUD are built; every project
- * scene shows an EMPTY content slot on its station screen, to be filled with the owner's material.
+ * 04 Personal Gallery. The hall, the three works and the stepping live in the world canvas; this layer
+ * carries the header, the intro labels on each work and the wall label (museum caption) for each scene.
  */
 export function LabExperience() {
   const section = useRef<HTMLElement>(null), viewport = useRef<HTMLDivElement>(null), surface = useRef<HTMLDivElement>(null), edge = useRef<HTMLDivElement>(null);
@@ -27,7 +29,10 @@ export function LabExperience() {
     const sync = () => { if (motion.matches) setMode("reduced-motion"); else { const c = document.createElement("canvas"), gl = c.getContext("webgl2"); setMode(gl ? "webgl" : "fallback"); gl?.getExtension("WEBGL_lose_context")?.loseContext(); } };
     sync(); motion.addEventListener("change", sync);
     const io = new IntersectionObserver(([e]) => setActive(e.isIntersecting)); if (section.current) io.observe(section.current);
-    return () => { io.disconnect(); motion.removeEventListener("change", sync); };
+    // Fetch the bust's head a couple of screens early so the hall never opens without it.
+    const near = new IntersectionObserver(([e]) => { if (e.isIntersecting) { useGLTF.preload(LAB_HEAD_URL); near.disconnect(); } }, { rootMargin: "250% 0px" });
+    if (section.current) near.observe(section.current);
+    return () => { io.disconnect(); near.disconnect(); motion.removeEventListener("change", sync); };
   }, []);
   useEffect(() => { if (surface.current) setSurface({ element: surface.current, video: null, active, mode, onFailure: fail }, "experimental-wing"); return () => setSurface(null, "experimental-wing"); }, [setSurface, mode, active, fail]);
   useEffect(() => {
@@ -50,7 +55,7 @@ export function LabExperience() {
     const resize = new ResizeObserver(() => apply(trigger.progress)); resize.observe(view);
     const stopDocent = onDocentOverlayChange(() => requestAnimationFrame(() => apply(trigger.progress)));
     const stop = observeScrollLayout(node);
-    // One gesture = one scene: entry (door), three station introductions, then three slots per project.
+    // One gesture = one scene: entry, three introductions, then three scenes per work.
     const stopRange = registerSteppedRange({
       id: "lab",
       enabled: () => mode !== "reduced-motion",
@@ -61,35 +66,40 @@ export function LabExperience() {
 
   const scene = labScenes[index], station = labStations.find(s => s.id === scene.station);
   const stationNo = station ? labStations.indexOf(station) + 1 : 0;
-  return <section id="lab" ref={section} className={styles.track} data-header-tone="dark" aria-label="개인 연구실: Digital Docent · BCOS · Crime Scene">
+  const label = scene.label;
+  return <section id="lab" ref={section} className={styles.track} data-header-tone="light" aria-label="개인 작업 갤러리: Digital Docent · BCOS · Crime Scene">
     <div ref={viewport} className={styles.viewport} data-phase={scene.id} data-hud="lg">
       <div ref={surface} className={styles.canvas} aria-hidden="true"/>
+      <div className={styles.veil} aria-hidden="true"/>
       <div ref={edge} className={styles.apertureEdge} aria-hidden="true"/>
 
       <header className={styles.header}>
-        <b>{scene.no === "00" ? "04" : scene.no}</b>
-        <div><h3>{scene.no === "00" ? "PERSONAL LAB" : scene.title}</h3><p>{scene.ko}</p></div>
+        <b>{scene.no}</b>
+        <div><h3>{scene.title}</h3><p>{scene.ko}</p></div>
       </header>
-      <SceneChrome project="04 / PERSONAL LAB" name="개인 연구실" count={labStations.length} current={stationNo} skipHref="#projects"/>
+      <SceneChrome project="04 / PERSONAL WORKS" name="개인 작업 갤러리" count={labStations.length} current={stationNo} skipHref="#projects"/>
 
-      {/* 00 introductions: a ring on the station being introduced + its name card. */}
+      {/* Introductions: a hairline leader from the work to its label. */}
       {labStations.map(st => <div key={st.id} className={styles.intro} data-on={scene.id === `intro-${st.id}`} style={{ translate: `var(--d-${st.id}-x) var(--d-${st.id}-y)`, "--c": st.accent } as CSSProperties}>
-        <i/><div><small>{String(labStations.indexOf(st) + 1).padStart(2, "0")} / 03</small><strong>{st.name}</strong><span>{st.ko}</span></div>
+        <i/><div><small>{String(labStations.indexOf(st) + 1).padStart(2, "0")} / 03</small><strong>{st.name}</strong><span>{st.ko}</span><em>{st.medium}</em></div>
       </div>)}
 
-      {/* Empty content slots, registered to each station's screen (filled later). */}
-      {labStations.map(st => <div key={st.id} className={styles.slot} data-on={scene.station === st.id && scene.slot} style={{ translate: `var(--s-${st.id}-x) var(--s-${st.id}-y)`, width: `var(--s-${st.id}-w)`, height: `var(--s-${st.id}-h)`, "--c": st.accent } as CSSProperties}>
-        <span>{scene.slot && scene.station === st.id ? `${scene.id.toUpperCase()} · 콘텐츠 자리` : ""}</span>
-      </div>)}
-      <div className={styles.panel} data-on={scene.slot} style={{ "--c": station?.accent ?? "#7cc4ff" } as CSSProperties}>
-        <small>{station ? `${String(stationNo).padStart(2, "0")} · ${station.en}` : ""}</small>
-        <strong>{scene.slot ? scene.ko : ""}</strong>
-        <p>이 장면의 설명·이미지·연출이 들어갈 자리입니다.</p>
-      </div>
+      {/* Wall label for the scene: kicker, title, text, two measured facts, and an optional action. */}
+      <aside className={styles.label} data-on={!!label} style={{ "--c": station?.accent ?? "#17181b" } as CSSProperties} aria-hidden={!label}>
+        {label && station && <>
+          <small><span>{`${String(stationNo).padStart(2, "0")} · ${station.en}`}</span><span>{label.kicker}</span></small>
+          <strong>{label.title}</strong>
+          <p>{label.body}</p>
+          {label.metrics && <dl>{label.metrics.map(m => <div key={m.label}><dt>{m.value}</dt><dd>{m.label}</dd></div>)}</dl>}
+          {label.cta && (label.cta.kind === "docent"
+            ? <button type="button" className={styles.cta} onClick={() => window.dispatchEvent(new CustomEvent(OPEN_GLOBAL_DOCENT_EVENT))}>{label.cta.text} →</button>
+            : <a className={styles.cta} href={label.cta.href}>{label.cta.text} →</a>)}
+        </>}
+      </aside>
 
       <div className={styles.rail} aria-hidden="true"><i style={{ left: `calc(var(--rail) * 100%)` } as CSSProperties}/>{labStations.map((st, i) => <span key={st.id} style={{ left: `${(i + .5) / 3 * 100}%`, "--c": st.accent } as CSSProperties} data-on={st.id === scene.station}>{st.en}</span>)}</div>
-      <p className={styles.srOnly} aria-live="polite">{`${scene.title} — ${scene.ko}`}</p>
-      <SceneFooter note="개인 연구실 · 각 장면 콘텐츠는 준비 중"/>
+      <p className={styles.srOnly} aria-live="polite">{label ? `${scene.title} — ${label.title}. ${label.body}` : `${scene.title} — ${scene.ko}`}</p>
+      <SceneFooter note="개인 작업 갤러리 · 수치는 각 프로젝트 기록 기준"/>
     </div>
   </section>;
 }

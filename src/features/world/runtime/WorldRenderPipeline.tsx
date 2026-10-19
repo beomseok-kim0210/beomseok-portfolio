@@ -42,7 +42,7 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
     gtao.enabled = false; gtao.blendIntensity = .85;
     gtao.updateGtaoMaterial({ radius: .32, distanceExponent: 1.6, thickness: 1.2, scale: 1.1, samples: 12 });
     composer.addPass(render); composer.addPass(gtao); composer.addPass(bloom); composer.addPass(new OutputPass());
-    return { composer, bloom, gtao, geometry, insetCamera: new PerspectiveCamera(60, 1, .08, 1000), fog: new Fog("#060b10", armiLook.fogNear, armiLook.fogFar), weddingFog: new Fog("#e6e0d6", 12, 28), labFog: new Fog("#070b11", 14, 34), background: new Color("#060b10") };
+    return { composer, bloom, gtao, geometry, insetCamera: new PerspectiveCamera(60, 1, .08, 1000), fog: new Fog("#060b10", armiLook.fogNear, armiLook.fogFar), weddingFog: new Fog("#e6e0d6", 12, 28), labFog: new Fog("#eceae6", 16, 40), background: new Color("#060b10") };
   }, [gl, scene, camera]);
   useEffect(() => {
     pipeline.composer.setPixelRatio(compact ? 1 : Math.min(gl.getPixelRatio(), 1.5));
@@ -52,14 +52,18 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
   // Exactly one final render owner. Camera samples have already been applied at -1.
   useFrame((_, delta) => {
     if(runtime.state.current.districtId === "experimental-wing") {
-      // Dark instrument room: ACES, light bloom on the accent rims and the rail pulse.
-      gl.info.autoReset=false;gl.info.reset();gl.toneMapping=ACESFilmicToneMapping;gl.toneMappingExposure=1;
-      if(scene.background instanceof Color)scene.background.set("#070b11"); else scene.background=new Color("#070b11");
+      // Bright white-cube gallery: neutral tone mapping keeps the walls white, AO grounds the plinths,
+      // a little bloom only on the beam, the lock light and the laylight (values above 1).
+      gl.info.autoReset=false;gl.info.reset();gl.toneMapping=NeutralToneMapping;gl.toneMappingExposure=1;
+      if(scene.background instanceof Color)scene.background.set("#eceae6"); else scene.background=new Color("#eceae6");
       scene.fog=pipeline.labFog;camera.layers.set(0);
       const {strength,threshold,radius}=pipeline.bloom;
-      pipeline.bloom.enabled=!compact&&renderTier()!=="low";pipeline.bloom.strength=.35;pipeline.bloom.threshold=.85;pipeline.bloom.radius=.4;
+      pipeline.bloom.enabled=!compact;pipeline.bloom.strength=.12;pipeline.bloom.threshold=.95;pipeline.bloom.radius=.45;
+      pipeline.gtao.enabled=!compact&&renderTier()!=="low";
       pipeline.composer.render();
+      pipeline.gtao.enabled=false;
       pipeline.bloom.strength=strength;pipeline.bloom.threshold=threshold;pipeline.bloom.radius=radius;
+      gl.domElement.dataset.labMetrics=JSON.stringify({progress:runtime.labProgress.current,calls:gl.info.render.calls,triangles:gl.info.render.triangles,frameMs:delta*1000});
       return;
     }
     if(runtime.state.current.districtId === "wedding") {
