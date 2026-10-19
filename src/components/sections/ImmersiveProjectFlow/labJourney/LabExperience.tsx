@@ -19,6 +19,9 @@ import styles from "./lab.module.css";
  * 04 Personal Gallery. The hall, the three works and the stepping live in the world canvas; this layer
  * carries the header, the intro labels on each work and the wall label (museum caption) for each scene.
  */
+/** Where a work's scenes sit on the visit rail (centre of its span). */
+const railAt = (id: string) => { const first = labScenes.findIndex(sc => sc.station === id), n = labScenes.filter(sc => sc.station === id).length; return (first + n / 2) / labScenes.length; };
+
 export function LabExperience() {
   const section = useRef<HTMLElement>(null), viewport = useRef<HTMLDivElement>(null), surface = useRef<HTMLDivElement>(null), edge = useRef<HTMLDivElement>(null);
   const { runtime, setSurface } = useWorldHost();
@@ -55,11 +58,11 @@ export function LabExperience() {
     const resize = new ResizeObserver(() => apply(trigger.progress)); resize.observe(view);
     const stopDocent = onDocentOverlayChange(() => requestAnimationFrame(() => apply(trigger.progress)));
     const stop = observeScrollLayout(node);
-    // One gesture = one scene: entry, three introductions, then three scenes per work.
+    // One gesture = one scene: the hall, then per work its introduction and three detail scenes.
     const stopRange = registerSteppedRange({
       id: "lab",
       enabled: () => mode !== "reduced-motion",
-      stops: () => labScenes.map((sc, i) => ({ y: trigger.start + (trigger.end - trigger.start) * labOuter(labStopInner(i)), duration: i === 0 ? 3.2 : 2.4, label: sc.id })),
+      stops: () => labScenes.map((sc, i) => ({ y: trigger.start + (trigger.end - trigger.start) * labOuter(labStopInner(i)), duration: i === 0 ? 2.6 : 1.8, label: sc.id })),
     });
     return () => { stop(); stopDocent(); stopRange(); resize.disconnect(); trigger.kill(); runtime.labViewport.current = null; };
   }, [runtime, mode]);
@@ -79,9 +82,13 @@ export function LabExperience() {
       </header>
       <SceneChrome project="04 / PERSONAL WORKS" name="개인 작업 갤러리" count={labStations.length} current={stationNo} skipHref="#projects"/>
 
-      {/* Introductions: a hairline leader from the work to its label. */}
+      {/* The hall at a glance: a small name tag on each of the three works. */}
+      {labStations.map((st, i) => <div key={st.id} className={styles.tag} data-on={scene.id === "entry"} style={{ translate: `var(--d-${st.id}-x) var(--d-${st.id}-y)`, transitionDelay: `${i * 120}ms` } as CSSProperties}>
+        <small>{String(i + 1).padStart(2, "0")}</small>{st.name}
+      </div>)}
+      {/* Each work's short introduction (before its details): a hairline leader from the work to its label. */}
       {labStations.map(st => <div key={st.id} className={styles.intro} data-on={scene.id === `intro-${st.id}`} style={{ translate: `var(--d-${st.id}-x) var(--d-${st.id}-y)`, "--c": st.accent } as CSSProperties}>
-        <i/><div><small>{String(labStations.indexOf(st) + 1).padStart(2, "0")} / 03</small><strong>{st.name}</strong><span>{st.ko}</span><em>{st.medium}</em></div>
+        <i/><div><small>{String(labStations.indexOf(st) + 1).padStart(2, "0")} / 03</small><strong>{st.name}</strong><p>{st.line}</p><span>{st.ko}</span><em>{st.medium}</em></div>
       </div>)}
 
       {/* Wall label for the scene: kicker, title, text, two measured facts, and an optional action. */}
@@ -97,7 +104,7 @@ export function LabExperience() {
         </>}
       </aside>
 
-      <div className={styles.rail} aria-hidden="true"><i style={{ left: `calc(var(--rail) * 100%)` } as CSSProperties}/>{labStations.map((st, i) => <span key={st.id} style={{ left: `${(i + .5) / 3 * 100}%`, "--c": st.accent } as CSSProperties} data-on={st.id === scene.station}>{st.en}</span>)}</div>
+      <div className={styles.rail} aria-hidden="true"><i style={{ left: `calc(var(--rail) * 100%)` } as CSSProperties}/>{labStations.map(st => <span key={st.id} style={{ left: `${railAt(st.id) * 100}%`, "--c": st.accent } as CSSProperties} data-on={st.id === scene.station}>{st.en}</span>)}</div>
       <p className={styles.srOnly} aria-live="polite">{label ? `${scene.title} — ${label.title}. ${label.body}` : `${scene.title} — ${scene.ko}`}</p>
       <SceneFooter note="개인 작업 갤러리 · 수치는 각 프로젝트 기록 기준"/>
     </div>

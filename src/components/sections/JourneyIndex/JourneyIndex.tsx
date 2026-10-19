@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { WD_ENTRY, wdTimelineToScroll } from "@/features/world/adapters/weddingAtelier";
 import { gatePx, heroGatePx, scrollToY } from "@/features/world/runtime/journeyGeometry";
+import { firstStopOf, registerSteppedRange } from "@/features/world/runtime/sceneStepper";
 import { Tunnel } from "./Tunnel";
 import { OrbCanvas } from "./OrbCanvas";
 import dynamic from "next/dynamic";
@@ -52,6 +53,9 @@ export function JourneyIndex() {
   const stage = useRef<HTMLDivElement>(null);
   const armiOrb = useRef<HTMLDivElement>(null);
   const [dive, setDive] = useState(0);                 // scroll-driven default journey (0..1)
+  // The tunnel has its own WebGL canvas + bloom: it must stop once ARMI has fully opened over it,
+  // otherwise it keeps rendering behind ARMI (the lag on entering ARMI).
+  const [through, setThrough] = useState(false);
   const [jump, setJump] = useState<{ id: Id; phase: "in" | "out" } | null>(null); // click-driven
   const [mounted, setMounted] = useState(false);
   const [live, setLive] = useState(false);
@@ -81,6 +85,7 @@ export function JourneyIndex() {
         orb.style.setProperty("--grow", String(1 + e * 1.6));
       }
       setDive(d);
+      const done = g >= .995; setThrough(prev => prev === done ? prev : done);
     };
     const trigger = ScrollTrigger.create({ trigger: node, start: "top top", end: () => `+=${Math.max(1, gatePx())}`, invalidateOnRefresh: true, onUpdate: self => apply(self.progress), onRefresh: self => apply(self.progress) });
     apply(trigger.progress);
@@ -90,6 +95,18 @@ export function JourneyIndex() {
     view.style.setProperty("--arrive", String(arrive.progress));
     return () => { trigger.kill(); arrive.kill(); arriveVar.kill(); };
   }, []);
+
+  // One gesture = one page from the very top: Hero → this index → ARMI's first scene. The last stop is
+  // ARMI's own first stop, so this range and ARMI's merge into one stepped region.
+  useEffect(() => registerSteppedRange({
+    id: "hero",
+    enabled: () => heroGatePx() > 0,
+    stops: () => {
+      const node = section.current; if (!node) return [];
+      const index = node.getBoundingClientRect().top + window.scrollY, armi = firstStopOf("armi");
+      return [{ y: 0, label: "hero" }, { y: index, duration: 1.2, label: "index" }, ...(armi && armi.y > index + 4 ? [{ ...armi, duration: 2.2, label: "armi-entry" }] : [])];
+    },
+  }), []);
 
   const enter = useCallback((id: Id) => {
     if (jump) return;
@@ -116,7 +133,7 @@ export function JourneyIndex() {
           <p className={s.lede}>음성을 행동으로, 움직임을 피드백으로.<br />사람의 경험으로 이어지는 세 개의 AI 프로젝트입니다.</p>
         </div>
 
-        {sharedOrbs && <OrbStage live={live} />}
+        {sharedOrbs && <OrbStage live={live && dive < .5} />}
         <ul className={s.worlds}>
           {projects.map((p, i) => (
             <li key={p.id} className={s.world} style={{ "--accent": p.accent, "--i": i } as CSSProperties} data-id={p.id} data-default={p.id === "armi"} data-chosen={diving === p.id}>
@@ -124,7 +141,8 @@ export function JourneyIndex() {
                 <span className={s.label} aria-hidden="true"><span className={s.no}>{p.no}</span><strong>{p.name}</strong><small>{p.flow}</small></span>
                 <span className={s.orbWrap} aria-hidden="true">
                   <span ref={p.id === "armi" ? armiOrb : undefined} className={s.orb}>
-                    <OrbCanvas id={p.id} accent={p.accent} live={live} />
+                    {/* The orbs stop animating as the dive starts (ARMI's carries on a little longer, it is the one travelling). */}
+                    <OrbCanvas id={p.id} accent={p.accent} live={live && dive < (p.id === "armi" ? .5 : .04)} />
                   </span>
                 </span>
               </button>
@@ -141,7 +159,7 @@ export function JourneyIndex() {
 
         <p className={s.scrollHint} aria-hidden="true">SCROLL TO START ↓</p>
         {/* Default journey tunnel (scroll-linked), drawn inside the stage. */}
-        <Tunnel accent="#d2f059" intensity={dive} label={{ no: "01", name: "ARMI", line: "VOICE BECOMES ACTION" }} />
+        <Tunnel accent="#d2f059" intensity={through ? 0 : dive} label={{ no: "01", name: "ARMI", line: "VOICE BECOMES ACTION" }} />
       </div>
       {/* Direct-choice tunnel: fixed, because the page jumps underneath it. */}
       {mounted && jump && createPortal(

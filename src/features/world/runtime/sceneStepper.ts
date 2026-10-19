@@ -7,8 +7,9 @@ import { scrollToY } from "./journeyGeometry";
  *
  *  - A gesture is a burst of wheel events; it ends after WHEEL_IDLE ms of silence, so trackpad
  *    inertia never skips two scenes.
- *  - The move between stops is an input-locked glide; the scene's own timeline (scrubbed by scroll)
- *    plays as an authored animation on the way.
+ *  - The move between stops is a glide; the scene's own timeline (scrubbed by scroll) plays as an
+ *    authored animation on the way. A new gesture during a glide is never ignored: it retargets the
+ *    glide one stop further (the visitor does not have to wait for an animation to finish).
  *  - Keyboard (↓ ↑ Space PageDown PageUp) steps too. Scrollbar drags and anchor jumps land on the
  *    nearest stop once scrolling settles.
  *  - Touch: one swipe = one scene (phones and tablets).
@@ -17,9 +18,12 @@ import { scrollToY } from "./journeyGeometry";
 export type Stop = { y: number; duration?: number; label?: string };
 export type SteppedRange = { id: string; stops: () => Stop[]; enabled: () => boolean };
 
-const WHEEL_IDLE = 320, COOLDOWN = 220, SETTLE = 260, EDGE = 3;
+const WHEEL_IDLE = 320, SETTLE = 260, EDGE = 3;
 const ranges = new Map<string, SteppedRange>();
 let installed = false, busyUntil = 0, lastWheel = 0, gestureUsed = false, gestureRegion: number | null = null, lastY = 0, settleTimer = 0, ownScroll = false;
+/** The stop the current glide is heading to; `glide` invalidates the landing check of a superseded glide. */
+let target: Stop | null = null, glide = 0;
+const busy = () => performance.now() < busyUntil;
 
 const touchDevice = () => window.matchMedia("(pointer: coarse)").matches;
 const isOn = () => (window.innerWidth > 900 || touchDevice()) && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -44,23 +48,26 @@ function active(y = window.scrollY) {
   return null;
 }
 function go(stop: Stop, fallback: number) {
-  const duration = stop.duration ?? fallback;
+  const duration = stop.duration ?? fallback, id = ++glide;
   busyUntil = performance.now() + duration * 1000 + 80;
-  ownScroll = true;
+  ownScroll = true; target = stop;
   scrollToY(stop.y, { duration, lock: true });
   window.setTimeout(() => {
+    if (id !== glide) return; // retargeted by a newer gesture
     // A layout refresh during the glide (pinned briefs, ScrollTrigger) can stop it short: finish the landing.
     if (Math.abs(window.scrollY - stop.y) > 6) {
       busyUntil = performance.now() + 480;
       scrollToY(stop.y, { duration: .4, lock: true });
-      window.setTimeout(() => { ownScroll = false; }, 520);
-    } else ownScroll = false;
+      window.setTimeout(() => { if (id === glide) { ownScroll = false; target = null; } }, 520);
+    } else { ownScroll = false; target = null; }
   }, duration * 1000 + 120);
 }
-/** Step in a direction from the current position. Returns false when the range has no stop that way (let the page scroll). */
+/** Step in a direction. During a glide the step counts from the glide's target, so each gesture moves one
+ *  stop further. Returns false when the range has no stop that way (let the page scroll). */
 function step(dir: 1 | -1): boolean {
-  const stops = active(); if (!stops) return false;
-  const y = window.scrollY;
+  const from = busy() && target ? target.y : window.scrollY;
+  const stops = active(from) ?? active(); if (!stops) return false;
+  const y = from;
   const next = dir > 0 ? stops.find(s => s.y > y + EDGE) : [...stops].reverse().find(s => s.y < y - EDGE);
   if (!next) return false;
   go(next, 1.3);
@@ -69,8 +76,8 @@ function step(dir: 1 | -1): boolean {
 
 function onWheel(e: WheelEvent) {
   if (!isOn() || e.ctrlKey || insideIgnored(e.target)) return;
-  // A new gesture needs a pause in the wheel stream AND the previous move (plus a short cooldown) to be over.
-  const now = performance.now(), fresh = now - lastWheel > WHEEL_IDLE && now > busyUntil + COOLDOWN;
+  // A new gesture is a pause in the wheel stream (trackpad inertia never pauses, so it never counts twice).
+  const now = performance.now(), fresh = now - lastWheel > WHEEL_IDLE;
   lastWheel = now;
   if (fresh) { gestureUsed = false; gestureRegion = active()?.[0].y ?? null; }
   const stops = active();
@@ -83,18 +90,18 @@ function onWheel(e: WheelEvent) {
   }
   // Leaving through the first/last stop belongs to the free page: do not swallow it.
   const y = window.scrollY, atFirst = Math.abs(y - stops[0].y) <= EDGE, atLast = Math.abs(y - stops[stops.length - 1].y) <= EDGE;
-  if ((dir < 0 && atFirst) || (dir > 0 && atLast)) { if (!gestureUsed && now > busyUntil) return; }
+  if ((dir < 0 && atFirst) || (dir > 0 && atLast)) { if (!gestureUsed && !busy()) return; }
   e.preventDefault(); e.stopImmediatePropagation();
-  if (gestureUsed || now < busyUntil || Math.abs(e.deltaY) < 2) return;
-  gestureUsed = step(dir);
+  if (gestureUsed || Math.abs(e.deltaY) < 2) return;
+  // One step per gesture, even mid-glide (it retargets the glide one stop further).
+  gestureUsed = step(dir) || busy();
 }
 function onKey(e: KeyboardEvent) {
   if (!isOn() || insideIgnored(e.target) || e.altKey || e.ctrlKey || e.metaKey) return;
   const dir = e.key === "ArrowDown" || e.key === "PageDown" || (e.key === " " && !e.shiftKey) ? 1
     : e.key === "ArrowUp" || e.key === "PageUp" || (e.key === " " && e.shiftKey) ? -1 : 0;
   if (!dir || !active()) return;
-  if (performance.now() < busyUntil) { e.preventDefault(); return; }
-  if (step(dir as 1 | -1)) e.preventDefault();
+  if (step(dir as 1 | -1) || busy()) e.preventDefault();
 }
 /** Scrollbar drags, anchor jumps, deep links: settle onto the nearest stop. */
 function onScroll() {
@@ -129,14 +136,14 @@ function onTouchMove(e: TouchEvent) {
   const dir = touchY - y > 0 ? 1 : -1, sy = window.scrollY;
   const atFirst = Math.abs(sy - stops[0].y) <= EDGE, atLast = Math.abs(sy - stops[stops.length - 1].y) <= EDGE;
   // Leaving the region through its boundary stop is a free-page gesture.
-  if (Math.abs(touchY - y) > 8 && ((dir < 0 && atFirst) || (dir > 0 && atLast)) && performance.now() > busyUntil) { touchOwned = false; return; }
+  if (Math.abs(touchY - y) > 8 && ((dir < 0 && atFirst) || (dir > 0 && atLast)) && !busy()) { touchOwned = false; return; }
   if (e.cancelable) e.preventDefault();
 }
 function onTouchEnd() {
   if (!touchOwned) return;
   touchOwned = false;
   const dy = touchY - touchLast;
-  if (Math.abs(dy) < 28 || performance.now() < busyUntil) return;
+  if (Math.abs(dy) < 28) return;
   step(dy > 0 ? 1 : -1);
 }
 
@@ -164,7 +171,12 @@ export function registerSteppedRange(range: SteppedRange) {
   ranges.set(range.id, range); install();
   return () => { ranges.delete(range.id); uninstall(); };
 }
-/** True while a stepper glide is running (other autoplay must stand down). */
+/** First stop of a registered range (lets an earlier range end exactly where the next one begins). */
+export function firstStopOf(id: string): Stop | null {
+  const range = ranges.get(id); if (!range?.enabled()) return null;
+  return range.stops()[0] ?? null;
+}
 /** Diagnostics for QA scripts: the stops of every registered range (y, label). */
 if (typeof window !== "undefined") (window as unknown as { __stepperStops?: () => unknown }).__stepperStops = () => [...ranges.values()].map(r => r.stops().map(s => [Math.round(s.y), s.label]));
+/** True while a stepper glide is running (other autoplay must stand down). */
 export const stepperBusy = () => typeof performance !== "undefined" && performance.now() < busyUntil;

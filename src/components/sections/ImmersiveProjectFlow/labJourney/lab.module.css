@@ -23,8 +23,14 @@
 .intro div{position:absolute;left:136px;top:-46px;display:grid;gap:5px;width:max-content;max-width:340px;padding:16px 20px 18px;background:#fdfcf9;box-shadow:0 1px 0 rgba(0,0,0,.04),0 18px 40px -18px rgba(40,36,30,.35)}
 .intro small{font:600 11px/1.4 ui-monospace,monospace;letter-spacing:.14em;color:var(--c)}
 .intro strong{font:600 26px/1.15 var(--world-display);letter-spacing:-.03em;color:var(--ink)}
-.intro span{font:600 15px/1.45 Pretendard,sans-serif;color:#3d3c39}
+.intro p{margin:2px 0 4px;max-width:300px;font:600 16px/1.5 Pretendard,sans-serif;color:var(--ink);word-break:keep-all}
+.intro span{font:600 13.5px/1.45 Pretendard,sans-serif;color:#55534f}
 .intro em{font:500 12.5px/1.5 Pretendard,sans-serif;font-style:normal;color:var(--muted);white-space:normal}
+
+/* Overview: a small name tag above each work. */
+.tag{position:absolute;left:0;top:0;z-index:6;display:flex;gap:8px;align-items:baseline;transform:translate(-50%,calc(-100% - 70px));padding:7px 12px;background:#fdfcf9;box-shadow:0 10px 24px -14px rgba(40,36,30,.45);font:600 14px/1 Pretendard,sans-serif;color:var(--ink);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .45s ease}
+.tag small{font:600 11px/1 ui-monospace,monospace;letter-spacing:.12em;color:var(--muted)}
+.tag[data-on=true]{opacity:1}
 
 /* Wall label (museum caption) for each work scene. */
 .label{position:absolute;right:calc(4% + 34px);top:50%;z-index:6;width:min(430px,33%);padding:26px 28px 24px;background:rgba(253,252,249,.96);box-shadow:0 1px 0 rgba(0,0,0,.05),0 30px 60px -28px rgba(40,36,30,.45);
