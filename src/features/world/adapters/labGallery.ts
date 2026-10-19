@@ -251,9 +251,8 @@ export function acrylicWork(etches: CanvasTexture[], high: boolean) {
   const g = new Group(), L = 2.3, base = new Mesh(new RoundedBoxGeometry(L + .3, .1, .62, 3, .012), new MeshStandardMaterial({ color: G.oak, roughness: .55 }));
   base.position.y = .05; base.castShadow = true; base.receiveShadow = true; g.add(base);
   const sheet = new RoundedBoxGeometry(.03, 1.2, .56, 2, .006);
-  const acrylic = high
-    ? new MeshPhysicalMaterial({ color: "#ffffff", roughness: .04, metalness: 0, transmission: 1, thickness: .03, ior: 1.49, clearcoat: 1, clearcoatRoughness: .05, attenuationColor: new Color("#e9f2ee"), attenuationDistance: .6, specularIntensity: 1 })
-    : new MeshPhysicalMaterial({ color: "#eef4f2", roughness: .05, transparent: true, opacity: .28, clearcoat: 1 });
+  // Reflection-carried acrylic: a transmission material would re-render the whole room every frame.
+  const acrylic = new MeshPhysicalMaterial({ color: "#eef6f3", roughness: .05, transparent: true, opacity: high ? .24 : .28, clearcoat: 1, clearcoatRoughness: .04, envMapIntensity: 1.5, depthWrite: false });
   const panels = etches.map((etch, i) => {
     const p = new Group(); p.position.set(-L / 2 + .15 + i * (L - .3) / 4, .1, 0);
     const s = new Mesh(sheet, acrylic); s.position.y = .6; s.castShadow = true; p.add(s);

@@ -20,6 +20,14 @@ import {
  * the back wall and a plaque. Track spots light the works and wash the prints; the floor is polished concrete.
  */
 function project(v: Vector3, camera: Camera, w: number, h: number) { const p = v.clone().project(camera); return [(p.x + 1) / 2 * w, (1 - p.y) / 2 * h, p.z] as const; }
+/** Soft warm pool a wall-washer throws on the wall (painted into an additive decal). */
+function poolTexture() {
+  const c = document.createElement("canvas"); c.width = 256; c.height = 320;
+  const x = c.getContext("2d")!, g = x.createRadialGradient(128, 96, 8, 128, 150, 170);
+  g.addColorStop(0, "rgba(255,246,228,.55)"); g.addColorStop(.45, "rgba(255,244,224,.22)"); g.addColorStop(1, "rgba(255,244,224,0)");
+  x.fillStyle = g; x.fillRect(0, 0, 256, 320);
+  const t = new CanvasTexture(c); t.colorSpace = SRGBColorSpace; return t;
+}
 function glow(color: string) {
   const c = document.createElement("canvas"); c.width = c.height = 128;
   const x = c.getContext("2d")!, g = x.createRadialGradient(64, 64, 0, 64, 64, 64);
@@ -38,7 +46,7 @@ function trackCan(from: Vector3, to: Vector3, mat: MeshStandardMaterial) {
 }
 
 export function LabDistrictScene({ runtime }: { runtime: WorldRuntime }) {
-  const { gl, size } = useThree();
+  const { gl, size, scene, camera } = useThree();
   const low = useMemo(() => renderTier() === "low" || size.width <= 700, [size.width]);
   // Same head as the live docent (shared drei cache): the bust is the docent, carved.
   const head = useGLTF(LAB_HEAD_URL);
@@ -82,6 +90,7 @@ export function LabDistrictScene({ runtime }: { runtime: WorldRuntime }) {
 
     /* Bays. */
     const prints = { docent: docentPrint(), bcos: bcosPrint(), crime: crimePrint() };
+    const poolTex = poolTexture();
     const bays = labStations.map((st, i) => {
       const cx = st.x, w = labWork(cx), bay = new Group();
       const frame = framedPrint(prints[st.id], LAB_FRAME.w, LAB_FRAME.h); frame.position.set(cx + LAB_FRAME.dx, LAB_FRAME.y, LAB_BACK_Z + .002); bay.add(frame);
@@ -94,12 +103,14 @@ export function LabDistrictScene({ runtime }: { runtime: WorldRuntime }) {
       const printTarget = new Object3D(); printTarget.position.set(cx + LAB_FRAME.dx, LAB_FRAME.y - .1, LAB_BACK_Z);
       const printFrom = new Vector3(cx + LAB_FRAME.dx, LAB_CEIL - .12, -1.75);
       bay.add(workTarget, printTarget, trackCan(workFrom, workTarget.position, blackMat), trackCan(printFrom, printTarget.position, blackMat));
-      const wash = new SpotLight("#fff6ea", 7, 9, .42, .85, 1.6); wash.position.copy(printFrom); wash.target = printTarget; bay.add(wash);
+      // The washer's pool on the wall is painted, not lit: one spotlight less per bay on every pixel.
+      const wash = new Mesh(new PlaneGeometry(3.3, 3.9), new MeshBasicMaterial({ map: poolTex, transparent: true, depthWrite: false, blending: AdditiveBlending, opacity: .5 }));
+      wash.position.set(cx + LAB_FRAME.dx, LAB_FRAME.y + .35, LAB_BACK_Z + .001); bay.add(wash);
       const key = new SpotLight("#fff8ef", 15, 10, .36, .7, 1.6); key.position.copy(workFrom); key.target = workTarget;
       key.castShadow = true; key.shadow.mapSize.set(low ? 512 : 1024, low ? 512 : 1024); key.shadow.bias = -.0004; key.shadow.normalBias = .02; key.shadow.radius = 4;
       bay.add(key);
       room.add(bay);
-      return { def: st, cx, w, key, wash, base: { key: 15, wash: 7 } };
+      return { def: st, cx, w, key, wash: wash.material as MeshBasicMaterial, base: { key: 15, wash: .5 } };
     });
 
     /* 01 · Digital Docent — marble bust on a tall plinth. */
@@ -121,11 +132,10 @@ export function LabDistrictScene({ runtime }: { runtime: WorldRuntime }) {
       bust.add(piece);
     });
 
-    // Sculpture lighting: a high key from front-left models the face; a cool rim from behind-right separates it from the wall.
+    // Sculpture lighting: a high key from front-left models the face (the environment gives the rim).
     const faceTarget = new Object3D(); faceTarget.position.set(dd.w.x, 1.5, dd.w.z);
-    const faceKey = new SpotLight("#fff4e6", 5, 6, .22, .8, 1.6); faceKey.position.set(dd.w.x - 1.4, 2.9, dd.w.z + 1.9); faceKey.target = faceTarget;
-    const faceRim = new SpotLight("#eef2ff", 6, 5, .25, .8, 1.6); faceRim.position.set(dd.w.x + 1.1, 2.4, dd.w.z - 1.6); faceRim.target = faceTarget;
-    room.add(faceKey, faceRim, faceTarget);
+    const faceKey = new SpotLight("#fff4e6", 7, 6, .22, .8, 1.6); faceKey.position.set(dd.w.x - 1.4, 2.9, dd.w.z + 1.9); faceKey.target = faceTarget;
+    room.add(faceKey, faceTarget);
 
     /* 02 · BCOS — five acrylic gates on an oak base, a beam threading them. */
     const bc = bays[1];
@@ -145,6 +155,18 @@ export function LabDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     return { room, shared, bays, bust, jaw: jaw as { mesh: Mesh; i: number } | null, acrylic, beamGlow, vitrine, ledGlow };
   }, [head, low]);
   useEffect(() => () => disposeTree(kit.room, kit.shared), [kit]);
+  // Ready = every material compiled (off the main thread where the driver allows) and two frames drawn.
+  // The gallery doors stay shut until then, so the hall never opens on a hitch.
+  useEffect(() => {
+    let alive = true;
+    runtime.labReady.current = false;
+    const done = () => requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (!alive) return; runtime.labReady.current = true; window.dispatchEvent(new Event("lab:ready"));
+    }));
+    const compile = (gl as unknown as { compileAsync?: (s: typeof scene, c: typeof camera) => Promise<unknown> }).compileAsync;
+    if (compile) compile.call(gl, scene, camera).then(done, done); else { gl.compile(scene, camera); done(); }
+    return () => { alive = false; runtime.labReady.current = false; window.dispatchEvent(new Event("lab:unready")); };
+  }, [kit, gl, scene, camera, runtime]);
 
   const floorTex = useMemo(() => concreteTexture(), []);
   useEffect(() => () => floorTex.dispose(), [floorTex]);
@@ -161,7 +183,7 @@ export function LabDistrictScene({ runtime }: { runtime: WorldRuntime }) {
       // (castShadow stays on everywhere so the light/shader setup never changes and nothing recompiles.)
       b.key.shadow.autoUpdate = !focus || b.def.id === focus;
       b.key.intensity += (b.base.key * on - b.key.intensity) * k;
-      b.wash.intensity += (b.base.wash * (on * .5 + .5) - b.wash.intensity) * k;
+      b.wash.opacity += (b.base.wash * (on * .5 + .5) - b.wash.opacity) * k;
     });
     /* DD: the bust turns from three-quarter to face the visitor; in 03 the marble speaks. */
     turn.current += ((-.15 + .58 * s.bustTurn) - turn.current) * Math.min(1, delta * 3);

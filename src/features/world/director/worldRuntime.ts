@@ -45,6 +45,8 @@ export function createWorldRuntime() {
     weddingViewport: { current: null as HTMLElement | null },
     labProgress,
     labViewport: { current: null as HTMLElement | null },
+    /** The gallery has its assets and compiled shaders: its doors may open (see LabExperience). */
+    labReady: { current: false },
     armiAsset: { current: null as ArmiProductionAsset | null },
     /** 0..1 inside the ARMI overview hold (four parts introduced in turn), -1 outside. */
     armiOverview: { current: -1 },

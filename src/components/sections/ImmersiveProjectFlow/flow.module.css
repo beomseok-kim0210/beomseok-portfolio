@@ -144,3 +144,5 @@
 /* Wedding brief sits right under the 72px band: its paper also fills the band, so nothing behind peeks through. */
 .weddingBrief { position:relative; z-index:1; }
 .weddingBrief > section { box-shadow:0 -32px 0 0 var(--brief-bg); }
+/* It is held in place while the gallery doors open over it: it fills the screen, so nothing behind it shows. */
+@media (min-width:901px) and (prefers-reduced-motion:no-preference) { .weddingBrief > section { box-sizing:border-box; min-height:calc(100svh - 72px); } }

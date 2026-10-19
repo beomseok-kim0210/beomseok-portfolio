@@ -26,6 +26,9 @@
 .doorway::after{content:"";position:absolute;left:-220vmax;right:-220vmax;bottom:-1px;height:30vh;transform:translateY(100%);background:linear-gradient(#d9d6cf,#cfccc5);pointer-events:none}
 .sign{position:absolute;left:50%;bottom:calc(100% + 34px);transform:translateX(-50%);margin:0;display:grid;justify-items:center;gap:8px;white-space:nowrap;font:300 clamp(22px,2vw,30px)/1 var(--world-display);letter-spacing:.18em;color:var(--ink)}
 .sign small{font:600 11px/1 ui-monospace,monospace;letter-spacing:.24em;color:var(--muted)}
+.sign em{font:500 12.5px/1 Pretendard,sans-serif;font-style:normal;letter-spacing:.04em;color:var(--muted);opacity:0;transition:opacity .4s ease}
+.viewport[data-ready=false] .sign em{opacity:1;animation:signWait 1.6s ease-in-out infinite}
+@keyframes signWait{50%{opacity:.35}}
 .leaf{position:absolute;top:0;bottom:0;width:50%;box-sizing:border-box;border:7px solid #1b1c1f;
   background:linear-gradient(180deg,rgba(255,255,255,.78),rgba(236,238,238,.72) 60%,rgba(220,224,224,.8)),linear-gradient(90deg,rgba(255,255,255,.4),transparent);backdrop-filter:blur(10px);
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.6),0 30px 60px -30px rgba(0,0,0,.35);backface-visibility:hidden}

@@ -41,10 +41,26 @@ export function LabExperience() {
     gsap.registerPlugin(ScrollTrigger);
     const node = section.current, view = viewport.current; if (!node || !view) return;
     runtime.labViewport.current = view;
-    let previous = -1;
+    let previous = -1, last = 0;
     const brief = document.getElementById("wedding-brief");
+    /* Doors open on their own clock, not the scroll's: the entry gesture only asks them to open, and they
+       take ~3s to swing — but never before the gallery is ready (assets + compiled shaders). If the visitor
+       arrives first, they wait closed under "전시를 준비하고 있습니다", then open. */
+    let ready = mode !== "webgl" || runtime.labReady.current, door = 0, want = 0, raf = 0, lastT = 0;
+    const OPEN_S = 3, CLOSE_S = .8;
+    const tick = (now: number) => {
+      const dt = lastT ? Math.min(.05, (now - lastT) / 1000) : 0; lastT = now;
+      const goal = want && ready ? 1 : want ? door : 0;
+      door = goal > door ? Math.min(goal, door + dt / OPEN_S) : Math.max(goal, door - dt / CLOSE_S);
+      apply(last, true);
+      if (door !== goal) raf = requestAnimationFrame(tick); else { raf = 0; lastT = 0; }
+    };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    const onReady = () => { ready = true; kick(); }, onUnready = () => { if (mode === "webgl") { ready = false; kick(); } };
+    window.addEventListener("lab:ready", onReady); window.addEventListener("lab:unready", onUnready);
     const ramp = (x: number, a: number, b: number) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
-    const apply = (p: number) => {
+    const apply = (p: number, fromClock = false) => {
+      last = p;
       const s = sampleLab(p);
       const box = node.getBoundingClientRect();
       if (box.top < innerHeight && box.bottom > 72) runtime.publish(worldPositionForDomProgress("experimental-wing", p), mode);
@@ -57,10 +73,15 @@ export function LabExperience() {
       const entryOn = innerWidth > 900 && mode !== "reduced-motion", e = entryOn ? s.entry : 1;
       view.style.clipPath = e > 0 ? "none" : "inset(50% 50% 50% 50%)";
       view.style.opacity = ramp(e, 0, .28).toFixed(3);
-      view.style.setProperty("--door-open", ramp(e, .3, .82).toFixed(4));
-      view.style.setProperty("--door-through", ramp(e, .7, 1).toFixed(4));
-      view.dataset.doors = String(e < 1);
-      node.style.pointerEvents = e < .98 ? "none" : "";
+      // The entry gesture asks the doors to open; scrolling back before it closes them.
+      const nextWant = e > .12 ? 1 : e < .04 ? 0 : want;
+      if (nextWant !== want) { want = nextWant; kick(); } else if (!fromClock && want && door < 1) kick();
+      const d = door * door * (3 - 2 * door);
+      view.style.setProperty("--door-open", d.toFixed(4));
+      view.style.setProperty("--door-through", (ramp(e, .78, 1) * ramp(door, .7, 1)).toFixed(4));
+      view.dataset.doors = String(e < 1 || door < 1);
+      view.dataset.ready = String(ready);
+      node.style.pointerEvents = e < .98 || door < 1 ? "none" : "";
       if (brief) {
         const dim = entryOn ? ramp(s.entry, 0, .3) : 0;
         brief.style.filter = dim > .001 ? `brightness(${(1 - .55 * dim).toFixed(3)})` : "";
@@ -84,10 +105,11 @@ export function LabExperience() {
       // First the hold (wedding brief + cue); the glide from it into the hall is the door opening.
       stops: () => [
         { y: trigger.start + (trigger.end - trigger.start) * LAB_HOLD * .5, duration: 1.6, label: "hold" },
-        ...labScenes.map((sc, i) => ({ y: trigger.start + (trigger.end - trigger.start) * labOuter(labStopInner(i)), duration: i === 0 ? 3.6 : 1.8, label: sc.id })),
+        ...labScenes.map((sc, i) => ({ y: trigger.start + (trigger.end - trigger.start) * labOuter(labStopInner(i)), duration: i === 0 ? 4.2 : 1.8, label: sc.id })),
       ],
     });
     return () => {
+      cancelAnimationFrame(raf); window.removeEventListener("lab:ready", onReady); window.removeEventListener("lab:unready", onUnready);
       stop(); stopDocent(); stopRange(); resize.disconnect(); briefResize.disconnect(); trigger.kill(); runtime.labViewport.current = null;
       if (brief) { brief.style.position = ""; brief.style.top = ""; brief.style.zIndex = ""; brief.style.filter = ""; brief.style.transform = ""; }
     };
@@ -107,7 +129,7 @@ export function LabExperience() {
       {/* The gallery's double doors: frosted glass leaves in a black steel frame, set in the white wall. */}
       <div className={styles.doors} aria-hidden="true">
         <div className={styles.doorway}>
-          <p className={styles.sign}><small>04 / PERSONAL WORKS</small>개인 작업 갤러리</p>
+          <p className={styles.sign}><small>04 / PERSONAL WORKS</small>개인 작업 갤러리<em>전시를 준비하고 있습니다</em></p>
           <span className={styles.leaf} data-side="l"/><span className={styles.leaf} data-side="r"/>
         </div>
       </div>
