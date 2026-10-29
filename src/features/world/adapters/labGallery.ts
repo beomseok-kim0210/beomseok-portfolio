@@ -27,8 +27,11 @@ function drawn(w: number, h: number, draw: (x: CanvasRenderingContext2D, w: numb
 let seed = 7;
 const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
 
-/** Polished concrete: soft blotches + fine aggregate; also used as the roughness map. */
-export function concreteTexture() {
+/** Polished concrete: soft blotches + fine aggregate; also used as the roughness map. Drawn once and
+ *  reused (26k strokes, ~0.3s on a slow laptop per gallery mount); disposing only drops the GPU copy. */
+let concrete: CanvasTexture | null = null;
+export function concreteTexture() { return concrete ??= drawConcrete(); }
+function drawConcrete() {
   seed = 7;
   const [c, x] = canvas(1024, 1024);
   x.fillStyle = "#d2cfc9"; x.fillRect(0, 0, 1024, 1024);

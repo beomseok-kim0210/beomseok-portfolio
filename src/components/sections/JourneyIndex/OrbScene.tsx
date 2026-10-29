@@ -5,7 +5,7 @@
  * project material; orbits, surface sparkles and a metal pedestal; bloom on top.
  * The canvas clears to black and is composited with mix-blend-mode: screen.
  */
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, Line, MeshTransmissionMaterial, useTexture } from "@react-three/drei";
 import {
@@ -17,6 +17,8 @@ import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js"
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { hgAnchors, hgBones } from "@/features/world/adapters/hangaraeAnimatic";
 import { renderTier } from "@/features/world/runtime/renderTier";
+import { tuneRenderer } from "@/features/world/runtime/shaderGate";
+import { WarmCanvas } from "@/features/world/runtime/WarmCanvas";
 
 export type OrbId = "armi" | "hangarae" | "wedding";
 /** Canvas box relative to the sphere box (CSS sets the same insets): wider for orbits, taller for the pedestal. */
@@ -26,14 +28,17 @@ const W_UNITS = 2 * (1 + ORB_CANVAS.left + ORB_CANVAS.right);
 const H_UNITS = 2 * (1 + ORB_CANVAS.top + ORB_CANVAS.bottom);
 
 export default function OrbScene({ id, accent, active, reduced }: { id: OrbId; accent: string; active: boolean; reduced: boolean }) {
+  // Glass, bloom and fresnel shaders compile off the main thread while Hero is still up (WarmCanvas);
+  // the sphere starts drawing only after that, so the first scroll into the index never freezes.
+  const [warm, setWarm] = useState(false), onWarm = useCallback(() => setWarm(true), []);
   return (
     <Canvas
       orthographic
       camera={{ position: [0, 0, 10], zoom: 1, near: .1, far: 40 }}
       dpr={[1, 1.25]}
-      frameloop={active ? (reduced ? "demand" : "always") : "never"}
+      frameloop={active && warm ? (reduced ? "demand" : "always") : "never"}
       gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
-      onCreated={({ gl }) => gl.setClearColor("#000000", 1)}
+      onCreated={({ gl }) => { tuneRenderer(gl); gl.setClearColor("#000000", 1); }}
     >
       <Fit />
       <Environment resolution={64} frames={1}>
@@ -43,7 +48,7 @@ export default function OrbScene({ id, accent, active, reduced }: { id: OrbId; a
       </Environment>
       <ambientLight intensity={.35} color="#8fa6d6" />
       <directionalLight position={[2, 5, 4]} intensity={2.2} color="#dfe8ff" />
-      <Suspense fallback={null}><World id={id} accent={accent} /></Suspense>
+      <Suspense fallback={null}><World id={id} accent={accent} /><WarmCanvas onWarm={onWarm} envSize={64} /></Suspense>
       {renderTier() === "high" && <Bloom />}
     </Canvas>
   );
@@ -67,9 +72,11 @@ function Bloom() {
   const { gl, scene, camera, size } = useThree();
   const composer = useMemo(() => {
     const c = new EffectComposer(gl);
+    const bloom = new UnrealBloomPass(new Vector2(256, 256), .28, .16, .5), output = new OutputPass();
     c.addPass(new RenderPass(scene, camera));
-    c.addPass(new UnrealBloomPass(new Vector2(256, 256), .28, .16, .5));
-    c.addPass(new OutputPass());
+    c.addPass(bloom);
+    c.addPass(output);
+    scene.userData.warmPasses = [[bloom], [output]]; // WarmCanvas precompiles them with the world
     return c;
   }, [gl, scene, camera]);
   useEffect(() => { composer.setPixelRatio(gl.getPixelRatio()); composer.setSize(size.width, size.height); }, [composer, gl, size]);

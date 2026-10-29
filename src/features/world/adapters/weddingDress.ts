@@ -119,8 +119,24 @@ function tearValues(model: WdModelId | "input") {
 }
 
 export type DressGeometry = BufferGeometry;
-/** Dress for one candidate (or the real input). Morph target 0 = that candidate's failure. */
+/**
+ * Dress for one candidate (or the real input). Morph target 0 = that candidate's failure.
+ * Built once per model and reused: the noise-shaped build cost ~0.6s on a slow laptop each time the
+ * atelier mounted. A disposed geometry only drops its GPU buffers, so reuse after unmount is safe.
+ */
+const dressCache = new Map<WdModelId | "input", DressGeometry>();
 export function createDressGeometry(model: WdModelId | "input"): DressGeometry {
+  let geo = dressCache.get(model);
+  if (!geo) dressCache.set(model, geo = buildDressGeometry(model));
+  return geo;
+}
+/** Builds the atelier's dresses in idle slots ahead of it (one per slot). */
+export function prewarmDressGeometries(models: readonly (WdModelId | "input")[]) {
+  const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 200));
+  const next = (i: number) => { if (i < models.length) idle(() => { createDressGeometry(models[i]); next(i + 1); }); };
+  next(0);
+}
+function buildDressGeometry(model: WdModelId | "input"): DressGeometry {
   const geo = new BufferGeometry();
   indexAndUv(geo);
   const base = build(inputShape);
@@ -204,7 +220,9 @@ export function createFabricMaterial() {
 export function setClay(m: MeshPhysicalMaterial, t: number) {
   m.color.copy(SATIN.color).lerp(CLAY.color, t);
   m.roughness = SATIN.roughness + (CLAY.roughness - SATIN.roughness) * t;
-  m.sheen = 1 - t; m.sheenRoughness = SATIN.sheenRoughness + (1 - SATIN.sheenRoughness) * t;
-  m.clearcoat = .08 * (1 - t);
+  // Floors, not zero: three swaps the whole shader when sheen or clearcoat reaches 0 (USE_SHEEN /
+  // USE_CLEARCOAT), and the mirror's reflection pass then compiled it synchronously mid-scroll.
+  m.sheen = Math.max(1e-3, 1 - t); m.sheenRoughness = SATIN.sheenRoughness + (1 - SATIN.sheenRoughness) * t;
+  m.clearcoat = Math.max(1e-3, .08 * (1 - t));
 }
 export function disposeAll(items: (Material | BufferGeometry)[]) { items.forEach(i => i.dispose()); }

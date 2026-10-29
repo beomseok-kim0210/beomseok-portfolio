@@ -13,6 +13,7 @@ import { onDocentOverlayChange } from "@/features/docent/docentOverlay";
 import { observeScrollLayout } from "../observeScrollLayout";
 import { SceneChrome, SceneFooter, SceneHeaderList } from "../SceneHud";
 import styles from "./wedding.module.css";
+import { hasWebGL2 } from "@/lib/webglSupport";
 
 const IMG = "/images/wedding";
 const smooth = (t: number) => t * t * (3 - 2 * t);
@@ -40,7 +41,7 @@ export function WeddingExperience() {
   const fail = useCallback(() => setMode("fallback"), []);
   useEffect(() => {
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => { if (motion.matches) setMode("reduced-motion"); else { const c = document.createElement("canvas"), gl = c.getContext("webgl2"); setMode(gl ? "webgl" : "fallback"); gl?.getExtension("WEBGL_lose_context")?.loseContext(); } };
+    const sync = () => { if (motion.matches) setMode("reduced-motion"); else setMode(hasWebGL2() ? "webgl" : "fallback"); };
     sync(); motion.addEventListener("change", sync);
     const observer = new IntersectionObserver(([e]) => setActive(e.isIntersecting)); if (section.current) observer.observe(section.current);
     return () => { observer.disconnect(); motion.removeEventListener("change", sync); };

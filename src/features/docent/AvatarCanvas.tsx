@@ -1,7 +1,7 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
-import { Component, Suspense, useCallback, useEffect, useReducer, useState, type ReactNode } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Component, Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
 import { ACESFilmicToneMapping, type WebGLRenderer } from "three";
 import type { VisemeKey } from "@/lib/docent/visemes";
 import type { SemanticMouthPose } from "@/lib/docent/semanticMouth";
@@ -13,6 +13,9 @@ import { DocentHead } from "./DocentHead";
 import type { HologramState } from "./hologram/hologramConfig";
 import { HologramChamber } from "./hologram/HologramChamber";
 import { SceneLighting } from "./hologram/SceneLighting";
+import { hasWebGL2 } from "@/lib/webglSupport";
+import { useAfterHomeSettles } from "@/lib/afterHomeSettles";
+import { createShaderGate, tuneRenderer } from "@/features/world/runtime/shaderGate";
 
 interface AvatarCanvasProps {
   /** shell 챔버의 투사 상태. 없으면 안정된 대기 상태. */
@@ -58,12 +61,22 @@ class AvatarErrorBoundary extends Component<
   }
 }
 
+// Takes over R3F's render: the head draws only once its shaders compiled off the main thread,
+// and at 30fps while silent (idle breathing reads the same; it was ~30% of a slow laptop's main
+// thread on Home). Speech keeps every frame for the lip-sync.
+function GatedRender({ speaking }: { speaking: boolean }) {
+  const gate = useMemo(createShaderGate, []), last = useRef(0);
+  useFrame(({ gl, scene, camera, invalidate }) => {
+    const now = performance.now();
+    if (!speaking && now - last.current < 30) return;
+    if (gate.ready(gl, scene, camera, invalidate)) { gl.render(scene, camera); last.current = now; }
+  }, 1);
+  return null;
+}
+
 function webglAvailable(): boolean {
   try {
-    const canvas = document.createElement("canvas");
-    return Boolean(
-      canvas.getContext("webgl2") ?? canvas.getContext("webgl")
-    );
+    return hasWebGL2() || Boolean(document.createElement("canvas").getContext("webgl"));
   } catch {
     return false;
   }
@@ -86,6 +99,8 @@ export default function AvatarCanvas({
   // While the global docent is minimized its panel is hidden: stop drawing the head every frame
   // (it was the one renderer running on every screen, which phones felt most).
   const [hidden, setHidden] = useState(false);
+  // On Home the head (a ~5MB GLB) loads after the first world is up, not alongside it.
+  const settled = useAfterHomeSettles();
   useEffect(() => {
     const root = document.documentElement, sync = () => setHidden(root.dataset.globalDocentView === "minimized");
     sync();
@@ -119,6 +134,7 @@ export default function AvatarCanvas({
   }, [active, onActiveChange]);
 
   const onCreated = useCallback(({ gl: renderer }: { gl: WebGLRenderer }) => {
+    tuneRenderer(renderer);
     const canvas = renderer.domElement;
     // preventDefault 가 있어야 브라우저가 이 컨텍스트를 복원해 준다.
     canvas.addEventListener("webglcontextlost", (event) => {
@@ -148,7 +164,7 @@ export default function AvatarCanvas({
       ) : null}
       {gl.status === "unavailable" ? (
         <AvatarFallback emotion={emotion} shell={shell} />
-      ) : (
+      ) : !settled ? null : (
       <AvatarErrorBoundary key={gl.canvasKey} onError={onRenderError}>
         <Canvas
           className="relative z-10"
@@ -165,6 +181,7 @@ export default function AvatarCanvas({
           }}
           onCreated={onCreated}
         >
+          <GatedRender speaking={speaking || !!mouth} />
           <SceneLighting hologram={shell} />
           <Suspense fallback={null}>
             <DocentHead emotion={emotion} viseme={viseme} mouth={mouth} speaking={speaking} projection={shell} />

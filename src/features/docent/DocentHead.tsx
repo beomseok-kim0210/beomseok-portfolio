@@ -468,4 +468,4 @@ export function DocentHead({
   );
 }
 
-useGLTF.preload(MODEL_URL);
+// No module-level preload: AvatarCanvas mounts the head once Home has settled (lib/afterHomeSettles).

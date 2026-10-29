@@ -5,7 +5,7 @@
  * bright core waits at the vanishing point. `level` (0..1) drives opacity-independent speed and
  * brightness; the DOM wrapper fades the canvas. Black clear, composited with screen.
  */
-import { Suspense, useEffect, useMemo, useRef, type MutableRefObject } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import { AdditiveBlending, Color, DoubleSide, Group, InstancedMesh, Object3D, SRGBColorSpace, ShaderMaterial, Vector2 } from "three";
@@ -14,16 +14,20 @@ import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { renderTier } from "@/features/world/runtime/renderTier";
+import { tuneRenderer } from "@/features/world/runtime/shaderGate";
+import { WarmCanvas } from "@/features/world/runtime/WarmCanvas";
 
 const DEPTH = 70; // tube length in front of the camera
 const rand = (i: number) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
 
-export default function TunnelScene({ accent, level, screens }: { accent: string; level: MutableRefObject<number>; screens: string[] }) {
+/** Mounted ahead of the dive (hidden, `active` false) so the dive itself only draws. */
+export default function TunnelScene({ accent, level, screens, active = true }: { accent: string; level: MutableRefObject<number>; screens: string[]; active?: boolean }) {
+  const [warm, setWarm] = useState(false), onWarm = useCallback(() => setWarm(true), []);
   return (
-    <Canvas camera={{ position: [0, 0, 0], fov: 72, near: .1, far: 120 }} dpr={[1, 1.25]}
-      gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }} onCreated={({ gl }) => gl.setClearColor("#000000", 1)}>
+    <Canvas camera={{ position: [0, 0, 0], fov: 72, near: .1, far: 120 }} dpr={[1, 1.25]} frameloop={active && warm ? "always" : "never"}
+      gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }} onCreated={({ gl }) => { tuneRenderer(gl); gl.setClearColor("#000000", 1); }}>
       <fog attach="fog" args={["#000000", 18, DEPTH]} />
-      <Flight accent={accent} level={level} screens={screens} />
+      <Flight accent={accent} level={level} screens={screens} onWarm={onWarm} />
       {renderTier() === "high" && <Bloom />}
     </Canvas>
   );
@@ -33,9 +37,11 @@ function Bloom() {
   const { gl, scene, camera, size } = useThree();
   const composer = useMemo(() => {
     const c = new EffectComposer(gl);
+    const bloom = new UnrealBloomPass(new Vector2(256, 256), .35, .3, .35), output = new OutputPass();
     c.addPass(new RenderPass(scene, camera));
-    c.addPass(new UnrealBloomPass(new Vector2(256, 256), .35, .3, .35));
-    c.addPass(new OutputPass());
+    c.addPass(bloom);
+    c.addPass(output);
+    scene.userData.warmPasses = [[bloom], [output]]; // WarmCanvas precompiles them
     return c;
   }, [gl, scene, camera]);
   useEffect(() => { composer.setPixelRatio(gl.getPixelRatio()); composer.setSize(size.width, size.height); }, [composer, gl, size]);
@@ -44,7 +50,7 @@ function Bloom() {
   return null;
 }
 
-function Flight({ accent, level, screens }: { accent: string; level: MutableRefObject<number>; screens: string[] }) {
+function Flight({ accent, level, screens, onWarm }: { accent: string; level: MutableRefObject<number>; screens: string[]; onWarm: () => void }) {
   const travel = useRef(0);
   const cam = useThree(s => s.camera);
   useFrame((_, dt) => {
@@ -57,7 +63,7 @@ function Flight({ accent, level, screens }: { accent: string; level: MutableRefO
   return <>
     <Streaks accent={accent} travel={travel} level={level} />
     <Rings accent={accent} travel={travel} />
-    <Suspense fallback={null}><Panels accent={accent} travel={travel} screens={screens} /></Suspense>
+    <Suspense fallback={null}><Panels accent={accent} travel={travel} screens={screens} /><WarmCanvas onWarm={onWarm} /></Suspense>
     <Core accent={accent} level={level} />
   </>;
 }

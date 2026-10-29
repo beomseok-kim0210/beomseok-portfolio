@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import dynamic from "next/dynamic";
 import s from "./journey-index.module.css";
+import { hasWebGL2 } from "@/lib/webglSupport";
+import { useAfterHomeSettles } from "@/lib/afterHomeSettles";
 
 const TunnelScene = dynamic(() => import("./TunnelScene"), { ssr: false });
 /** Real screens from each project fly past as glass panels. */
@@ -21,7 +23,9 @@ export function Tunnel({ accent, intensity, label, fixed = false }: { accent: st
   level.current = intensity;
   const visible = intensity > .002;
   const [webgl, setWebgl] = useState(false);
-  useEffect(() => { const c = document.createElement("canvas").getContext("webgl2"); setWebgl(!!c); c?.getExtension("WEBGL_lose_context")?.loseContext(); }, []);
+  useEffect(() => { setWebgl(hasWebGL2()); }, []);
+  // The 3D tunnel mounts hidden once Home has settled, so the dive only draws (no context/shader setup mid-scroll).
+  const armed = useAfterHomeSettles(5000), parked = webgl && armed && !visible;
   // 2D streak fallback (no WebGL)
   useEffect(() => {
     const el = canvas.current; if (!el || !visible || webgl) return;
@@ -63,10 +67,10 @@ export function Tunnel({ accent, intensity, label, fixed = false }: { accent: st
     raf = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf);
   }, [accent, visible, webgl]);
-  if (!visible) return null;
+  if (!visible && !parked) return null;
   return (
-    <div className={fixed ? `${s.tunnel} ${s.tunnelFixed}` : s.tunnel} style={{ "--k": intensity, "--accent": accent } as CSSProperties} aria-hidden="true">
-      {webgl ? <div className={s.tunnel3d}><TunnelScene accent={accent} level={level} screens={SCREENS[accent] ?? SCREENS["#d2f059"]} /></div> : <>
+    <div className={fixed ? `${s.tunnel} ${s.tunnelFixed}` : s.tunnel} style={{ "--k": intensity, "--accent": accent, ...(parked ? { visibility: "hidden" } : null) } as CSSProperties} aria-hidden="true">
+      {webgl ? <div className={s.tunnel3d}><TunnelScene accent={accent} level={level} screens={SCREENS[accent] ?? SCREENS["#d2f059"]} active={visible} /></div> : <>
         <canvas ref={canvas} />
         <span className={s.plate} data-n="1" /><span className={s.plate} data-n="2" /><span className={s.plate} data-n="3" />
       </>}

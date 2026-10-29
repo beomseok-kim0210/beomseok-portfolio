@@ -24,7 +24,9 @@ test("A: mounted Home runtime exposes ARMI and separates continuous/semantic not
   assert.equal(semantic, 1); assert.equal(frames, 3); assert.equal(runtime.progress.current, .52);
   stop(); runtime.publish(3.6, "fallback"); assert.equal(semantic, 1);
   assert.match(read(world + "runtime/WorldHost.tsx"), /createWorldRuntime/);
-  assert.match(read("src/app/page.tsx"), /<WorldHost><ImmersiveProjectFlow/);
+  // Home mounts the journeys through its lazily hydrated worlds chunk (HomeWorlds → HomeWorldsContent).
+  assert.match(read("src/app/page.tsx"), /<HomeWorlds \/>/);
+  assert.match(read("src/components/sections/HomeWorldsContent.tsx"), /<WorldHost><ImmersiveProjectFlow/);
 });
 test("B/C: equal absolute positions restore deterministic identity forward, reverse and direct", () => {
   for (const p of checkpoints) {
@@ -92,7 +94,7 @@ test("N: production district replaces primitive world, preserves original produc
   assert.deepEqual([...scene.matchAll(/import \{ (Armi\w+) \}/g)].map(match => match[1]), ["ArmiTabletPortal", "ArmiVoiceSignal"]);
   assert.doesNotMatch(read(world + "runtime/WorldCanvas.tsx"), /RoutingChamber/);
   // Wedding is a real district now (atelier scene), not a primitive placeholder.
-  assert.match(read(world + "runtime/WorldCanvas.tsx"), /districtId === "wedding" \? <WeddingDistrictScene/);
+  assert.match(read(world + "runtime/WorldCanvas.tsx"), /districtId === "wedding" (\?|&&) <WeddingDistrictScene/);
   assert.match(read(world + "runtime/WorldCanvas.tsx"), /districtId === "hangarae"/);
 });
 test("responsive synchronization uses actual size and invalidates demand frames", () => {

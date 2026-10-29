@@ -9,10 +9,14 @@ import s from "./world-loader.module.css";
  *   3D ASSETS  → GLB + decoder fetched      SCENE GRAPH → ARMI chamber built
  *   INTERACTION→ page hydrated & interactive READY      → leave
  * Fast visits leave almost immediately; a repeat visit in the same session never shows it;
- * WebGL-less / failed loads report ready from the ARMI side; a 10s ceiling guarantees entry.
- * Without script, CSS fades it out after 7s (world-loader.module.css).
+ * WebGL-less / failed loads report ready from the ARMI side; a 1.6s ceiling from navigation start
+ * guarantees entry (CSS enforces it even before script) — the ARMI world keeps loading behind the
+ * closed aperture, two screens away.
+ * Without script, CSS fades it out at the same ceiling (world-loader.module.css).
  */
 const STEPS = ["3D ASSETS", "SCENE GRAPH", "INTERACTION", "READY"] as const;
+/** Matches the CSS auto-hide delay: past it the overlay is already gone, so script must not revive it. */
+const LOADER_CAP_MS = 1600;
 
 export function WorldLoader() {
   const [state, setState] = useState({ progress: 0, ready: false, hydrated: false });
@@ -23,11 +27,14 @@ export function WorldLoader() {
     born.current = performance.now();
     let seen = false;
     try { seen = sessionStorage.getItem("portfolio:loaded") === "1"; } catch { /* storage blocked */ }
-    if (seen) { setPhase("gone"); return; }
-    const sync = () => setState(st => ({ ...st, ...readWorldLoad(), hydrated: true }));
+    // Hydrated after the CSS cap: the overlay already faded out on its own; leave it gone (no scroll lock).
+    if (seen || performance.now() >= LOADER_CAP_MS) { setPhase("gone"); return; }
+    // Progress events must not undo the ceiling: readiness only ever moves forward.
+    const sync = () => setState(st => { const w = readWorldLoad(); return { progress: Math.max(st.progress, w.progress), ready: st.ready || w.ready, hydrated: true }; });
     sync();
     window.addEventListener("portfolio:world-load", sync);
-    const ceiling = window.setTimeout(() => setState(st => ({ ...st, ready: true, progress: 1 })), 10000);
+    // Counted from navigation start, so slow hydration does not stack on top of the ceiling.
+    const ceiling = window.setTimeout(() => setState(st => ({ ...st, ready: true, progress: 1 })), LOADER_CAP_MS - performance.now());
     const root = document.documentElement; root.style.overflow = "hidden";
     return () => { window.removeEventListener("portfolio:world-load", sync); window.clearTimeout(ceiling); root.style.overflow = ""; };
   }, []);
@@ -37,12 +44,12 @@ export function WorldLoader() {
   const ready = state.ready;
   useEffect(() => {
     if (!ready) return;
-    const quick = performance.now() - born.current < 700, hold = quick ? 150 : 450;
+    const quick = performance.now() - born.current < 700, hold = quick ? 150 : 250;
     const t1 = window.setTimeout(() => setPhase(p => p === "show" ? "leave" : p), hold);
     const t2 = window.setTimeout(() => {
       setPhase("gone"); document.documentElement.style.overflow = "";
       try { sessionStorage.setItem("portfolio:loaded", "1"); } catch { /* storage blocked */ }
-    }, hold + 800);
+    }, hold + 600);
     return () => { window.clearTimeout(t1); window.clearTimeout(t2); };
   }, [ready]);
 
@@ -72,12 +79,16 @@ function Globe() {
     const ctx = el.getContext("2d"); if (!ctx) return;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     // Random (not lattice) points read as a field of stars on the surface, plus a few inside for depth.
-    const N = 2600, pts = Array.from({ length: N }, (_, i) => {
+    // 1400 points at 30fps with a pre-built palette: the globe must not steal the main thread from hydration.
+    const N = 1400, pts = Array.from({ length: N }, (_, i) => {
       const u = Math.random() * 2 - 1, a = Math.random() * Math.PI * 2, r = Math.sqrt(1 - u * u), d = i % 9 === 0 ? .55 + Math.random() * .4 : 1;
       return [Math.cos(a) * r * d, u * d, Math.sin(a) * r * d, Math.random()] as const;
     });
-    let raf = 0, t = 0, last = performance.now();
+    const palette = Array.from({ length: 9 }, (_, i) => `rgb(${175 + i * 10},${208 + i * 6},255)`);
+    let raf = 0, t = 0, last = performance.now(), drawn = 0;
     const draw = (now: number) => {
+      raf = requestAnimationFrame(draw);
+      if (now - drawn < 31) return; drawn = now;
       const dpr = Math.min(2, devicePixelRatio || 1), W = el.clientWidth, H = el.clientHeight;
       if (el.width !== Math.round(W * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
       t += reduced ? 0 : Math.min(.05, (now - last) / 1000) * .18; last = now;
@@ -99,13 +110,12 @@ function Globe() {
         const tw = .65 + .35 * Math.sin(now / 600 + k * 40);
         const a = (front ? .38 + light * .62 : .12) * (.45 + k * .55) * tw;
         const px = cx + x * R, py = cy + y * R;
-        ctx.fillStyle = `rgba(${175 + light * 80 | 0},${208 + light * 47 | 0},255,${a.toFixed(3)})`;
+        ctx.globalAlpha = Math.min(1, a); ctx.fillStyle = palette[Math.min(8, light * 8 | 0)];
         const size = front ? .8 + light * 1.3 : .55;
         ctx.fillRect(px - size / 2, py - size / 2, size, size);
-        if (front && k > .9 && light > .3) { ctx.fillStyle = `rgba(200,230,255,${(a * .25).toFixed(3)})`; ctx.beginPath(); ctx.arc(px, py, 3.2 + light * 2, 0, Math.PI * 2); ctx.fill(); }
+        if (front && k > .9 && light > .3) { ctx.globalAlpha = a * .25; ctx.fillStyle = "rgb(200,230,255)"; ctx.beginPath(); ctx.arc(px, py, 3.2 + light * 2, 0, Math.PI * 2); ctx.fill(); }
       }
-      ctx.globalCompositeOperation = "source-over";
-      raf = requestAnimationFrame(draw);
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
     };
     raf = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf);

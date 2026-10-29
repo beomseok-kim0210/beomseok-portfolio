@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGLTF } from "@react-three/drei";
 import { useWorldHost } from "@/features/world/runtime/WorldHost";
 import { worldPositionForDomProgress } from "@/features/world/director/worldRuntime";
 import type { WorldRenderMode } from "@/features/world/types/contracts";
@@ -13,6 +12,7 @@ import { OPEN_GLOBAL_DOCENT_EVENT } from "@/features/docent/globalDocentEvents";
 import { observeScrollLayout } from "../observeScrollLayout";
 import { SceneChrome, SceneFooter } from "../SceneHud";
 import styles from "./lab.module.css";
+import { hasWebGL2 } from "@/lib/webglSupport";
 
 /**
  * 04 Personal Gallery. The hall, the three works and the stepping live in the world canvas; this layer
@@ -28,11 +28,11 @@ export function LabExperience() {
   const fail = useCallback(() => setMode("fallback"), []);
   useEffect(() => {
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => { if (motion.matches) setMode("reduced-motion"); else { const c = document.createElement("canvas"), gl = c.getContext("webgl2"); setMode(gl ? "webgl" : "fallback"); gl?.getExtension("WEBGL_lose_context")?.loseContext(); } };
+    const sync = () => { if (motion.matches) setMode("reduced-motion"); else setMode(hasWebGL2() ? "webgl" : "fallback"); };
     sync(); motion.addEventListener("change", sync);
     const io = new IntersectionObserver(([e]) => setActive(e.isIntersecting)); if (section.current) io.observe(section.current);
     // Fetch the bust's head a couple of screens early so the hall never opens without it.
-    const near = new IntersectionObserver(([e]) => { if (e.isIntersecting) { useGLTF.preload(LAB_HEAD_URL); near.disconnect(); } }, { rootMargin: "250% 0px" });
+    const near = new IntersectionObserver(([e]) => { if (e.isIntersecting) { void import("@react-three/drei").then(m => m.useGLTF.preload(LAB_HEAD_URL)); near.disconnect(); } }, { rootMargin: "250% 0px" });
     if (section.current) near.observe(section.current);
     return () => { io.disconnect(); near.disconnect(); motion.removeEventListener("change", sync); };
   }, []);

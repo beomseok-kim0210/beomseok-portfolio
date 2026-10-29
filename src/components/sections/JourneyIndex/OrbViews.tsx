@@ -5,10 +5,11 @@
  * environment maps and three render loops; phones felt that most. The look matches the per-orb
  * canvas minus bloom (which the low tier never had).
  */
-import { Suspense, useEffect, useRef, useState, type RefObject } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, OrthographicCamera, View } from "@react-three/drei";
 import { ORB_CANVAS, World, type OrbId } from "./OrbScene";
+import { tuneRenderer, warmPMREM, whenCompiled } from "@/features/world/runtime/shaderGate";
 
 const W_UNITS = 2 * (1 + ORB_CANVAS.left + ORB_CANVAS.right);
 const H_UNITS = 2 * (1 + ORB_CANVAS.top + ORB_CANVAS.bottom);
@@ -55,6 +56,12 @@ function CaptureEnv() {
   return null;
 }
 
+function WarmEnv({ onWarm }: { onWarm: () => void }) {
+  const { gl } = useThree();
+  useEffect(() => { let alive = true; warmPMREM(gl, 64).then(() => whenCompiled(gl)).then(() => { if (alive) onWarm(); }); return () => { alive = false; }; }, [gl, onWarm]);
+  return null;
+}
+
 /** Clears the whole shared canvas each frame before the views draw (moving orbs leave no trails). */
 function ClearAll() {
   const { gl } = useThree();
@@ -72,16 +79,19 @@ export default function OrbStage({ live }: { live: boolean }) {
     const io = new IntersectionObserver(([e]) => setSeen(e.isIntersecting)); io.observe(el);
     return () => io.disconnect();
   }, []);
-  const active = live && seen;
+  // The environment's PMREM shaders compile off-thread before the first frame (see warmPMREM).
+  const [warm, setWarm] = useState(false), onWarm = useCallback(() => setWarm(true), []);
+  const active = live && seen && warm;
   return <div ref={host} aria-hidden="true" style={{ position: "absolute", inset: 0, pointerEvents: "none", mixBlendMode: "screen", zIndex: 2 }}>
     <Canvas dpr={[1, 1.25]} frameloop={active ? (reduced ? "demand" : "always") : "never"}
       gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
-      eventSource={host as unknown as RefObject<HTMLElement>} style={{ position: "absolute", inset: 0 }}>
+      eventSource={host as unknown as RefObject<HTMLElement>} style={{ position: "absolute", inset: 0 }} onCreated={({ gl }) => tuneRenderer(gl)}>
       <Environment resolution={64} frames={1}>
         <Lightformer form="rect" intensity={3} color="#ffffff" position={[3, 4, 4]} scale={[4, 2, 1]} />
         <Lightformer form="ring" intensity={4} color="#c9d8ff" position={[-4, 0, 2]} scale={3} />
         <Lightformer form="rect" intensity={1.5} color="#6f8fd0" position={[0, -4, 3]} scale={[8, 1, 1]} />
       </Environment>
+      <WarmEnv onWarm={onWarm} />
       <CaptureEnv />
       <ClearAll />
       <View.Port />

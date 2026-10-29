@@ -4,10 +4,12 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, MeshReflectorMaterial, useGLTF } from "@react-three/drei";
 import {
   AdditiveBlending, BoxGeometry, BufferGeometry, CanvasTexture, Color, CylinderGeometry, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial,
-  Object3D, PCFSoftShadowMap, PlaneGeometry, SRGBColorSpace, SpotLight, Vector3, type Camera,
+  Object3D, PCFSoftShadowMap, PlaneGeometry, SRGBColorSpace, SpotLight, Vector3, WebGLRenderTarget, type Camera,
 } from "three";
 import type { WorldRuntime } from "../director/worldRuntime";
 import { renderTier } from "../runtime/renderTier";
+import { compileOffThread, whenCompiled } from "../runtime/shaderGate";
+import { useSceneCompiled } from "../runtime/WarmCanvas";
 import { LAB_BACK_Z, LAB_CEIL, LAB_FRAME, LAB_HEAD_URL, LAB_PARTITIONS, labStations, labWork, sampleLab } from "./labRoom";
 import {
   G, FONT, MONO, acrylicWork, bcosPrint, brassPlateTexture, concreteTexture, crimePrint, disposeTree, docentPrint, etchTexture, fileTexture, framedPrint,
@@ -48,6 +50,8 @@ function trackCan(from: Vector3, to: Vector3, mat: MeshStandardMaterial) {
 export function LabDistrictScene({ runtime }: { runtime: WorldRuntime }) {
   const { gl, size, scene, camera } = useThree();
   const low = useMemo(() => renderTier() === "low" || size.width <= 700, [size.width]);
+  // The reflective floor joins once the hall has compiled (see useSceneCompiled).
+  const compiled = useSceneCompiled();
   // Same head as the live docent (shared drei cache): the bust is the docent, carved.
   const head = useGLTF(LAB_HEAD_URL);
   useEffect(() => {
@@ -163,8 +167,9 @@ export function LabDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     const done = () => requestAnimationFrame(() => requestAnimationFrame(() => {
       if (!alive) return; runtime.labReady.current = true; window.dispatchEvent(new Event("lab:ready"));
     }));
-    const compile = (gl as unknown as { compileAsync?: (s: typeof scene, c: typeof camera) => Promise<unknown> }).compileAsync;
-    if (compile) compile.call(gl, scene, camera).then(done, done); else { gl.compile(scene, camera); done(); }
+    // Offscreen variant (the gallery draws through the composer); compileOffThread never hangs on a disposed material.
+    const target = new WebGLRenderTarget(1, 1);
+    void compileOffThread(gl, scene, camera, target).then(() => whenCompiled(gl)).then(() => { target.dispose(); done(); });
     return () => { alive = false; runtime.labReady.current = false; window.dispatchEvent(new Event("lab:unready")); };
   }, [kit, gl, scene, camera, runtime]);
 
@@ -235,7 +240,7 @@ export function LabDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     {/* Polished concrete: a soft, blurred reflection of the hang. */}
     <mesh rotation-x={-Math.PI / 2} position={[0, 0, 3.6]} receiveShadow>
       <planeGeometry args={[24, 14]}/>
-      {low
+      {low || !compiled
         ? <meshStandardMaterial color="#ffffff" map={floorTex} roughness={.55}/>
         : <MeshReflectorMaterial map={floorTex} color="#ffffff" roughness={.78} roughnessMap={floorTex} metalness={0} blur={[600, 200]} resolution={512} mixBlur={1.4} mixStrength={.9} mixContrast={1} depthScale={1.1} minDepthThreshold={.3} maxDepthThreshold={1.2} mirror={0}/>}
     </mesh>

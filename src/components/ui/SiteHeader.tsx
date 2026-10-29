@@ -21,15 +21,16 @@ export function SiteHeader({ items }: SiteHeaderProps) {
   // Dark glass over dark worlds: read the section under the header band (data-header-tone).
   const [tone, setTone] = useState<"light" | "dark">("light");
   useEffect(() => {
-    let raf = 0;
+    let timer = 0;
     const read = () => {
-      raf = 0;
+      timer = 0;
       const under = document.elementsFromPoint(window.innerWidth / 2, 40).find(el => !el.closest("header, [data-loader]")); // the loading overlay is not a section
       setTone(under?.closest<HTMLElement>("[data-header-tone]")?.dataset.headerTone === "dark" ? "dark" : "light");
     };
-    const queue = () => { if (!raf) raf = requestAnimationFrame(read); };
+    // A hit test of the whole page stack is costly: sample ~8×/s while scrolling, not every frame (it was ~1.9s of a 14s scroll).
+    const queue = () => { if (!timer) timer = window.setTimeout(read, 120); };
     read(); window.addEventListener("scroll", queue, { passive: true }); window.addEventListener("resize", queue);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", queue); window.removeEventListener("resize", queue); };
+    return () => { window.clearTimeout(timer); window.removeEventListener("scroll", queue); window.removeEventListener("resize", queue); };
   }, []);
 
   return (
@@ -47,6 +48,8 @@ export function SiteHeader({ items }: SiteHeaderProps) {
               <Link
                 key={item.href}
                 href={item.href}
+                // Home is one heavy page; prefetching /knowledge (~430KB of notes) on load only competes with it.
+                prefetch={false}
                 className={`nav-label transition-colors ${
                   isActive
                     ? "text-[#111827]"

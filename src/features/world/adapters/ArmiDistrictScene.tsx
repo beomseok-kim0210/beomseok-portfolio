@@ -6,7 +6,8 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { RectAreaLightUniformsLib } from "three/addons/lights/RectAreaLightUniformsLib.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import { Color, FileLoader, Mesh, PMREMGenerator } from "three";
+import { Color, FileLoader, Mesh, PerspectiveCamera, WebGLCubeRenderTarget, type Texture } from "three";
+import { compileOffThread, warmPMREM, whenCompiled } from "../runtime/shaderGate";
 import { overviewParts, projectOverviewAnchors } from "./armiOverview";
 import { clone } from "three/addons/utils/SkeletonUtils.js";
 import type { Group } from "three";
@@ -83,7 +84,7 @@ export function ArmiDistrictScene({ runtime, compact, video }: { runtime: WorldR
     return () => { runtime.armiAsset.current = null; };
   }, [asset, runtime, invalidate]);
   useEffect(() => {
-    const pmrem = new PMREMGenerator(gl), room = new RoomEnvironment();
+    const room = new RoomEnvironment();
     const reflectionTint = new Color(.62, .8, 1);
     const reflectionColors = new Set<Color>();
     room.traverse(object => {
@@ -95,11 +96,22 @@ export function ArmiDistrictScene({ runtime, compact, video }: { runtime: WorldR
         }
       }
     });
-    const target = pmrem.fromScene(room, .03);
+    // The room's and PMREM's shaders compile off the main thread first (offscreen targets, as PMREM
+    // draws them); fromScene then only renders and blurs — it was a ~0.7s freeze on Hero.
     const previous = scene.environment, previousIntensity = scene.environmentIntensity;
-    scene.environment = target.texture; scene.environmentIntensity = armiLook.environmentIntensity;
-    invalidate(); room.dispose(); pmrem.dispose();
-    return () => { scene.environment = previous; scene.environmentIntensity = previousIntensity; target.dispose(); };
+    let alive = true, target: { texture: Texture; dispose: () => void } | null = null;
+    const probe = new WebGLCubeRenderTarget(1);
+    const compiled = compileOffThread(gl, room, new PerspectiveCamera(90, 1, .1, 100), probe);
+    // The shared, pre-warmed generator: its blur/GGX programs are already compiled (see warmPMREM).
+    Promise.all([compiled, warmPMREM(gl, 256)]).then(async ([, pmrem]) => {
+      await whenCompiled(gl);
+      probe.dispose();
+      if (!alive) { room.dispose(); return; }
+      target = pmrem.fromScene(room, .03);
+      scene.environment = target.texture; scene.environmentIntensity = armiLook.environmentIntensity;
+      invalidate(); room.dispose();
+    });
+    return () => { alive = false; scene.environment = previous; scene.environmentIntensity = previousIntensity; target?.dispose(); };
   }, [gl, scene, invalidate]);
   useFrame(() => {
     counter?.reset();

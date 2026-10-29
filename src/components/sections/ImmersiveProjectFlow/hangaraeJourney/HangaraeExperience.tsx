@@ -18,6 +18,8 @@ import { onDocentOverlayChange } from "@/features/docent/docentOverlay";
 import { applyAperture, armiBriefStopY, debriefPx, weddingHoldStopY } from "@/features/world/runtime/journeyGeometry";
 import { WD_HOLD, wdTimelineToScroll } from "@/features/world/adapters/weddingAtelier";
 import { registerSteppedRange } from "@/features/world/runtime/sceneStepper";
+import { hasWebGL2 } from "@/lib/webglSupport";
+import { afterHomeSettles } from "@/lib/afterHomeSettles";
 
 function place(el: HTMLElement | null, rect: Rect, opacity: number) {
   if (!el) return;
@@ -90,12 +92,13 @@ export function HangaraeExperience() {
   const fail = useCallback(() => setMode("fallback"), []);
   useEffect(() => {
     const query = new URLSearchParams(location.search), motion = matchMedia("(prefers-reduced-motion: reduce)"); setReview(query.has("hgReview"));
-    const sync = () => { if (motion.matches) setMode("reduced-motion"); else if (query.has("hgFallback")) setMode("fallback"); else { const c = document.createElement("canvas"), gl = c.getContext("webgl2"); setMode(gl ? "webgl" : "fallback"); gl?.getExtension("WEBGL_lose_context")?.loseContext(); } };
+    const sync = () => { if (motion.matches) setMode("reduced-motion"); else if (query.has("hgFallback")) setMode("fallback"); else setMode(hasWebGL2() ? "webgl" : "fallback"); };
     sync(); motion.addEventListener("change", sync);
     // Polygonise the hologram bodies off-thread now, so the hero never waits on them.
-    if (!motion.matches) prewarmHangaraeBodies(innerWidth <= 700);
+    // Body meshes build in time slices; start after the first screen has settled, well before Hangarae is reached.
+    const stopPrewarm = motion.matches ? () => {} : afterHomeSettles(() => prewarmHangaraeBodies(innerWidth <= 700), 6000);
     const observer = new IntersectionObserver(([e]) => setActive(e.isIntersecting)); if (section.current) observer.observe(section.current);
-    return () => { observer.disconnect(); motion.removeEventListener("change", sync); };
+    return () => { observer.disconnect(); stopPrewarm(); motion.removeEventListener("change", sync); };
   }, []);
   useEffect(() => { if (surface.current) setSurface({ element: surface.current, video: null, active, mode, onFailure: fail }, "hangarae"); return () => setSurface(null, "hangarae"); }, [setSurface, mode, active, fail]);
   useEffect(() => {

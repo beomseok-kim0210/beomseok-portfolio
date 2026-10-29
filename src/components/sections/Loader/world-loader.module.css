@@ -1,8 +1,9 @@
 /* Loading screen: particle globe centre, steps right, statement below. */
 .loader { position:fixed; inset:0; z-index:100; background:radial-gradient(ellipse 60% 55% at 45% 45%, #0b1528 0%, #05080f 70%); color:#eef2f5; overflow:hidden;
-  transition:opacity .8s ease, transform .8s cubic-bezier(.6,0,.2,1);
-  /* No-script fallback: never trap the visitor. Script takes over (data-js) and leaves on real readiness. */
-  animation:loaderAutoHide .6s ease 7s forwards; }
+  transition:opacity .6s ease, transform .6s cubic-bezier(.6,0,.2,1);
+  /* Hard cap, script or not: the brand moment never outlasts 1.6s (slow devices hydrate later than that).
+     Script takes over (data-js) only when it arrives in time — WorldLoader, LOADER_CAP_MS. */
+  animation:loaderAutoHide .5s ease 1.6s forwards; }
 .loader[data-js] { animation:none; }
 .loader[data-phase=leave] { opacity:0; transform:scale(1.06); pointer-events:none; }
 @keyframes loaderAutoHide { to { opacity:0; visibility:hidden; } }

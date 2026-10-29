@@ -73,7 +73,8 @@ function makePlate(geo: { box: BoxGeometry; disc: PlaneGeometry }) {
 }
 type Plate = ReturnType<typeof makePlate>;
 
-export function HangaraeDistrictScene({ runtime }: { runtime: WorldRuntime }) {
+/** `standby`: mounted hidden ahead of the district (see WorldCanvas) — it renders state 00 and leaves the DOM alone. */
+export function HangaraeDistrictScene({ runtime, standby = false }: { runtime: WorldRuntime; standby?: boolean }) {
   const { size, gl } = useThree();
   const compact = size.width <= 700;
   const cameraTexture = useLoader(TextureLoader, hgAsset(hgMedia.camera));
@@ -343,7 +344,7 @@ export function HangaraeDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     }
 
     /* DOM anchors follow the same projection rather than a second camera. */
-    const root = runtime.hangaraeViewport.current;
+    const root = standby ? null : runtime.hangaraeViewport.current;
     if (root) {
       const set = (name: string, v: Vector3) => { const [x, y] = project(v, camera, W, H); root.style.setProperty(`--a-${name}-x`, `${x.toFixed(1)}px`); root.style.setProperty(`--a-${name}-y`, `${y.toFixed(1)}px`); return [x, y] as const; };
       const wrist = set("wrist", work.d[10]);

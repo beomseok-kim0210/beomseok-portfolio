@@ -17,6 +17,7 @@ import styles from "./journey.module.css";
 import { armiStage } from "@/features/world/adapters/armiChoreography";
 import { ArmiRoutingOptions } from "./ArmiRoutingOptions";
 import { ArmiProductTransition } from "./ArmiProductTransition";
+import { hasWebGL2 } from "@/lib/webglSupport";
 const webp = (src: string) => src.replace(/\.png$/, ".webp"); // WebP twins of the frozen evidence paths
 
 export function ArmiExperience() {
@@ -78,10 +79,7 @@ export function ArmiExperience() {
     setVideo(videoRef.current);
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
     const sync = () => { if (motion.matches) setMode("reduced"); else {
-      const test = document.createElement("canvas");
-      const gl = test.getContext("webgl2");
-      setMode(gl ? "3d" : "fallback");
-      gl?.getExtension("WEBGL_lose_context")?.loseContext();
+      setMode(hasWebGL2() ? "3d" : "fallback");
     }};
     sync(); motion.addEventListener("change",sync);
     const observer = new IntersectionObserver(([entry]) => { setInView(entry.isIntersecting); if (!entry.isIntersecting) videoRef.current?.pause(); });

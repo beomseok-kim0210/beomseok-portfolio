@@ -14,6 +14,7 @@ import { renderTier } from "@/features/world/runtime/renderTier";
 const OrbStage = dynamic(() => import("./OrbViews"), { ssr: false });
 import { docentOverlayPx } from "@/features/docent/docentOverlay";
 import s from "./journey-index.module.css";
+import { hasWebGL2 } from "@/lib/webglSupport";
 
 /**
  * The project index is a place, not a list: three project worlds sit on one stage.
@@ -60,7 +61,7 @@ export function JourneyIndex() {
   const [mounted, setMounted] = useState(false);
   const [live, setLive] = useState(false);
   const [sharedOrbs, setSharedOrbs] = useState(false);
-  useEffect(() => { const c = document.createElement("canvas"), ok = !!c.getContext("webgl2"); setSharedOrbs(ok && renderTier() === "low"); }, []); // index revealed (Hero no longer covering it)
+  useEffect(() => { setSharedOrbs(hasWebGL2() && renderTier() === "low"); }, []); // index revealed (Hero no longer covering it)
   useEffect(() => setMounted(true), []);
 
   // Default journey: scroll through the gate.

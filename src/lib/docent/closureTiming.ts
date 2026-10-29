@@ -1,4 +1,5 @@
-import { MathUtils } from "three";
+// three's MathUtils.damp, inlined: importing it pulled all of three.js into every page's first load.
+const damp = (x: number, y: number, lambda: number, dt: number) => { const t = 1 - Math.exp(-lambda * dt); return (1 - t) * x + t * y; };
 
 import { LAM_FUSION, fuseLamMouth, type FusedMouthPose, type LamFusionConfig, type LamMouthChannels } from "./lamMouthFusion";
 
@@ -89,11 +90,11 @@ export function dampMouth(
   for (const name of names) {
     const total = finite(target?.[name]);
     const ct = finite(corrT?.[name]);
-    const b = MathUtils.damp(state.base[name] ?? 0, total - ct, BASE_MOUTH_LAMBDA, delta);
+    const b = damp(state.base[name] ?? 0, total - ct, BASE_MOUTH_LAMBDA, delta);
     const c0 = state.corr[name] ?? 0;
     // 보정분은 닫는 쪽(음수, 가중치를 줄인다)이다. 절댓값이 커지면 닫히는 중이다.
     const lambda = Math.abs(ct) > Math.abs(c0) ? policy.closeLambda : policy.releaseLambda;
-    const c = Number.isFinite(lambda) ? MathUtils.damp(c0, ct, lambda, delta) : ct;
+    const c = Number.isFinite(lambda) ? damp(c0, ct, lambda, delta) : ct;
     state.base[name] = b;
     state.corr[name] = c;
     const v = b + c;

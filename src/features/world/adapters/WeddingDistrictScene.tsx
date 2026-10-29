@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { renderTier } from "../runtime/renderTier";
+import { useSceneCompiled } from "../runtime/WarmCanvas";
 import { wdInner } from "./weddingAtelier";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, MeshReflectorMaterial } from "@react-three/drei";
@@ -74,9 +75,13 @@ export function WeddingDistrictScene({ runtime }: { runtime: WorldRuntime }) {
   const { gl, size } = useThree();
   // Low tier keeps the room but trims the expensive passes (shadow resolution, mirror resolution).
   const low = useMemo(() => renderTier() === "low" || size.width <= 700, [size.width]);
+
   // The planar mirror re-renders the room: mount it only while the camera can see it
   // (entry/01 and 04 onward; the 02–03 gallery dolly never frames it).
   const [mirrorOn, setMirrorOn] = useState(true);
+  // The planar reflection joins once the atelier, as it is at that moment, has compiled (see
+  // useSceneCompiled) — every time the mirror comes back into view.
+  const compiled = useSceneCompiled(mirrorOn);
   const key = useRef<DirectionalLight>(null);
   // Shadows only while the atelier is mounted (other districts do not pay for them).
   useEffect(() => {
@@ -120,7 +125,9 @@ export function WeddingDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     /* Hero: the real dress on its form. */
     const makeForm = (model: Parameters<typeof createDressGeometry>[0], x: number): Form => {
       const group = new Group(); group.position.set(x, 0, 0);
-      const fabric = createFabricMaterial();
+      // Gallery forms fade in and out (see `fade` below): transparent from the start, so the program
+      // compiled on entry is the one drawn when they appear (the hero form stays opaque).
+      const fabric = createFabricMaterial(); fabric.transparent = model !== "input";
       const dress = new Mesh(createDressGeometry(model), fabric); dress.castShadow = true; dress.receiveShadow = true;
       const form = new Mesh(geo.form, model === "input" ? mat.linen : mat.clayLinen.clone()); form.castShadow = true;
       const stand = new Mesh(geo.stand, mat.brass); stand.castShadow = true;
@@ -217,7 +224,9 @@ export function WeddingDistrictScene({ runtime }: { runtime: WorldRuntime }) {
       if (!f.group.visible) return;
       let d = ramp(a, .4, 1);
       if (id === "econ") d = .5 * d + .5 * s.collapse;
-      const fade = (m: { opacity: number; transparent: boolean }) => { m.opacity = present; m.transparent = present < .999; };
+      // Gallery forms stay transparent (opacity 1 looks the same): toggling it swapped the fabric's
+      // whole shader set (double-sided transparent draws as two single-sided passes), compiled mid-scroll.
+      const fade = (m: { opacity: number; transparent: boolean }) => { m.opacity = present; m.transparent = true; };
       f.group.position.y = (1 - ramp(a, 0, .5)) * -.12 + (id === "econ" ? .06 * s.picked * (1 - s.recede) : 0);
       fade(f.fabric); fade(f.form.material as MeshStandardMaterial); fade(f.plinth.material as MeshStandardMaterial);
       setClay(f.fabric, ramp(d, 0, .55));
@@ -308,8 +317,12 @@ export function WeddingDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     </Environment>
     <primitive object={kit.room}/>
     {/* The fitting mirror reflects the room and the dress (planar reflection). */}
-    {mirrorOn && <mesh geometry={kit.geo.mirror} position={[WD_MIRROR.x, WD_MIRROR.y - WD_MIRROR.h / 2, WD_MIRROR.z]}>
-      <MeshReflectorMaterial mirror={.92} resolution={low ? 512 : 1024} blur={[0, 0]} mixBlur={0} mixStrength={1.15} color="#d9d6d0" metalness={0} roughness={.08} depthScale={0}/>
+    {/* dispose={null}: an unmounted mirror keeps its material, so its program stays cached and the
+        next mount reuses it instead of compiling it synchronously (a ~0.7s hitch each time). */}
+    {mirrorOn && <mesh geometry={kit.geo.mirror} position={[WD_MIRROR.x, WD_MIRROR.y - WD_MIRROR.h / 2, WD_MIRROR.z]} dispose={null}>
+      {compiled
+        ? <MeshReflectorMaterial mirror={.92} resolution={low ? 512 : 1024} blur={[0, 0]} mixBlur={0} mixStrength={1.15} color="#d9d6d0" metalness={0} roughness={.08} depthScale={0}/>
+        : <meshStandardMaterial color="#d9d6d0" metalness={0} roughness={.08}/>}
     </mesh>}
     <primitive object={kit.hero.group}/>
     {kit.gallery.map((f, i) => <primitive key={i} object={f.group}/>)}

@@ -17,14 +17,17 @@ import { createArmiRoutingOptions, isArmiOptionsVisible } from "../adapters/armi
 import { armiStage, armiMotionWindows, local } from "../adapters/armiChoreography";
 import { routingCue } from "../adapters/armiRoutingCue";
 import { ArmiAuditContext,auditDomainCounters } from "../audit/ArmiAuditContext";
+import { createShaderGate, precompilePasses, warmPMREM } from "./shaderGate";
 
-export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntime; compact: boolean }) {
-  const { gl, scene, camera, size } = useThree();
+/** `mounted`: the district React has mounted; the runtime switches a frame earlier (see the frame guard). */
+export function WorldRenderPipeline({ runtime, compact, mounted }: { runtime: WorldRuntime; compact: boolean; mounted: string }) {
+  const { gl, scene, camera, size, invalidate } = useThree();
   const audit=useContext(ArmiAuditContext);
   const measuredShot=useRef("");
   const options = useMemo(() => createArmiRoutingOptions(), []);
   useEffect(() => () => options.dispose(), [options]);
   const timing = useRef({ seconds: 0, frames: 0, fps: 0, samples: [] as number[] });
+  const settle = useRef({ id: "", frames: 0 });
   const pipeline = useMemo(() => {
     const composer = new EffectComposer(gl);
     // 2× MSAA on the HDR targets: edges stay clean at a third of the 4× fill cost.
@@ -41,22 +44,44 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
     const gtao = new GTAOPass(scene, camera, 512, 512);
     gtao.enabled = false; gtao.blendIntensity = .85;
     gtao.updateGtaoMaterial({ radius: .32, distanceExponent: 1.6, thickness: 1.2, scale: 1.1, samples: 12 });
-    composer.addPass(render); composer.addPass(gtao); composer.addPass(bloom); composer.addPass(new OutputPass());
-    return { composer, bloom, gtao, geometry, insetCamera: new PerspectiveCamera(60, 1, .08, 1000), fog: new Fog("#060b10", armiLook.fogNear, armiLook.fogFar), weddingFog: new Fog("#e6e0d6", 12, 28), labFog: new Fog("#eceae6", 16, 40), background: new Color("#060b10") };
+    const output = new OutputPass();
+    composer.addPass(render); composer.addPass(gtao); composer.addPass(bloom); composer.addPass(output);
+    return { composer, bloom, gtao, output, geometry, insetCamera: new PerspectiveCamera(60, 1, .08, 1000), fog: new Fog("#060b10", armiLook.fogNear, armiLook.fogFar), introFog: new Fog("#060b10", armiLook.fogNear, armiLook.fogFar), weddingFog: new Fog("#e6e0d6", 12, 28), labFog: new Fog("#eceae6", 16, 40), background: new Color("#060b10"), bloomWarm: false };
   }, [gl, scene, camera]);
   useEffect(() => {
     pipeline.composer.setPixelRatio(compact ? 1 : Math.min(gl.getPixelRatio(), 1.5));
     pipeline.composer.setSize(size.width, size.height);
   }, [pipeline, size.width, size.height, compact, gl]);
   useEffect(() => () => { pipeline.composer.passes.forEach(pass => pass.dispose()); pipeline.composer.dispose(); }, [pipeline]);
+  // Shaders compile off the main thread before their first draw (see shaderGate): scrolling into a district never freezes.
+  const gate = useMemo(createShaderGate, [scene]);
+  const passesReady = useRef(false);
+  useEffect(() => {
+    passesReady.current = false; let alive = true;
+    const { composer, bloom, gtao, output } = pipeline;
+    Promise.all([precompilePasses(gl, camera, [bloom, gtao], composer.renderTarget1), precompilePasses(gl, camera, [output], null), warmPMREM(gl, 256)])
+      .then(() => { if (alive) { passesReady.current = true; invalidate(); } });
+    return () => { alive = false; };
+  }, [pipeline, gl, camera, invalidate]);
+  const drawable = () => passesReady.current && gate.ready(gl, scene, camera, invalidate, pipeline.composer.renderTarget1);
   // Exactly one final render owner. Camera samples have already been applied at -1.
   useFrame((_, delta) => {
+    // The runtime names the next district before React has swapped the scenes: drawing that frame
+    // re-keyed the outgoing district's materials for the new look (ARMI without fog: 234 programs,
+    // ~2.6s of driver compile on the hand-off to Hangarae). Hold the last frame until both agree.
+    if ((runtime.state.current.districtId ?? "armi") !== mounted) return;
+    // A fresh district gets two frames before the gate compiles it: <Environment> bakes on its first
+    // frame, so the gate compiles once, environment included, and the bake's own small programs are
+    // not queued behind hundreds of district programs on the driver (a ~1.4s stall into the atelier).
+    if (settle.current.id !== mounted) settle.current = { id: mounted, frames: 0 };
+    if (settle.current.frames++ < 2) return;
     if(runtime.state.current.districtId === "experimental-wing") {
       // Bright white-cube gallery: neutral tone mapping keeps the walls white, AO grounds the plinths,
       // a little bloom only on the beam, the lock light and the laylight (values above 1).
       gl.info.autoReset=false;gl.info.reset();gl.toneMapping=NeutralToneMapping;gl.toneMappingExposure=1;
       if(scene.background instanceof Color)scene.background.set("#eceae6"); else scene.background=new Color("#eceae6");
       scene.fog=pipeline.labFog;camera.layers.set(0);
+      if(!drawable())return;
       const {strength,threshold,radius}=pipeline.bloom;
       pipeline.bloom.enabled=!compact;pipeline.bloom.strength=.12;pipeline.bloom.threshold=.95;pipeline.bloom.radius=.45;
       pipeline.gtao.enabled=!compact&&renderTier()!=="low";
@@ -71,6 +96,7 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
       gl.info.autoReset=false;gl.info.reset();gl.toneMapping=NeutralToneMapping;gl.toneMappingExposure=.96;
       if(scene.background instanceof Color)scene.background.set("#e6e0d6"); else scene.background=new Color("#e6e0d6");
       scene.fog=pipeline.weddingFog;camera.layers.set(0);
+      if(!drawable())return;
       const {strength,threshold,radius}=pipeline.bloom;
       pipeline.bloom.enabled=!compact;pipeline.bloom.strength=.08;pipeline.bloom.threshold=.92;pipeline.bloom.radius=.5;
       // AO is the most expensive pass; low-tier devices keep the look without it.
@@ -86,6 +112,7 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
       if(scene.background instanceof Color)scene.background.set("#040a16");
       else scene.background=new Color("#040a16");
       scene.fog=null;camera.layers.set(0);
+      if(!drawable())return;
       // Neon glow: HDR bloom over values >1 only, so the camera photo stays clean.
       const {strength,threshold,radius}=pipeline.bloom;
       pipeline.bloom.enabled=true; pipeline.bloom.strength=compact?.2:.24;pipeline.bloom.threshold=1;pipeline.bloom.radius=.38;
@@ -106,6 +133,13 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
       pipeline.bloom.threshold = armiLook.bloomThreshold;
       pipeline.bloom.radius = armiLook.bloomRadius;
       camera.layers.set(0);
+      // The chamber's reflections (RoomEnvironment PMREM) arrive just after the GLB: compiling before
+      // them re-keyed all 234 ARMI materials a second time (~3s more before the first frame).
+      if (!scene.environment) return;
+      if (!drawable()) return;
+      // Once, behind the closed aperture: draw the bloom chain ARMI skips, so its first real use
+      // (Hangarae) does not pay the driver's first-draw shader build mid-scroll.
+      if (!pipeline.bloomWarm) { pipeline.bloomWarm = true; pipeline.bloom.enabled = true; pipeline.composer.render(); pipeline.bloom.enabled = armiLook.bloomStrength >= .05; }
       if (!runtime.armiReview.current && isArmiOptionsVisible(runtime.progress.current)) {
         const blend = routingCue(runtime.progress.current).blend;
         if (blend < 1) pipeline.composer.render();
@@ -138,7 +172,8 @@ export function WorldRenderPipeline({ runtime, compact }: { runtime: WorldRuntim
       }
     } else {
       gl.toneMapping = ACESFilmicToneMapping; gl.toneMappingExposure = 1;
-      scene.fog = new Fog("#060b10", intent.fogNear, intent.fogFar);
+      scene.fog = pipeline.introFog; pipeline.introFog.near = intent.fogNear; pipeline.introFog.far = intent.fogFar;
+      if (!drawable()) return;
       if (intent.direct) gl.render(scene, camera);
       else { pipeline.bloom.enabled = true; pipeline.bloom.strength = intent.bloomStrength; pipeline.composer.render(); }
     }
