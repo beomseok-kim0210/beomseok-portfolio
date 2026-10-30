@@ -48,10 +48,12 @@ export function WorldRenderPipeline({ runtime, compact, mounted }: { runtime: Wo
     composer.addPass(render); composer.addPass(gtao); composer.addPass(bloom); composer.addPass(output);
     return { composer, bloom, gtao, output, geometry, insetCamera: new PerspectiveCamera(60, 1, .08, 1000), fog: new Fog("#060b10", armiLook.fogNear, armiLook.fogFar), introFog: new Fog("#060b10", armiLook.fogNear, armiLook.fogFar), weddingFog: new Fog("#e6e0d6", 12, 28), labFog: new Fog("#eceae6", 16, 40), background: new Color("#060b10"), bloomWarm: false };
   }, [gl, scene, camera]);
+  // Follows the canvas ratio, which the pixel budget (pixelBudget.ts) may set below 1 on large screens.
+  const dpr = useThree(state => state.viewport.dpr);
   useEffect(() => {
-    pipeline.composer.setPixelRatio(compact ? 1 : Math.min(gl.getPixelRatio(), 1.5));
+    pipeline.composer.setPixelRatio(compact ? Math.min(1, dpr) : Math.min(dpr, 1.5));
     pipeline.composer.setSize(size.width, size.height);
-  }, [pipeline, size.width, size.height, compact, gl]);
+  }, [pipeline, size.width, size.height, compact, dpr]);
   useEffect(() => () => { pipeline.composer.passes.forEach(pass => pass.dispose()); pipeline.composer.dispose(); }, [pipeline]);
   // Shaders compile off the main thread before their first draw (see shaderGate): scrolling into a district never freezes.
   const gate = useMemo(createShaderGate, [scene]);

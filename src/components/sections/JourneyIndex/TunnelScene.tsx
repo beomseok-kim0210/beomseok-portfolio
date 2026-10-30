@@ -16,15 +16,16 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { renderTier } from "@/features/world/runtime/renderTier";
 import { tuneRenderer } from "@/features/world/runtime/shaderGate";
 import { WarmCanvas } from "@/features/world/runtime/WarmCanvas";
+import { useBudgetDpr } from "@/features/world/runtime/pixelBudget";
 
 const DEPTH = 70; // tube length in front of the camera
 const rand = (i: number) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
 
 /** Mounted ahead of the dive (hidden, `active` false) so the dive itself only draws. */
 export default function TunnelScene({ accent, level, screens, active = true }: { accent: string; level: MutableRefObject<number>; screens: string[]; active?: boolean }) {
-  const [warm, setWarm] = useState(false), onWarm = useCallback(() => setWarm(true), []);
+  const [warm, setWarm] = useState(false), onWarm = useCallback(() => setWarm(true), []), dpr = useBudgetDpr(1.25);
   return (
-    <Canvas camera={{ position: [0, 0, 0], fov: 72, near: .1, far: 120 }} dpr={[1, 1.25]} frameloop={active && warm ? "always" : "never"}
+    <Canvas camera={{ position: [0, 0, 0], fov: 72, near: .1, far: 120 }} dpr={dpr} frameloop={active && warm ? "always" : "never"}
       gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }} onCreated={({ gl }) => { tuneRenderer(gl); gl.setClearColor("#000000", 1); }}>
       <fog attach="fog" args={["#000000", 18, DEPTH]} />
       <Flight accent={accent} level={level} screens={screens} onWarm={onWarm} />

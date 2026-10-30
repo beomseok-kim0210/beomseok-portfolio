@@ -3,6 +3,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import type { Group } from "three";
 import { afterHomeSettles } from "@/lib/afterHomeSettles";
 import { PredrawStandby } from "./WarmCanvas";
+import { useBudgetDpr } from "./pixelBudget";
 import { prewarmDressGeometries } from "../adapters/weddingDress";
 import { wdModels } from "../adapters/weddingAtelier";
 import { concreteTexture } from "../adapters/labGallery";
@@ -62,7 +63,8 @@ function District({ runtime, video, districtId }: { runtime: WorldRuntime; video
 export default function WorldCanvas({ runtime, video, compact, active, onFailure, districtId="armi" }: {
   runtime: WorldRuntime; video: HTMLVideoElement | null; compact: boolean; active: boolean; onFailure: () => void; districtId?:string;
 }) {
-  return <Canvas camera={{ position: [0, .6, 12], fov: 43, near: .03, far: 180 }} dpr={compact ? 1 : [1, 1.5]}
+  const dpr = useBudgetDpr(1.5);
+  return <Canvas camera={{ position: [0, .6, 12], fov: 43, near: .03, far: 180 }} dpr={compact ? Math.min(1, dpr) : dpr}
     frameloop={active ? "always" : "demand"} gl={{ antialias: true, alpha: false, powerPreference: "high-performance", preserveDrawingBuffer: !!runtime.armiReview.current }}
     fallback={<span>3D 표시를 사용할 수 없습니다.</span>}>
     <FrameSync runtime={runtime} onFailure={onFailure}/>
