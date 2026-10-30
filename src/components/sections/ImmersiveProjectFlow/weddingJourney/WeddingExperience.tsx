@@ -99,7 +99,9 @@ export function WeddingExperience() {
         return [
           { y: weddingHoldStopY(wdTimelineToScroll(WD_HOLD * .5)) ?? at(WD_HOLD * .5), duration: 1.8, label: "hold" },
           ...wdSceneRanges.map(([a, b], i) => ({ y: at(wdOuter(a + (b - a) * SETTLED[i])), duration: i === 0 ? 10.4 : i === 1 ? 9 : 3, label: wdScenes[i].id })),
-          ...(brief ? [{ y: brief.getBoundingClientRect().top + window.scrollY - 72, duration: 4.2, label: "brief" }] : []),
+          // From the track's bottom, not the brief's own box: the gallery makes the brief sticky, and its box
+          // then follows the scroll — this stop crept along just ahead of the visitor and swallowed every wheel.
+          ...(brief ? [{ y: (brief.previousElementSibling ?? brief).getBoundingClientRect()[brief.previousElementSibling ? "bottom" : "top"] + window.scrollY - 72, duration: 4.2, label: "brief" }] : []),
         ];
       },
     });
