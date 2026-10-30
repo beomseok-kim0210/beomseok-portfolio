@@ -47,9 +47,9 @@ export function applyCircleAperture(view: HTMLElement, open: number, cx: number,
 type LenisLike = { scrollTo: (target: number, options?: { duration?: number; immediate?: boolean; force?: boolean; lock?: boolean; easing?: (t: number) => number }) => void };
 declare global { interface Window { __lenis?: LenisLike } }
 /** `lock` holds user input until the glide lands (authored transitions play as one move). */
-export function scrollToY(y: number, options: { duration?: number; immediate?: boolean; lock?: boolean } = {}) {
+export function scrollToY(y: number, options: { duration?: number; immediate?: boolean; lock?: boolean; easing?: (t: number) => number } = {}) {
   const lenis = window.__lenis;
-  if (lenis) lenis.scrollTo(y, { force: true, ...options, ...(options.immediate ? {} : { easing: (t: number) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 }) });
+  if (lenis) lenis.scrollTo(y, { force: true, ...options, ...(options.immediate ? {} : { easing: options.easing ?? ((t: number) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2) }) });
   else window.scrollTo({ top: y, behavior: options.immediate ? "instant" : "smooth" });
 }
 

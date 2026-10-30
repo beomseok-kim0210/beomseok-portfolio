@@ -47,11 +47,28 @@ function active(y = window.scrollY) {
   for (const stops of regions()) if (y >= stops[0].y - EDGE && y <= stops[stops.length - 1].y + EDGE) return stops;
   return null;
 }
+/* Scroll samples while a glide runs, so a retarget can carry the current speed on. */
+const samples: [number, number][] = [];
+let sampling = 0;
+const sample = () => { samples.push([performance.now(), window.scrollY]); if (samples.length > 6) samples.shift(); sampling = ownScroll ? requestAnimationFrame(sample) : 0; };
+/** Easing that leaves at normalised slope `s0` and lands at rest (cubic Hermite, no overshoot for s0 ≤ 3). */
+const carry = (s0: number) => (t: number) => s0 * (t * t * t - 2 * t * t + t) + (3 * t * t - 2 * t * t * t);
 function go(stop: Stop, fallback: number) {
   const duration = stop.duration ?? fallback, id = ++glide;
+  // A gesture during a glide (a mouse wheel sends one per notch) used to restart from rest: the ease-in
+  // dropped the speed to zero on every notch, and the camera moves (zoom into a work) visibly stuttered.
+  // Retargets now leave at the glide's current speed.
+  let easing: ((t: number) => number) | undefined;
+  const recent = samples.filter(([t]) => performance.now() - t < 120);
+  if (busy() && recent.length >= 2) {
+    const [t0, y0] = recent[0], [t1, y1] = recent[recent.length - 1], dist = stop.y - window.scrollY;
+    const v = (y1 - y0) / Math.max(1, t1 - t0); // px/ms
+    if (Math.abs(dist) > 1 && Math.sign(v) === Math.sign(dist)) easing = carry(Math.min(3, Math.abs(v) * duration * 1000 / Math.abs(dist)));
+  }
   busyUntil = performance.now() + duration * 1000 + 80;
   ownScroll = true; target = stop;
-  scrollToY(stop.y, { duration, lock: true });
+  scrollToY(stop.y, { duration, lock: true, easing });
+  if (!sampling) sampling = requestAnimationFrame(sample);
   window.setTimeout(() => {
     if (id !== glide) return; // retargeted by a newer gesture
     // A layout refresh during the glide (pinned briefs, ScrollTrigger) can stop it short: finish the landing.
