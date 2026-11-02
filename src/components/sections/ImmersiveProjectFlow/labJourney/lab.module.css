@@ -1,10 +1,12 @@
 /* 04 Personal Gallery — white cube. Ink is near-black; each work carries one quiet accent (label kicker only). */
-.track{--paper:#eceae6;--ink:#17181b;--muted:#5d5c58;
+.track{--exit-through:0;--outside:0;--paper:#eceae6;--ink:#17181b;--muted:#5d5c58;
   --world-ink:var(--ink);--world-muted:var(--muted);--accent:#17181b;--world-display:var(--font-display),Pretendard,sans-serif;--world-label:12px/1.5 ui-monospace,monospace;
-  position:relative;z-index:1;overflow-x:clip;height:calc(1150svh + 100svh);color:var(--ink)}
+  position:relative;z-index:1;overflow-x:clip;height:calc(1370svh + 100svh);color:var(--ink)}
+/* #contact: the final screen of the track (the night plaza outside the gallery). */
+.contactAnchor{position:absolute;left:0;bottom:0;width:1px;height:calc(100svh - 72px);pointer-events:none}
 /* Desktop: overlap the wedding brief so the gallery doors open over it (it stays pinned and readable). */
 @media (min-width:901px) and (prefers-reduced-motion:no-preference){.track{margin-top:calc(-100svh + 72px)}}
-.viewport{position:sticky;top:72px;height:calc(100svh - 72px);min-height:560px;overflow-x:visible;overflow-y:clip;isolation:isolate;background:var(--paper);border-right:var(--docent-overlay,0px) solid transparent;box-shadow:0 -24px 0 0 var(--paper);clip-path:inset(50% 50% 50% 50%)}
+.viewport{position:sticky;top:72px;height:calc(100svh - 72px);min-height:560px;overflow-x:visible;overflow-y:clip;isolation:isolate;background:var(--paper);border-right:var(--docent-overlay,0px) solid transparent;box-shadow:0 -24px 0 0 color-mix(in srgb,#05080f calc(var(--outside) * 100%),var(--paper));clip-path:inset(50% 50% 50% 50%)}
 @media not ((min-width:901px) and (prefers-reduced-motion:no-preference)){.viewport{clip-path:none}}
 .canvas{position:absolute;inset:0;right:calc(var(--docent-overlay,0px) * -1);z-index:0}
 /* A soft lens falloff + a paper wash behind the header keep the render photographic and the copy legible. */
@@ -95,3 +97,6 @@
 .viewport[data-compact=true] .intro div{left:-150px;top:70px;max-width:300px}
 .viewport[data-compact=true] .intro i::after{display:none}
 .viewport[data-compact=true] .rail span{display:none}
+/* On the way out the visit rail has done its job. */
+.rail{transition:opacity .4s ease}
+.viewport[data-leaving=true] .rail{opacity:0}

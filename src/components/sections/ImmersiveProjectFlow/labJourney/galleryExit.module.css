@@ -1,0 +1,47 @@
+/* The way out of the gallery and the night plaza outside it (contact). Vars come from LabExperience. */
+/* Reaches under the docked docent like the world canvas. */
+.exit{position:absolute;inset:0;right:calc(var(--docent-overlay,0px) * -1);z-index:30;pointer-events:none}
+:global([data-exit=off]) > .exit{display:none}
+
+/* 2 · Walking into the light. */
+.flash{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,#ffffff,#eef5ff 60%,#dde9f8);opacity:calc(var(--exit-through) * var(--exit-through) * (1 - var(--outside)))}
+
+/* 3 · Outside: the night plaza of the opening scene. The page ends here. */
+.outside{position:absolute;inset:0;container-type:size;overflow:hidden;background:#05080f;color:#eef2f5;opacity:var(--outside)}
+.outside[inert]{pointer-events:none}
+.outside:not([inert]){pointer-events:auto}
+/* The plate covers the stage at 16:9 so its own coordinates hold (doorway at 63–69% across). */
+.plate{position:absolute;left:50%;top:50%;width:max(100cqw,177.78cqh);aspect-ratio:16/9;translate:-50% -50%;scale:calc(1.07 - var(--outside) * .07)}
+.plate img{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* The figure who walked in at the start is gone: the doorway stands empty, the visitor came back out. */
+.empty{position:absolute;left:63.7%;width:4.9%;top:61%;height:12.6%;background:linear-gradient(rgba(214,232,252,0),#e2efff 30%,#f1f8ff 80%,#e8f2ff);filter:blur(2.5px)}
+.empty::after{content:"";position:absolute;left:24%;width:52%;top:100%;height:68%;background:linear-gradient(rgba(176,206,240,.85),rgba(120,160,210,.25) 60%,transparent);filter:blur(4px)}
+.glow{position:absolute;left:60%;width:12%;top:16%;height:62%;background:radial-gradient(ellipse 50% 50% at 50% 60%,rgba(170,210,255,.28),transparent 70%);animation:breathe 5s ease-in-out infinite alternate;mix-blend-mode:screen}
+@keyframes breathe{from{opacity:.5}to{opacity:1}}
+.scrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(3,6,12,.82),rgba(3,6,12,.55) 34%,rgba(3,6,12,0) 58%),linear-gradient(0deg,rgba(3,6,12,.6),transparent 30%)}
+
+.copy{position:absolute;left:7cqw;top:50%;width:min(560px,48cqw);translate:0 calc(-50% + (1 - var(--outside)) * 18px)}
+.kicker{margin:0 0 22px;font:600 11.5px/1 ui-monospace,monospace;letter-spacing:.26em;color:#e8c48a}
+.copy h2{margin:0;font:500 clamp(32px,4.6cqh,56px)/1.24 Pretendard,var(--font-display),sans-serif;letter-spacing:-.035em;color:#f2f5f8;word-break:keep-all}
+.lede{margin:22px 0 0;font:500 clamp(14.5px,1.9cqh,17px)/1.8 Pretendard,sans-serif;color:#b7c2ce;word-break:keep-all}
+/* Contact: three lines like the plaza's light paths — a warm hairline that lights on hover. */
+.links{list-style:none;margin:clamp(22px,4cqh,40px) 0 0;padding:0;display:grid;gap:2px;max-width:520px}
+.links a{display:grid;grid-template-columns:20px 74px 1fr auto;align-items:center;gap:12px;padding:14px 4px;border-bottom:1px solid rgba(232,196,138,.22);color:#dfe6ee;text-decoration:none;transition:border-color .25s ease,color .25s ease,background .25s ease}
+.links svg{width:18px;height:18px;color:#8fa0b2;transition:color .25s ease}
+.links b{font:600 15px/1 Pretendard,sans-serif}
+.links span{font:500 14.5px/1.3 Pretendard,sans-serif;color:#97a6b6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.links i{font-style:normal;color:#e8c48a;opacity:.6;transition:transform .25s ease,opacity .25s ease}
+.links a:hover,.links a:focus-visible{border-color:#e8c48a;color:#fff;background:linear-gradient(90deg,rgba(232,196,138,.08),transparent);outline:none}
+.links a:hover svg,.links a:focus-visible svg{color:#e8c48a}
+.links a:hover i,.links a:focus-visible i{opacity:1;transform:translateX(4px)}
+.again{display:inline-block;margin-top:clamp(18px,3cqh,30px);font:500 13.5px/1 Pretendard,sans-serif;color:#8fa0b2;text-decoration:none;letter-spacing:.02em}
+.again:hover,.again:focus-visible{color:#e8c48a}
+.colophon{position:absolute;left:7cqw;bottom:3.4%;margin:0;font:500 12px/1.4 ui-monospace,monospace;letter-spacing:.08em;color:rgba(183,194,206,.6)}
+
+@container (max-width:760px){
+  .plate{translate:-66% -50%}
+  .copy{left:6%;right:6%;width:auto;top:auto;bottom:9%;translate:0 calc((1 - var(--outside)) * 18px)}
+  .scrim{background:linear-gradient(0deg,rgba(3,6,12,.92),rgba(3,6,12,.7) 55%,rgba(3,6,12,.1) 85%)}
+  .links a{grid-template-columns:20px 64px 1fr auto;padding:12px 2px}
+  .colophon{display:none}
+}

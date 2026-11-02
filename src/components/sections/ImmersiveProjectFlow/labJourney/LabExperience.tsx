@@ -5,7 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useWorldHost } from "@/features/world/runtime/WorldHost";
 import { worldPositionForDomProgress } from "@/features/world/director/worldRuntime";
 import type { WorldRenderMode } from "@/features/world/types/contracts";
-import { LAB_HEAD_URL, LAB_HOLD, labOuter, labScenes, labStations, labStopInner, sampleLab } from "@/features/world/adapters/labRoom";
+import { LAB_EXIT_STOP, LAB_HEAD_URL, LAB_HOLD, labOuter, labScenes, labStations, labStopInner, sampleLab } from "@/features/world/adapters/labRoom";
 import { registerSteppedRange } from "@/features/world/runtime/sceneStepper";
 import { onDocentOverlayChange } from "@/features/docent/docentOverlay";
 import { OPEN_GLOBAL_DOCENT_EVENT } from "@/features/docent/globalDocentEvents";
@@ -13,6 +13,7 @@ import { observeScrollLayout } from "../observeScrollLayout";
 import { SceneChrome, SceneFooter } from "../SceneHud";
 import styles from "./lab.module.css";
 import { hasWebGL2 } from "@/lib/webglSupport";
+import { GalleryExit } from "./GalleryExit";
 
 /**
  * 04 Personal Gallery. The hall, the three works and the stepping live in the world canvas; this layer
@@ -24,7 +25,7 @@ const railAt = (id: string) => { const first = labScenes.findIndex(sc => sc.stat
 export function LabExperience() {
   const section = useRef<HTMLElement>(null), viewport = useRef<HTMLDivElement>(null), surface = useRef<HTMLDivElement>(null);
   const { runtime, setSurface } = useWorldHost();
-  const [mode, setMode] = useState<WorldRenderMode>("static"), [active, setActive] = useState(false), [index, setIndex] = useState(0);
+  const [mode, setMode] = useState<WorldRenderMode>("static"), [active, setActive] = useState(false), [index, setIndex] = useState(0), [leaving, setLeaving] = useState(false), [outdoor, setOutdoor] = useState(false);
   const fail = useCallback(() => setMode("fallback"), []);
   useEffect(() => {
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -36,12 +37,13 @@ export function LabExperience() {
     if (section.current) near.observe(section.current);
     return () => { io.disconnect(); near.disconnect(); motion.removeEventListener("change", sync); };
   }, []);
-  useEffect(() => { if (surface.current) setSurface({ element: surface.current, video: null, active, mode, onFailure: fail }, "experimental-wing"); return () => setSurface(null, "experimental-wing"); }, [setSurface, mode, active, fail]);
+  // Outside (the night plaza covers the stage) the hall stops drawing: demand frames, same renderer.
+  useEffect(() => { if (surface.current) setSurface({ element: surface.current, video: null, active: active && !outdoor, mode, onFailure: fail }, "experimental-wing"); return () => setSurface(null, "experimental-wing"); }, [setSurface, mode, active, outdoor, fail]);
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     const node = section.current, view = viewport.current; if (!node || !view) return;
     runtime.labViewport.current = view;
-    let previous = -1, last = 0;
+    let previous = -1, last = 0, leavingNow = false, outdoorNow = false;
     const brief = document.getElementById("wedding-brief");
     /* Doors open on their own clock, not the scroll's: the entry gesture only asks them to open, and they
        take ~3s to swing — but never before the gallery is ready (assets + compiled shaders). If the visitor
@@ -87,6 +89,13 @@ export function LabExperience() {
         brief.style.filter = dim > .001 ? `brightness(${(1 - .55 * dim).toFixed(3)})` : "";
         brief.style.transform = dim > .001 ? `scale(${(1 - .03 * dim).toFixed(4)})` : "";
       }
+      // The way out: the turn and the doors are 3D; the white-out and the night plaza outside are GalleryExit.
+      view.style.setProperty("--exit-through", s.exitThrough.toFixed(4)); view.style.setProperty("--outside", s.outside.toFixed(4));
+      view.dataset.exit = s.exitThrough > 0 ? (s.outside > .9 ? "out" : "on") : "off";
+      const nextLeaving = s.exitTurn > .45; if (nextLeaving !== leavingNow) { leavingNow = nextLeaving; setLeaving(nextLeaving); }
+      const nextOutdoor = s.outside > .995; if (nextOutdoor !== outdoorNow) { outdoorNow = nextOutdoor; setOutdoor(nextOutdoor); }
+      node.dataset.headerTone = s.exitThrough > .5 ? "dark" : "light";
+      view.querySelector("[data-outside]")?.toggleAttribute("inert", s.outside < .9);
       if (previous !== s.index) { previous = s.index; setIndex(s.index); }
     };
     const trigger: ScrollTrigger = ScrollTrigger.create({ trigger: node, start: "top 72px", end: "bottom bottom", invalidateOnRefresh: true, onUpdate: self => apply(self.progress), onRefresh: self => apply(self.progress) });
@@ -106,6 +115,9 @@ export function LabExperience() {
       stops: () => [
         { y: trigger.start + (trigger.end - trigger.start) * LAB_HOLD * .5, duration: 1.6, label: "hold" },
         ...labScenes.map((sc, i) => ({ y: trigger.start + (trigger.end - trigger.start) * labOuter(labStopInner(i)), duration: i === 0 ? 4.2 : 1.8, label: sc.id })),
+        // The way out: turn round and walk to the exit doors, then through them to the plaza outside.
+        { y: trigger.start + (trigger.end - trigger.start) * LAB_EXIT_STOP, duration: 3.6, label: "exit" },
+        { y: trigger.end, duration: 4.2, label: "outside" },
       ],
     });
     return () => {
@@ -123,7 +135,7 @@ export function LabExperience() {
     <div className={styles.cueRail} aria-hidden="true"><div className={styles.cue} style={{ opacity: "var(--cue)" } as CSSProperties}>
       <span>NEXT</span><strong>04 · 개인 프로젝트</strong><em>계속 내리면 개인 프로젝트 갤러리로 넘어갑니다</em><i/>
     </div></div>
-    <div ref={viewport} className={styles.viewport} data-phase={scene.id} data-hud="lg">
+    <div ref={viewport} className={styles.viewport} data-phase={scene.id} data-hud="lg" data-leaving={leaving}>
       <div ref={surface} className={styles.canvas} aria-hidden="true"/>
       <div className={styles.veil} aria-hidden="true"/>
       {/* The gallery's double doors: frosted glass leaves in a black steel frame, set in the white wall. */}
@@ -135,8 +147,9 @@ export function LabExperience() {
       </div>
 
       <header className={styles.header}>
-        <b>{scene.no}</b>
-        <div><h3>{scene.title}</h3><p>{scene.ko}</p></div>
+        {leaving
+          ? <><b>04</b><div><h3>EXIT</h3><p>관람을 마치고 밖으로</p></div></>
+          : <><b>{scene.no}</b><div><h3>{scene.title}</h3><p>{scene.ko}</p></div></>}
       </header>
       <SceneChrome project="04 / PERSONAL WORKS" name="개인 작업 갤러리" count={labStations.length} current={stationNo} skipHref="#contact"/>
 
@@ -165,6 +178,9 @@ export function LabExperience() {
       <div className={styles.rail} aria-hidden="true"><i style={{ left: `calc(var(--rail) * 100%)` } as CSSProperties}/>{labStations.map(st => <span key={st.id} style={{ left: `${railAt(st.id) * 100}%`, "--c": st.accent } as CSSProperties} data-on={st.id === scene.station}>{st.en}</span>)}</div>
       <p className={styles.srOnly} aria-live="polite">{label ? `${scene.title} — ${label.title}. ${label.body}` : `${scene.title} — ${scene.ko}`}</p>
       <SceneFooter note="개인 작업 갤러리 · 수치는 각 프로젝트 기록 기준"/>
+      <GalleryExit/>
     </div>
+    {/* Contact is the last screen of the walk (outside the museum); anchors land on it. */}
+    <span id="contact" className={styles.contactAnchor} aria-hidden="true"/>
   </section>;
 }

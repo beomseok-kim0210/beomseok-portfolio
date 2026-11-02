@@ -17,6 +17,9 @@ export type LabStationId = typeof labStations[number]["id"];
 
 /** Where each exhibit's pieces stand (metres, floor y = 0, back wall at LAB_BACK_Z). */
 export const LAB_BACK_Z = -3.4;
+/** The hall's front wall (behind the visitor all visit long) and its exit doors, seen only on the way out. */
+export const LAB_FRONT_Z = 10.6;
+export const LAB_DOOR = { w: 1.9, h: 2.75 } as const;
 export const LAB_CEIL = 4.6;
 export const LAB_PARTITIONS = [-3.1, 3.1] as const;
 export const labWork = (cx: number) => ({ x: cx - .55, z: -.35 });
@@ -86,21 +89,27 @@ export type LabSceneId = typeof labScenes[number]["id"];
  * A chapter break, not a scroll-through (same grammar as the wedding entry):
  *  HOLD  [0, LAB_HOLD)          — the wedding brief stays pinned and readable; only a "next" cue shows.
  *  ENTRY [LAB_HOLD, LAB_ENTRY)  — the brief dims, the gallery's double doors appear and swing open.
- * Then equal spans per scene.
+ * Then equal spans per scene, and the way out (the page ends here — contact is outside the museum):
+ *  EXIT  [LAB_EXIT, LAB_EXIT_STOP] — one last look at the hall, then the exit wall: doors closed, EXIT sign.
+ *  OUT   (LAB_EXIT_STOP, 1]     — the doors swing open, the light whites out, and it clears onto the night
+ *                                 plaza of the opening scene: the door the visitor first walked into, now behind them.
+ * Fractions are of a 1370svh run (1150 for the hall as before + 220 for the way out).
  */
-export const LAB_HOLD = .03;
-export const LAB_ENTRY = .09;
-export const labInner = (p: number) => Math.max(0, Math.min(1, (p - LAB_ENTRY) / (1 - LAB_ENTRY)));
-export const labOuter = (q: number) => LAB_ENTRY + q * (1 - LAB_ENTRY);
+export const LAB_HOLD = .0252;
+export const LAB_ENTRY = .0755;
+export const LAB_EXIT = .8394;
+export const LAB_EXIT_STOP = .905;
+export const labInner = (p: number) => Math.max(0, Math.min(1, (p - LAB_ENTRY) / (LAB_EXIT - LAB_ENTRY)));
+export const labOuter = (q: number) => LAB_ENTRY + q * (LAB_EXIT - LAB_ENTRY);
 const N = labScenes.length;
 /** Inner progress where scene i holds (its camera has arrived). */
 export const labStopInner = (i: number) => (i + .6) / N;
 export const labSceneIndex = (q: number) => Math.max(0, Math.min(N - 1, Math.floor(q * N)));
-/** Shot seams: the door, then one equal span per scene. */
-export const labRanges = [0, LAB_ENTRY, ...labScenes.map((_, i) => labOuter((i + 1) / N))] as readonly number[];
+/** Shot seams: the door, one equal span per scene, then the way out. */
+export const labRanges = [0, LAB_ENTRY, ...labScenes.map((_, i) => labOuter((i + 1) / N)), 1] as readonly number[];
 export const labRuntimeProfile: DistrictShotProfile = {
   profileId: "experimental-wing/shots", districtId: "experimental-wing", publishState: "published",
-  shots: ["door", ...labScenes.map(s => s.id)].map((shotId, i) => ({ shotId, localStart: labRanges[i], localEnd: labRanges[i + 1],
+  shots: ["door", ...labScenes.map(s => s.id), "exit"].map((shotId, i) => ({ shotId, localStart: labRanges[i], localEnd: labRanges[i + 1],
     desktopCameraProfileId: "lab/desktop", mobileCameraProfileId: "lab/mobile", narrativeReferenceId: `lab/${shotId}`, requiredAssetIds: [], reducedMotion: "still" as const })),
 };
 const ramp = (p: number, a: number, b: number) => { const t = Math.max(0, Math.min(1, (p - a) / (b - a))); return t * t * (3 - 2 * t); };
@@ -133,6 +142,12 @@ export function sampleLab(p: number) {
     /** Crime Scene: the truth vault's lock light wakes in 01, then the evidence tags that pass the whitelist light up. */
     whitelist: ramp(through(q, "c1"), .45, .85),
     vaultGlow: ramp(through(q, "c1"), .1, .5),
+    /** The way out: the visitor turns round in the hall and walks to the exit doors in the front wall. */
+    exitTurn: ramp(p, LAB_EXIT, LAB_EXIT + (LAB_EXIT_STOP - LAB_EXIT) * .55),
+    /** The doors swing open; the visitor walks into the light (white-out); it clears onto the night plaza. */
+    exitOpen: ramp(p, LAB_EXIT_STOP + .004, LAB_EXIT_STOP + .035),
+    exitThrough: ramp(p, LAB_EXIT_STOP + .03, LAB_EXIT_STOP + .063),
+    outside: ramp(p, LAB_EXIT_STOP + .063, .998),
   };
 }
 export type LabSample = ReturnType<typeof sampleLab>;
@@ -180,6 +195,23 @@ export function sampleLabCamera(p: number, compact: boolean, out = { position: n
   }
   // Docent docked: the stage is narrower, so step back a little.
   if (!compact && docentOverlayPx() > 0 && sc.slot) out.position.z += .6;
+  // Leaving: step back from the last work, turn round to face the front wall, walk up to the exit doors
+  // (the stop), then on through them into the light. Heading/pitch turn; the walk is a separate path.
+  const pp = Math.max(0, Math.min(1, p));
+  if (pp > LAB_EXIT) {
+    const b = Math.min(1, (pp - LAB_EXIT) / (LAB_EXIT_STOP - LAB_EXIT));
+    const dx = out.target.x - out.position.x, dy = out.target.y - out.position.y, dz = out.target.z - out.position.z;
+    const yaw0 = Math.atan2(dx, -dz), pitch0 = Math.atan2(dy, Math.hypot(dx, dz));
+    const back = ramp(b, 0, .55), turn = ramp(b, .12, .8), walkIn = ramp(b, .45, 1);
+    const near = LAB_FRONT_Z - (compact ? 10 : 6.2), through = ramp(pp, LAB_EXIT_STOP + .012, LAB_EXIT_STOP + .062);
+    let x = out.position.x, y = out.position.y, z = out.position.z;
+    x += (1.6 - x) * back; y += (1.66 - y) * back; z += (5 - z) * back;
+    x += (0 - x) * walkIn; y += (1.6 - y) * walkIn; z += (near - z) * walkIn;
+    z += (LAB_FRONT_Z + .3 - near) * through * through;
+    const yaw = yaw0 + (Math.PI - yaw0) * turn, pitch = pitch0 + (.02 - pitch0) * turn;
+    out.position.set(x, y, z);
+    out.target.set(x + Math.sin(yaw) * Math.cos(pitch) * 3, y + Math.sin(pitch) * 3, z - Math.cos(yaw) * Math.cos(pitch) * 3);
+  }
   out.up.set(0, 1, 0); out.fov = LAB_FOV; out.far = 80;
   return out;
 }

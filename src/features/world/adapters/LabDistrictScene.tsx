@@ -10,7 +10,7 @@ import type { WorldRuntime } from "../director/worldRuntime";
 import { renderTier } from "../runtime/renderTier";
 import { compileOffThread, whenCompiled } from "../runtime/shaderGate";
 import { useSceneCompiled } from "../runtime/WarmCanvas";
-import { LAB_BACK_Z, LAB_CEIL, LAB_FRAME, LAB_HEAD_URL, LAB_PARTITIONS, labStations, labWork, sampleLab } from "./labRoom";
+import { LAB_BACK_Z, LAB_CEIL, LAB_DOOR, LAB_FRAME, LAB_FRONT_Z, LAB_HEAD_URL, LAB_PARTITIONS, labStations, labWork, sampleLab } from "./labRoom";
 import {
   G, FONT, MONO, acrylicWork, bcosPrint, brassPlateTexture, concreteTexture, crimePrint, disposeTree, docentPrint, etchTexture, fileTexture, framedPrint,
   marbleMaterial, photoTexture, plaqueTexture, plinth, socleGeometry, tagTexture, vinylTexture, vitrineWork,
@@ -28,6 +28,16 @@ function poolTexture() {
   const x = c.getContext("2d")!, g = x.createRadialGradient(128, 96, 8, 128, 150, 170);
   g.addColorStop(0, "rgba(255,246,228,.55)"); g.addColorStop(.45, "rgba(255,244,224,.22)"); g.addColorStop(1, "rgba(255,244,224,0)");
   x.fillStyle = g; x.fillRect(0, 0, 256, 320);
+  const t = new CanvasTexture(c); t.colorSpace = SRGBColorSpace; return t;
+}
+/** Illuminated green EXIT sign over the doors, bilingual. */
+function exitSignTexture() {
+  const c = document.createElement("canvas"); c.width = 512; c.height = 170;
+  const x = c.getContext("2d")!;
+  x.fillStyle = "#13814a"; x.fillRect(0, 0, 512, 170);
+  x.fillStyle = "#effff5"; x.fillRect(26, 40, 196, 90);
+  x.fillStyle = "#13814a"; x.font = `800 70px ${MONO}`; x.textAlign = "center"; x.fillText("EXIT", 124, 110);
+  x.fillStyle = "#effff5"; x.font = `600 74px ${FONT}`; x.fillText("출구", 368, 112);
   const t = new CanvasTexture(c); t.colorSpace = SRGBColorSpace; return t;
 }
 function glow(color: string) {
@@ -156,7 +166,47 @@ export function LabDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     crGroup.add(plinth(1.1, vitrine.H, .74, plinthMat), vitrine.group);
     const ledGlow = new Mesh(new PlaneGeometry(.12, .12), new MeshBasicMaterial({ map: glow("rgba(255,70,50,.9)"), transparent: true, depthWrite: false, blending: AdditiveBlending, toneMapped: false }));
     room.add(ledGlow);
-    return { room, shared, bays, bust, jaw: jaw as { mesh: Mesh; i: number } | null, acrylic, beamGlow, vitrine, ledGlow };
+
+    /* The way out: the front wall (single-sided, so the open front the hall is seen through stays open) with
+       black-framed glass double doors, an EXIT sign and the closing wall text; light waits beyond the doors.
+       Shown only on the way out. Materials reuse the hall's programs (standard / basic) so nothing compiles late. */
+    const exit = new Group(); exit.visible = false; room.add(exit);
+    const frontMat = new MeshStandardMaterial({ color: G.wall, roughness: .94, emissive: new Color("#e9e7e2"), emissiveIntensity: .32 });
+    const half = LAB_DOOR.w / 2, side = 11 - half;
+    for (const sx of [-1, 1]) { const w = new Mesh(new PlaneGeometry(side, LAB_CEIL), frontMat); w.position.set(sx * (half + side / 2), LAB_CEIL / 2, LAB_FRONT_Z); w.rotation.y = Math.PI; exit.add(w); }
+    const lintel = new Mesh(new PlaneGeometry(LAB_DOOR.w, LAB_CEIL - LAB_DOOR.h), frontMat); lintel.position.set(0, (LAB_CEIL + LAB_DOOR.h) / 2, LAB_FRONT_Z); lintel.rotation.y = Math.PI; exit.add(lintel);
+    for (const sx of [-1, 1]) { const jamb = new Mesh(new BoxGeometry(.09, LAB_DOOR.h + .09, .22), blackMat); jamb.position.set(sx * (half + .045), (LAB_DOOR.h + .09) / 2, LAB_FRONT_Z); exit.add(jamb); }
+    const lintelFrame = new Mesh(new BoxGeometry(LAB_DOOR.w + .18, .09, .22), blackMat); lintelFrame.position.set(0, LAB_DOOR.h + .045, LAB_FRONT_Z); exit.add(lintelFrame);
+    const glassMat = new MeshStandardMaterial({ color: "#dfe7ec", roughness: .18, emissive: new Color("#d4e4f4"), emissiveIntensity: .45 });
+    const brassMat = new MeshStandardMaterial({ color: "#c9a256", roughness: .3, metalness: .8 });
+    const leaves = [-1, 1].map(sx => {
+      const pivot = new Group(); pivot.position.set(sx * half, 0, LAB_FRONT_Z); exit.add(pivot);
+      const lw = half - .01, cx = -sx * lw / 2;
+      const glass = new Mesh(new BoxGeometry(lw - .1, LAB_DOOR.h - .12, .025), glassMat); glass.position.set(cx, LAB_DOOR.h / 2, 0); pivot.add(glass);
+      for (const [w, h, x, y] of [[lw, .06, cx, LAB_DOOR.h - .03], [lw, .06, cx, .03], [.06, LAB_DOOR.h, cx - lw / 2 + .03, LAB_DOOR.h / 2], [.06, LAB_DOOR.h, cx + lw / 2 - .03, LAB_DOOR.h / 2]] as const) {
+        const bar = new Mesh(new BoxGeometry(w, h, .05), blackMat); bar.position.set(x, y, 0); pivot.add(bar);
+      }
+      const handle = new Mesh(new BoxGeometry(.028, .62, .028), brassMat); handle.position.set(-sx * (lw - .14), 1.08, -.06); pivot.add(handle);
+      return { pivot, sx };
+    });
+    // Light beyond the doors: a lit field outside, and its glow spilling into the hall as they open.
+    const beyond = new Mesh(new PlaneGeometry(9, 6), new MeshBasicMaterial({ color: "#f4f9ff" })); beyond.position.set(0, 2.4, LAB_FRONT_Z + .9); beyond.rotation.y = Math.PI; exit.add(beyond);
+    const spill = new Mesh(new PlaneGeometry(5.2, 4.6), new MeshBasicMaterial({ map: glow("rgba(200,226,255,.95)"), transparent: true, depthWrite: false, blending: AdditiveBlending, toneMapped: false }));
+    spill.position.set(0, 1.5, LAB_FRONT_Z - .06); spill.rotation.y = Math.PI; exit.add(spill);
+    const sign = new Mesh(new PlaneGeometry(.6, .2), new MeshBasicMaterial({ map: exitSignTexture(), toneMapped: false })); sign.position.set(0, LAB_DOOR.h + .42, LAB_FRONT_Z - .015); sign.rotation.y = Math.PI; exit.add(sign);
+    const signGlow = new Mesh(new PlaneGeometry(1.1, .55), new MeshBasicMaterial({ map: glow("rgba(40,210,120,.55)"), transparent: true, depthWrite: false, blending: AdditiveBlending, toneMapped: false }));
+    signGlow.position.set(0, LAB_DOOR.h + .42, LAB_FRONT_Z - .02); signGlow.rotation.y = Math.PI; exit.add(signGlow);
+    // Closing wall text on the visitor's left of the doors (+x: they face the front wall now).
+    const farewell = new Mesh(new PlaneGeometry(1.6, .8), new MeshStandardMaterial({ map: vinylTexture([
+      { text: "THANK YOU", font: `300 120px ${FONT}`, y: 150, spacing: 20 },
+      { text: "FOR VISITING", font: `300 120px ${FONT}`, y: 290, spacing: 20 },
+      { text: "관람을 마칩니다", font: `500 56px ${FONT}`, y: 420, color: "#55545a" },
+      { text: "Digital Docent · BCOS · Crime Scene", font: `500 40px ${FONT}`, y: 500, color: "#8a8883" },
+    ], 1200, 600), transparent: true, roughness: .6 }));
+    farewell.position.set(2.4, 1.8, LAB_FRONT_Z - .005); farewell.rotation.y = Math.PI; exit.add(farewell);
+    const exitDoors = { group: exit, leaves, spill: spill.material as MeshBasicMaterial };
+
+    return { room, shared, bays, bust, jaw: jaw as { mesh: Mesh; i: number } | null, acrylic, beamGlow, vitrine, ledGlow, exitDoors };
   }, [head, low]);
   useEffect(() => () => disposeTree(kit.room, kit.shared), [kit]);
   // Ready = every material compiled (off the main thread where the driver allows) and two frames drawn.
@@ -180,13 +230,15 @@ export function LabDistrictScene({ runtime }: { runtime: WorldRuntime }) {
   const turn = useRef(-.15);
   useFrame(({ camera, clock }, delta) => {
     const s = sampleLab(runtime.labProgress.current), t = clock.elapsedTime, k = Math.min(1, delta * 4);
-    const focus = s.scene.station;
+    // On the way out the hall is seen whole again, so every bay is lit evenly.
+    const focus = s.exitTurn > .3 ? null : s.scene.station;
     /* Lighting: the bay being visited is brightest; the others settle, as in a real hang. */
     kit.bays.forEach(b => {
       const on = !focus || b.def.id === focus ? 1 : .55;
       // Only the visited bay re-renders its shadow map (its work moves); the others keep their last one.
       // (castShadow stays on everywhere so the light/shader setup never changes and nothing recompiles.)
-      b.key.shadow.autoUpdate = !focus || b.def.id === focus;
+      // On the way out nothing moves: every map keeps its last frame (instead of three shadow passes a frame).
+      b.key.shadow.autoUpdate = s.exitTurn > 0 ? false : !focus || b.def.id === focus;
       b.key.intensity += (b.base.key * on - b.key.intensity) * k;
       b.wash.opacity += (b.base.wash * (on * .5 + .5) - b.wash.opacity) * k;
     });
@@ -214,6 +266,11 @@ export function LabDistrictScene({ runtime }: { runtime: WorldRuntime }) {
     V.tags.forEach((tg, i) => { tg.mat.emissiveIntensity = tg.pass ? .9 * Math.min(1, Math.max(0, s.whitelist * 3 - i)) : 0; });
     V.led.getWorldPosition(v); kit.ledGlow.position.copy(v); kit.ledGlow.quaternion.copy(camera.quaternion);
     (kit.ledGlow.material as MeshBasicMaterial).opacity = .35 + .65 * s.vaultGlow;
+
+    /* The way out: the front wall shows once the visitor turns; the doors swing outward into the light. */
+    const X = kit.exitDoors; X.group.visible = s.exitTurn > 0;
+    X.leaves.forEach(l => { l.pivot.rotation.y = l.sx * 1.75 * s.exitOpen; });
+    X.spill.opacity = .25 + .75 * s.exitOpen;
 
     /* DOM anchors: the centre of each work (intro cards). */
     const root = runtime.labViewport.current;

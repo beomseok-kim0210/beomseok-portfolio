@@ -1,7 +1,7 @@
 import { Github, Mail, NotebookTabs } from "lucide-react";
 import { MotionBlock } from "@/components/ui/MotionBlock";
 
-const contactLinks = [
+export const contactLinks = [
   {
     label: "Email",
     handle: "yongt102028@gmail.com",
