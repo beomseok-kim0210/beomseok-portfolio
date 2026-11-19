@@ -1,0 +1,39 @@
+/* Journey page frame: a pinned title card the project's world opens over, and the "next" footer. */
+/* overflow-y:clip: the pinned card (margin-bottom:-100svh) must not hang over the debrief after the frame. */
+.frame { position:relative; --space:0px; overflow-y:clip; }
+.pin { position:relative; height:100svh; min-height:560px; display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(ellipse 70% 60% at 50% 46%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%), #05080f; color:#eef2f5; }
+.card { width:min(680px, calc(100% - 48px)); margin-right:var(--docent-overlay, 0px); text-align:center; display:flex; flex-direction:column; align-items:center; }
+.back { align-self:center; margin-bottom:28px; font:600 13px/1 Pretendard,sans-serif; color:#9aa6b2; text-decoration:none; }
+.back:hover { color:#fff; }
+.no { font:700 12px/1 ui-monospace,monospace; letter-spacing:.28em; color:var(--accent); }
+.name { margin-top:18px; font:800 clamp(52px, 9vw, 120px)/.95 var(--font-display, Pretendard), sans-serif; letter-spacing:-.04em; }
+.line { margin-top:18px; font:700 13px/1.3 ui-monospace,monospace; letter-spacing:.22em; color:#c9d1d9; }
+.lede { margin-top:22px; max-width:30em; font:500 17px/1.65 Pretendard,sans-serif; color:#aeb8c2; word-break:keep-all; }
+.cue { margin-top:44px; display:flex; flex-direction:column; align-items:center; gap:10px; font:500 14px/1.4 Pretendard,sans-serif; color:#d7dde3; }
+.cue span { font:700 11px/1 ui-monospace,monospace; letter-spacing:.26em; color:var(--accent); }
+.cue i { display:block; width:1px; height:26px; background:linear-gradient(var(--accent), transparent); animation:coverDrop 1.8s ease-in-out infinite; }
+@keyframes coverDrop { 0%,100% { transform:scaleY(.4); transform-origin:top; opacity:.4 } 50% { transform:scaleY(1); opacity:1 } }
+.detail { margin-top:26px; font:500 13px/1 Pretendard,sans-serif; color:#8f9aa6; text-decoration:underline; text-underline-offset:4px; }
+.detail:hover { color:#fff; }
+.space { height:var(--space); }
+/* Desktop journeys: the card pins and the world's track overlaps the space below it (its entry plays over
+   the card). Space = the track's own overlap, so its entry starts at the top of the page. */
+@media (min-width:901px) and (prefers-reduced-motion:no-preference) {
+  .pin { position:sticky; top:0; margin-bottom:-100svh; }
+  .frame[data-journey=armi] { --space:calc(100svh + var(--world-gate, 0px)); }
+  .frame[data-journey=hangarae] { --space:128svh; }
+  .frame[data-journey=wedding] { --space:100svh; }
+}
+
+.next { position:relative; z-index:2; background:#05080f; color:#eef2f5; padding:96px 24px 120px; padding-right:calc(24px + var(--docent-overlay, 0px)); display:flex; flex-direction:column; align-items:center; gap:28px; }
+.nextCard { width:min(720px, 100%); display:flex; flex-direction:column; gap:12px; padding:36px 40px; border-radius:20px; border:1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, transparent), rgba(255,255,255,.02)); color:inherit; text-decoration:none; transition:transform .25s ease, border-color .25s ease; }
+.nextCard:hover { transform:translateY(-3px); border-color:var(--accent); }
+.nextCard small { font:700 11px/1 ui-monospace,monospace; letter-spacing:.26em; color:var(--accent); }
+.nextCard strong { font:700 clamp(28px, 4vw, 40px)/1.15 Pretendard,sans-serif; letter-spacing:-.03em; }
+.nextCard span { font:500 16px/1.6 Pretendard,sans-serif; color:#aeb8c2; word-break:keep-all; }
+.nextCard em { margin-top:8px; font:600 15px/1 Pretendard,sans-serif; font-style:normal; color:var(--accent); }
+.nextLinks { display:flex; flex-wrap:wrap; justify-content:center; gap:12px 28px; font:500 14px/1 Pretendard,sans-serif; }
+.nextLinks a { color:#9aa6b2; text-decoration:none; }
+.nextLinks a:hover { color:#fff; }

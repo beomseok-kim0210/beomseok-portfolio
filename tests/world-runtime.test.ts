@@ -24,9 +24,13 @@ test("A: mounted Home runtime exposes ARMI and separates continuous/semantic not
   assert.equal(semantic, 1); assert.equal(frames, 3); assert.equal(runtime.progress.current, .52);
   stop(); runtime.publish(3.6, "fallback"); assert.equal(semantic, 1);
   assert.match(read(world + "runtime/WorldHost.tsx"), /createWorldRuntime/);
-  // Home mounts the journeys through its lazily hydrated worlds chunk (HomeWorlds → HomeWorldsContent).
+  // Home mounts the index + personal gallery, each project page its own journey, through the lazily
+  // hydrated worlds chunk (HomeWorlds → HomeWorldsContent).
   assert.match(read("src/app/page.tsx"), /<HomeWorlds \/>/);
-  assert.match(read("src/components/sections/HomeWorldsContent.tsx"), /<WorldHost><ImmersiveProjectFlow/);
+  assert.match(read("src/app/journeys/[id]/page.tsx"), /<HomeWorlds only=\{id\} \/>/);
+  const worlds = read("src/components/sections/HomeWorldsContent.tsx");
+  assert.match(worlds, /<WorldHost><ImmersiveProjectFlow only=\{only\} \/><\/WorldHost>/);
+  assert.match(worlds, /<WorldHost><ImmersiveProjectFlow only="lab" \/><\/WorldHost>/);
 });
 test("B/C: equal absolute positions restore deterministic identity forward, reverse and direct", () => {
   for (const p of checkpoints) {

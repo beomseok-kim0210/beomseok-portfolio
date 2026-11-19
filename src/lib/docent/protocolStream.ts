@@ -164,6 +164,46 @@ export function stripProtocolMarkers(text: string, options: { holdPartial?: bool
  * 태그 없이 보이는 글이 holdChars 를 넘거나, 스트림이 끝날 때 한 번 나간다. 그 전의 글은 붙잡았다가
  * 메타 뒤에 내보낸다 — 클라이언트는 메타를 받은 뒤 글을 그리므로 표정과 첫 문장이 어긋나지 않는다.
  */
+/**
+ * 한국어 문장이 끝난 뒤 스트림 끝에 붙는 뜻 없는 영문 한 단어("…시스템입니다. sermitsiaq")를 걸러 낸다.
+ * gpt-5.6-luna 가 가끔 내는 글리치 토큰이다(2026-11-19 운영에서 재현). 화면과 음성에 그대로 나가므로
+ * 한글 종결 뒤에 오는 영문 한 단어는 다음 글이 올 때까지 붙잡아 두고, 그대로 스트림이 끝나면 버린다.
+ * 영어 답변(한글 종결이 없음)과 "…입니다. ARMI는" 처럼 이어지는 글에는 영향이 없다.
+ */
+export class TrailingGlitchFilter {
+  private tail = "";
+  private readonly onText: (text: string) => void;
+  private lastChar = "";
+
+  constructor(onText: (text: string) => void) {
+    this.onText = onText;
+  }
+
+  push(text: string): void {
+    if (!text) return;
+    const combined = this.tail + text;
+    // 한글 + 문장부호 뒤, 공백과 라틴 문자만 남은 꼬리.
+    const match = /(?<=[가-힣][.!?。]["'”’)]?)(\s*[A-Za-z]*)$/.exec(this.lastChar + combined);
+    const tailLen = match ? match[1].length : 0;
+    const safe = tailLen > 0 ? combined.slice(0, combined.length - tailLen) : combined;
+    this.tail = tailLen > 0 ? combined.slice(combined.length - tailLen) : "";
+    if (safe) {
+      this.onText(safe);
+      this.lastChar = (this.lastChar + safe).slice(-3);
+    }
+  }
+
+  /** 스트림 끝. 붙잡아 둔 꼬리가 영문 한 단어뿐이면 버린다. 버렸으면 true. */
+  end(): boolean {
+    const tail = this.tail;
+    this.tail = "";
+    if (!tail) return false;
+    if (/^\s*[A-Za-z]{2,}\s*$/.test(tail)) return true;
+    this.onText(tail);
+    return false;
+  }
+}
+
 export class VisibleAnswerStream {
   private readonly parser = new ProtocolStreamParser();
   private held = "";
@@ -172,11 +212,18 @@ export class VisibleAnswerStream {
   private readonly onMeta: (emotion: DocentEmotion) => void;
   private readonly onText: (text: string) => void;
   private readonly holdChars: number;
+  private readonly glitch: TrailingGlitchFilter;
+  /** 스트림 끝의 글리치 토큰을 버렸는지 (로그용). */
+  droppedGlitch = false;
 
   constructor(onMeta: (emotion: DocentEmotion) => void, onText: (text: string) => void, holdChars = 64) {
     this.onMeta = onMeta;
     this.onText = onText;
     this.holdChars = holdChars;
+    this.glitch = new TrailingGlitchFilter((text) => {
+      this.visible += text;
+      this.onText(text);
+    });
   }
 
   get started(): boolean {
@@ -195,6 +242,7 @@ export class VisibleAnswerStream {
   end(): void {
     this.accept(this.parser.end());
     if (!this.metaSent) this.start("neutral");
+    this.droppedGlitch = this.glitch.end();
   }
 
   /** 모델이 아무 글도 내지 않았을 때 대신 채울 글. 메타 뒤에만 부른다. */
@@ -206,7 +254,7 @@ export class VisibleAnswerStream {
 
   private accept({ text, emotion }: ProtocolChunk): void {
     if (this.metaSent) {
-      this.emit(text);
+      this.glitch.push(text);
       return;
     }
     this.held += text;
@@ -219,6 +267,6 @@ export class VisibleAnswerStream {
     this.metaSent = true;
     const pending = this.held;
     this.held = "";
-    this.emit(pending);
+    this.glitch.push(pending);
   }
 }

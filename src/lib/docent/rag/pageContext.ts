@@ -15,7 +15,8 @@ const PAGE_TYPES = ["home", "about", "project", "playground", "knowledge", "skil
 /** 클라이언트 라우팅에서 PageContext 를 만든다. 서버 검증과 같은 규칙. */
 export function pageContextFromPathname(pathname: string, sectionId?: string | null): PageContext {
   const clean = normalizePathname(pathname);
-  const project = PROJECT_ENTITIES.find((p) => p.pathname === clean);
+  // A project's 3D journey page (/journeys/<id>) is that project's context, like its detail page.
+  const project = PROJECT_ENTITIES.find((p) => p.pathname === clean || clean === `/journeys/${p.id}`);
   if (project) {
     return withSection({ pathname: clean, pageType: "project", projectSlug: project.id, projectTitle: project.title }, sectionId);
   }

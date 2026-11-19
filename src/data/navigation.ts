@@ -1,7 +1,7 @@
 import type { NavItem } from "@/types/portfolio";
 
 export const navItems: NavItem[] = [
-  { label: "Projects", href: "/#armi" },
+  { label: "Projects", href: "/#journeys" },
   { label: "Personal", href: "/#lab" },
   { label: "Knowledge", href: "/knowledge" },
   { label: "Playground", href: "/playground" },

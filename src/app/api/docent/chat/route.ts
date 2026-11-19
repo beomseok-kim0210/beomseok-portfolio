@@ -253,7 +253,7 @@ function liveResponse(parsed: Parsed): Response {
         const t = timings(g, { ttfb: firstTokenAt === null ? null : firstTokenAt - llmStart, total: performance.now() - llmStart });
         send({ type: "stage", stage: "llm", status: "complete", elapsedMs: t.llmTotalMs ?? undefined });
         send({ type: "done", timings: t });
-        logChat(g, "live", { provider: provider.name, model: provider.model, visible_answer_chars: answer.text.length, llmTtfbMs: t.llmTtfbMs, llmTotalMs: t.llmTotalMs, chatTotalMs: t.chatTotalMs });
+        logChat(g, "live", { provider: provider.name, model: provider.model, visible_answer_chars: answer.text.length, dropped_glitch: answer.droppedGlitch, llmTtfbMs: t.llmTtfbMs, llmTotalMs: t.llmTotalMs, chatTotalMs: t.chatTotalMs });
       } catch (err) {
         if (!answer.started) {
           // 첫 글 전에 죽었다 — 아직 아무 말도 안 했으니 근거 발췌로 조용히 내려간다.

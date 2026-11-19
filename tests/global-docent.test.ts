@@ -109,9 +109,15 @@ test("navigation, hints, opening, and text-only chat contain no voice warm call"
   assert.equal((read("src/features/docent/voiceWarmClient.ts").match(/\/api\/docent\/voice\/warm/g) ?? []).length, 1);
 });
 
-test("avatar mounts in the initially expanded panel and is retained when minimized", () => {
+test("3D face mounts only in fullscreen — the default side panel / mobile sheet gives the chat all the room", () => {
+  // 2026-11-19 컨설팅 피드백: 기본 사이트의 DD 는 얼굴 없이 글을 읽을 공간을 최대한 확보한다.
   assert.match(globalShell, /const DocentExperience = dynamic\(/);
-  assert.match(globalShell, /<DocentExperience focusInputToken=\{focusInputToken\} layout=\{sidecar \? "sidecar" : "workspace"\} \/>/);
+  assert.match(globalShell, /layout=\{sidecar \? "sidecar" : "workspace"\}/);
+  assert.match(globalShell, /showAvatar=\{state === "fullscreen"\}/);
+  const experience = read("src/features/docent/DocentExperience.tsx");
+  const hiddenBranch = experience.slice(experience.indexOf("if (!showAvatar)"), experience.indexOf("return (", experience.indexOf("if (!showAvatar)") + 40));
+  assert.match(hiddenBranch, /data-docent-avatar="hidden"/);
+  assert.doesNotMatch(hiddenBranch, /<AvatarCanvas/);
   assert.match(runtime, /\.\.\.readDocentMountMetrics\(\)/);
   const metrics = read("src/features/docent/docentMetrics.ts");
   assert.match(metrics, /runtimeMountCount: runtimeIds\.size/);

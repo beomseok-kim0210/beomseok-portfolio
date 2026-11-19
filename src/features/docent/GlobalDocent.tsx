@@ -217,7 +217,12 @@ function GlobalDocentPresentation() {
           }`}
           data-lenis-prevent
         >
-          <DocentExperience focusInputToken={focusInputToken} layout={sidecar ? "sidecar" : "workspace"} />
+          <DocentExperience
+            focusInputToken={focusInputToken}
+            layout={sidecar ? "sidecar" : "workspace"}
+            /* 얼굴은 전체 화면에서만 — 기본 사이트에서는 대화 글이 패널 높이를 다 쓴다. */
+            showAvatar={state === "fullscreen"}
+          />
         </div>
       </section>
 

@@ -16,8 +16,11 @@ import { LabExperience } from "./labJourney/LabExperience";
 import { ArmiExperience } from "./armiJourney/ArmiExperience";
 import { observeScrollLayout } from "./observeScrollLayout";
 import { HangaraeExperience } from "./hangaraeJourney/HangaraeExperience";
+import { JourneyCover, JourneyNext } from "./JourneyFrame";
+import type { JourneyId } from "@/data/journeys";
 
-export function ImmersiveProjectFlow() {
+/** The pinned ARMI debrief (its scroll track); on a journey page it ends the page instead of handing over. */
+function ArmiBrief() {
   const section = useRef<HTMLElement>(null);
   const [scene, setScene] = useState(()=>briefTimeline(0));
   const {progress, briefActive, transition, heroActive} = scene;
@@ -38,23 +41,16 @@ export function ImmersiveProjectFlow() {
     const stopObserving = observeScrollLayout(section.current);
     return ()=>{ stopObserving(); media.revert(); };
   },[]);
-  // The brief stays pinned and readable; the Hangarae hero (next track, overlapping this one)
-  // wipes in over it, so ARMI hands over straight into the hero without an interstitial.
   const css = {"--stage-bg":"#060a0c","--stage-ink":"#eff1e3","--stage-muted":"#9eaaaa","--stage-accent":"#d2f059"} as CSSProperties;
+  return <section ref={section} className={styles.scrollTrack} data-header-tone="dark" data-armi-brief-track aria-label="ARMI 여정 정리">
+    <div className={styles.stickyStage} style={css} data-stage-progress={progress.toFixed(4)} data-stage-phase={heroActive?"SYSTEM":briefActive?"BRIEF":"HANDOFF"} data-transition-progress={transition.toFixed(4)}>
+      <div id="armi-brief" className={styles.armiBrief} data-active={briefActive || heroActive}><HomeProjectBrief project="armi" recap={armiScenes.map(s => s.title)}/></div>
+    </div>
+  </section>;
+}
 
-  return <div id="armi" className={styles.flow}>
-    <ArmiExperience/>
-    <section ref={section} className={styles.scrollTrack} data-header-tone="dark" data-armi-brief-track aria-label="ARMI에서 행가래로 이어지는 시각적 전환">
-      <div className={styles.stickyStage} style={css} data-stage-progress={progress.toFixed(4)} data-stage-phase={heroActive?"SYSTEM":briefActive?"BRIEF":"HANDOFF"} data-transition-progress={transition.toFixed(4)}>
-        <div id="armi-brief" className={styles.armiBrief} data-active={briefActive || heroActive}><HomeProjectBrief project="armi" recap={armiScenes.map(s => s.title)}/></div>
-        {/* Same chapter cue as the Hangarae brief: the next scroll opens the next world. */}
-        <div className={styles.nextCue} aria-hidden="true" style={{ opacity: briefActive ? 1 : 0 } as CSSProperties}>
-          <span>NEXT PROJECT</span><strong>02 · 행가래</strong><em>계속 내리면 다음 방으로 들어갑니다</em><i/>
-        </div>
-      </div>
-    </section>
-
-    <HangaraeExperience/>
+function HangaraeEvidence() {
+  return <>
     <section id="hangarae-evidence" className={styles.evidence}>
       <div className={styles.evidenceHeading}><p className={styles.eyebrow}>HANGARAE / BRIEF EVIDENCE</p><h2>좌표는 목적이 아니라,<br/>피드백으로 가는 과정.</h2></div>
       <ol className={styles.pipeline}>{[
@@ -69,8 +65,28 @@ export function ImmersiveProjectFlow() {
       <Link href="/projects/hangarae#trouble-01" className={styles.evidenceLink}>성과 근거: 데이터 구축과 재학습 과정 <span aria-hidden="true">↗</span></Link>
       <div className={styles.evidenceComplete}><JourneyComplete href="/projects/hangarae" cta="행가래 상세 기록 열기" sub="데이터 구축 · 재학습 · 트러블슈팅 · 기술 스택" recap={hangaraeRecap}/></div>
     </section>
-    <WeddingExperience/>
+  </>;
+}
+
+/**
+ * One project's journey per page (/journeys/<id>), or the personal gallery on Home ("lab").
+ * Each page opens on the project's title card (JourneyCover) and ends with the way on (JourneyNext).
+ */
+export function ImmersiveProjectFlow({ only }: { only: JourneyId | "lab" }) {
+  if (only === "lab") return <div className={styles.flow}><LabExperience/></div>;
+  if (only === "armi") return <div id="armi" className={styles.flow}>
+    <JourneyCover id="armi"><ArmiExperience/></JourneyCover>
+    <ArmiBrief/>
+    <JourneyNext id="armi"/>
+  </div>;
+  if (only === "hangarae") return <div className={styles.flow}>
+    <JourneyCover id="hangarae"><HangaraeExperience/></JourneyCover>
+    <HangaraeEvidence/>
+    <JourneyNext id="hangarae"/>
+  </div>;
+  return <div className={styles.flow}>
+    <JourneyCover id="wedding"><WeddingExperience cue={false}/></JourneyCover>
     <div id="wedding-brief" className={styles.weddingBrief}><HomeProjectBrief project="wedding"/></div>
-    <LabExperience/>
+    <JourneyNext id="wedding"/>
   </div>;
 }

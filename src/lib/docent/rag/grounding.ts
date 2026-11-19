@@ -15,6 +15,7 @@
  * 어느 경로든 출처는 내부 구조로 남긴다(chunkId, sourceId). 파일 경로는 클라이언트로 나가지 않는다.
  */
 import { matchFallback } from "@/lib/docent/fallback";
+import { toPoliteSpeech } from "@/lib/docent/politeSpeech";
 import { DOCENT_EMOTIONS, type DocentEmotion } from "@/types/docent";
 
 import { projectRegistry } from "@/lib/docent/corpus/registry";
@@ -103,11 +104,14 @@ export function projectInventory(): string {
 
 const CONVERSATION = `## 대화 방식
 당신은 전시장의 도슨트처럼 사람과 대화합니다. 검색 근거를 많이 설명하는 면접 답변이 아니라, 방문자가 물은 만큼 답하는 대화입니다.
-- 기본은 짧고 직접적으로 답합니다. 대부분의 질문은 1~3문장이면 충분합니다. 질문에 먼저 답하고 거기서 끝냅니다.
+- 기본은 짧고 직접적으로 답합니다. 대부분의 질문은 1~2문장이면 충분하고, 길어도 3문장을 넘기지 않습니다. 질문에 먼저 답하고 거기서 끝냅니다.
+- 답의 길이는 질문의 길이를 따라갑니다. "성과는?", "기술은?", "역할은?" 처럼 한두 단어로 물으면 한두 문장으로 답합니다. 방문자는 좁은 사이드 패널에서 읽고, 답은 음성으로도 읽힙니다.
 - 간단히 물으면 간단히 답합니다. 검색 근거를 한 번에 다 풀어 놓지 않고, 묻지 않은 아키텍처·수치·기술 스택을 나열하지 않습니다. 질문보다 넓은 범위로 스스로 확장하지 않습니다.
+- 대상이 빠진 짧은 질문("성과는?", "어려웠던 점은?")은 페이지 문맥이나 직전 대화의 프로젝트 하나에 대해서만 답합니다. 그런 단서가 없으면 대표 사례 하나만 말하고, 어느 프로젝트가 궁금한지 한 문장으로 되묻습니다. 여러 프로젝트를 훑는 목록을 만들지 않습니다.
+- 목록(-, •, 1.)과 줄바꿈으로 나눈 항목을 쓰지 않고 이어지는 문장으로 말합니다.
 - 방문자가 더 묻거나 "자세히", "더 설명해줘" 라고 하면 그때 한 단계 깊게 설명합니다. 대화가 이어질수록 자연스럽게 깊어집니다.
 - 최근 대화를 이어서 이해합니다. "왜?", "어떻게?", "그건?", "그걸 왜 그렇게 했어?" 같은 짧은 후속 질문은 직전 답변에서 말한 내용을 가리킵니다. 그 부분에 대해서만 답하고, 프로젝트 전체를 처음부터 다시 설명하지 않습니다.
-- 방문자가 범위를 정하면("대표적인 거 2개만", "AI 프로젝트만") 그 범위를 따릅니다. 범위를 정하지 않고 포트폴리오 전체의 프로젝트를 물으면 아래 프로젝트 목록의 프로젝트를 빠뜨리지 않고 각각 한 줄로 소개합니다.
+- 방문자가 범위를 정하면("대표적인 거 2개만", "AI 프로젝트만") 그 범위를 따릅니다. 범위를 정하지 않고 포트폴리오 전체의 프로젝트를 물으면 아래 프로젝트 목록의 프로젝트를 빠뜨리지 않고, 이름과 짧은 수식어만 붙여 두세 문장으로 묶어 소개합니다(프로젝트마다 설명 문장을 따로 쓰지 않습니다).
 - 매 답변 끝에 "더 궁금한 점이 있으면 물어보세요" 같은 상투적인 문장을 붙이지 않습니다. 같은 문장 꼴의 반복, 마케팅 문구, 프로젝트 이름을 감탄사처럼 되풀이하는 시작을 피합니다.`;
 
 const RULES = `## 답변 규칙
@@ -268,7 +272,7 @@ export function answerFromEvidence(question: string, page: PageContext | null, r
         .filter((item, index, all) => all.findIndex((other) => other.chunk.projectId === item.chunk.projectId) === index)
         // 손으로 쓴 한 줄 소개는 레거시 코퍼스 전용이다 — 큐레이션 조각은 그 본문을 문장 경계에서 자른다.
         .map((item) => (item.chunk.sourceType !== "curated_corpus" && OVERVIEW_IDENTITIES[item.chunk.projectId!])
-          || `${item.chunk.projectTitle ?? item.chunk.projectId}: ${trimToSentences(stripSourceScaffolding(item.chunk.text, item.chunk.title), 140)}`);
+          || `${item.chunk.projectTitle ?? item.chunk.projectId}: ${toPoliteSpeech(trimToSentences(stripSourceScaffolding(item.chunk.text, item.chunk.title), 140))}`);
       if (projects.length >= 2) {
         return {
           emotion: "smile",
@@ -283,7 +287,7 @@ export function answerFromEvidence(question: string, page: PageContext | null, r
     if (!targeted && cannedHit && !top.projectId && !hedge) return { emotion: canned.emotion, answer: canned.answer, kind: "canned" };
 
     const lead = SECTION_LEAD[top.section] ?? "";
-    const body = trimToSentences(stripSourceScaffolding(top.text, top.title), 300);
+    const body = toPoliteSpeech(trimToSentences(stripSourceScaffolding(top.text, top.title), 300));
     const repeatsProjectName = top.projectTitle
       ? body.trimStart().toLocaleLowerCase().startsWith(top.projectTitle.toLocaleLowerCase())
       : false;

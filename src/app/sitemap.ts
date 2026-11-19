@@ -28,6 +28,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    ...["armi", "hangarae", "wedding"].map((id) => ({
+      url: `${baseUrl}/journeys/${id}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+    })),
     ...["ai-docent", "bcos", "armi", "crime-scene", "hangarae", "claw-dev", "wedding"].map((slug) => ({
       url: `${baseUrl}/projects/${slug}`,
       lastModified: new Date(),

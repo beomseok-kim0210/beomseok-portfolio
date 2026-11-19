@@ -44,7 +44,8 @@ export function LabExperience() {
     const node = section.current, view = viewport.current; if (!node || !view) return;
     runtime.labViewport.current = view;
     let previous = -1, last = 0, leavingNow = false, outdoorNow = false;
-    const brief = document.getElementById("wedding-brief");
+    // What the gallery doors open over: the project index on Home (the wedding brief in the old single-page flow).
+    const brief = document.getElementById("wedding-brief") ?? document.getElementById("journeys");
     /* Doors open on their own clock, not the scroll's: the entry gesture only asks them to open, and they
        take ~3s to swing — but never before the gallery is ready (assets + compiled shaders). If the visitor
        arrives first, they wait closed under "전시를 준비하고 있습니다", then open. */

@@ -34,7 +34,8 @@ function applyArch(view: HTMLElement, open: number, glow: HTMLElement | null) {
   if (glow) Object.assign(glow.style, { translate: `${left}px ${top}px`, width: `${FW - left - right}px`, height: `${H - top - bottom}px`, borderRadius: `${r}px ${r}px 6px 6px`, opacity: String(t > .001 ? 1 - smooth(Math.max(0, (t - .75) / .25)) : 0) });
 }
 
-export function WeddingExperience() {
+/** `cue`: the "next project" cue over the hold (off on its own page, where the title card stands there). */
+export function WeddingExperience({ cue = true }: { cue?: boolean } = {}) {
   const section = useRef<HTMLElement>(null), viewport = useRef<HTMLDivElement>(null), surface = useRef<HTMLDivElement>(null), glow = useRef<HTMLDivElement>(null);
   const { runtime, setSurface } = useWorldHost();
   const [mode, setMode] = useState<WorldRenderMode>("static"), [active, setActive] = useState(false), [shot, setShot] = useState(0), [split, setSplit] = useState(50);
@@ -120,9 +121,9 @@ export function WeddingExperience() {
 
   const scene = Math.max(0, shot - 1), isStatic = mode !== "webgl";
   return <section id="wedding" ref={section} className={styles.track} aria-label="웨딩드레스 AI: 3D 복원의 한계를 분석하고 전문가 토의 기반 비교 경험으로 전환한 여정">
-    <div className={styles.cueRail} aria-hidden="true"><div className={styles.cue} style={{ opacity: "var(--cue)" } as CSSProperties}>
+    {cue && <div className={styles.cueRail} aria-hidden="true"><div className={styles.cue} style={{ opacity: "var(--cue)" } as CSSProperties}>
       <span>NEXT PROJECT</span><strong>03 · 웨딩드레스 AI</strong><em>계속 내리면 다음 방으로 들어갑니다</em><i/>
-    </div></div>
+    </div></div>}
     <div ref={viewport} className={styles.viewport} data-phase={wdShots[shot].id} data-hud="lg">
       <div ref={surface} className={styles.canvas} aria-hidden="true"/>
       {isStatic && <div className={styles.still} aria-hidden="true"><img loading="lazy" decoding="async" src={`${IMG}/ball-photo.webp`} alt=""/></div>}

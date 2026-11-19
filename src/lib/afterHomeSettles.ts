@@ -15,7 +15,7 @@ export function afterHomeSettles(run: () => void, fallbackMs = 4000): () => void
     idle = w.requestIdleCallback ? w.requestIdleCallback(run, { timeout: 1500 }) : window.setTimeout(run, 200);
   };
   const onLoad = () => { if (readWorldLoad().ready) go(); };
-  const timer = window.setTimeout(go, location.pathname === "/" ? fallbackMs : 0);
+  const timer = window.setTimeout(go, location.pathname === "/" || location.pathname.startsWith("/journeys/") ? fallbackMs : 0);
   function cleanup() { window.clearTimeout(timer); window.removeEventListener("portfolio:world-load", onLoad); }
   window.addEventListener("portfolio:world-load", onLoad);
   onLoad();

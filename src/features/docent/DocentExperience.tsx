@@ -27,10 +27,15 @@ export interface DocentExperienceProps {
   focusInputToken?: number;
   /** sidecar = 오른쪽 440px 사이드 패널(세로 한 줄), workspace = 전체 화면 2열. */
   layout?: "sidecar" | "workspace";
+  /**
+   * 3D 얼굴을 그릴지. 기본 사이트(사이드 패널·모바일 시트)에서는 글을 읽을 자리가 먼저라
+   * 얼굴을 빼고 대화만 둔다 — 얼굴은 전체 화면에서만 나온다(WebGL 컨텍스트도 그때만 만든다).
+   */
+  showAvatar?: boolean;
 }
 
 /** Presentation for the persistent runtime. Hiding it never destroys the provider. */
-export function DocentExperience({ focusInputToken = 0, layout = "workspace" }: DocentExperienceProps) {
+export function DocentExperience({ focusInputToken = 0, layout = "workspace", showAvatar = true }: DocentExperienceProps) {
   const runtime = useDocentRuntime();
   const avatarId = useRef(`dd-avatar-${Math.random().toString(36).slice(2)}`);
 
@@ -71,6 +76,32 @@ export function DocentExperience({ focusInputToken = 0, layout = "workspace" }: 
   // 두 배치는 같은 요소 트리를 쓰고 클래스만 바꾼다 — 사이드 패널 ↔ 전체 화면을
   // 오가도 아바타 캔버스(WebGL 컨텍스트)가 다시 마운트되지 않는다.
   const sidecar = layout === "sidecar";
+
+  if (!showAvatar) {
+    return (
+      <div
+        className="flex h-full min-h-0 flex-col gap-2"
+        data-docent-layout={layout}
+        data-docent-avatar="hidden"
+        data-docent-page-type={runtime.pageContext.pageType}
+        data-docent-project={runtime.pageContext.projectSlug ?? ""}
+      >
+        <p className="shrink-0 truncate px-1 text-[11px] text-slate-500">
+          현재 보고 있는 내용 · <span className="text-slate-300">{contextLabel}</span>
+        </p>
+        <section className="min-h-0 flex-1" data-docent-conversation-region aria-label="AI 도슨트 대화">
+          <ChatPanel
+            {...runtime.chat}
+            send={runtime.send}
+            voice={runtime.voice}
+            compact
+            fill
+            focusInputToken={focusInputToken}
+          />
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div
